@@ -12,6 +12,7 @@ if [ -f generated/latex/refman.pdf ];
     cd apidoc
     ./generatedoc.sh
     evince ../EnhancedPositionServiceAPI.pdf &
+    rm -rf ../generated
   else
     echo "Error generating pdf file"
 fi
