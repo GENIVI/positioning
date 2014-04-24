@@ -1,7 +1,8 @@
 ============================
-Positioning PoC
+Positioning Git Repository
 ============================
-The GENIVI Positioning Git repository is a collection of 4 proofs of concept:
+
+The Positioning repository is a collection of 4 proofs of concept:
 * GNSSService
 * SensorsService
 * EnhancedPositionService
@@ -11,6 +12,7 @@ The GENIVI Positioning Git repository is a collection of 4 proofs of concept:
 ===============================
 Directory Structure
 ===============================
+
 enhanced-position-service   //enhanced-position-service PoC
 gnss-service                //gnss-service PoC
 log-replayer                //log-replayer-PoC
@@ -48,6 +50,8 @@ service:
 How To Test
 ===============================
 
+To test the positioning proofs of concept please use the following test application:
+
 ./run-test.sh [service]
 
 service:
@@ -65,7 +69,7 @@ Compiler Options
 If you wish to change the default cmake-options, please 
 1) open the file build-all.sh, 
 2) edit the compiler flags, 
-3) delete the build directory
+3) delete the build directory,
 4) recompile the code from scratch.
 
 ---------
