@@ -1,0 +1,43 @@
+/*  SPDX-License-Identifier: MPL-2.0
+    Component Name: EnhancedPositionService
+    Compliance Level: Abstract Component
+    Copyright (C) 2012, BMW Car IT GmbH, Continental Automotive GmbH, PCA Peugeot Citroën, XS Embedded GmbH
+    License:
+    This Source Code Form is subject to the terms of the
+    Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed with
+    this file, You can obtain one at http://mozilla.org/MPL/2.0/.
+*/
+
+package org.genivi.EnhancedPositionService
+
+import org.genivi.CommonTypes.* from "CommonTypes.fidl"
+
+<**
+	@description : Configuration = This interface allows a client application to set and retrieve configuration options
+**>
+interface Configuration {
+	version {
+		major 0
+		minor 0
+	}
+	
+    <**
+	    @description : SatelliteSystem = satellite system (GPS, Glonass, ...)
+    **>
+	attribute UInt16 SatelliteSystem 
+	
+    <**
+	    @description : UpdateInterval = update interval
+    **>
+	attribute Int32 UpdateInterval
+
+	<**
+		@description : GetVersion = This method returns the API version implemented by the server application.
+	**>
+	method GetVersion {
+		out {
+			Version ^version
+		}
+	}
+	
+}

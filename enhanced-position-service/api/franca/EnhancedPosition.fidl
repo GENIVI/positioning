@@ -1,0 +1,152 @@
+/*  SPDX-License-Identifier: MPL-2.0
+    Component Name: EnhancedPositionService
+    Compliance Level: Abstract Component
+    Copyright (C) 2012, BMW Car IT GmbH, Continental Automotive GmbH, PCA Peugeot Citroën, XS Embedded GmbH
+    License:
+    This Source Code Form is subject to the terms of the
+    Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed with
+    this file, You can obtain one at http://mozilla.org/MPL/2.0/.
+*/
+
+package org.genivi.EnhancedPositionService
+
+import org.genivi.CommonTypes.* from "CommonTypes.fidl"
+import org.genivi.EnhancedPositionService.EnhancedPositionServiceTypes.* from "EnhancedPositionServiceTypes.fidl"
+
+<**
+	@description : EnhancedPosition = This interface offers functionalities to retrieve the enhanced position of the vehicle
+**>
+interface EnhancedPosition {
+	version {
+		major 0
+		minor 0
+	}
+
+	<**
+		@description : GetVersion = This method returns the API version implemented by the server application
+	**>
+	method GetVersion {
+		out {
+			Version ^version
+		}
+	}
+
+	<**
+		@description : GetData = This method returns a given set of positioning data (e.g. Position, Course, Accuracy, Status, ... )
+		Note: If a requested value is invalid, it's not returned to the client application
+	**>
+	method GetData {
+		in {
+			PositioningDataKey[] valuesToReturn
+		}
+		out {
+			PositioningData data
+		}
+	}
+
+	<**
+		@description : GetPosition = This method returns the current position
+		Note: If a requested value is invalid, it's not returned to the client application
+	**>
+	method GetPosition {
+		out {
+			PositionInfo position
+		}
+	}
+
+	<**
+		@description : GetRotationRate = This method returns the rotation rate
+		Note: If a requested value is invalid, it's not returned to the client application
+	**>
+	method GetRotationRate {
+		out {
+			RotationRate rotationRate
+		}
+	}
+
+	<**
+		@description : GetAccuracy = This method returns the accuracy
+		Note: If a requested value is invalid, it's not returned to the client application
+	**>
+	method GetAccuracy {
+		out {
+			AccuracyInfo accuracy
+		}
+	}
+
+	<**
+		@description : GetSatelliteInfo = This method returns information about the current satellite constellation
+		Note: If a requested value is invalid, it's not returned to the client application
+	**>
+	method GetSatelliteInfo {
+		out {
+			SatelliteInfo satelliteInfo
+		}
+	}
+
+	<**
+		@description : GetStatus = This method returns the status of this service
+		Note: If a requested value is invalid, it's not returned to the client application
+	**>
+	method GetStatus {
+		out {
+			StatusInfo status
+		}
+	}
+
+	<**
+		@description : GetTime = This method returns UTC time and date
+		Note: If a requested value is invalid, it's not returned to the client application
+	**>
+	method GetTime {
+		out {
+			TimeInfo time
+		}
+	}
+
+	<**
+		@description : PositionUpdate = This signal is called to notifiy a client application of a position change. The update frequency is implementation specific. The maximal allowed frequency is 10Hz
+	**>
+	broadcast PositionUpdate {
+		out {
+			PositionInfoKey[] changedValues
+		}
+	}
+
+	<**
+		@description : RotationRateUpdated = This signal is emitted when the rotation rate changes
+	**>
+	broadcast RotationRateUpdate {
+		out {
+			RotationRateKey[] changedValues
+		}
+	}
+
+	<**
+		@description : AccuracyUpdated = This signal is emitted when the accuracy changes
+	**>
+	broadcast AccuracyUpdate {
+		out {
+			AccuracyInfoKey[] changedValues
+		}
+	}
+
+	<**
+		@description : SatelliteInfoUpdate = This signal is emitted when information about the current satellite information is updated
+	**>
+	broadcast SatelliteInfoUpdate {
+		out {
+			SatelliteInfoKey[] changedValues
+		}
+	}
+
+	<**
+		@description : StatusUpdate = This signal is emitted when the status of this service changes
+	**>
+	broadcast StatusUpdate {
+		out {
+			StatusKey[] changedValues
+		}
+	}
+
+}

@@ -1,0 +1,21 @@
+/**************************************************************************
+ * Component Name: SensorsService
+ * Compliance Level: Abstract Component
+ * File: TestPlan.txt
+ * This document describes how to test the Abstract Component SensorsService.
+ * It is an artifact required by the GENIVI release process
+ * and is a prerequisite for the standardization of GENIVI interfaces
+ **************************************************************************/
+
+In order to test the SensorsService you just need to run the test script
+'run-test.sh' with the parameter 'sns' and then wait 10 s until the test is completed.
+
+The script starts the sensors-service-client application followed by the log-replayer
+application:
+
+Example:
+
+run-test.sh sns 
+
+
+

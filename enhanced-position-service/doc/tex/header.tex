@@ -1,0 +1,111 @@
+\documentclass[a4paper]{article}
+\usepackage{a4wide}
+\usepackage{makeidx}
+\usepackage{graphicx}
+\usepackage{multicol}
+\usepackage{float}
+\usepackage{listings}
+\usepackage{color}
+\usepackage{textcomp}
+\usepackage{alltt}
+\usepackage{times}
+\usepackage{ifpdf}
+\ifpdf
+\usepackage[pdftex,
+            pagebackref=true,
+            colorlinks=true,
+            linkcolor=blue,
+            unicode
+           ]{hyperref}
+\else
+\usepackage[ps2pdf,
+            pagebackref=true,
+            colorlinks=true,
+            linkcolor=blue,
+            unicode
+           ]{hyperref}
+\usepackage{pspicture}
+\fi
+\usepackage[utf8]{inputenc}
+\usepackage{doxygen}
+\lstset{language=C++,inputencoding=utf8,basicstyle=\footnotesize,breaklines=true,breakatwhitespace=true,tabsize=8,numbers=left }
+\makeindex
+\setcounter{tocdepth}{2}
+\renewcommand{\footrulewidth}{0.4pt}
+\begin{document}
+\hypersetup{pageanchor=false}
+\begin{titlepage}
+\begin{center}
+\vspace{2cm}
+\includegraphics{../../../doc/images/genivi-logo.png}\\
+\vspace{1.5cm}
+{\Large $projectname } \\
+\vspace{0.3cm}
+{\large Version 2.0.0}\\
+\vspace{0.3cm}
+{\small $date}\\
+\end{center}
+
+\vfill
+
+{\large Accepted for release by:}\\
+Approved by the EG-LBS and the SAT for the GENIVI Gemini Release.
+\vspace{1cm}
+
+{\large Abstract:}\\
+This document describes the architecture and the interface of the GENIVI EnhancedPositionService.
+\vspace{1cm}
+
+{\large Keywords:}\\
+GENIVI, Position, GPS, GNSS, Positioning, Dead-Reckoning
+\vspace{1cm}
+
+SPDX-License-Identifier: CC-BY-SA-3.0
+
+Copyright (C) 2014, BMW Car IT GmbH, Continental Automotive GmbH, PCA Peugeot Citroën, XS Embedded GmbH, TomTom International B.V., Alpine Electronics R\&D Europe GmbH, AISIN AW CO., LTD.
+
+This work is licensed under the Creative Commons Attribution-ShareAlike 3.0 Unported License.
+
+To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/3.0/ or send a letter to Creative Commons, 444 Castro Street, Suite 900, Mountain View, California, 94041, USA.
+
+\newpage
+
+\section*{Participants}
+This document has been created by members of the Location Based Services expert group.
+
+\section*{Change History}
+The following table shows the change history of the current document:
+
+\begin{tabular}{ | l | l | p{9.5cm} | }
+\hline
+Date & Document Version & Changes \\
+\hline
+thomas.bader & 2012-03-16 & Created initial version \\
+\hline
+thomas.bader & 2012-03-19 & added API, Architecture, Discovery-Links \\
+\hline
+thomas.bader & 2012-03-21 & fixed typos, added sequence diagrams \\
+\hline
+thomas.bader & 2012-03-26 & created version 1.0, added images \\
+\hline
+marco.residori (XS Embedded) & 2013-06-03 & Updated context description, architecture description, UML diagrams \\
+\hline
+marco.residori (XS Embedded) & 2013-06-04 & API version in the XML files set to 2.0.0 \\
+\hline
+marco.residori (XS Embedded) & 2013-08-23 & API documentation generated automatically from XML files \\
+\hline
+marco.residori (XS Embedded) & 2014-03-27 & Added copyright notes \\
+\hline
+\end{tabular}
+
+
+\end{titlepage}
+\clearemptydoublepage
+\pagenumbering{roman}
+\tableofcontents
+\clearemptydoublepage
+\pagenumbering{arabic}
+\hypersetup{pageanchor=true}
+
+
+

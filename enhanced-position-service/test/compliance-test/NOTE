@@ -1,0 +1,7 @@
+The test application 'enhanced-position-service-compliance-test' was written using the code 
+examples provided at http://www.matthew.ath.cx/misc/dbus as a reference.
+
+The code example doesn report any license.
+
+I put the code under MPLv2 license, since it is the license used for the Positioning PoC.
+

@@ -1,0 +1,16 @@
+/**************************************************************************
+ * Component Name: LogReplayer
+ **************************************************************************/
+
+In order to test the LogReplayer you just need to run the test script
+'run-test.sh' with the parameter 'repl' and then wait 10 s until the test is completed.
+
+The script starts the test-log-replayer application followed by the log-replayer
+application:
+
+Example:
+
+run-test.sh repl 
+
+
+

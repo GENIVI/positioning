@@ -1,0 +1,11 @@
+The source code of the enhanced-position-service was developed by BMW Car IT GmbH.
+
+The source code of gnss-service and sensors-service was rewritten by XS Embedded.
+Some code fragments of the gnss-service and sensors-service
+were taken over from a previous version of the positioning proof of concept 
+developed by BMW Car IT GmbH. 
+
+The original implementation by BMW Car IT GmbH is available for GENIVI members only.
+It is contained in the internal positioning git repository and labelled with the tag 2.0.0
+
+

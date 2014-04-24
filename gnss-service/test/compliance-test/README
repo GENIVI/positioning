@@ -1,0 +1,26 @@
+============================
+GNSSService - Compliance Test
+============================
+
+---------------------
+Usage
+---------------------
+* Compile the provided test application against your 
+  implementation of the GNSSService library.
+* Make sure that a GPS receiver is connected 
+* Start the 'gnss-service-compliance-test'
+* Wait 10 seconds for the test to complete
+
+---------------------
+Important Note
+---------------------
+The test application 'gnss-service-compliance-test'
+is just a prototype of a test application that may be used
+in future to prove that the current implementation of the
+GNSSService is GENIVI compliant.
+
+At the time of writing no testing framework
+has officially been defined within the GENIVI Alliance.
+
+This tets application is simply provided as a test tool.
+

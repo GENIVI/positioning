@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="iso-8859-15"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-15" />
+    <title>DBUS Introspection Data</title>
+    <style type="text/css">
+        body { color: black; background-color: white } 
+        h1 { font-family: sans-serif }
+        ul { list-style-type: none; margin-bottom: 10px }
+        li { font-family: sans-serif }
+        .keyword { font-style: italic }
+        .title { font-style: italic; color: blue }
+		    .line { font-style: italic; font-size:8pt; color: green}
+		    .version { font-family: monospace }
+      </style>
+  </head>
+  <body>
+    <div class="constants">
+      <h1><span class="keyword">constants</span> <span class="title">EnhancedPositionService</span> <span class="version">version</span> <span class="version">2.0.0 (04-06-2013)</span></h1>
+      <li>
+        <span class="line">This document defines the constants that are used in the EnhancedPositionService APIs<br /></span>
+      </li>
+      <hr />
+      <li>INVALID = 0x0000</li>
+      <hr />
+      <li>TIMESTAMP = 0x0001</li>
+      <hr />
+      <li>ALL = 0xffff</li>
+      <hr />
+      <li>LATITUDE = 0x0020</li>
+      <hr />
+      <li>LONGITUDE = 0x0021</li>
+      <hr />
+      <li>ALTITUDE = 0x0022</li>
+      <hr />
+      <li>HEADING = 0x0030</li>
+      <hr />
+      <li>SPEED = 0x0031</li>
+      <hr />
+      <li>CLIMB = 0x0032</li>
+      <hr />
+      <li>COUNTRY = 0x0040</li>
+      <hr />
+      <li>CITY = 0x0041</li>
+      <hr />
+      <li>STREET = 0x0042</li>
+      <hr />
+      <li>NUMBER = 0x0043</li>
+      <hr />
+      <li>CROSSING = 0x0044</li>
+      <hr />
+      <li>DISTRICT = 0x0045</li>
+      <hr />
+      <li>TIMEZONE_OFFSET = 0x0046</li>
+      <hr />
+      <li>DAYLIGHT_OFFSET = 0x0047</li>
+      <hr />
+      <li>MATCH_TYPE = 0x0048</li>
+      <hr />
+      <li>ROLL_RATE = 0x0060</li>
+      <hr />
+      <li>PITCH_RATE = 0x0061</li>
+      <hr />
+      <li>YAW_RATE = 0x0062</li>
+      <hr />
+      <li>GNSS_FIX_STATUS = 0x0070</li>
+      <hr />
+      <li>DR_STATUS = 0x0071</li>
+      <hr />
+      <li>MM_STATUS = 0x0072</li>
+      <hr />
+      <li>RELIABILTY_INDEX = 0x0073</li>
+      <hr />
+      <li>MAP_MATCHED_FEEDBACK = 0x0074</li>
+      <hr />
+      <li>TEST_FEEDBACK = 0x0075</li>
+      <hr />
+      <li>PDOP = 0x0080</li>
+      <hr />
+      <li>HDOP = 0x0081</li>
+      <hr />
+      <li>VDOP = 0x0082</li>
+      <hr />
+      <li>SIGMA_LATITUDE = 0x0083</li>
+      <hr />
+      <li>SIGMA_LONGITUDE = 0x0084</li>
+      <hr />
+      <li>SIGMA_ALTITUDE = 0x0085</li>
+      <hr />
+      <li>SIGMA_HEADING = 0x0086</li>
+      <hr />
+      <li>YEAR = 0x00a0</li>
+      <hr />
+      <li>MONTH = 0x00a1</li>
+      <hr />
+      <li>DAY = 0x00a2</li>
+      <hr />
+      <li>HOUR = 0x00a3</li>
+      <hr />
+      <li>MINUTE = 0x00a4</li>
+      <hr />
+      <li>SECOND = 0x00a5</li>
+      <hr />
+      <li>MS = 0x00a6</li>
+      <hr />
+      <li>GPS = 0x00b0</li>
+      <hr />
+      <li>GLONASS = 0x00b1</li>
+      <hr />
+      <li>GALILEO = 0x00b2</li>
+      <hr />
+      <li>COMPASS = 0x00b3</li>
+      <hr />
+      <li>USED_SATELLITES = 0x00c0</li>
+      <hr />
+      <li>TRACKED_SATELLITES = 0x00c1</li>
+      <hr />
+      <li>VISIBLE_SATELLITES = 0x00c2</li>
+      <hr />
+      <li>SATELLITE_DETAILS = 0x00c3</li>
+    </div>
+  </body>
+</html>

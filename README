@@ -1,0 +1,104 @@
+============================
+Positioning PoC
+============================
+The Positioning PoC is a collection of 4 proofs of concept:
+* GNSSService
+* SensorsService
+* EnhancedPositionService
+* LogReplayer
+
+
+===============================
+Directory Structure
+===============================
+enhanced-position-service   //enhanced-position-service PoC
+gnss-service                //gnss-service PoC
+log-replayer                //log-replayer-PoC
+sensors-service             //sensors-service PoC
+architecture.png            //architecture overview
+build-all.sh                //script to build the PoCs (usage: build-all.sh help) 
+run-test.sh                 //script to run a quick test for each PoC (usage: run-test.sh help) 
+
+
+===============================
+How To Build
+===============================
+
+To build the positioning proofs of concept please follow the following steps:
+
+./build-all.sh 
+
+or
+
+./build-all.sh [command] [service]
+
+command:
+  make            Build
+  install         Install
+  clean           Clean
+  help            Print Help
+
+service:
+  gnss            Test GNSSService
+  sns             Test SensorsService
+  enhpos          Test EnhancedPositionService
+  repl            Test Replayer
+
+
+===============================
+How To Test
+===============================
+
+./run-test.sh [service]
+
+service:
+  gnss            Test GNSSService
+  sns             Test SensorsService
+  enhpos          Test EnhancedPositionService
+  repl            Test Replayer
+  help            Print Help
+
+
+===============================
+Compiler Options
+===============================
+
+If you wish to change the default cmake-options, please open
+the file build-all.sh, edit the compiler flags, delete the build directory
+and recompile the code from scratch.
+
+---------
+Example
+---------
+
+If you wish to activate DLT logging for the GNSSService, just change the  
+value of GNSS_SERVICE_FLAGS in the file build-all.sh as follows:
+GNSS_SERVICE_FLAGS='-DWITH_DLT=ON'
+
+---------
+Notes
+---------
+
+DWITH_GPSD=ON requires that the package 'gpsd' is installed.
+To install 'gpsd', please execute the following commands:
+sudo apt-get install gpsd
+sudo apt-get install libgps-dev
+
+To test the enhanced-positon-service the package Qt4 must be installed.
+To install Qt4, please execute the following command:
+sudo apt-get install qtcreator
+
+DWITH_TESTS=ON enables the compilation of the test application(s).
+
+DWITH_DLT=ON requires that the DLT-daemon is installed.
+To download the DLT-daemon, just execute the following command:
+git clone git://git.projects.genivi.org/dlt-daemon.git
+To install the DLT-daemon, etxract the tarball and follow the 
+instructions in the file install.txt.
+
+DWITH_IPHONE=ON requires that the iPhone app SensorLogger is
+installed on a iPhone and that the option to broadcast the
+sensor data is activated (port=5555).
+
+ 
+

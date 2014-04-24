@@ -1,0 +1,23 @@
+/*!
+
+\page "Sequence Diagrams"
+
+The following sequence diagrams are generated out of the GENIVI Enterprise Architect model.
+
+\section sequ1 GetData (Simple)
+
+\image html enh-sequence-get.png 
+\image latex enh-sequence-get.png "EnhancedPositionService - Sequence Diagram" width=\textwidth
+
+\section sequ2 GetSatelliteInfo
+
+\image html enh-sequence-satelliteinfo.png 
+\image latex enh-sequence-satelliteinfo.png "EnhancedPositionService - Sequence Diagram" width=\textwidth
+
+
+\section sequ3 GetData (Complex)
+
+\image html enh-sequence-getdata.png 
+\image latex enh-sequence-getdata.png "Enhanced Position Service - Sequence Diagram" width=\textwidth
+
+*/

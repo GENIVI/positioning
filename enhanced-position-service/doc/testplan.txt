@@ -1,0 +1,30 @@
+/**************************************************************************
+ * Component Name: EnhancedPositionService
+ * Compliance Level: Abstract Component
+ * File: testplan.txt
+ * This document describes how to test the Abstract Component EnhancedPositionService.
+ * It is an artifact required by the GENIVI release process
+ * and is a prerequisite for the standardization of GENIVI interfaces
+ **************************************************************************/
+
+In order to test the EnhancedPositionService you need to run the following test applications:
+1) replayer
+2) test-client
+3) position-daemon
+
+The source code of the test applications can be found in the following directories:
+positioning/EnhancedPositionService/test
+
+In order to run the test application follow these steps:
+
+1) Install and compile the Positioning PoC (Proof of Concept) 
+   as described in the file: positioning/README.txt
+
+2) Navigate to the directory 'positioning' and run the test application
+
+cd positioning
+./build/replayer/src/replayer ./build/replayer/logs/testlog.gvsl &
+./build/enhanced-position-service/src/position-daemon &
+./build/enhanced-position-service/test/test-client
+
+
