@@ -46,7 +46,6 @@ usage() {
     echo
     echo "command:"
     echo "  make            Build"
-    echo "  install         Install"
     echo "  clean           Clean"
     echo "  help            Print Help"
     echo
@@ -132,15 +131,12 @@ if [ $# -ge 1 ]; then
         else
             rm -rf $TOP_BIN_DIR
         fi
-    elif [ $1 = install ]; then
-        echo "todo: installation"
     else
         usage
     fi
 elif [ $# -eq 0 ]; then
     #cleanAll
     buildAll
-    #todo: installAll
 else
     usage
 fi
