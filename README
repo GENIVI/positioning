@@ -34,7 +34,6 @@ or
 
 command:
   make            Build
-  install         Install
   clean           Clean
   help            Print Help
 
@@ -63,9 +62,11 @@ service:
 Compiler Options
 ===============================
 
-If you wish to change the default cmake-options, please open
-the file build-all.sh, edit the compiler flags, delete the build directory
-and recompile the code from scratch.
+If you wish to change the default cmake-options, please 
+1) open the file build-all.sh, 
+2) edit the compiler flags, 
+3) delete the build directory
+4) recompile the code from scratch.
 
 ---------
 Example
@@ -96,7 +97,7 @@ git clone git://git.projects.genivi.org/dlt-daemon.git
 To install the DLT-daemon, etxract the tarball and follow the 
 instructions in the file install.txt.
 
-DWITH_IPHONE=ON requires that the iPhone app SensorLogger is
+DWITH_IPHONE=ON requires that the iPhone app 'SensorLogger' is
 installed on a iPhone and that the option to broadcast the
 sensor data is activated (port=5555).
 
