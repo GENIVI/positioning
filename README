@@ -1,7 +1,7 @@
 ============================
 Positioning PoC
 ============================
-The Positioning PoC is a collection of 4 proofs of concept:
+The GENIVI Positioning Git repository is a collection of 4 proofs of concept:
 * GNSSService
 * SensorsService
 * EnhancedPositionService
