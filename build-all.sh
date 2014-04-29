@@ -14,6 +14,9 @@
 # Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed with
 # this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
+# List of changes:
+# 
+# 29-04-2014, Philippe Colliot, add a -DWITH_MESSAGES option to the logreplayer
 # @licence end@
 ###########################################################################
 
@@ -24,7 +27,7 @@
 GNSS_SERVICE_FLAGS='-DWITH_DLT=OFF -DWITH_GPSD=OFF -DWITH_REPLAYER=ON -DWITH_TESTS=ON'
 SENSORS_SERVICE_FLAGS='-DWITH_DLT=OFF -DWITH_REPLAYER=ON -DWITH_IPHONE=OFF -DWITH_TESTS=ON'
 ENHANCED_POSITION_SERVICE_FLAGS='-DWITH_DLT=OFF -DWITH_GPSD=OFF -DWITH_REPLAYER=ON -DWITH_TESTS=ON'
-LOG_REPLAYER_FLAGS='-DWITH_DLT=OFF -DWITH_TESTS=ON'
+LOG_REPLAYER_FLAGS='-DWITH_DLT=OFF -DWITH_TESTS=ON -DWITH_MESSAGES=OFF'
 #--------------------------------------------------------------------------
 
 TOP_SRC_DIR=$PWD

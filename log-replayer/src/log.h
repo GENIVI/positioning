@@ -45,6 +45,22 @@ typedef const char* NoDltContext;
 #define DLT_UNREGISTER_APP() ;
 #define dlt_free() ;
 
+#if (!MESSAGES)
+
+#define LOG_VERBOSE_MSG(context, msg)
+#define LOG_VERBOSE(context, fmt, ...)
+#define LOG_DEBUG_MSG(context, msg)
+#define LOG_DEBUG(context, fmt, ...)
+#define LOG_INFO_MSG(context, msg)
+#define LOG_INFO(context, fmt, ...)
+#define LOG_WARNING_MSG(context, msg)
+#define LOG_WARNING(context, fmt, ...)
+#define LOG_ERROR_MSG(context, msg)
+#define LOG_ERROR(context, fmt, ...)
+#define LOG_FATAL_MSG(context, msg)
+#define LOG_FATAL(context, fmt, ...)
+
+#else /* with messages */
 // log calls
 #define LOG_VERBOSE_MSG(context, msg) \
         fprintf(stderr, "[VERBO][%4s] " msg "\n", context)
@@ -53,9 +69,9 @@ typedef const char* NoDltContext;
 
 #define LOG_DEBUG_MSG(context, msg) \
         fprintf(stderr, "[DEBUG][%4s] " msg "\n", context)
+
 #define LOG_DEBUG(context, fmt, ...) \
         fprintf(stderr, "[DEBUG][%4s] " fmt "\n", context, __VA_ARGS__)
-
 #define LOG_INFO_MSG(context, msg) \
         fprintf(stderr, "[INFO ][%4s] " msg "\n", context)
 #define LOG_INFO(context, fmt, ...) \
@@ -75,6 +91,8 @@ typedef const char* NoDltContext;
         fprintf(stderr, "[FATAL][%4s] " msg "\n", context)
 #define LOG_FATAL(context, fmt, ...) \
         fprintf(stderr, "[FATAL][%4s] " fmt "\n", context, __VA_ARGS__)
+
+#endif  /* MESSAGES */
 
 #else   /* DLT_ENABLED */
 /*****************************************************************************/

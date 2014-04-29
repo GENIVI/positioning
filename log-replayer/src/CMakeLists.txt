@@ -19,6 +19,8 @@
 message(STATUS "LOG-REPLAYER")
 message(STATUS "WITH_DLT = ${WITH_DLT}")
 message(STATUS "WITH_TESTS = ${WITH_TESTS}")
+message(STATUS "WITH_MESSAGES = ${WITH_MESSAGES}")
+
 
 find_package(PkgConfig)
 
@@ -32,6 +34,10 @@ if(WITH_DLT)
     add_definitions("-DDLT_ENABLED=1")
     include_directories( ${DLT_INCLUDE_DIRS} )
     set(LIBRARIES ${LIBRARIES} ${DLT_LIBRARIES})
+endif()
+
+if(WITH_MESSAGES)
+    add_definitions("-DMESSAGES=1")
 endif()
 
 add_executable(log-replayer ${LIB_SRCS})

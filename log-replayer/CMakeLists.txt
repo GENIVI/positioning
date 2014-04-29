@@ -24,6 +24,9 @@ option(WITH_DLT
 
 option(WITH_TESTS
     "Compile test applications" OFF)
+ 
+option(WITH_MESSAGES
+    "Enable the build to print messages" OFF)
     
 message(STATUS)
 message(STATUS "---------------------------------------------------------")
