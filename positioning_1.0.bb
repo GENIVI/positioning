@@ -17,7 +17,7 @@
 ###########################################################################
 
 #
-# Description: this is a Yocto Recipe of the 4 proof of concept contained 
+# Description: This is a Yocto recipe of the 4 proofs of concept contained 
 #              in the positioning repository
 #
 # Status: Draft (Work in Progress)
@@ -71,7 +71,7 @@ do_compile() {
 do_install() {
    install -d ${D}/${bindir}
    install -d ${D}/${libdir}
-   install -d ${D}/${datadir}/${PN}
+   install -d ${D}${datadir}/${PN}
    install -m 755 ${S}/log-replayer/src/log-replayer ${D}/${bindir}
    install -m 755 ${S}/log-replayer/test/test-log-replayer ${D}/${bindir}
    install -m 644 ${S}/log-replayer/logs/*.log ${D}${datadir}/${PN}
@@ -85,7 +85,6 @@ do_install() {
    #install -m 755 ${S}/enhanced-position-service/test/compliance-test/enhanced-position-service-compliance-test ${D}/${bindir}
 }
 
-#select which of the files in ${bindir} and ${libdir} belong to which package
 FILES_${PN}-gnss = "${libdir}/libgnss-service*.so "
 FILES_${PN}-gnss-test = "${bindir}/gnss-service-client \
                          ${bindir}/gnss-service-compliance-test "    
@@ -93,9 +92,9 @@ FILES_${PN}-gnss-test = "${bindir}/gnss-service-client \
 FILES_${PN}-sns = "${libdir}/libsensors-service*.so "
 FILES_${PN}-sns-test = "${bindir}/sensors-service-client "    
 
-FILES_${PN}-repl = "${bindir}/log-replayer "
+FILES_${PN}-repl = "${bindir}/log-replayer \ 
+                    ${datadir}/${PN}/*.log "
 FILES_${PN}-repl-test = "${bindir}/test-log-replayer "
-FILES_${PN}-repl-test = "${D}${datadir}/${PN} "
 
 #FILES_${PN}-enhpos = "${bindir}/enhanced-position-service/src/position-daemon "
 #FILES_${PN}-enhpos = "${bindir}/enhanced-position-service/test/test-client "
