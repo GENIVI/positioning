@@ -31,8 +31,11 @@ option(WITH_REPLAYER
 option(WITH_TESTS
     "Compile test applications" OFF)
 
-SET(CMAKE_INSTALL_RPATH "")
-#SET(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE) 
+if(${CMAKE_INSTALL_RPATH})
+    set(CMAKE_INSTALL_RPATH ${LIBRARY_INSTALL_PATH}:${CMAKE_INSTALL_RPATH})
+else(${CMAKE_INSTALL_RPATH})
+    set(CMAKE_INSTALL_RPATH ${LIBRARY_INSTALL_PATH})
+endif(${CMAKE_INSTALL_RPATH})
 
 message(STATUS)
 message(STATUS "---------------------------------------------------------")
