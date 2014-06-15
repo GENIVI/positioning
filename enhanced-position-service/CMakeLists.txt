@@ -13,11 +13,15 @@
 # Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed with
 # this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
+# List of changes:
+# 
+# 15/6/2014, Philippe Colliot, migrate to Qt5
+#
 # @licence end@
 ###########################################################################
 
+cmake_minimum_required(VERSION 2.8.11)
 project(enhanced-position-service)
-cmake_minimum_required(VERSION 2.6.0)
 
 message(STATUS)
 message(STATUS "---------------------------------------------------------")
@@ -39,11 +43,8 @@ if(WITH_REPLAYER)
 endif()
 
 set(QT_USE_QTDBUS TRUE)
-find_package(Qt4 COMPONENTS QtDBus REQUIRED )
 
-include_directories(api src test ${QT_INCLUDE_DIR} ${gnss-service_INCLUDE_DIRS} ${sensors-service_INCLUDE_DIRS})
-
-add_definitions(${QT_DEFINITIONS})
+include_directories(api src test ${gnss-service_INCLUDE_DIRS} ${sensors-service_INCLUDE_DIRS})
 
 add_subdirectory(src)
 message(STATUS "---------------------------------------------------------")

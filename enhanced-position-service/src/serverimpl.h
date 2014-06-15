@@ -18,9 +18,8 @@
 #ifndef SERVERIMPL_H
 #define SERVERIMPL_H
 
-#include <QtCore/QObject>
-#include <QtDBus/QtDBus>
-#include <QtDBus/QDBusContext>
+#include <QtCore>
+#include <QtDBus>
 
 #include "genivi-dbus-types.h"
 #include "ConfigurationImpl.h"
