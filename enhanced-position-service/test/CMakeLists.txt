@@ -4,72 +4,73 @@
 #
 # Component Name: EnhancedPositionService
 #
-# Author: Thomas Bader
+# Author: Marco Residori
 #
-# Copyright (C) 2012, BMW Car IT GmbH
+# Copyright (C) 2014, XS Embedded GmbH
 # 
 # License:
 # This Source Code Form is subject to the terms of the
 # Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed with
 # this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
-# List of changes:
-# 
-# 15/6/2014, Philippe Colliot, migrate to Qt5
-#
 # @licence end@
 ###########################################################################
 
-cmake_minimum_required(VERSION 2.8.11)
+project(enhanced-position-client)
+cmake_minimum_required(VERSION 2.6.0)
 
-project(test-client)
-
-# Find includes in corresponding build directories
-set(CMAKE_INCLUDE_CURRENT_DIR ON)
-
-# Instruct CMake to run moc automatically when needed.
-set(CMAKE_AUTOMOC ON)
-
-# Tell CMake where are Qt packages
-set(CMAKE_PREFIX_PATH $ENV{QTDIR})
-
-# Tell CMake what Qt components are used
-find_package(Qt5Core)
-find_package(Qt5DBus)
-get_target_property(QtCore_location Qt5::Core LOCATION)
-get_target_property(QtDBus_location Qt5::DBus LOCATION)
-include_directories(${Qt5Core_INCLUDE_DIRS} ${Qt5DBus_INCLUDE_DIRS})
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${Qt5Core_EXECUTABLE_COMPILE_FLAGS}")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${Qt5DBus_EXECUTABLE_COMPILE_FLAGS}")
-
-message(STATUS "ENHANCED-POSITION-SERVICE TEST-APPLICATION")
+message(STATUS "ENHANCED-POSITION-CLIENT")
 message(STATUS "WITH_DLT = ${WITH_DLT}")
-message(STATUS "WITH_GPSD = ${WITH_GPSD}")
-message(STATUS "WITH_REPLAYER = ${WITH_REPLAYER}")
+
+find_package(PkgConfig REQUIRED)
+
+pkg_check_modules(DBUS_CPP dbus-c++-1)
+
+include_directories(${DBUS_CPP_INCLUDE_DIRS})
+include_directories(${CMAKE_CURRENT_BINARY_DIR})
+include_directories(${DBUS_CPP_INCLUDE_DIRS})
+
+# Generate the client glue code before building the client
+add_custom_command(
+  OUTPUT  enhanced-position-proxy.h 
+  COMMAND dbusxx-xml2cpp ${CMAKE_CURRENT_SOURCE_DIR}/../api/genivi-positioning-enhancedposition.xml 
+  --proxy=enhanced-position-proxy.h
+  OUTPUT  position-feedback-proxy.h 
+  COMMAND dbusxx-xml2cpp ${CMAKE_CURRENT_SOURCE_DIR}/../api/genivi-positioning-positionfeedback.xml 
+  --proxy=position-feedback-proxy.h
+  OUTPUT  configuration-proxy.h 
+  COMMAND dbusxx-xml2cpp ${CMAKE_CURRENT_SOURCE_DIR}/../api/genivi-positioning-configuration.xml
+  --proxy=configuration-proxy.h
+  OUTPUT positioning-constants.h 
+  COMMAND xsltproc ${CMAKE_CURRENT_SOURCE_DIR}/../api/enum.xsl ${CMAKE_CURRENT_SOURCE_DIR}/../api/genivi-positioning-constants.xml > positioning-constants.h
+)
+
+link_directories(${DBUS_CPP_LIBRARY_DIRS})
+
+add_executable(enhanced-position-client
+    enhanced-position-proxy.h
+    enhanced-position-client.h
+    enhanced-position-client.cpp
+    position-feedback-proxy.h
+    configuration-proxy.h
+    positioning-constants.h
+)
 
 set(LIBRARIES 
-	${Qt5Core_LIBRARIES}
-	${Qt5DBus_LIBRARIES}
+    ${DBUS_CPP_LIBRARIES}
 )
 
-add_library(ClientEnhpos STATIC
-	demoif.cpp
-	testclient.cpp
-	confif.cpp
-	ConfigurationClient.cpp
-	../src/genivi-version.cpp
-	signalhelper.cpp
-)
+if(WITH_DLT)
+    add_definitions("-DDLT_ENABLED=1")
+    set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/..")
+    find_package(DLT REQUIRED)
+    include_directories( ${DLT_INCLUDE_DIRS} )
+    set(LIBRARIES ${LIBRARIES} ${DLT_LIBRARIES})
+endif()
 
-# Specify the paths in which the linker should search for libraries. 
-# The command will apply only to targets created after it is called.
-link_directories(${QT_LIBRARY_DIR})
+target_link_libraries(enhanced-position-client ${LIBRARIES})
 
-# Tell CMake to create the test-client executable
-add_executable(test-client main-client.cpp)
+message(STATUS "DBUS_CPP_LIBRARIES: " ${DBUS_CPP_LIBRARIES})
 
-target_link_libraries(test-client
-    ClientEnhpos
-	${LIBRARIES}
-)
+
 

@@ -20,11 +20,11 @@
 # Description: This is a Yocto recipe of the 4 proofs of concept contained 
 #              in the positioning repository
 #
-# Status: Draft (Work in Progress)
+# Status: Work in Progress
 #
 
 DESCRIPTION = "Positioning"
-HOMEPAGE = "http://git.projects.genivi.org/?p=lbs/positioning.git;a=summary"
+HOMEPAGE = "http://projects.genivi.org/ivi-navigation"
 
 LICENSE = "MPLv2"
 LICENSE_${PN}-gnss= "MPLv2"
@@ -42,7 +42,7 @@ S = "${WORKDIR}/git"
 DEPENDS = "dbus"
 DEPENDS += "dlt-daemon"
 #DEPENDS += "gpsd"
-#DEPENDS += "qt4"
+#DEPENDS += "dbus-c++ dbus-c++-native "
 
 inherit cmake pkgconfig 
 
@@ -53,6 +53,12 @@ DEPENDS_${PN}-gnss-test = "${PN}-gnss"
 
 RDEPENDS_${PN}-sns-test = "${PN}-sns"
 DEPENDS_${PN}-sns-test = "${PN}-sns"
+
+RDEPENDS_${PN}-enhpos-test = "${PN}-enhpos"
+DEPENDS_${PN}-enhpos-test = "${PN}-enhpos"
+
+RDEPENDS_${PN}-repl-test = "${PN}-repl"
+DEPENDS_${PN}-repl-test = "${PN}-repl"
 
 do_configure() {
  cd ${S}/gnss-service && cmake -DWITH_DLT=OFF -DWITH_GPSD=OFF -DWITH_REPLAYER=ON -DWITH_TESTS=ON . 

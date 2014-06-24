@@ -20,6 +20,7 @@ sensors-service             //sensors-service PoC
 architecture.png            //architecture overview
 build-all.sh                //script to build the PoCs (usage: build-all.sh help) 
 run-test.sh                 //script to run a quick test for each PoC (usage: run-test.sh help) 
+positioning_x.y.bb          //version x.y of a Yocto recipe for the positioning PoCs
 
 
 ===============================
@@ -52,13 +53,14 @@ How To Test
 
 To test the positioning proofs of concept please use the following test application:
 
-./run-test.sh [service]
+./run-test.sh [command]
 
 service:
   gnss            Test GNSSService
   sns             Test SensorsService
   enhpos          Test EnhancedPositionService
   repl            Test Replayer
+  kill            Kill all test applications
   help            Print Help
 
 
@@ -89,9 +91,9 @@ To install 'gpsd', please execute the following commands:
 sudo apt-get install gpsd
 sudo apt-get install libgps-dev
 
-To test the enhanced-positon-service the package Qt4 must be installed.
-To install Qt4, please execute the following command:
-sudo apt-get install qtcreator
+To test  the enhanced-positon-service the package 'libdbus-c++-dev' must be installed.
+To install 'libdbus-c++-dev', please execute the following command:
+sudo apt-get install libdbus-c++-dev
 
 DWITH_TESTS=ON enables the compilation of the test application(s).
 

@@ -4,8 +4,9 @@
 * SPDX-License-Identifier: MPL-2.0
 *
 * \ingroup EnhancedPositionService
+* \author Marco Residori <marco.residori@xse.de>
 *
-* \copyright Copyright (C) BMW Car IT GmbH 2011, 2012
+* \copyright Copyright (C) 2014, XS Embedded GmbH
 * 
 * \license
 * This Source Code Form is subject to the terms of the
@@ -15,42 +16,67 @@
 * @licence end@
 **************************************************************************/
 
-#include "serverimpl.h"
-#include "demoifadaptor.h"
+#include <stdio.h>
+#include <signal.h>
+#include <dbus-c++/dbus.h>
 
-#include "ConfigurationImpl.h"
-#include "confifadaptor.h"
+#include "enhanced-position.h"
+#include "position-feedback.h"
+#include "configuration.h"
+#include "log.h"
 
-// e.g. testing with dbus-launch
-#define USE_DBUS_SESSION_BUS 1
+const char* ENHANCED_POSITION_SERVICE_NAME = "org.genivi.positioning.EnhancedPosition";
+const char* ENHANCED_POSITION_OBJECT_PATH = "/org/genivi/positioning/EnhancedPosition";
+const char* POSITION_FEEDBACK_OBJECT_PATH = "/org/genivi/positioning/PositionFeedback";
+const char* CONFIGURATION_OBJECT_PATH = "/org/genivi/positioning/Configuration";
 
-int main(int argc, char *argv[])
+DLT_DECLARE_CONTEXT(gCtx);
+
+DBus::BusDispatcher dispatcher;
+
+static DBus::Connection *conn;
+
+void sighandler(int sig)
 {
-    QCoreApplication a(argc, argv);
+  LOG_INFO_MSG(gCtx,"Signal received");
 
-    ServerImpl *server = new ServerImpl();
-    new DemoIfAdaptor(server);
+  dispatcher.leave();
+}
 
-    ConfigurationImpl *confServer = new ConfigurationImpl();
-    new ConfigurationIfAdaptor(confServer);
+int main()
+{
+  DLT_REGISTER_APP("ENHP", "EnhancedPositionService");
+  DLT_REGISTER_CONTEXT(gCtx,"EPSR", "Global Context");
+  LOG_INFO_MSG(gCtx,"starting EnhancedPositionService...");
 
-#if USE_DBUS_SESSION_BUS
-    QDBusConnection connection = QDBusConnection::sessionBus();
-#else
-    QDBusConnection connection = QDBusConnection::systemBus();
-#endif
+  signal(SIGTERM, sighandler);
+  signal(SIGINT, sighandler);
 
-    server->setConnection(connection);
+  DBus::default_dispatcher = &dispatcher;
 
-    bool ret = false;
-    ret |= connection.registerService("org.genivi.positioning.EnhancedPosition");
-    ret |= connection.registerObject("/position", server);
-    ret |= connection.registerObject("/config", confServer);
+  conn = new DBus::Connection(DBus::Connection::SessionBus());
 
-    if (!ret) {
-        return EXIT_FAILURE;
-    }
+  if (conn == NULL)
+  {
+    LOG_ERROR_MSG(gCtx,"Null pointer!");
+  }
 
-    qDebug() << "loop ...";
-    return a.exec();
+  conn->setup(&dispatcher);
+  conn->request_name(ENHANCED_POSITION_SERVICE_NAME);
+
+  EnhancedPosition EnhancedPositionServer(*conn, ENHANCED_POSITION_OBJECT_PATH); 
+  PositionFeedback PositionFeedbackServer(*conn, POSITION_FEEDBACK_OBJECT_PATH);
+  Configuration ConfigurationServer(*conn, CONFIGURATION_OBJECT_PATH);
+  
+  EnhancedPositionServer.run();
+  PositionFeedbackServer.run();
+  ConfigurationServer.run();
+
+  dispatcher.enter();
+
+  ConfigurationServer.shutdown();
+  PositionFeedbackServer.shutdown();
+  EnhancedPositionServer.shutdown();
+  
+  return 0;
 }

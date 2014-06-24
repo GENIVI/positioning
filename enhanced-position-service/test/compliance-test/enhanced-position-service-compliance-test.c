@@ -31,8 +31,8 @@
 #define ALT 34  //value taken from GENIVI API
 
 const char * DBUS_INTERFACE = "org.genivi.positioning.EnhancedPosition";
-const char * DBUS_PATH = "/position";
-const char * DBUS_SOURCE = "org.genivi.positioning.Client";
+const char * DBUS_PATH = "/org/genivi/positioning/EnhancedPosition";
+const char * DBUS_SOURCE = "org.genivi.positioning.EnhancedPositionClient";
 const char * DBUS_DESTINATION = "org.genivi.positioning.EnhancedPosition";
 const char * DBUS_METHOD_GET_DATA = "GetData";
 

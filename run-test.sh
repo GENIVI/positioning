@@ -25,6 +25,7 @@ usage() {
     echo "  sns             Test SensorsService"
     echo "  enhpos          Test EnhancedPositionService"
     echo "  repl            Test LogReplayer"
+    echo "  kill            Kill all test applications"
     echo "  help            Print Help"
     echo
 }
@@ -35,7 +36,6 @@ testGnssService()
     sleep 3
     echo 'starting log replayer...'
     build/log-replayer/src/log-replayer log-replayer/logs/20100411_Geko_Regensburg_short.log > /dev/null 2>&1 &
-    #build/log-replayer/src/log-replayer log-replayer/logs/testlog-gnss.gvsl > /dev/null 2>&1 &
     sleep 10
     echo 'stopping test...'
     killall log-replayer
@@ -48,7 +48,6 @@ testSensorsService()
     sleep 3
     echo 'starting log replayer...'
     build/log-replayer/src/log-replayer log-replayer/logs/20100411_Geko_Regensburg_short.log > /dev/null 2>&1 &
-    #build/log-replayer/src/log-replayer log-replayer/logs/testlog-whtk.gvsl > /dev/null  2>&1 &
     sleep 10
     echo 'stopping test...'
     killall log-replayer
@@ -57,30 +56,40 @@ testSensorsService()
 
 testEnhancedPositionService()
 {
-    build/enhanced-position-service/src/position-daemon > /dev/null 2>&1 &
+    build/enhanced-position-service/src/enhanced-position-service > /dev/null 2>&1 &
     sleep 3
-    build/enhanced-position-service/test/test-client &
+    build/enhanced-position-service/test/enhanced-position-client &
     sleep 3
     echo 'starting log replayer...'
-    build/log-replayer/src/log-replayer log-replayer/logs/geneve-cologny.log > /dev/null  2>&1 &
+    build/log-replayer/src/log-replayer log-replayer/logs/geneve-cologny.log > /dev/null  2>&1  &
     sleep 10
     echo 'stopping test...'
+    killall enhanced-position-client 
+    killall enhanced-position-service
     killall log-replayer
-    killall test-client
-    killall position-daemon
 }
 
 testLogReplayer()
 {
-    build/log-replayer/test/test-log-replayer 9931 &
+    build/log-replayer/test/test-log-replayer 9930 &
     sleep 3
     echo 'starting log replayer...'
-    build/log-replayer/src/log-replayer log-replayer/logs/20100411_Geko_Regensburg_short.log > /dev/null 2>&1 &
-    #build/log-replayer/src/log-replayer log-replayer/logs/testlog-whtk.gvsl > /dev/null 2>&1 &
+    build/log-replayer/src/log-replayer log-replayer/logs/geneve-cologny.log  > /dev/null 2>&1
+    #build/log-replayer/src/log-replayer log-replayer/logs/20100411_Geko_Regensburg_short.log > /dev/null 2>&1 &
     sleep 10
     echo 'stopping test...'
     killall log-replayer
     killall test-log-replayer
+}
+
+killAllTests()
+{
+    killall gnss-service-client
+    killall sensors-service-client
+    killall enhanced-position-client 
+    killall enhanced-position-service
+    killall test-log-replayer
+    killall log-replayer
 }
 
 if [ $# -eq 1 ]; then
@@ -91,11 +100,13 @@ if [ $# -eq 1 ]; then
     elif [ $1 = sns ]; then
        testSensorsService
     elif [ $1 = enhpos ]; then
-        testEnhancedPositionService
+       testEnhancedPositionService
     elif [ $1 = repl ]; then
-        testLogReplayer
+       testLogReplayer
+    elif [ $1 = kill ]; then
+       killAllTests
     else
-        usage
+       usage
     fi
 else
     usage

@@ -19,6 +19,7 @@
 #include <arpa/inet.h>
 #include <netinet/in.h>
 #include <stdio.h>
+#include <signal.h>
 #include <stdlib.h>
 #include <stdbool.h>
 #include <sys/types.h>
@@ -35,6 +36,14 @@
 #define IPADDR "127.0.0.1"
 
 DLT_DECLARE_CONTEXT(gContext);
+
+bool running = true;
+
+void sighandler(int sig)
+{
+  LOG_INFO_MSG(gContext,"Signal received");
+  running = false;
+}
 
 bool getStrToSend(FILE* file, char* line, int dim)
 {
@@ -111,6 +120,9 @@ int main(int argc, char* argv[])
     char buf[BUFLEN];
     char msgId[MSGIDLEN];
 
+    signal(SIGTERM, sighandler);
+    signal(SIGINT, sighandler);
+
     if(argc < 2)
     {
        LOG_ERROR_MSG(gContext,"missing input parameter: logfile");
@@ -151,7 +163,7 @@ int main(int argc, char* argv[])
 
     LOG_INFO(gContext,"Started reading log file %s",filename);
 
-    while(1)
+    while(running)
     {
         if(!getStrToSend(logfile,buf,BUFLEN))
         {

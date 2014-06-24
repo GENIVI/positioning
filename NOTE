@@ -1,8 +1,5 @@
-The source code of the enhanced-position-service was developed by BMW Car IT GmbH.
-
-The source code of gnss-service and sensors-service was rewritten by XS Embedded.
-Some code fragments of the gnss-service and sensors-service were taken over from a 
-previous version of the positioning proof of concept developed by BMW Car IT GmbH. 
+Some code fragments of the gnss-service, sensors-service and enhanced-position-service were taken 
+over from a previous version of the positioning proof of concept developed by BMW Car IT GmbH. 
 
 The icon used in the file architecture.png to represent the iPhone application "SensorLogger"
 was downloaded from the following web page:
