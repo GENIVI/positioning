@@ -33,16 +33,15 @@ LICENSE_${PN}-repl = "MPLv2"
 LICENSE_${PN}-enhpos = "MPLv2"
 
 SRC_URI = "git://git.projects.genivi.org/lbs/positioning.git;protocol=git"
-SRCREV = "355aea9c48fb89007681635f98b62c0045f0c63c"
-
+SRCREV = "388525df57d3f0ff5ac8e6ad8edaf1b0bfb2d66b"
 LIC_FILES_CHKSUM = "file://LICENSE;md5=e73ca6874051c79a99d065bc57849af5"
 
 S = "${WORKDIR}/git"
 
 DEPENDS = "dbus"
 DEPENDS += "dlt-daemon"
-#DEPENDS += "gpsd"
-#DEPENDS += "dbus-c++ dbus-c++-native "
+DEPENDS += "gpsd"
+DEPENDS += "dbus-c++ dbus-c++-native "
 
 inherit cmake pkgconfig 
 
@@ -64,14 +63,14 @@ do_configure() {
  cd ${S}/gnss-service && cmake -DWITH_DLT=OFF -DWITH_GPSD=OFF -DWITH_REPLAYER=ON -DWITH_TESTS=ON . 
  cd ${S}/sensors-service && cmake -DWITH_DLT=OFF -DWITH_REPLAYER=ON -DWITH_IPHONE=OFF -DWITH_TESTS=ON . 
  cd ${S}/log-replayer && cmake -DWITH_DLT=OFF -DWITH_TESTS=ON . 
- #cd ${S}/enhanced-position-service && cmake -DWITH_DLT=OFF -DWITH_GPSD=OFF -DWITH_REPLAYER=ON -DWITH_TESTS=ON . 
+ cd ${S}/enhanced-position-service && cmake -DWITH_DLT=OFF -DWITH_GPSD=OFF -DWITH_REPLAYER=ON -DWITH_TESTS=ON . 
 }
 
 do_compile() {
  cd ${S}/gnss-service && make
  cd ${S}/sensors-service && make
  cd ${S}/log-replayer && make
- #cd ${S}/enhanced-position-service && make
+ cd ${S}/enhanced-position-service && make
 }
 
 do_install() {
@@ -86,9 +85,9 @@ do_install() {
    install -m 755 ${S}/gnss-service/test/compliance-test/gnss-service-compliance-test ${D}/${bindir}
    install -m 755 ${S}/sensors-service/src/*.so ${D}/${libdir}
    install -m 755 ${S}/sensors-service/test/sensors-service-client ${D}/${bindir}
-   #install -m 755 ${S}/enhanced-position-service/src/position-daemon ${D}/${libdir}
-   #install -m 755 ${S}/enhanced-position-service/test/test-client ${D}/${bindir}
-   #install -m 755 ${S}/enhanced-position-service/test/compliance-test/enhanced-position-service-compliance-test ${D}/${bindir}
+   install -m 755 ${S}/enhanced-position-service/src/enhanced-position-service ${D}/${bindir}
+   install -m 755 ${S}/enhanced-position-service/test/enhanced-position-client ${D}/${bindir}
+   install -m 755 ${S}/enhanced-position-service/test/compliance-test/enhanced-position-service-compliance-test ${D}/${bindir}
 }
 
 FILES_${PN}-gnss = "${libdir}/libgnss-service*.so "
@@ -102,8 +101,13 @@ FILES_${PN}-repl = "${bindir}/log-replayer \
                     ${datadir}/${PN}/*.log "
 FILES_${PN}-repl-test = "${bindir}/test-log-replayer "
 
-#FILES_${PN}-enhpos = "${bindir}/enhanced-position-service/src/position-daemon "
-#FILES_${PN}-enhpos = "${bindir}/enhanced-position-service/test/test-client "
-#FILES_${PN}-enhpos = "${bindir}/enhanced-position-service/test/compliance-test/enhanced-position-service-compliance-test "
+FILES_${PN}-enhpos = "${bindir}/enhanced-position-service "
+FILES_${PN}-enhpos-test = "${bindir}/enhanced-position-client \
+                           ${bindir}/enhanced-position-service-compliance-test "
 
 BBCLASSEXTEND = "native"
+
+#TODO: fix this
+do_package_qa() {
+  echo "workaround to avoid problem with RPATH"
+}
