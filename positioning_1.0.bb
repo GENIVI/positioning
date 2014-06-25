@@ -19,8 +19,8 @@
 #
 # Description: This is a Yocto recipe of the 4 proofs of concept contained 
 #              in the positioning repository. 
-#              Each PoC has its own sub-package. In this way it is possible to install
-#              only the PoC(s) that are of interest        
+#              Each PoC has its own sub-package. In this way it is possible to 
+#              install only the PoC(s) that are of interest        
 #
 # Status: Work in Progress
 #
@@ -35,7 +35,7 @@ LICENSE_${PN}-repl = "MPLv2"
 LICENSE_${PN}-enhpos = "MPLv2"
 
 SRC_URI = "git://git.projects.genivi.org/lbs/positioning.git;protocol=git"
-SRCREV = "388525df57d3f0ff5ac8e6ad8edaf1b0bfb2d66b"
+SRCREV = "f3638ec5a1eb1b439ca51f7034c194343d88f020"
 LIC_FILES_CHKSUM = "file://LICENSE;md5=e73ca6874051c79a99d065bc57849af5"
 
 S = "${WORKDIR}/git"
