@@ -46,7 +46,9 @@
 pthread_t listenerThread;
 pthread_mutex_t mutexCb;
 pthread_mutex_t mutexData;
+
 bool isRunning = false;
+int s = NULL;
 
 void *listenForMessages( void *ptr );
 
@@ -55,7 +57,7 @@ DLT_DECLARE_CONTEXT(gContext);
 bool gnssInit()
 {
     isRunning = true;
-
+    
     if(pthread_create(&listenerThread, NULL, listenForMessages, NULL) != 0)
     {
         isRunning = false;
@@ -68,6 +70,9 @@ bool gnssInit()
 bool gnssDestroy()
 {
     isRunning = false;
+    
+    //shut down the socket
+    shutdown(s,2);
 
     if(listenerThread)
     {
@@ -374,7 +379,7 @@ void *listenForMessages( void *ptr )
 {  
     struct sockaddr_in si_me;
     struct sockaddr_in si_other;
-    int s;
+    //int s;
     socklen_t slen = sizeof(si_other);
     char buf[BUFLEN];
     char msgId[MSGIDLEN];

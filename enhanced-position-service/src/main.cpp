@@ -47,7 +47,7 @@ int main()
 {
   DLT_REGISTER_APP("ENHP", "EnhancedPositionService");
   DLT_REGISTER_CONTEXT(gCtx,"EPSR", "Global Context");
-  LOG_INFO_MSG(gCtx,"starting EnhancedPositionService...");
+  LOG_INFO_MSG(gCtx,"Starting EnhancedPositionService...");
 
   signal(SIGTERM, sighandler);
   signal(SIGINT, sighandler);
