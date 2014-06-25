@@ -36,17 +36,7 @@ if(WITH_DLT)
     set(LIBRARIES ${LIBRARIES} ${DLT_LIBRARIES})
 endif()
 
-if(WITH_REPLAYER)
-    #generate library using replayer as input
-    set(LIB_SRC_USE_REPLAYER ${CMAKE_SOURCE_DIR}/src/sns-use-replayer.c 
-             ${CMAKE_SOURCE_DIR}/src/wheeltick.c 
-             ${CMAKE_SOURCE_DIR}/src/gyroscope.c 
-             ${CMAKE_SOURCE_DIR}/src/vehicle-speed.c
-             ${CMAKE_SOURCE_DIR}/src/sns-meta-data.c)
-
-    add_library(sensors-service-use-replayer SHARED ${LIB_SRC_USE_REPLAYER})
-    target_link_libraries(sensors-service-use-replayer ${LIBRARIES})
-elseif(WITH_IPHONE)
+if(WITH_IPHONE)
     #generate library using iphone as input
     set(LIB_SRC_USE_IPHONE ${CMAKE_SOURCE_DIR}/src/sns-use-iphone.c 
              ${CMAKE_SOURCE_DIR}/src/wheeltick.c 
@@ -56,8 +46,18 @@ elseif(WITH_IPHONE)
 
     add_library(sensors-service-use-iphone SHARED ${LIB_SRC_USE_IPHONE})
     target_link_libraries(sensors-service-use-iphone ${LIBRARIES})
+elseif(WITH_REPLAYER)
+    #generate library using replayer as input
+    set(LIB_SRC_USE_REPLAYER ${CMAKE_SOURCE_DIR}/src/sns-use-replayer.c 
+             ${CMAKE_SOURCE_DIR}/src/wheeltick.c 
+             ${CMAKE_SOURCE_DIR}/src/gyroscope.c 
+             ${CMAKE_SOURCE_DIR}/src/vehicle-speed.c
+             ${CMAKE_SOURCE_DIR}/src/sns-meta-data.c)
+
+    add_library(sensors-service-use-replayer SHARED ${LIB_SRC_USE_REPLAYER})
+    target_link_libraries(sensors-service-use-replayer ${LIBRARIES})
 else()
-    message(STATUS "Invalid cmake option!")
+    message(STATUS "Invalid cmake options!")
 endif()
 
 

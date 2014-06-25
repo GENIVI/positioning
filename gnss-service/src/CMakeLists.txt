@@ -54,7 +54,7 @@ elseif(WITH_REPLAYER)
     add_library(gnss-service-use-replayer SHARED ${LIB_SRC_USE_REPLAYER})
     target_link_libraries(gnss-service-use-replayer ${LIBRARIES})
 else()
-    message(STATUS "Invalid cmake option!")
+    message(STATUS "Invalid cmake options!")
 endif()
 
 

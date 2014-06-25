@@ -26,12 +26,12 @@ include_directories("${PROJECT_SOURCE_DIR}/src")
 
 find_package(PkgConfig)
 
-if(WITH_REPLAYER)
-    set(LIBRARIES sensors-service-use-replayer)
-elseif(WITH_IPHONE)
+if(WITH_IPHONE)
     set(LIBRARIES sensors-service-use-iphone)
+elseif(WITH_REPLAYER)
+    set(LIBRARIES sensors-service-use-replayer)
 else()
-    message(STATUS "Invalid cmake option!")
+    message(STATUS "Invalid cmake options!")
 endif()
 
 if(WITH_DLT)

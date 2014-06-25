@@ -154,7 +154,7 @@ int main()
     DLT_REGISTER_APP("GNSS", "GNSS-SERVICE-CLIENT");
     DLT_REGISTER_CONTEXT(gCtx,"GCLT", "Global Context");
 
-    LOG_INFO_MSG(gCtx,"starting gnss-service-client...");
+    LOG_INFO_MSG(gCtx,"Starting gnss-service-client...");
 
     // register for GNSS
     gnssSimpleRegisterPositionCallback(&cbPosition);

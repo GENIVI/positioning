@@ -107,7 +107,7 @@ int main()
   DLT_REGISTER_APP("ENHPOS", "EnhancedPositionClient");
   DLT_REGISTER_CONTEXT(gCtx,"EPCL", "Global Context");
 
-  LOG_INFO_MSG(gCtx,"starting EnhancedPositionClient...");
+  LOG_INFO_MSG(gCtx,"Starting EnhancedPositionClient...");
 
   signal(SIGTERM, signalhandler);
   signal(SIGINT, signalhandler);

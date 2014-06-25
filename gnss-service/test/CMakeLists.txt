@@ -35,7 +35,7 @@ if(WITH_GPSD)
 elseif(WITH_REPLAYER)
     set(LIBRARIES gnss-service-use-replayer) 
 else()
-    message(STATUS "Invalid cmake option!")
+    message(STATUS "Invalid cmake options!")
 endif()
 
 if(WITH_DLT)

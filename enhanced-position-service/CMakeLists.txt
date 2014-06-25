@@ -22,36 +22,51 @@ cmake_minimum_required(VERSION 2.6.0)
 option(WITH_DLT
     "Enable DLT logging" OFF)
 
+option(WITH_GPSD
+    "Use GPSD as source of GPS data" OFF)
+
+option(WITH_REPLAYER
+    "Use REPLAYER as source of GPS data" ON)
+
+option(WITH_TESTS
+    "Compile test applications" OFF)
+
 message(STATUS)
 message(STATUS "---------------------------------------------------------")
 
 set(gnss-service_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/../gnss-service/api")
 set(gnss-service_LIBRARY_DIRS "${PROJECT_BINARY_DIR}/../gnss-service/src")
 
-if(WITH_REPLAYER)
+if(WITH_GPSD)
+    set(gnss-service_LIBRARIES "gnss-service-use-gpsd")
+elseif(WITH_REPLAYER)
     set(gnss-service_LIBRARIES "gnss-service-use-replayer")
-elseif(WITH_GPSD)
-	set(gnss-service_LIBRARIES "gnss-service-use-gpsd")
+else()
+    message(STATUS "Invalid cmake options!")
 endif()
 
 set(sensors-service_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/../sensors-service/api")
 set(sensors-service_LIBRARY_DIRS "${PROJECT_BINARY_DIR}/../sensors-service/src")
 
-if(WITH_REPLAYER)
-   set(sensors-service_LIBRARIES "sensors-service-use-replayer")
+if(WITH_IPHONE)
+    set(sensors-service_LIBRARIES "sensors-service-use-iphone")
+elseif(WITH_REPLAYER)
+    set(sensors-service_LIBRARIES "sensors-service-use-replayer")
+else()
+    message(STATUS "Invalid cmake options!")
 endif()
 
 include_directories(api src test ${gnss-service_INCLUDE_DIRS} ${sensors-service_INCLUDE_DIRS})
 
 add_subdirectory(src)
+
 message(STATUS "---------------------------------------------------------")
 
 if(WITH_TESTS)
-add_subdirectory(test)
-message(STATUS "---------------------------------------------------------")
-
-add_subdirectory(test/compliance-test)
-message(STATUS "---------------------------------------------------------")
+    add_subdirectory(test)
+    message(STATUS "---------------------------------------------------------")
+    add_subdirectory(test/compliance-test)
+    message(STATUS "---------------------------------------------------------")
 endif()
 
 message(STATUS)

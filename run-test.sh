@@ -62,7 +62,7 @@ testEnhancedPositionService()
     sleep 3
     echo 'starting log replayer...'
     build/log-replayer/src/log-replayer log-replayer/logs/geneve-cologny.log > /dev/null  2>&1  &
-    sleep 10
+    sleep 20
     echo 'stopping test...'
     killall enhanced-position-client 
     killall enhanced-position-service
@@ -71,11 +71,12 @@ testEnhancedPositionService()
 
 testLogReplayer()
 {
-    build/log-replayer/test/test-log-replayer 9930 &
-    sleep 3
     echo 'starting log replayer...'
-    build/log-replayer/src/log-replayer log-replayer/logs/geneve-cologny.log  > /dev/null 2>&1
+    build/log-replayer/src/log-replayer log-replayer/logs/geneve-cologny.log  > /dev/null 2>&1 &
     #build/log-replayer/src/log-replayer log-replayer/logs/20100411_Geko_Regensburg_short.log > /dev/null 2>&1 &
+    sleep 1
+    echo 'starting test application...'
+    build/log-replayer/test/test-log-replayer 9930 &
     sleep 10
     echo 'stopping test...'
     killall log-replayer

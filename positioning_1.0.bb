@@ -18,7 +18,9 @@
 
 #
 # Description: This is a Yocto recipe of the 4 proofs of concept contained 
-#              in the positioning repository
+#              in the positioning repository. 
+#              Each PoC has its own sub-package. In this way it is possible to install
+#              only the PoC(s) that are of interest        
 #
 # Status: Work in Progress
 #
@@ -47,23 +49,26 @@ inherit cmake pkgconfig
 
 PACKAGES =+ "${PN}-gnss ${PN}-gnss-test ${PN}-sns ${PN}-sns-test ${PN}-repl ${PN}-repl-test ${PN}-enhpos ${PN}-enhpos-test "
 
+RDEPENDS_${PN}-repl-test = "${PN}-repl"
+DEPENDS_${PN}-repl-test = "${PN}-repl"
+
 RDEPENDS_${PN}-gnss-test = "${PN}-gnss"
 DEPENDS_${PN}-gnss-test = "${PN}-gnss"
 
 RDEPENDS_${PN}-sns-test = "${PN}-sns"
 DEPENDS_${PN}-sns-test = "${PN}-sns"
 
+RDEPENDS_${PN}-enhpos = "${PN}-gnss ${PN}-sns"
+DEPENDS_${PN}-enhpos = "${PN}-gnss ${PN}-sns"
+
 RDEPENDS_${PN}-enhpos-test = "${PN}-enhpos"
 DEPENDS_${PN}-enhpos-test = "${PN}-enhpos"
 
-RDEPENDS_${PN}-repl-test = "${PN}-repl"
-DEPENDS_${PN}-repl-test = "${PN}-repl"
-
 do_configure() {
- cd ${S}/gnss-service && cmake -DWITH_DLT=OFF -DWITH_GPSD=OFF -DWITH_REPLAYER=ON -DWITH_TESTS=ON . 
+ cd ${S}/gnss-service && cmake -DWITH_DLT=ON -DWITH_GPSD=OFF -DWITH_REPLAYER=ON -DWITH_TESTS=ON . 
  cd ${S}/sensors-service && cmake -DWITH_DLT=OFF -DWITH_REPLAYER=ON -DWITH_IPHONE=OFF -DWITH_TESTS=ON . 
  cd ${S}/log-replayer && cmake -DWITH_DLT=OFF -DWITH_TESTS=ON . 
- cd ${S}/enhanced-position-service && cmake -DWITH_DLT=OFF -DWITH_GPSD=OFF -DWITH_REPLAYER=ON -DWITH_TESTS=ON . 
+ cd ${S}/enhanced-position-service && cmake -DWITH_DLT=OFF -DWITH_GPSD=OFF -DWITH_REPLAYER=ON -DWITH_IPHONE=OFF -DWITH_TESTS=ON . 
 }
 
 do_compile() {
