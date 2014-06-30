@@ -125,7 +125,7 @@ std::map< uint16_t, ::DBus::Variant > EnhancedPosition::GetData(const std::vecto
 
       if (pos.validityBits && GNSS_POSITION_ALTITUDE_VALID)
       {
-        Data[POS_ALTITUDE] = variant_int32(pos.altitude);
+        Data[POS_ALTITUDE] = variant_double(pos.altitude);
       }
     }
   }
@@ -136,7 +136,7 @@ std::map< uint16_t, ::DBus::Variant > EnhancedPosition::GetData(const std::vecto
     {
       if (course.validityBits && GNSS_COURSE_SPEED_VALID)
       {
-        Data[POS_HEADING] = variant_int32(course.heading);
+        Data[POS_HEADING] = variant_double(course.heading);
       }
 
       if (course.validityBits && GNSS_COURSE_CLIMB_VALID)
@@ -146,7 +146,7 @@ std::map< uint16_t, ::DBus::Variant > EnhancedPosition::GetData(const std::vecto
 
       if (course.validityBits && GNSS_COURSE_HEADING_VALID)
       {
-        Data[POS_CLIMB] = variant_int32(course.climb);
+        Data[POS_CLIMB] = variant_double(course.climb);
       }
     }
   }
@@ -174,7 +174,7 @@ std::map< uint16_t, ::DBus::Variant > EnhancedPosition::GetPosition()
 
     if (pos.validityBits && GNSS_POSITION_ALTITUDE_VALID)
     {
-      Position[POS_ALTITUDE] = variant_int32(pos.altitude);
+      Position[POS_ALTITUDE] = variant_double(pos.altitude);
     }
   }
 
@@ -182,7 +182,7 @@ std::map< uint16_t, ::DBus::Variant > EnhancedPosition::GetPosition()
   {
     if (pos.validityBits && GNSS_COURSE_SPEED_VALID)
     {
-      Position[POS_HEADING] = variant_int32(course.heading);
+      Position[POS_HEADING] = variant_double(course.heading);
     }
 
     if (pos.validityBits && GNSS_COURSE_CLIMB_VALID)
@@ -192,7 +192,7 @@ std::map< uint16_t, ::DBus::Variant > EnhancedPosition::GetPosition()
 
     if (pos.validityBits && GNSS_COURSE_HEADING_VALID)
     {
-      Position[POS_CLIMB] = variant_int32(course.climb);
+      Position[POS_CLIMB] = variant_double(course.climb);
     }
   }
 

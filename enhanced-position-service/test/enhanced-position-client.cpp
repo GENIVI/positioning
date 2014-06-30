@@ -55,7 +55,7 @@ void EnhancedPositionClient::PositionUpdate(const std::vector< uint16_t >& chang
 
     if (changedValues[i] == POS_ALTITUDE)
     {
-      LOG_INFO(gCtx,"ALT=%d", posData[POS_ALTITUDE].reader().get_int32());
+      LOG_INFO(gCtx,"ALT=%lf", posData[POS_ALTITUDE].reader().get_double());
     }
 
     if (changedValues[i] == POS_SPEED)
@@ -65,12 +65,12 @@ void EnhancedPositionClient::PositionUpdate(const std::vector< uint16_t >& chang
 
     if (changedValues[i] == POS_CLIMB)
     {
-      LOG_INFO(gCtx,"CLIMB=%d", posData[POS_CLIMB].reader().get_int32());
+      LOG_INFO(gCtx,"CLIMB=%lf", posData[POS_CLIMB].reader().get_double());
     }
 
     if (changedValues[i] == POS_HEADING)
     {
-      LOG_INFO(gCtx,"HEADING=%d", posData[POS_HEADING].reader().get_int32());
+      LOG_INFO(gCtx,"HEADING=%lf", posData[POS_HEADING].reader().get_double());
     }
   }
 

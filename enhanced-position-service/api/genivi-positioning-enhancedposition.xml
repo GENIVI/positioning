@@ -49,27 +49,28 @@
 
       <arg name="data" type="a{qv}" direction="out">
         <doc>
-          <line>position = dictionary[key,value]</line>
+          <line>data = dictionary[key,value]</line>
           <line>dictionary = array of tuples (key,value)</line>
           <line>Invalid data is not be returned to the client application</line>
+          <line>The vehicle axis system is defined by ISO 8855: In short, the X-axis pointing is forwards, the Y-axis is pointing left, the Z-axis is pointing upwards</line>
           <line>key = enum(INVALID,TIMESTAMP,LATITUDE,LONGITUDE,ALTITUDE,HEADING,SPEED,CLIMB,ROLL_RATE,PITCH_RATE,YAW_RATE,PDOP,HDOP,VDOP,SIGMA_LATITUDE,SIGMA_LONGITUDE,SIGMA_ALTITUDE,SIGMA_HEADING,... ,ALL</line>
           <line>key = TIMESTAMP, value = value of type 't', that represents a timestamp in ms</line>
-          <line>key = LATITUDE, value = value of type 'd', that expresses the latitude of the current position. Range [-90:+90]. Example: 48.053250</line>
-          <line>key = LONGITUDE, value = value of type 'd', that expresses the longitude of the current position. Range [-180:+180]. Example: 8.324500</line>  
-          <line>key = ALTITUDE, value = value of type 'i', that expresses the altitude above the sea level of the current position in meters</line>
-          <line>key = HEADING, value = value of type 'i', that expresses the course angle in degree. Range [0:360]. 0 = north, 90 = east, 180 = south, 270 = west</line>
+          <line>key = LATITUDE, value = value of type 'd', that expresses the WGS84 latitude of the current position in degrees. Range [-90:+90]. Example: 48.053250</line>
+          <line>key = LONGITUDE, value = value of type 'd', that expresses the WGS84 longitude of the current position in degrees. Range [-180:+180]. Example: 8.324500</line>
+          <line>key = ALTITUDE, value = value of type 'd', that expresses the altitude above the sea level of the current position in meters</line>
+          <line>key = HEADING, value = value of type 'd', that expresses the course angle in degree. Range [0:360]. 0 = north, 90 = east, 180 = south, 270 = west</line>
           <line>key = SPEED, value = value of type 'd', that expresses speed measured in m/s. A negative value indicates that the vehicle is moving backwards</line>
-          <line>key = CLIMB, value = value of type 'i', that expresses the road gradient in degrees</line>
-          <line>key = ROLL_RATE, value = value of type 'i', rotation rate around the X-axis in degrees/s. Range [-100:+100]</line>
-          <line>key = PITCH_RATE, value = value of type 'i', rotation rate around the Y-axis in degrees/s. Range [-100:+100]</line>
-          <line>key = YAW_RATE, value = value of type 'i', rotation rate around the Z-axis in degrees/s. Range [-100:+100]</line>
+          <line>key = CLIMB, value = value of type 'd', that expresses the road gradient in degrees. Range [-180:+180]. A positive value means upwards. </line>
+          <line>key = ROLL_RATE, value = value of type 'd', rotation rate around the X-axis in degrees/s. Range [-100:+100]</line>
+          <line>key = PITCH_RATE, value = value of type 'd', rotation rate around the Y-axis in degrees/s. Range [-100:+100]</line>
+          <line>key = YAW_RATE, value = value of type 'd', rotation rate around the Z-axis in degrees/s. Range [-100:+100]</line>
           <line>key = PDOP, value = value of type 'd', that represents the positional (3D) dilution of precision</line>
           <line>key = HDOP, value = value of type 'd', that represents the horizontal (2D) dilution of precision</line>
           <line>key = VDOP, value = value of type 'd', that represents vertical (altitude) dilution of precision</line>
-          <line>key = SIGMA_LATITUDE, value = value of type 'd', that represents the standard deviation for latitude in m</line>
-          <line>key = SIGMA_LONGITUDE, value = value of type 'd', that represents the standard deviation for longitude in m</line>
-          <line>key = SIGMA_ALTITUDE, value = value of type 'd', that represents the standard deviation for altitude in m</line>
-          <line>key = SIGMA_HEADING, value = value of type 'd', that represents the standard deviation for altitude in degrees</line>
+          <line>key = SIGMA_LATITUDE, value = value of type 'd', that represents the standard error estimate of the latitude in m</line>
+          <line>key = SIGMA_LONGITUDE, value = value of type 'd', that represents the standard error estimate of the longitude in m</line>
+          <line>key = SIGMA_ALTITUDE, value = value of type 'd', that represents the standard error estimate of the altitude in m</line>
+          <line>key = SIGMA_HEADING, value = value of type 'd', that represents the standard error estimate of the heading in degrees</line>
         </doc>
       </arg>
     </method>
@@ -86,12 +87,12 @@
           <line>Invalid data is not be returned to the client application</line>
           <line>key = enum(INVALID,TIMESTAMP,LATITUDE,LONGITUDE,ALTITUDE,HEADING,SPEED,CLIMB,...)</line>
           <line>key = TIMESTAMP, value = value of type 't', that represents a timestamp in ms</line>
-          <line>key = LATITUDE, value = value of type 'd', that expresses the latitude of the current position. Range [-90:+90]. Example: 48.053250</line>
-          <line>key = LONGITUDE, value = value of type 'd', that expresses the longitude of the current position. Range [-180:+180]. Example: 8.324500</line>  
-          <line>key = ALTITUDE, value = value of type 'i', that expresses the altitude above the sea level of the current position in meters</line>
-          <line>key = HEADING, value = value of type 'i', that expresses the course angle in degree. Range [0:360]. 0 = north, 90 = east, 180 = south, 270 = west</line>
+          <line>key = LATITUDE, value = value of type 'd', that expresses the WGS84 latitude of the current position in degrees. Range [-90:+90]. Example: 48.053250</line>
+          <line>key = LONGITUDE, value = value of type 'd', that expresses the WGS84 longitude of the current position in degrees. Range [-180:+180]. Example: 8.324500</line>
+          <line>key = ALTITUDE, value = value of type 'd', that expresses the altitude above the sea level of the current position in meters</line>
+          <line>key = HEADING, value = value of type 'd', that expresses the course angle in degree. Range [0:360]. 0 = north, 90 = east, 180 = south, 270 = west</line>
           <line>key = SPEED, value = value of type 'd', that expresses speed measured in m/s. A negative value indicates that the vehicle is moving backwards</line>
-          <line>key = CLIMB, value = value of type 'i', that expresses the road gradient in degrees</line>
+          <line>key = CLIMB, value = value of type 'd', that expresses the road gradient in degrees. Range [-180:+180]. A positive value means upwards. </line>
         </doc>
       </arg>
     </method>
@@ -114,14 +115,15 @@
       </doc>
       <arg name="rotationRate" type="a{qv}" direction="out">
         <doc>
-          <line>rotationRates = dictionary[key,value]</line>
+          <line>rotationRate = dictionary[key,value]</line>
           <line>dictionary = array of tuples (key,value)</line>
           <line>If you request for a specific value which is invalid, it's not returned in the dictionary.</line>
+          <line>The vehicle axis system is defined by ISO 8855: In short, the X-axis pointing is forwards, the Y-axis is pointing left, the Z-axis is pointing upwards</line>
           <line>key = enum(INVALID,TIMESTAMP,ROLL_RATE,PITCH_RATE,YAW_RATE, ... )</line>
           <line>key = TIMESTAMP, value = value of type 't', that represents a timestamp in ms</line>
-          <line>key = ROLL_RATE, value = rotation rate around the X-axis in degrees/s. Range [-100:+100]</line>
-          <line>key = PITCH_RATE, value = rotation rate around the Y-axis in degrees/s. Range [-100:+100]</line>
-          <line>key = YAW_RATE, value = rotation rate around the Z-axis in degrees/s. Range [-100:+100]</line>
+          <line>key = ROLL_RATE, value = value of type 'd', rotation rate around the X-axis in degrees/s. Range [-100:+100]</line>
+          <line>key = PITCH_RATE, value = value of type 'd', rotation rate around the Y-axis in degrees/s. Range [-100:+100]</line>
+          <line>key = YAW_RATE, value = value of type 'd', rotation rate around the Z-axis in degrees/s. Range [-100:+100]</line>
         </doc>
       </arg>
     </method>
@@ -152,10 +154,10 @@
           <line>key = PDOP, value = value of type 'd', that represents the positional (3D) dilution of precision</line>
           <line>key = HDOP, value = value of type 'd', that represents the horizontal (2D) dilution of precision</line>
           <line>key = VDOP, value = value of type 'd', that represents vertical (altitude) dilution of precision</line>
-          <line>key = SIGMA_LATITUDE, value = value of type 'd', that represents the standard deviation for latitude in m</line>
-          <line>key = SIGMA_LONGITUDE, value = value of type 'd', that represents the standard deviation for longitude in m</line>
-          <line>key = SIGMA_ALTITUDE, value = value of type 'd', that represents the standard deviation for altitude in m</line>
-          <line>key = SIGMA_HEADING, value = value of type 'd', that represents the standard deviation for altitude in degrees</line>
+          <line>key = SIGMA_LATITUDE, value = value of type 'd', that represents the standard error estimate of the latitude in m</line>
+          <line>key = SIGMA_LONGITUDE, value = value of type 'd', that represents the standard error estimate of the longitude in m</line>
+          <line>key = SIGMA_ALTITUDE, value = value of type 'd', that represents the standard error estimate of the altitude in m</line>
+          <line>key = SIGMA_HEADING, value = value of type 'd', that represents the standard error estimate of the heading in degrees</line>
         </doc>
       </arg>
     </method>
@@ -252,7 +254,7 @@
           <line>key = DAY, value = value of type 'y', 2 digits number that indicates the day. Range [0:31]. Example: 07</line>
           <line>key = HOUR, value = value of type 'y', 2 digits number that indicates the hour. Range [0:23].  Example: 01</line> 
           <line>key = MINUTE, value = value of type 'y', 2 digits number that represents the minutes. Range [0:59]. Example: 01</line>
-          <line>key = SECOND, value = value of type 'y', 2 digits number that represents the seconds. Range [0:59]. Example: 01</line>
+          <line>key = SECOND, value = value of type 'y', 2 digits number that represents the seconds. Range [0:59], for leap seconds, also 60 is allowed. Example: 01</line>
           <line>key = MS, value = value of type 'q', 3 digits number that represents the milliseconds. Range [0:999]. Example: 007</line>
         </doc>
       </arg>
