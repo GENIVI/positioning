@@ -35,7 +35,7 @@ LICENSE_${PN}-repl = "MPLv2"
 LICENSE_${PN}-enhpos = "MPLv2"
 
 SRC_URI = "git://git.projects.genivi.org/lbs/positioning.git;protocol=git"
-SRCREV = "7b10b9e1bd22bb66f1e2a39d8f385e94a0ed6a03"
+SRCREV = "65cacfff17867aac958cdc1f1021864732fe277d"
 LIC_FILES_CHKSUM = "file://LICENSE;md5=e73ca6874051c79a99d065bc57849af5"
 
 S = "${WORKDIR}/git"
