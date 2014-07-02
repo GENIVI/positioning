@@ -8,10 +8,10 @@
     this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 */
 
-package org.genivi.EnhancedPositionService
+package org.genivi.positioning.EnhancedPositionService
 
-import org.genivi.CommonTypes.* from "CommonTypes.fidl"
-import org.genivi.EnhancedPositionService.EnhancedPositionServiceTypes.* from "EnhancedPositionServiceTypes.fidl"
+import org.genivi.positioning.EnhancedPositionService.EnhancedPositionServiceTypes.* from "EnhancedPositionServiceTypes.fidl"
+import org.genivi.positioning.EnhancedPositionService.EnhancedPositionTypes.* from "EnhancedPositionTypes.fidl"
 
 <**
 	@description : EnhancedPosition = This interface offers functionalities to retrieve the enhanced position of the vehicle

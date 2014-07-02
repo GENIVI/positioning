@@ -8,16 +8,15 @@
     this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 */
 
-package org.genivi.EnhancedPositionService
+package org.genivi.positioning.EnhancedPositionService
 
-import org.genivi.CommonTypes.* from "CommonTypes.fidl"
-import org.genivi.EnhancedPositionService.EnhancedPositionServiceTypes.* from "EnhancedPositionServiceTypes.fidl"
+import org.genivi.positioning.EnhancedPositionService.EnhancedPositionServiceTypes.* from "EnhancedPositionServiceTypes.fidl"
 
 <**
 	@description : PositionFeedback = This interface allows the application implementing the map-matching algorithm to provide a position feedback to the EnahncedPositionService
 **>
 
-interface org.genivi.positioning.PositionFeedback {
+interface org.genivi.positioning.EnhancedPositionService.PositionFeedback {
 	version {
 		major 0
 		minor 0
@@ -63,7 +62,7 @@ interface org.genivi.positioning.PositionFeedback {
           key = RELIABILTY_INDEX, value = value of type ´y´, that indicates the position feedabck reliabilty. It can assume values from 0 to 100
 	**>
 	map PositionFeedback {
-		UInt16 to Variant
+		UInt16 to Value
 	}
 
 }
