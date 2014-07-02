@@ -16,7 +16,6 @@
 * @licence end@
 **************************************************************************/
 
-#include <stdio.h>
 #include <signal.h>
 #include <dbus-c++/dbus.h>
 
@@ -46,7 +45,7 @@ void sighandler(int sig)
 int main()
 {
   DLT_REGISTER_APP("ENHP", "EnhancedPositionService");
-  DLT_REGISTER_CONTEXT(gCtx,"EPSR", "Global Context");
+  DLT_REGISTER_CONTEXT(gCtx,"EPSR", "Global Context");  // EPSR = EnhancedPositionService Server Application
   LOG_INFO_MSG(gCtx,"Starting EnhancedPositionService...");
 
   signal(SIGTERM, sighandler);

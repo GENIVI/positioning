@@ -105,7 +105,7 @@ void signalhandler(int sig)
 int main()
 {
   DLT_REGISTER_APP("ENHPOS", "EnhancedPositionClient");
-  DLT_REGISTER_CONTEXT(gCtx,"EPCL", "Global Context");
+  DLT_REGISTER_CONTEXT(gCtx,"EPCL", "Global Context"); // EPCL = EnhancedPositionService Client Application
 
   LOG_INFO_MSG(gCtx,"Starting EnhancedPositionClient...");
 
@@ -119,7 +119,8 @@ int main()
 
   DBus::Connection conn = DBus::Connection::SessionBus();
 
-  EnhancedPositionClient client(conn, "/org/genivi/positioning/EnhancedPosition",
+  EnhancedPositionClient client(conn, 
+                                "/org/genivi/positioning/EnhancedPosition",
                                 "org.genivi.positioning.EnhancedPosition");
 
   // dispatch

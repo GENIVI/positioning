@@ -20,9 +20,6 @@
 
 #include <dbus-c++/dbus.h>
 #include "configuration-adaptor.h"
-#include "gnss.h"
-#include "gnss-simple.h"
-#include "gnss-ext.h"
 
 class Configuration
   : public org::genivi::positioning::Configuration_adaptor

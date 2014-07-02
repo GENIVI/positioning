@@ -16,7 +16,6 @@
 * @licence end@
 **************************************************************************/
 
-#include <stdio.h>
 #include "position-feedback.h"
 #include "log.h"
 
@@ -55,6 +54,7 @@ void PositionFeedback::run()
 
 void PositionFeedback::shutdown()
 {
+  LOG_INFO_MSG(gCtx,"Shutting down PositionFeedback dispatcher...");
 }
 
 

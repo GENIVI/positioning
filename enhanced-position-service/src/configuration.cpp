@@ -16,7 +16,6 @@
 * @licence end@
 **************************************************************************/
 
-#include <stdio.h>
 #include "configuration.h"
 #include "positioning-constants.h"
 #include "log.h"
@@ -117,6 +116,7 @@ void Configuration::run()
 
 void Configuration::shutdown()
 {
+  LOG_INFO_MSG(gCtx,"Shutting down Configuration dispatcher...");
 }
 
 

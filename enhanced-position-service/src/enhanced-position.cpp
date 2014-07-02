@@ -604,7 +604,7 @@ void EnhancedPosition::run()
 
 void EnhancedPosition::shutdown()
 {
-  LOG_INFO_MSG(gCtx,"shutting down...");
+  LOG_INFO_MSG(gCtx,"Shutting down EnhancedPosition dispatcher...");
 
   gnssSimpleDeregisterPositionCallback(&cbPosition);
   gnssSimpleDeregisterCourseCallback(&cbCourse);
