@@ -37,10 +37,10 @@ interface EnhancedPosition {
 	**>
 	method GetData {
 		in {
-			PositioningDataKey[] valuesToReturn
+			DataType[] valuesToReturn
 		}
 		out {
-			PositioningData data
+			Data data
 		}
 	}
 
@@ -109,7 +109,7 @@ interface EnhancedPosition {
 	**>
 	broadcast PositionUpdate {
 		out {
-			PositionInfoKey[] changedValues
+			DataType[] changedValues
 		}
 	}
 
@@ -118,7 +118,7 @@ interface EnhancedPosition {
 	**>
 	broadcast RotationRateUpdate {
 		out {
-			RotationRateKey[] changedValues
+			RotationRateType[] changedValues
 		}
 	}
 
@@ -127,7 +127,7 @@ interface EnhancedPosition {
 	**>
 	broadcast AccuracyUpdate {
 		out {
-			AccuracyInfoKey[] changedValues
+			AccuracyInfoType[] changedValues
 		}
 	}
 
@@ -136,7 +136,7 @@ interface EnhancedPosition {
 	**>
 	broadcast SatelliteInfoUpdate {
 		out {
-			SatelliteInfoKey[] changedValues
+			SatelliteInfoType[] changedValues
 		}
 	}
 

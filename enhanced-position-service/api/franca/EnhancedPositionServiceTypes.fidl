@@ -14,12 +14,11 @@ typeCollection EnhancedPositionServiceTypes {
 	
 	<** @description : A template to generate a dbus 'v'.**>
 	union Value {
-		UInt32 uInt32Value
-		Float floatValue		
+		UInt32 uInt32Value	
 	}
 
 	enumeration BasicEnum {
-		INVALID = "0x0000"
+		INVALID = 0x0000
 	}
 	
     typedef Handle is UInt32

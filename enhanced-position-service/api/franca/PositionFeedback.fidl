@@ -16,7 +16,7 @@ import org.genivi.positioning.EnhancedPositionService.EnhancedPositionServiceTyp
 	@description : PositionFeedback = This interface allows the application implementing the map-matching algorithm to provide a position feedback to the EnahncedPositionService
 **>
 
-interface org.genivi.positioning.EnhancedPositionService.PositionFeedback {
+interface PositionFeedback {
 	version {
 		major 0
 		minor 0
