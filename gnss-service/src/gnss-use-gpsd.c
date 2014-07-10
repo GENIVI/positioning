@@ -23,6 +23,7 @@
 #include <errno.h>
 #include <pthread.h>
 #include <assert.h>
+#include <math.h>
 
 #include "globals.h"
 #include "gnss.h"
@@ -234,12 +235,15 @@ bool extractCourse(struct gps_data_t* pGpsData, TGNSSCourse* pCourse)
         return false;
    }
    
-   pCourse->validityBits = 0;
-
    if( ((pGpsData->set & SPEED_SET) && (oldSpeed != (float)pGpsData->fix.speed)) || 
        ((pGpsData->set & CLIMB_SET) && (oldClimb != (float)pGpsData->fix.climb)) || 
        ((pGpsData->set & TRACK_SET) && (oldHeading != (float)pGpsData->fix.track)) )
    {
+    
+       pCourse->validityBits = 0;
+
+       pCourse->timestamp = pGpsData->fix.time;
+
        if(pGpsData->set & SPEED_SET)
        {
            oldSpeed = pCourse->speed;
@@ -425,6 +429,46 @@ bool extractLocation(struct gps_data_t* pGpsData, TGNSSLocation* pLocation)
     return true;
 }
 
+bool extractUTC(struct gps_data_t* pGpsData, TGNSSUTC* pUTC)
+{
+    static timestamp_t oldTime = 0;
+
+    if(!pGpsData || !pUTC)
+    {
+        return false;
+    }
+   
+    if ((pGpsData->set & TIME_SET) && (oldTime != pGpsData->fix.time))
+   {
+        char month [12] [4] = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
+        
+        pUTC->validityBits = 0;
+        pUTC->timestamp = pGpsData->fix.time;
+
+        if(pGpsData->set & TIME_SET)
+        {
+            oldTime = pGpsData->fix.time;
+            time_t unix_sec = pGpsData->fix.time;
+            struct tm * ptm = gmtime (&unix_sec);
+            pUTC->year = ptm->tm_year+1900;
+            pUTC->month = ptm->tm_mon;
+            pUTC->day = ptm->tm_mday;
+            pUTC->hour = ptm->tm_hour;
+            pUTC->minute = ptm->tm_min;
+            pUTC->second = ptm->tm_sec;
+            pUTC->ms = 1000*fmod(pGpsData->fix.time, 1.0);
+            pUTC->validityBits |= GNSS_UTC_TIME_VALID | GNSS_UTC_DATE_VALID;
+            LOG_DEBUG(gContext,"UTC: %04d-%s-%02d %02d:%02d:%02d", pUTC->year, month[pUTC->month%12], pUTC->day, pUTC->hour, pUTC->minute, pUTC->second);
+        }
+
+        if(cbUTC != 0)
+        {
+            cbUTC(pUTC,1);
+        }
+    }
+    return true;
+}
+
 
 void *listen( void *ptr )
 {  
@@ -488,8 +532,14 @@ void *listen( void *ptr )
 
                 if(!extractLocation(&gpsdata,&gLocation))
                 {
-                    LOG_ERROR_MSG(gContext,"error extracting positionVelocityAccuracy");
+                    LOG_ERROR_MSG(gContext,"error extracting Location");
                 }
+
+                if(!extractUTC(&gpsdata,&gUTC))
+                {
+                    LOG_ERROR_MSG(gContext,"error extracting UTC");
+                }
+
 
                 pthread_mutex_unlock(&mutexData);
             }

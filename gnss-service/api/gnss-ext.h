@@ -149,33 +149,40 @@ typedef struct {
     float speedLatitude;            /**< Speed in direction of latitude in [m/s]. */
     float speedLongitude;           /**< Speed in direction of longitude in [m/s]. */
     float speedAltitude;            /**< Speed in direction of altitude in [m/s]. */
-    uint32_t validityBits;         /**< Bit mask indicating the validity of each corresponding value.
-                                        [bitwise or'ed @ref EGNSSCourse3DValidityBits values].
-                                        Must be checked before usage. */
+    uint32_t validityBits;          /**< Bit mask indicating the validity of each corresponding value.
+                                         [bitwise or'ed @ref EGNSSCourse3DValidityBits values].
+                                         Must be checked before usage. */
 } TGNSSCourse3D;
 
+
 /**
- * Provides the UTC (Coordinated Universal Time) time part.
+ * TGNSSUTC::validityBits provides information about the currently valid parts of UTC date/time.
+ * It is a or'ed bitmask of the EGNSSUTCValidityBits values.
+ * There are separate validity bits for date end time since a GPS receiver may be able to provide time earlier than date.
+ */
+typedef enum {
+    GNSS_UTC_TIME_VALID             = 0x00000001,    /**< Validity bit for field TGNSSUTC fields hour, minute, second, ms. */
+    GNSS_UTC_DATE_VALID             = 0x00000002,    /**< Validity bit for field TGNSSUTC fields year, month, day. */
+} EGNSSUTCValidityBits;
+
+/**
+ * Provides the current date and time according UTC (Coordinated Universal Time) 
+ * Note: the uncommon numbering of day and month is chosen to be compatible with the struct tm from the standard C-Library
  */
 typedef struct {
+    uint64_t timestamp;             /**< Timestamp of the acquisition of the UTC date/time. */
+    uint16_t year;                  /**< Year fraction of the UTC time. Unit: [year] Number equivalent to the year (4 digits) */
+    uint8_t month;                  /**< Month fraction of the UTC time. Unit: [month] Number betweeen 0 and 11 */
+    uint8_t day;                    /**< Day of month fraction of the UTC time. Unit: [day]. Number between 1 and 31 */   
     uint8_t hour;                   /**< Hour fraction of the UTC time. Unit: [hour] Number between 0 and 23 */
     uint8_t minute;                 /**< Minute fraction of the UTC time. Unit: [minutes] Number between 0 and 59 */
     uint8_t second;                 /**< Second fraction of the UTC time. Unit: [seconds] Number between 0 and 59.
                                          In case of a leap second this value is 60. */
     uint16_t ms;                    /**< Millisecond fraction of the UTC time. Unit: [milliseconds] Number between 0 and 999 */
-    bool valid;                     /**< Defines the validity of the complete structure. Must be checked before usage. */
-} TUTCTime;
-
-/**
- * Provides the UTC (Coordinated Universal Time) date part.
- * Note: the uncommon numbering of day and month is chosen to be compatible with the struct tm from the standard C-Library
- */
-typedef struct {
-    uint8_t day;                    /**< Day fraction of the UTC time. Unit: [day]. Number between 1 and 31 */
-    uint8_t month;                  /**< Month fraction of the UTC time. Unit: [month] Number betweeen 0 and 11 */
-    uint16_t year;                  /**< Year fraction of the UTC time. Unit: [year] Number equivalent to the year */
-    bool valid;                     /**< Defines the validity of the complete structure. Must be checked before usage. */
-} TUTCDate;
+    uint32_t validityBits;          /**< Bit mask indicating the validity of each corresponding value.
+                                         [bitwise or'ed @ref EGNSSCourse3DValidityBits values].
+                                         Must be checked before usage. */
+} TGNSSUTC;
 
 /**
  * Enumeration to describe the type of GNSS system to which a particular GNSS satellite belongs.
@@ -282,7 +289,7 @@ typedef enum {
  * for positioning applications such as GNSS/Dead Reckoning sensor fusion.
  */
 typedef struct {
-    uint64_t timestamp;             /**< Timestamp of the acquisition of the position data. [ms] */ 
+    uint64_t timestamp;             /**< Timestamp of the acquisition of the location data. [ms] */ 
     //position
     double latitude;                /**< Latitude in WGS84 in degrees. */ 
     double longitude;               /**< Longitude in WGS84 in degrees. */ 
@@ -341,30 +348,16 @@ typedef void (*GNSSAccuracyCallback)(const TGNSSAccuracy accuracy[], uint16_t nu
 typedef void (*GNSSCourse3DCallback)(const TGNSSCourse3D course[], uint16_t numElements);
 
 /**
- * Callback type for extended GNSS UTC time.
+ * Callback type for extended GNSS UTC date and time.
  * Use this type of callback if you want to register for extended GNSS UTC time data.
  * This callback may return buffered data (numElements >1) for different reasons
  *   for (large) portions of data buffered at startup
  *   for data buffered during regular operation e.g. for performance optimization (reduction of callback invocation frequency)
  * If the array contains (numElements >1), the elements will be ordered with rising timestamps 
- * @param time pointer to an array of TUTCTime with size numElements 
+ * @param time pointer to an array of TGNSSUTC with size numElements 
  * @param numElements: allowed range: >=1. If numElements >1, buffered data are provided.  
  */
-typedef void (*GNSSUTCTimeCallback)(const TUTCTime time[], uint16_t numElements);
-
-/**
- * Callback type for extended GNSS UTC date.
- * Use this type of callback if you want to register for extended
- * GNSS UTC date and the GNSS UTC time data.
- * This callback may return buffered data (numElements >1) for different reasons
- *   for (large) portions of data buffered at startup
- *   for data buffered during regular operation e.g. for performance optimization (reduction of callback invocation frequency)
- * If the array contains (numElements >1), the elements will be ordered with rising timestamps 
- * @param date pointer to an array of TUTCDate with size numElements
- * @param time pointer to an array of TUTCTime with size numElements
- * @param numElements: allowed range: >=1. If numElements >1, buffered data are provided.  
- */
-typedef void (*GNSSUTCDateCallback)(const TUTCDate date[], const TUTCTime time[], uint16_t numElements);
+typedef void (*GNSSUTCCallback)(const TGNSSUTC time[], uint16_t numElements);
 
 /**
  * Callback type for GNSS satellite details.
@@ -478,12 +471,12 @@ bool gnssExtendedRegister3DCourseCallback(GNSSCourse3DCallback callback);
 bool gnssExtendedDeregister3DCourseCallback(GNSSCourse3DCallback callback);
 
 /**
- * Method to get the UTC Time data of the GNSS receiver at a specific point in time.
+ * Method to get the UTC date / time data of the GNSS receiver at a specific point in time.
  * The valid flag is updated. The data is only guaranteed to be updated when the valid flag is true.
- * @param time After calling the method the current GNSS UTC time is written into this parameter.
+ * @param time After calling the method the current GNSS UTC date / time is written into this parameter.
  * @return Is true if data can be provided and false otherwise, e.g. missing initialization
  */
-bool gnssExtendedGetUTCTime(TUTCTime *time);
+bool gnssExtendedGetUTC(TGNSSUTC *utc);
 
 /**
  * Register extended GNSS UTC time callback.
@@ -492,7 +485,7 @@ bool gnssExtendedGetUTCTime(TUTCTime *time);
  * @param callback The callback which should be registered.
  * @return True if callback has been registered successfully.
  */
-bool gnssExtendedRegisterUTCTimeCallback(GNSSUTCTimeCallback callback);
+bool gnssExtendedRegisterUTCCallback(GNSSUTCCallback callback);
 
 /**
  * Deregister extended GNSS UTC time callback.
@@ -500,33 +493,7 @@ bool gnssExtendedRegisterUTCTimeCallback(GNSSUTCTimeCallback callback);
  * @param callback The callback which should be deregistered.
  * @return True if callback has been deregistered successfully.
  */
-bool gnssExtendedDeregisterUTCTimeCallback(GNSSUTCTimeCallback callback);
-
-/**
- * Method to get the UTC date of the GNSS receiver at a specific point in time.
- * The valid flag is updated. The data is only guaranteed to be updated when the valid flag is true.
- * @param date After calling the method the current GNSS UTC date is written into this parameter.
- * @param time After calling the method the current GNSS UTC time is written into this parameter.
- * @return Is true if data can be provided and false otherwise, e.g. missing initialization
- */
-bool gnssExtendedGetUTCDate(TUTCDate *date, TUTCTime *time);
-
-/**
- * Register extended GNSS UTC date callback.
- * The callback will be invoked when new date data is available from the GNSS receiver.
- * The valid flags is updated. The data is only guaranteed to be updated when the valid flag is true.
- * @param callback The callback which should be registered.
- * @return True if callback has been registered successfully.
- */
-bool gnssExtendedRegisterUTCDateCallback(GNSSUTCDateCallback callback);
-
-/**
- * Deregister extended GNSS UTC date callback.
- * After calling this method no new date will be delivered to the client.
- * @param callback The callback which should be deregistered.
- * @return True if callback has been deregistered successfully.
- */
-bool gnssExtendedDeregisterUTCDateCallback(GNSSUTCDateCallback callback);
+bool gnssExtendedDeregisterUTCCallback(GNSSUTCCallback callback);
 
 /**
  * Method to get the GNSS satellite details at a specific point in time.

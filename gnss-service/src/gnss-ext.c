@@ -28,6 +28,9 @@ GNSSSatelliteDetailCallback cbSatelliteDetail = 0;
 TGNSSLocation gLocation;
 GNSSLocationCallback cbLocation = 0;
 
+TGNSSUTC gUTC;
+GNSSUTCCallback cbUTC = 0;
+
 bool gnssExtendedInit()
 {
     return true;
@@ -161,6 +164,49 @@ bool gnssExtendedGetLocation(TGNSSLocation* location)
 
     pthread_mutex_lock(&mutexData);
     *location = gLocation;
+    pthread_mutex_unlock(&mutexData);
+
+    return true;
+}
+
+
+bool gnssExtendedRegisterUTCCallback(GNSSUTCCallback callback)
+{
+    if(cbUTC != 0) 
+    {
+        return false; //if already registered
+    }
+
+    pthread_mutex_lock(&mutexCb);
+    cbUTC = callback;
+    pthread_mutex_unlock(&mutexCb);
+
+    return true;
+}
+
+bool gnssExtendedDeregisterUTCCallback(GNSSUTCCallback callback)
+{
+    if(cbUTC == callback && callback != 0)
+    {
+        pthread_mutex_lock(&mutexCb);
+        cbUTC = 0;
+        pthread_mutex_unlock(&mutexCb);
+
+        return true;
+    }
+
+    return false;
+}
+
+bool gnssExtendedGetUTC(TGNSSUTC* utc)
+{
+    if(!utc)
+    {
+        return false;
+    }
+
+    pthread_mutex_lock(&mutexData);
+    *utc = gUTC;
     pthread_mutex_unlock(&mutexData);
 
     return true;
