@@ -35,6 +35,7 @@ extern TGNSSPosition gPosition;
 extern TGNSSCourse gCourse;
 extern TGNSSAccuracy gAccuracy;
 extern TGNSSSatelliteDetail gSatelliteDetail; //TODO: buffer full set of satellite details for one point in time
+extern TGNSSLocation gLocation;
 extern TGNSSSimpleConfiguration gConfiguration;
 
 extern const TGnssMetaData gMetaData;
@@ -43,5 +44,6 @@ extern GNSSPositionCallback cbPosition;
 extern GNSSCourseCallback cbCourse;
 extern GNSSAccuracyCallback cbAccuracy;
 extern GNSSSatelliteDetailCallback cbSatelliteDetail;
+extern GNSSLocationCallback cbLocation;
 
 #endif /* GLOBALS_H */

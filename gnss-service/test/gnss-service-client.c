@@ -59,7 +59,7 @@ static void cbCourse(const TGNSSCourse course[], uint16_t numElements)
 
     for (i = 0; i<numElements; i++)
     {
-        LOG_INFO(gCtx,"Course Updatee[%d/%d]: speed=%f heading=%f climb=%f",
+        LOG_INFO(gCtx,"Course Update[%d/%d]: speed=%f heading=%f climb=%f",
                  i+1,
                  numElements,
                  course[i].speed, 
@@ -87,6 +87,36 @@ static void cbAccuracy(const TGNSSAccuracy accuracy[], uint16_t numElements)
                  accuracy[i].visibleSatellites,
                  accuracy[i].fixStatus,
                  accuracy[i].fixTypeBits);
+    }
+}
+
+static void cbLocation(const TGNSSLocation location[], uint16_t numElements)
+{
+    int i;    
+    if(location == NULL || numElements < 1)
+    {
+        LOG_ERROR_MSG(gCtx,"cbLocation failed!");
+        return;
+    }
+
+    for (i = 0; i<numElements; i++)
+    {
+        LOG_INFO(gCtx,"Location Update[%d/%d]: timestamp=%llu latitude=%.5f longitude=%.5f altitudeMSL=%.1f hSpeed=%.1f heading=%.1f\n hdop=%.1f usedSatellites=%d sigmaHPosition=%.1f sigmaHSpeed=%.1f sigmaHeading=%.1f fixStatus=%d fixTypeBits=0x%08X",
+                 i+1,
+                 numElements,
+                 location[i].timestamp, 
+                 location[i].latitude,
+                 location[i].longitude,
+                 location[i].altitudeMSL,
+                 location[i].hSpeed,
+                 location[i].heading,
+                 location[i].hdop,
+                 location[i].usedSatellites,
+                 location[i].sigmaHPosition,
+                 location[i].sigmaHSpeed,
+                 location[i].sigmaHeading,
+                 location[i].fixStatus,
+                 location[i].fixTypeBits);
     }
 }
 
@@ -161,6 +191,7 @@ int main()
     gnssSimpleRegisterCourseCallback(&cbCourse);
     gnssExtendedRegisterAccuracyCallback(&cbAccuracy);
     gnssExtendedRegisterSatelliteDetailCallback(&cbSatelliteDetail);
+    gnssExtendedRegisterLocationCallback(&cbLocation);
 
     // enter endless loop
     while(1)
@@ -173,6 +204,7 @@ int main()
     gnssSimpleDeregisterCourseCallback(&cbCourse);
     gnssExtendedDeregisterAccuracyCallback(&cbAccuracy);
     gnssExtendedDeregisterSatelliteDetailCallback(&cbSatelliteDetail);
+    gnssExtendedDeregisterLocationCallback(&cbLocation);
 
     gnssSimpleDestroy();
     gnssDestroy();

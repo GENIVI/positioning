@@ -58,11 +58,11 @@ typedef enum {
  */
 typedef enum {
     GNSS_FIX_STATUS_NO,         /**< GNSS has no fix, i.e. position, velocity, time cannot be determined */
+    GNSS_FIX_STATUS_TIME,       /**< GNSS can only determine the time, but not position and velocity */
     GNSS_FIX_STATUS_2D,         /**< GNSS has a 2D fix, i.e. the horizontal position can be determined but not the altitude.
                                      This implies that also velocity and time are available. */
-    GNSS_FIX_STATUS_3D,         /**< GNSS has a 3D fix, i.e. position can be determined including the altitude.
+    GNSS_FIX_STATUS_3D          /**< GNSS has a 3D fix, i.e. position can be determined including the altitude.
                                      This implies that also velocity and time are available. */
-    GNSS_FIX_STATUS_TIME        /**< GNSS can only determine the time, but not position and velocity */
 } EGNSSFixStatus;
 
 /**
@@ -168,6 +168,7 @@ typedef struct {
 
 /**
  * Provides the UTC (Coordinated Universal Time) date part.
+ * Note: the uncommon numbering of day and month is chosen to be compatible with the struct tm from the standard C-Library
  */
 typedef struct {
     uint8_t day;                    /**< Day fraction of the UTC time. Unit: [day]. Number between 1 and 31 */
@@ -210,10 +211,11 @@ typedef enum {
     GNSS_SATELLITE_SYSTEM_VALID                 = 0x00000001,    /**< Validity bit for field TGNSSSatelliteDetail::system. */
     GNSS_SATELLITE_ID_VALID                     = 0x00000002,    /**< Validity bit for field TGNSSSatelliteDetail::satelliteId. */
     GNSS_SATELLITE_AZIMUTH_VALID                = 0x00000004,    /**< Validity bit for field TGNSSSatelliteDetail::azimuth. */
-    GNSS_SATELLITE_ELEVATION_VALIDLID           = 0x00000008,    /**< Validity bit for field TGNSSSatelliteDetail::elevation. */
+    GNSS_SATELLITE_ELEVATION_VALID              = 0x00000008,    /**< Validity bit for field TGNSSSatelliteDetail::elevation. */
     GNSS_SATELLITE_SNR_VALID                    = 0x00000010,    /**< Validity bit for field TGNSSSatelliteDetail::SNR. */
     GNSS_SATELLITE_USED_VALID                   = 0x00000020,    /**< Validity bit for field TGNSSSatelliteDetail::statusBits::GNSS_SATELLITE_USED. */
     GNSS_SATELLITE_EPHEMERIS_AVAILABLE_VALID    = 0x00000040,    /**< Validity bit for field TGNSSSatelliteDetail::statusBits::GNSS_SATELLITE_EPHEMERIS_AVAILABLE. */
+    GNSS_SATELLITE_RESIDUAL_VALID               = 0x00000080,    /**< Validity bit for field TGNSSSatelliteDetail::posResidual. */
 } EGNSSSatelliteDetailValidityBits;
 
 /**
@@ -234,10 +236,85 @@ typedef struct {
     uint16_t SNR;                   /**< SNR (C/No) in dBHz. Range 0 to 99, null when not tracking */
     uint32_t statusBits;            /**< Bit mask of additional status flags.
                                         [bitwise or'ed @ref EGNSSSatelliteFlag values]. */
+    int16_t posResidual;            /**< Residual in m of position calculation. Range -999 to +999, 0 if not tracking */                                        
     uint32_t validityBits;          /**< Bit mask indicating the validity of each corresponding value.
                                         [bitwise or'ed @ref EGNSSSatelliteDetailValidityBits values].
                                         Must be checked before usage. */
 } TGNSSSatelliteDetail;
+
+/**
+ * TGNSSLocation::validityBits provides information about the currently valid signals 
+ * of the GNSS position and velocity including status and accuracy data.
+ * It is a or'ed bitmask of the EGNSSLocationValidityBits values.
+ */
+typedef enum {
+    //position
+    GNSS_LOCATION_LATITUDE_VALID        = 0x00000001,    /**< Validity bit for field TGNSSLocation::latitude. */
+    GNSS_LOCATION_LONGITUDE_VALID       = 0x00000002,    /**< Validity bit for field TGNSSLocation::longitude. */
+    GNSS_LOCATION_ALTITUDEMSL_VALID     = 0x00000004,    /**< Validity bit for field TGNSSLocation::altitudeMSL. */
+    GNSS_LOCATION_ALTITUDEELL_VALID     = 0x00000008,    /**< Validity bit for field TGNSSLocation::altitudeEll. */
+    //velocity
+    GNSS_LOCATION_HSPEED_VALID          = 0x00000010,    /**< Validity bit for field TGNSSLocation::hSpeed. */
+    GNSS_LOCATION_VSPEED_VALID          = 0x00000020,    /**< Validity bit for field TGNSSLocation::vSpeed. */
+    GNSS_LOCATION_HEADING_VALID         = 0x00000040,    /**< Validity bit for field TGNSSLocation::heading. */
+    //quality parameters: satellite constellation
+    GNSS_LOCATION_PDOP_VALID            = 0x00000080,    /**< Validity bit for field TGNSSLocation::pdop. */
+    GNSS_LOCATION_HDOP_VALID            = 0x00000100,    /**< Validity bit for field TGNSSLocation::hdop. */
+    GNSS_LOCATION_VDOP_VALID            = 0x00000200,    /**< Validity bit for field TGNSSLocation::vdop. */
+    
+    GNSS_LOCATION_USAT_VALID            = 0x00000400,    /**< Validity bit for field TGNSSLocation::usedSatellites. */
+    GNSS_LOCATION_TSAT_VALID            = 0x00000800,    /**< Validity bit for field TGNSSLocation::trackedSatellites. */
+    GNSS_LOCATION_VSAT_VALID            = 0x00001000,    /**< Validity bit for field TGNSSLocation::visibleSatellites. */
+    //quality parameters: error estimates
+    GNSS_LOCATION_SHPOS_VALID           = 0x00002000,    /**< Validity bit for field TGNSSLocation::sigmaHPosition. */
+    GNSS_LOCATION_SALT_VALID            = 0x00004000,    /**< Validity bit for field TGNSSLocation::sigmaAltitude. */
+    GNSS_LOCATION_SHSPEED_VALID         = 0x00008000,    /**< Validity bit for field TGNSSLocation::sigmaHSpeed. */
+    GNSS_LOCATION_SVSPEED_VALID         = 0x00010000,    /**< Validity bit for field TGNSSLocation::sigmaVSpeed. */
+    GNSS_LOCATION_SHEADING_VALID        = 0x00020000,    /**< Validity bit for field TGNSSLocation::sigmaHeading. */
+    //quality parameters: overall GNSS fix status
+    GNSS_LOCATION_STAT_VALID            = 0x00040000,    /**< Validity bit for field TGNSSLocation::fixStatus. */
+    GNSS_LOCATION_TYPE_VALID            = 0x00080000,    /**< Validity bit for field TGNSSLocation::fixTypeBits. */    
+} EGNSSLocationValidityBits;
+
+/**
+ * GNSS location, i.e. position and velocity including status and accuracy.
+ * This data structure provides all GNSS information which is typically needed 
+ * for positioning applications such as GNSS/Dead Reckoning sensor fusion.
+ */
+typedef struct {
+    uint64_t timestamp;             /**< Timestamp of the acquisition of the position data. [ms] */ 
+    //position
+    double latitude;                /**< Latitude in WGS84 in degrees. */ 
+    double longitude;               /**< Longitude in WGS84 in degrees. */ 
+    float altitudeMSL;              /**< Altitude above mean sea level (geoid) */ 
+    float altitudeEll;              /**< Altitude above WGS84 ellipsoid */ 
+    //velocity
+    float hSpeed;                   /**< Horizontal speed [m/s]. */ 
+    float vSpeed;                   /**< Vertical speed [m/s]. */ 
+    float heading;                  /**< GNSS course angle [degree] (0 => north, 90 => east, 180 => south, 270 => west, no negative values). */ 
+    //quality parameters: satellite constellation
+    float pdop;                     /**< The positional (3D) dilution of precision. [Note: pdop^2 = hdop^2+vdop^2] */ 
+    float hdop;                     /**< The horizontal (2D) dilution of precision. */ 
+    float vdop;                     /**< The vertical (altitude) dilution of precision. */ 
+    uint16_t usedSatellites;        /**< Number of satellites used for the GNSS fix. */ 
+    uint16_t trackedSatellites;     /**< Number of satellites from which a signal is received. */ 
+    uint16_t visibleSatellites;     /**< Number of satellites expected to be receiveable, i.e. above horizon or elevation mask. */ 
+    //quality parameters: error estimates
+    float sigmaHPosition;           /**< Standard error estimate of the horizontal position in [m]. */ 
+    float sigmaAltitude;            /**< Standard error estimate of altitude in [m]. */ 
+    float sigmaHSpeed;              /**< Standard error estimate of horizontal speed in [m/s]. */ 
+    float sigmaVSpeed;              /**< Standard error estimate of vertical speed in [m/s]. */     
+    float sigmaHeading;             /**< Standard error estimate of horizontal heading/course in [degree]. */ 
+    //quality parameters: overall GNSS fix status
+    EGNSSFixStatus fixStatus;       /**< Value representing the GNSS mode. */ 
+    uint32_t fixTypeBits;           /**< Bit mask indicating the sources actually used for the GNSS calculation. 
+                                         [bitwise or'ed @ref EGNSSFixType values]. */
+
+    uint32_t validityBits;          /**< Bit mask indicating the validity of each corresponding value.
+                                         [bitwise or'ed @ref EGNSSLocationValidityBits values].
+                                         Must be checked before usage. */                                         
+} TGNSSLocation;
+
 
 /**
  * Callback type for extended GNSS accuracy.
@@ -300,6 +377,18 @@ typedef void (*GNSSUTCDateCallback)(const TUTCDate date[], const TUTCTime time[]
  * @param numElements: allowed range: >=1. If numElements >1, buffered data are provided.  
  */
 typedef void (*GNSSSatelliteDetailCallback)(const TGNSSSatelliteDetail satelliteDetail[], uint16_t numElements);
+
+/**
+ * Callback type for GNSS position, velocity, accuracy.
+ * Use this type of callback if you want to register for GNSS position, velocity, accuracy.
+ * This callback may return buffered data (numElements >1) for different reasons
+ *   for (large) portions of data buffered at startup
+ *   for data buffered during regular operation e.g. for performance optimization (reduction of callback invocation frequency)
+ * If the array contains (numElements >1), the elements will be ordered with rising timestamps 
+ * @param time pointer to an array of TGNSSLocation with size numElements 
+ * @param numElements: allowed range: >=1. If numElements >1, buffered data are provided.  
+ */
+typedef void (*GNSSLocationCallback)(const TGNSSLocation location[], uint16_t numElements);
 
 /**
  * Initialization of the extended GNSS service.
@@ -465,6 +554,32 @@ bool gnssExtendedRegisterSatelliteDetailCallback(GNSSSatelliteDetailCallback cal
  * @return True if callback has been deregistered successfully.
  */
 bool gnssExtendedDeregisterSatelliteDetailCallback(GNSSSatelliteDetailCallback callback);
+
+/**
+ * Method to get the GNSS position, velocity, accuracy at a specific point in time.
+ * All valid flags are updated. The data is only guaranteed to be updated when the valid flag is true.
+ * @param positionVelocityAccuracy After calling the method current GNSS position, velocity, accuracy are written into this parameter.
+ * @return Is true if data can be provided and false otherwise, e.g. missing initialization
+ */
+bool gnssExtendedGetLocation(TGNSSLocation* location);
+
+/**
+ * Register GNSS position, velocity, accuracy callback.
+ * The callback will be invoked when new date data is available from the GNSS receiver.
+ * The valid flags is updated. The data is only guaranteed to be updated when the valid flag is true.
+ * @param callback The callback which should be registered.
+ * @return True if callback has been registered successfully.
+ */
+bool gnssExtendedRegisterLocationCallback(GNSSLocationCallback callback);
+
+/**
+ * Deregister GNSS position, velocity, accuracy callback.
+ * After calling this method no new data will be delivered to the client.
+ * @param callback The callback which should be deregistered.
+ * @return True if callback has been deregistered successfully.
+ */
+bool gnssExtendedDeregisterLocationCallback(GNSSLocationCallback callback);
+
 
 /**
  * Provides the precision timing information as signaled by the GNSS PPS signal.
