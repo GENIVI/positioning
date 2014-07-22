@@ -35,7 +35,7 @@ LICENSE_${PN}-repl = "MPLv2"
 LICENSE_${PN}-enhpos = "MPLv2"
 
 SRC_URI = "git://git.projects.genivi.org/lbs/positioning.git;protocol=git"
-SRCREV = "65cacfff17867aac958cdc1f1021864732fe277d"
+SRCREV = "fbd1b0d48879146dc91a3959ced85d78db5d3098"
 LIC_FILES_CHKSUM = "file://LICENSE;md5=e73ca6874051c79a99d065bc57849af5"
 
 S = "${WORKDIR}/git"
@@ -65,7 +65,7 @@ RDEPENDS_${PN}-enhpos-test = "${PN}-enhpos"
 DEPENDS_${PN}-enhpos-test = "${PN}-enhpos"
 
 do_configure() {
- cd ${S}/gnss-service && cmake -DWITH_DLT=ON -DWITH_GPSD=OFF -DWITH_REPLAYER=ON -DWITH_TESTS=ON . 
+ cd ${S}/gnss-service && cmake -DWITH_DLT=OFF -DWITH_GPSD=OFF -DWITH_REPLAYER=ON -DWITH_TESTS=ON . 
  cd ${S}/sensors-service && cmake -DWITH_DLT=OFF -DWITH_REPLAYER=ON -DWITH_IPHONE=OFF -DWITH_TESTS=ON . 
  cd ${S}/log-replayer && cmake -DWITH_DLT=OFF -DWITH_TESTS=ON . 
  cd ${S}/enhanced-position-service && cmake -DWITH_DLT=OFF -DWITH_GPSD=OFF -DWITH_REPLAYER=ON -DWITH_IPHONE=OFF -DWITH_TESTS=ON . 
