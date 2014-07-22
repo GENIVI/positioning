@@ -114,9 +114,6 @@ int main()
 
   DBus::default_dispatcher = &dispatcher;
 
-  // increase DBus-C++ frequency
-  new DBus::DefaultTimeout(100, false, &dispatcher);
-
   DBus::Connection conn = DBus::Connection::SessionBus();
 
   EnhancedPositionClient client(conn, 

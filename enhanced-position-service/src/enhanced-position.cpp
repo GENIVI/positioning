@@ -17,6 +17,7 @@
 **************************************************************************/
 
 #include <stdio.h>
+#include <stdlib.h>
 #include "enhanced-position.h"
 #include "positioning-constants.h"
 #include "log.h"
