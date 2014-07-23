@@ -22,7 +22,6 @@
 
 #include "enhanced-position-adaptor.h"
 #include "gnss.h"
-#include "gnss-simple.h"
 #include "gnss-ext.h"
 
 class EnhancedPosition
@@ -62,11 +61,14 @@ private:
 
   static void cbSatelliteDetail(const TGNSSSatelliteDetail satelliteDetail[], uint16_t numElements);
 
-  static void cbAccuracy(const TGNSSAccuracy accuracy[], uint16_t numElements);
-
-  static void cbCourse(const TGNSSCourse course[], uint16_t numElements);
-
-  static void cbPosition(const TGNSSPosition pos[], uint16_t numElements);
+  static void cbSpatial(const TGNSSSpatial spatial[], uint16_t numElements);
+  static void sigPositionUpdate(const TGNSSSpatial spatial[], uint16_t numElements);
+  static void sigAccuracyUpdate(const TGNSSSpatial spatial[], uint16_t numElements);
+  static void sigStatusUpdate(const TGNSSSpatial spatial[], uint16_t numElements);  
+  static void sigSatelliteInfoUpdate(const TGNSSSpatial spatial[], uint16_t numElements);
+  
+  
+  
 
   static EnhancedPosition* mpSelf;
 };

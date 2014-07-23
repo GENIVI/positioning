@@ -23,79 +23,18 @@
 #include <unistd.h>
 
 #include "gnss.h"
-#include "gnss-simple.h"
 #include "gnss-ext.h"
 #include "log.h"
 
 DLT_DECLARE_CONTEXT(gCtx);
 
-static void cbPosition(const TGNSSPosition pos[], uint16_t numElements)
-{
-    int i;
-    if(pos == NULL || numElements < 1)
-    {
-        LOG_ERROR_MSG(gCtx,"cbPosition failed!");
-        return;
-    }
 
-    for (i = 0; i<numElements; i++)
-    {
-        LOG_INFO(gCtx,"Position Update[%d/%d]: lat=%f lon=%f",
-                 i+1,
-                 numElements,
-                 pos[i].latitude, 
-                 pos[i].longitude);
-    }
-}
-
-static void cbCourse(const TGNSSCourse course[], uint16_t numElements)
-{
-    int i;
-    if(course == NULL || numElements < 1)
-    {
-        LOG_ERROR_MSG(gCtx,"cbCourse failed!");
-        return;
-    }
-
-    for (i = 0; i<numElements; i++)
-    {
-        LOG_INFO(gCtx,"Course Update[%d/%d]: speed=%f heading=%f climb=%f",
-                 i+1,
-                 numElements,
-                 course[i].speed, 
-                 course[i].heading, 
-                 course[i].climb);        
-    }
-
-}
-
-static void cbAccuracy(const TGNSSAccuracy accuracy[], uint16_t numElements)
+static void cbSpatial(const TGNSSSpatial spatial[], uint16_t numElements)
 {
     int i;    
-    if(accuracy == NULL || numElements < 1)
+    if(spatial == NULL || numElements < 1)
     {
-        LOG_ERROR_MSG(gCtx,"cbAccuracy failed!");
-        return;
-    }
-
-    for (i = 0; i<numElements; i++)
-    {
-        LOG_INFO(gCtx,"Accuracy Update[%d/%d]: usedSatellites=%d visibleSatellites=%d fixStatus=%d fixTypeBits=0x%08X",
-                 i+1,
-                 numElements,
-                 accuracy[i].usedSatellites, 
-                 accuracy[i].visibleSatellites,
-                 accuracy[i].fixStatus,
-                 accuracy[i].fixTypeBits);
-    }
-}
-
-static void cbLocation(const TGNSSLocation location[], uint16_t numElements)
-{
-    int i;    
-    if(location == NULL || numElements < 1)
-    {
-        LOG_ERROR_MSG(gCtx,"cbLocation failed!");
+        LOG_ERROR_MSG(gCtx,"cbSpatial failed!");
         return;
     }
 
@@ -104,19 +43,19 @@ static void cbLocation(const TGNSSLocation location[], uint16_t numElements)
         LOG_INFO(gCtx,"Location Update[%d/%d]: timestamp=%llu latitude=%.5f longitude=%.5f altitudeMSL=%.1f hSpeed=%.1f heading=%.1f\n hdop=%.1f usedSatellites=%d sigmaHPosition=%.1f sigmaHSpeed=%.1f sigmaHeading=%.1f fixStatus=%d fixTypeBits=0x%08X",
                  i+1,
                  numElements,
-                 location[i].timestamp, 
-                 location[i].latitude,
-                 location[i].longitude,
-                 location[i].altitudeMSL,
-                 location[i].hSpeed,
-                 location[i].heading,
-                 location[i].hdop,
-                 location[i].usedSatellites,
-                 location[i].sigmaHPosition,
-                 location[i].sigmaHSpeed,
-                 location[i].sigmaHeading,
-                 location[i].fixStatus,
-                 location[i].fixTypeBits);
+                 spatial[i].timestamp, 
+                 spatial[i].latitude,
+                 spatial[i].longitude,
+                 spatial[i].altitudeMSL,
+                 spatial[i].hSpeed,
+                 spatial[i].heading,
+                 spatial[i].hdop,
+                 spatial[i].usedSatellites,
+                 spatial[i].sigmaHPosition,
+                 spatial[i].sigmaHSpeed,
+                 spatial[i].sigmaHeading,
+                 spatial[i].fixStatus,
+                 spatial[i].fixTypeBits);
     }
 }
 
@@ -171,7 +110,7 @@ void init()
         exit(EXIT_FAILURE);
     }
 
-    if(!gnssSimpleInit())
+    if(!gnssExtendedInit())
     {
         exit(EXIT_FAILURE);
     }
@@ -187,11 +126,8 @@ int main()
     LOG_INFO_MSG(gCtx,"Starting gnss-service-client...");
 
     // register for GNSS
-    gnssSimpleRegisterPositionCallback(&cbPosition);
-    gnssSimpleRegisterCourseCallback(&cbCourse);
-    gnssExtendedRegisterAccuracyCallback(&cbAccuracy);
     gnssExtendedRegisterSatelliteDetailCallback(&cbSatelliteDetail);
-    gnssExtendedRegisterLocationCallback(&cbLocation);
+    gnssExtendedRegisterSpatialCallback(&cbSpatial);
 
     // enter endless loop
     while(1)
@@ -200,13 +136,10 @@ int main()
     }
 
     // deregister
-    gnssSimpleDeregisterPositionCallback(&cbPosition);
-    gnssSimpleDeregisterCourseCallback(&cbCourse);
-    gnssExtendedDeregisterAccuracyCallback(&cbAccuracy);
     gnssExtendedDeregisterSatelliteDetailCallback(&cbSatelliteDetail);
-    gnssExtendedDeregisterLocationCallback(&cbLocation);
+    gnssExtendedDeregisterSpatialCallback(&cbSpatial);
 
-    gnssSimpleDestroy();
+    gnssExtendedDestroy();
     gnssDestroy();
 
     return EXIT_SUCCESS;

@@ -23,7 +23,6 @@
 #include <unistd.h>
 
 #include "gnss.h"
-#include "gnss-simple.h"
 #include "gnss-ext.h"
 #include "log.h"
 
@@ -33,37 +32,22 @@ DLT_DECLARE_CONTEXT(gCtx);
 #define TEST_PASSED EXIT_SUCCESS
 
 static int testResult = TEST_PASSED;
+static int cbSpatialSuccess = 0;
 
-
-static void cbPosition(const TGNSSPosition pos[], uint16_t numElements)
+static void cbSpatial(const TGNSSSpatial spatial[], uint16_t numElements)
 {
-    if(pos == NULL || numElements < 1)
+    int i;    
+    if(spatial == NULL || numElements < 1)
     {
-        LOG_ERROR_MSG(gCtx,"cbPosition failed!");
+        LOG_ERROR_MSG(gCtx,"cbSpatial failed!");
         testResult = TEST_FAILED;
         return;
     }
+    cbSpatialSuccess++;
+    
+    
 }
 
-static void cbCourse(const TGNSSCourse course[], uint16_t numElements)
-{
-    if(course == NULL || numElements < 1)
-    {
-        LOG_ERROR_MSG(gCtx,"cbCourse failed!");
-        testResult = TEST_FAILED;
-        return;
-    }
-}
-
-static void cbAccuracy(const TGNSSAccuracy accuracy[], uint16_t numElements)
-{
-    if(accuracy == NULL || numElements < 1)
-    {
-        LOG_ERROR_MSG(gCtx,"cbAccuracy failed!");
-        testResult = TEST_FAILED;
-        return;
-    }
-}
 
 bool checkMajorVersion(int expectedMajor)
 {
@@ -96,7 +80,7 @@ bool init()
         return false;
     }
 
-    if(!gnssSimpleInit())
+    if(!gnssExtendedInit())
     {
         return false;
     }
@@ -116,9 +100,7 @@ int main()
     if(init())
     {
         //register for GNSS
-        gnssSimpleRegisterPositionCallback(&cbPosition);
-        gnssSimpleRegisterCourseCallback(&cbCourse);
-        gnssExtendedRegisterAccuracyCallback(&cbAccuracy);
+        gnssExtendedRegisterSpatialCallback(&cbSpatial);        
 
         //listen for events for about 10 seconds
         for(i = 0; i < 10; i++)
@@ -127,11 +109,9 @@ int main()
         }
 
         //deregister
-        gnssSimpleDeregisterPositionCallback(&cbPosition);
-        gnssSimpleDeregisterCourseCallback(&cbCourse);
-        gnssExtendedDeregisterAccuracyCallback(&cbAccuracy);
+        gnssExtendedDeregisterSpatialCallback(&cbSpatial);        
 
-        gnssSimpleDestroy();
+        gnssExtendedDestroy();
         gnssDestroy();
     }
     
@@ -142,7 +122,7 @@ int main()
          return EXIT_FAILURE;
     }
 
-    LOG_INFO_MSG(gCtx,"TEST_PASSED");
+    LOG_INFO(gCtx,"TEST_PASSED with %d successful callbacks", cbSpatialSuccess);
 
     return EXIT_SUCCESS;
 }

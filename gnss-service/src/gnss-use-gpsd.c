@@ -27,7 +27,6 @@
 
 #include "globals.h"
 #include "gnss.h"
-#include "gnss-simple.h"
 #include "log.h"
 #include "gps.h"
 
@@ -114,170 +113,7 @@ static EGNSSFixStatus convertToFixStatus(int fixMode)
     return status;
 }
 
-bool extractAccuracy(struct gps_data_t* pGpsData, TGNSSAccuracy* pAccuracy)
-{
-    static EGNSSFixStatus oldFixStatus = GNSS_FIX_STATUS_NO;
-    static uint16_t oldUsedSatellites = 0;
-    static uint16_t oldVisibleSatellites = 0;
-    bool fixStatusChanged = false;
-    bool satellitesChanged = false;
-
-    if(!pGpsData || !pAccuracy)
-    {
-        return false;
-    }
-
-    pAccuracy->validityBits = 0;
-
-    pAccuracy->timestamp = pGpsData->fix.time;
-
-    fixStatusChanged = (oldFixStatus != convertToFixStatus(pGpsData->fix.mode));
- 
-    satellitesChanged = ((oldUsedSatellites != (uint16_t)pGpsData->satellites_used) || 
-                         (oldVisibleSatellites != (uint16_t)pGpsData->satellites_visible));
-                        
-    if(((pGpsData->set & MODE_SET) && fixStatusChanged) ||
-       (pGpsData->set & DOP_SET) ||
-       ((pGpsData->set & SATELLITE_SET) && satellitesChanged))
-    {
-        oldFixStatus = pAccuracy->fixStatus;
-        pAccuracy->fixStatus = convertToFixStatus(pGpsData->fix.mode);
-        pAccuracy->validityBits |= GNSS_ACCURACY_STAT_VALID;
-        LOG_DEBUG(gContext,"FixStatus: %d", (int)pAccuracy->fixStatus);
-
-        pAccuracy->pdop = (float)pGpsData->dop.pdop;
-        pAccuracy->validityBits |= GNSS_ACCURACY_PDOP_VALID;
-        LOG_DEBUG(gContext,"pdop: %lf", pAccuracy->pdop);
-
-        pAccuracy->hdop = (float)pGpsData->dop.hdop;
-        pAccuracy->validityBits |= GNSS_ACCURACY_HDOP_VALID;
-        LOG_DEBUG(gContext,"hdop: %lf", pAccuracy->hdop);
-
-        pAccuracy->vdop = (float)pGpsData->dop.vdop;
-        pAccuracy->validityBits |= GNSS_ACCURACY_VDOP_VALID;
-        LOG_DEBUG(gContext,"vdop: %lf", pAccuracy->vdop);
-
-        if(pGpsData->satellites_used >= 0)
-        {
-            oldUsedSatellites = pAccuracy->usedSatellites;
-            pAccuracy->usedSatellites = (uint16_t)pGpsData->satellites_used;      
-            pAccuracy->validityBits |= GNSS_ACCURACY_USAT_VALID;
-            LOG_DEBUG(gContext,"Used Satellites: %d", pAccuracy->usedSatellites);
-        }
-        
-        if(pGpsData->satellites_visible >= 0)
-        {
-            oldVisibleSatellites = pAccuracy->visibleSatellites; 
-            pAccuracy->visibleSatellites = (uint16_t)pGpsData->satellites_visible;
-            pAccuracy->validityBits |= GNSS_ACCURACY_VSAT_VALID;
-            LOG_DEBUG(gContext,"Visible Satellites: %d", pAccuracy->visibleSatellites);
-        }
-
-        if(cbAccuracy != 0)
-        {
-            cbAccuracy(pAccuracy,1);
-        }
-    }
-    return true;
-}
-
-bool extractPosition(struct gps_data_t* pGpsData, TGNSSPosition* pPosition)
-{
-   if(!pGpsData || !pPosition)
-   {
-        return false;
-   }
-
-   if( ((pGpsData->set & LATLON_SET) || (pGpsData->set & ALTITUDE_SET)) &&
-       (pGpsData->set & MODE_SET) && 
-       ((pGpsData->fix.mode == MODE_2D) || (pGpsData->fix.mode == MODE_3D)) )
-   {
-       pPosition->validityBits = 0;
- 
-       pPosition->timestamp = pGpsData->fix.time;
-
-       if(pGpsData->set & LATLON_SET)
-       {
-           pPosition->validityBits |= GNSS_POSITION_LATITUDE_VALID;
-           pPosition->latitude = pGpsData->fix.latitude;
-
-           pPosition->validityBits |= GNSS_POSITION_LONGITUDE_VALID;
-           pPosition->longitude = pGpsData->fix.longitude;
-
-           LOG_DEBUG(gContext,"Latitude: %lf", pPosition->latitude);
-           LOG_DEBUG(gContext,"Longitude: %lf", pPosition->longitude);
-       }
-
-       if((pGpsData->set & ALTITUDE_SET) && (pGpsData->fix.mode == MODE_3D))
-       {
-           pPosition->validityBits |= GNSS_POSITION_ALTITUDE_VALID;
-           pPosition->altitude = (float)pGpsData->fix.altitude;
-
-           LOG_DEBUG(gContext,"Altitude: %lf", pPosition->altitude);
-       }
-
-       if (cbPosition != 0)
-       {
-           cbPosition(pPosition,1);
-       }
-    }
-    return true;
-}
-
-bool extractCourse(struct gps_data_t* pGpsData, TGNSSCourse* pCourse)
-{
-   static float oldSpeed = 0;
-   static float oldClimb = 0;
-   static float oldHeading = 0;
-
-   if(!pGpsData || !pCourse)
-   {
-        return false;
-   }
-   
-   if( ((pGpsData->set & SPEED_SET) && (oldSpeed != (float)pGpsData->fix.speed)) || 
-       ((pGpsData->set & CLIMB_SET) && (oldClimb != (float)pGpsData->fix.climb)) || 
-       ((pGpsData->set & TRACK_SET) && (oldHeading != (float)pGpsData->fix.track)) )
-   {
-    
-       pCourse->validityBits = 0;
-
-       pCourse->timestamp = pGpsData->fix.time;
-
-       if(pGpsData->set & SPEED_SET)
-       {
-           oldSpeed = pCourse->speed;
-           pCourse->speed = (float)pGpsData->fix.speed; 
-           pCourse->validityBits |= GNSS_COURSE_SPEED_VALID;
-           LOG_DEBUG(gContext,"Speed: %lf", pCourse->speed);
-       }
-
-       if(pGpsData->set & CLIMB_SET)
-       {
-           oldClimb = pCourse->climb;
-           pCourse->climb = (float)pGpsData->fix.climb;
-           pCourse->validityBits |= GNSS_COURSE_CLIMB_VALID;
-           LOG_DEBUG(gContext,"Climb: %lf", pCourse->climb);
-       }
-            		
-       if(pGpsData->set & TRACK_SET)
-       {
-           oldHeading = pCourse->heading;
-           pCourse->heading = (float)pGpsData->fix.track;
-           pCourse->validityBits |= GNSS_COURSE_HEADING_VALID;
-           LOG_DEBUG(gContext,"Heading: %lf", pCourse->heading);
-       }
-            	
-       if(cbCourse != 0)
-       {
-           cbCourse(pCourse,1);
-       }
-    }
-    return true;
-}
-
-
-bool extractLocation(struct gps_data_t* pGpsData, TGNSSLocation* pLocation)
+bool extractSpatial(struct gps_data_t* pGpsData, TGNSSSpatial* pSpatial)
 {
     static float oldHSpeed = 0;
     static float oldVSpeed = 0;
@@ -291,14 +127,14 @@ bool extractLocation(struct gps_data_t* pGpsData, TGNSSLocation* pLocation)
     bool fixStatusChanged = false;
     bool satellitesChanged = false;
 
-    if(!pGpsData || !pLocation)
+    if(!pGpsData || !pSpatial)
     {
         return false;
     }
 
-    pLocation->validityBits = 0;
+    pSpatial->validityBits = 0;
 
-    pLocation->timestamp = pGpsData->fix.time;
+    pSpatial->timestamp = pGpsData->fix.time;
 
     if( ((pGpsData->set & LATLON_SET) || (pGpsData->set & ALTITUDE_SET)) &&
        (pGpsData->set & MODE_SET) && 
@@ -308,22 +144,22 @@ bool extractLocation(struct gps_data_t* pGpsData, TGNSSLocation* pLocation)
  
        if(pGpsData->set & LATLON_SET)
        {
-           pLocation->validityBits |= GNSS_LOCATION_LATITUDE_VALID;
-           pLocation->latitude = pGpsData->fix.latitude;
+           pSpatial->validityBits |= GNSS_SPATIAL_LATITUDE_VALID;
+           pSpatial->latitude = pGpsData->fix.latitude;
 
-           pLocation->validityBits |= GNSS_LOCATION_LONGITUDE_VALID;
-           pLocation->longitude = pGpsData->fix.longitude;
+           pSpatial->validityBits |= GNSS_SPATIAL_LONGITUDE_VALID;
+           pSpatial->longitude = pGpsData->fix.longitude;
 
-           LOG_DEBUG(gContext,"Latitude: %lf", pLocation->latitude);
-           LOG_DEBUG(gContext,"Longitude: %lf", pLocation->longitude);
+           LOG_DEBUG(gContext,"Latitude: %lf", pSpatial->latitude);
+           LOG_DEBUG(gContext,"Longitude: %lf", pSpatial->longitude);
        }
 
        if((pGpsData->set & ALTITUDE_SET) && (pGpsData->fix.mode == MODE_3D))
        {
-           pLocation->validityBits |= GNSS_LOCATION_ALTITUDEMSL_VALID;
-           pLocation->altitudeMSL = (float)pGpsData->fix.altitude;
+           pSpatial->validityBits |= GNSS_SPATIAL_ALTITUDEMSL_VALID;
+           pSpatial->altitudeMSL = (float)pGpsData->fix.altitude;
 
-           LOG_DEBUG(gContext,"Altitude: %lf", pLocation->altitudeMSL);
+           LOG_DEBUG(gContext,"Altitude: %lf", pSpatial->altitudeMSL);
        }
     }
 
@@ -336,26 +172,26 @@ bool extractLocation(struct gps_data_t* pGpsData, TGNSSLocation* pLocation)
         
         if(pGpsData->set & SPEED_SET)
         {
-            oldHSpeed = pLocation->hSpeed;
-            pLocation->hSpeed = (float)pGpsData->fix.speed; 
-            pLocation->validityBits |= GNSS_LOCATION_HSPEED_VALID;
-            LOG_DEBUG(gContext,"Speed: %lf", pLocation->hSpeed);
+            oldHSpeed = pSpatial->hSpeed;
+            pSpatial->hSpeed = (float)pGpsData->fix.speed; 
+            pSpatial->validityBits |= GNSS_SPATIAL_HSPEED_VALID;
+            LOG_DEBUG(gContext,"Speed: %lf", pSpatial->hSpeed);
         }
 
         if(pGpsData->set & CLIMB_SET)
         {
-            oldVSpeed = pLocation->vSpeed;
-            pLocation->vSpeed = (float)pGpsData->fix.climb;
-            pLocation->validityBits |= GNSS_LOCATION_VSPEED_VALID;
-            LOG_DEBUG(gContext,"Climb: %lf", pLocation->vSpeed);
+            oldVSpeed = pSpatial->vSpeed;
+            pSpatial->vSpeed = (float)pGpsData->fix.climb;
+            pSpatial->validityBits |= GNSS_SPATIAL_VSPEED_VALID;
+            LOG_DEBUG(gContext,"Climb: %lf", pSpatial->vSpeed);
         }
             		
         if(pGpsData->set & TRACK_SET)
         {
-            oldHeading = pLocation->heading;
-            pLocation->heading = (float)pGpsData->fix.track;
-            pLocation->validityBits |= GNSS_LOCATION_HEADING_VALID;
-            LOG_DEBUG(gContext,"Heading: %lf", pLocation->heading);
+            oldHeading = pSpatial->heading;
+            pSpatial->heading = (float)pGpsData->fix.track;
+            pSpatial->validityBits |= GNSS_SPATIAL_HEADING_VALID;
+            LOG_DEBUG(gContext,"Heading: %lf", pSpatial->heading);
         }
     }
 
@@ -368,72 +204,72 @@ bool extractLocation(struct gps_data_t* pGpsData, TGNSSLocation* pLocation)
        (pGpsData->set & DOP_SET) ||
        ((pGpsData->set & SATELLITE_SET) && satellitesChanged))
     {
-        oldFixStatus = pLocation->fixStatus;
-        pLocation->fixStatus = convertToFixStatus(pGpsData->fix.mode);
-        pLocation->validityBits |= GNSS_LOCATION_STAT_VALID;
-        LOG_DEBUG(gContext,"FixStatus: %d", (int)pLocation->fixStatus);
+        oldFixStatus = pSpatial->fixStatus;
+        pSpatial->fixStatus = convertToFixStatus(pGpsData->fix.mode);
+        pSpatial->validityBits |= GNSS_SPATIAL_STAT_VALID;
+        LOG_DEBUG(gContext,"FixStatus: %d", (int)pSpatial->fixStatus);
         
         //fixTypeBits: hardcoded
-        pLocation->fixTypeBits |= GNSS_FIX_TYPE_SINGLE_FREQUENCY;
-        pLocation->validityBits |= GNSS_LOCATION_TYPE_VALID;
+        pSpatial->fixTypeBits |= GNSS_FIX_TYPE_SINGLE_FREQUENCY;
+        pSpatial->validityBits |= GNSS_SPATIAL_TYPE_VALID;
         
-        pLocation->pdop = (float)pGpsData->dop.pdop;
-        pLocation->validityBits |= GNSS_LOCATION_PDOP_VALID;
-        LOG_DEBUG(gContext,"pdop: %lf", pLocation->pdop);
+        pSpatial->pdop = (float)pGpsData->dop.pdop;
+        pSpatial->validityBits |= GNSS_SPATIAL_PDOP_VALID;
+        LOG_DEBUG(gContext,"pdop: %lf", pSpatial->pdop);
 
-        pLocation->hdop = (float)pGpsData->dop.hdop;
-        pLocation->validityBits |= GNSS_LOCATION_HDOP_VALID;
-        LOG_DEBUG(gContext,"hdop: %lf", pLocation->hdop);
+        pSpatial->hdop = (float)pGpsData->dop.hdop;
+        pSpatial->validityBits |= GNSS_SPATIAL_HDOP_VALID;
+        LOG_DEBUG(gContext,"hdop: %lf", pSpatial->hdop);
 
-        pLocation->vdop = (float)pGpsData->dop.vdop;
-        pLocation->validityBits |= GNSS_LOCATION_VDOP_VALID;
-        LOG_DEBUG(gContext,"vdop: %lf", pLocation->vdop);
+        pSpatial->vdop = (float)pGpsData->dop.vdop;
+        pSpatial->validityBits |= GNSS_SPATIAL_VDOP_VALID;
+        LOG_DEBUG(gContext,"vdop: %lf", pSpatial->vdop);
 
-        pLocation->sigmaHPosition = (float)pGpsData->fix.epx;
-        pLocation->validityBits |= GNSS_LOCATION_SHPOS_VALID;
-        LOG_DEBUG(gContext,"sigmaHorPosition: %lf", pLocation->sigmaHPosition);
+        pSpatial->sigmaHPosition = (float)pGpsData->fix.epx;
+        pSpatial->validityBits |= GNSS_SPATIAL_SHPOS_VALID;
+        LOG_DEBUG(gContext,"sigmaHorPosition: %lf", pSpatial->sigmaHPosition);
 
-        pLocation->sigmaHSpeed = (float)pGpsData->fix.eps;
-        pLocation->validityBits |= GNSS_LOCATION_SHSPEED_VALID;
-        LOG_DEBUG(gContext,"sigmaHorSpeed: %lf", pLocation->sigmaHSpeed);
+        pSpatial->sigmaHSpeed = (float)pGpsData->fix.eps;
+        pSpatial->validityBits |= GNSS_SPATIAL_SHSPEED_VALID;
+        LOG_DEBUG(gContext,"sigmaHorSpeed: %lf", pSpatial->sigmaHSpeed);
 
-        pLocation->sigmaHeading = (float)pGpsData->fix.epd;
-        pLocation->validityBits |= GNSS_LOCATION_SHEADING_VALID;
-        LOG_DEBUG(gContext,"sigmaHeading: %lf", pLocation->sigmaHeading);
+        pSpatial->sigmaHeading = (float)pGpsData->fix.epd;
+        pSpatial->validityBits |= GNSS_SPATIAL_SHEADING_VALID;
+        LOG_DEBUG(gContext,"sigmaHeading: %lf", pSpatial->sigmaHeading);
 
         if(pGpsData->satellites_used >= 0)
         {
-            oldUsedSatellites = pLocation->usedSatellites;
-            pLocation->usedSatellites = (uint16_t)pGpsData->satellites_used;      
-            pLocation->validityBits |= GNSS_LOCATION_USAT_VALID;
-            LOG_DEBUG(gContext,"Used Satellites: %d", pLocation->usedSatellites);
+            oldUsedSatellites = pSpatial->usedSatellites;
+            pSpatial->usedSatellites = (uint16_t)pGpsData->satellites_used;      
+            pSpatial->validityBits |= GNSS_SPATIAL_USAT_VALID;
+            LOG_DEBUG(gContext,"Used Satellites: %d", pSpatial->usedSatellites);
         }
         
         if(pGpsData->satellites_visible >= 0)
         {
-            oldVisibleSatellites = pLocation->visibleSatellites; 
-            pLocation->visibleSatellites = (uint16_t)pGpsData->satellites_visible;
-            pLocation->validityBits |= GNSS_LOCATION_VSAT_VALID;
-            LOG_DEBUG(gContext,"Visible Satellites: %d", pLocation->visibleSatellites);
+            oldVisibleSatellites = pSpatial->visibleSatellites; 
+            pSpatial->visibleSatellites = (uint16_t)pGpsData->satellites_visible;
+            pSpatial->validityBits |= GNSS_SPATIAL_VSAT_VALID;
+            LOG_DEBUG(gContext,"Visible Satellites: %d", pSpatial->visibleSatellites);
         }
     }
    
     if (positionAvailable || velocityAvailable || fixStatusChanged || satellitesChanged)
     {
-        if(cbLocation != 0)
+        if(cbSpatial != 0)
         {
-            cbLocation(pLocation,1);
+            cbSpatial(pSpatial,1);
         }
     }
     
     return true;
 }
 
-bool extractUTC(struct gps_data_t* pGpsData, TGNSSUTC* pUTC)
+bool extractTime(struct gps_data_t* pGpsData, TGNSSTime* pTime)
 {
     static timestamp_t oldTime = 0;
 
-    if(!pGpsData || !pUTC)
+    if(!pGpsData || !pTime)
     {
         return false;
     }
@@ -442,28 +278,28 @@ bool extractUTC(struct gps_data_t* pGpsData, TGNSSUTC* pUTC)
    {
         char month [12] [4] = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
         
-        pUTC->validityBits = 0;
-        pUTC->timestamp = pGpsData->fix.time;
+        pTime->validityBits = 0;
+        pTime->timestamp = pGpsData->fix.time;
 
         if(pGpsData->set & TIME_SET)
         {
             oldTime = pGpsData->fix.time;
             time_t unix_sec = pGpsData->fix.time;
             struct tm * ptm = gmtime (&unix_sec);
-            pUTC->year = ptm->tm_year+1900;
-            pUTC->month = ptm->tm_mon;
-            pUTC->day = ptm->tm_mday;
-            pUTC->hour = ptm->tm_hour;
-            pUTC->minute = ptm->tm_min;
-            pUTC->second = ptm->tm_sec;
-            pUTC->ms = 1000*fmod(pGpsData->fix.time, 1.0);
-            pUTC->validityBits |= GNSS_UTC_TIME_VALID | GNSS_UTC_DATE_VALID;
-            LOG_DEBUG(gContext,"UTC: %04d-%s-%02d %02d:%02d:%02d", pUTC->year, month[pUTC->month%12], pUTC->day, pUTC->hour, pUTC->minute, pUTC->second);
+            pTime->year = ptm->tm_year+1900;
+            pTime->month = ptm->tm_mon;
+            pTime->day = ptm->tm_mday;
+            pTime->hour = ptm->tm_hour;
+            pTime->minute = ptm->tm_min;
+            pTime->second = ptm->tm_sec;
+            pTime->ms = 1000*fmod(pGpsData->fix.time, 1.0);
+            pTime->validityBits |= GNSS_TIME_TIME_VALID | GNSS_TIME_DATE_VALID;
+            LOG_DEBUG(gContext,"UTC: %04d-%s-%02d %02d:%02d:%02d", pTime->year, month[pTime->month%12], pTime->day, pTime->hour, pTime->minute, pTime->second);
         }
 
-        if(cbUTC != 0)
+        if(cbTime != 0)
         {
-            cbUTC(pUTC,1);
+            cbTime(pTime,1);
         }
     }
     return true;
@@ -515,29 +351,15 @@ void *listen( void *ptr )
             {
                 pthread_mutex_lock(&mutexData);
 
-                if(!extractPosition(&gpsdata,&gPosition))
+
+                if(!extractSpatial(&gpsdata,&gSpatial))
                 {
-                    LOG_ERROR_MSG(gContext,"error extracting position");
+                    LOG_ERROR_MSG(gContext,"error extracting spatial data");
                 }
 
-                if(!extractCourse(&gpsdata,&gCourse))
+                if(!extractTime(&gpsdata,&gTime))
                 {
-                    LOG_ERROR_MSG(gContext,"error extracting course");
-                }
-      	
-                if(!extractAccuracy(&gpsdata,&gAccuracy))
-                {
-                    LOG_ERROR_MSG(gContext,"error extracting accuracy");
-                }
-
-                if(!extractLocation(&gpsdata,&gLocation))
-                {
-                    LOG_ERROR_MSG(gContext,"error extracting Location");
-                }
-
-                if(!extractUTC(&gpsdata,&gUTC))
-                {
-                    LOG_ERROR_MSG(gContext,"error extracting UTC");
+                    LOG_ERROR_MSG(gContext,"error extracting Time");
                 }
 
 

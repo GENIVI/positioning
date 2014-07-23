@@ -19,17 +19,14 @@
 #include "globals.h"
 #include "gnss-ext.h"
 
-TGNSSAccuracy gAccuracy;
-GNSSAccuracyCallback cbAccuracy = 0;
-
 TGNSSSatelliteDetail gSatelliteDetail; //TODO: buffer full set of satellite details for one point in time
 GNSSSatelliteDetailCallback cbSatelliteDetail = 0;
 
-TGNSSLocation gLocation;
-GNSSLocationCallback cbLocation = 0;
+TGNSSSpatial gSpatial;
+GNSSSpatialCallback cbSpatial = 0;
 
-TGNSSUTC gUTC;
-GNSSUTCCallback cbUTC = 0;
+TGNSSTime gTime;
+GNSSTimeCallback cbTime = 0;
 
 bool gnssExtendedInit()
 {
@@ -41,47 +38,6 @@ bool gnssExtendedDestroy()
     return true;
 }
 
-bool gnssExtendedRegisterAccuracyCallback(GNSSAccuracyCallback callback)
-{
-    if(cbAccuracy != 0) 
-    {
-        return false; //if already registered
-    }
-
-    pthread_mutex_lock(&mutexCb);
-    cbAccuracy = callback;
-    pthread_mutex_unlock(&mutexCb);
-
-    return true;
-}
-
-bool gnssExtendedDeregisterAccuracyCallback(GNSSAccuracyCallback callback)
-{
-    if(cbAccuracy == callback && callback != 0)
-    {
-        pthread_mutex_lock(&mutexCb);
-        cbAccuracy = 0;
-        pthread_mutex_unlock(&mutexCb);
-
-        return true;
-    }
-
-    return false;
-}
-
-bool gnssExtendedGetAccuracy(TGNSSAccuracy* accuracy)
-{
-    if(!accuracy)
-    {
-        return false;
-    }
-
-    pthread_mutex_lock(&mutexData);
-    *accuracy = gAccuracy;
-    pthread_mutex_unlock(&mutexData);
-
-    return true;
-}
 
 bool gnssExtendedRegisterSatelliteDetailCallback(GNSSSatelliteDetailCallback callback)
 {
@@ -127,26 +83,26 @@ bool gnssExtendedGetSatelliteDetails(TGNSSSatelliteDetail* satelliteDetails, uin
     return true;
 }
 
-bool gnssExtendedRegisterLocationCallback(GNSSLocationCallback callback)
+bool gnssExtendedRegisterSpatialCallback(GNSSSpatialCallback callback)
 {
-    if(cbLocation != 0) 
+    if(cbSpatial != 0) 
     {
         return false; //if already registered
     }
 
     pthread_mutex_lock(&mutexCb);
-    cbLocation = callback;
+    cbSpatial = callback;
     pthread_mutex_unlock(&mutexCb);
 
     return true;
 }
 
-bool gnssExtendedDeregisterLocationCallback(GNSSLocationCallback callback)
+bool gnssExtendedDeregisterSpatialCallback(GNSSSpatialCallback callback)
 {
-    if(cbLocation == callback && callback != 0)
+    if(cbSpatial == callback && callback != 0)
     {
         pthread_mutex_lock(&mutexCb);
-        cbLocation = 0;
+        cbSpatial = 0;
         pthread_mutex_unlock(&mutexCb);
 
         return true;
@@ -155,41 +111,41 @@ bool gnssExtendedDeregisterLocationCallback(GNSSLocationCallback callback)
     return false;
 }
 
-bool gnssExtendedGetLocation(TGNSSLocation* location)
+bool gnssExtendedGetSpatial(TGNSSSpatial* spatial)
 {
-    if(!location)
+    if(!spatial)
     {
         return false;
     }
 
     pthread_mutex_lock(&mutexData);
-    *location = gLocation;
+    *spatial = gSpatial;
     pthread_mutex_unlock(&mutexData);
 
     return true;
 }
 
 
-bool gnssExtendedRegisterUTCCallback(GNSSUTCCallback callback)
+bool gnssExtendedRegisterTimeCallback(GNSSTimeCallback callback)
 {
-    if(cbUTC != 0) 
+    if(cbTime != 0) 
     {
         return false; //if already registered
     }
 
     pthread_mutex_lock(&mutexCb);
-    cbUTC = callback;
+    cbTime = callback;
     pthread_mutex_unlock(&mutexCb);
 
     return true;
 }
 
-bool gnssExtendedDeregisterUTCCallback(GNSSUTCCallback callback)
+bool gnssExtendedDeregisterTimeCallback(GNSSTimeCallback callback)
 {
-    if(cbUTC == callback && callback != 0)
+    if(cbTime == callback && callback != 0)
     {
         pthread_mutex_lock(&mutexCb);
-        cbUTC = 0;
+        cbTime = 0;
         pthread_mutex_unlock(&mutexCb);
 
         return true;
@@ -198,15 +154,15 @@ bool gnssExtendedDeregisterUTCCallback(GNSSUTCCallback callback)
     return false;
 }
 
-bool gnssExtendedGetUTC(TGNSSUTC* utc)
+bool gnssExtendedGetTime(TGNSSTime* time)
 {
-    if(!utc)
+    if(!time)
     {
         return false;
     }
 
     pthread_mutex_lock(&mutexData);
-    *utc = gUTC;
+    *time = gTime;
     pthread_mutex_unlock(&mutexData);
 
     return true;
