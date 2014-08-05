@@ -34,10 +34,10 @@ PositionFeedback::~PositionFeedback()
 {
   ::DBus::Struct< uint16_t, uint16_t, uint16_t, std::string > Version;
 
-  Version._1 = 2;
+  Version._1 = 3;
   Version._2 = 0;
   Version._3 = 0;
-  Version._4 = std::string("04-06-2013");
+  Version._4 = std::string("05-08-2014");
 
   return Version;
 }

@@ -12,12 +12,12 @@
      this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 -->
 
-<node name="/org/genivi/enhancedpositionservice" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="introspect.xsd">
+<node name="/org/genivi/positioning/Configuration" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="introspect.xsd">
 
   <interface name="org.genivi.positioning.Configuration">
-    <version>2.0.0 (04-06-2013)</version>
+    <version>3.0.0-alpha (05-08-2014)</version>
     <doc>
-      <line>Configuration = This interface allows a client application to set and retrieve configuration options</line>
+      <line>Configuration = This i8nterface allows a client application to set and retrieve configuration options</line>
     </doc>
    
     <method name="GetVersion">
