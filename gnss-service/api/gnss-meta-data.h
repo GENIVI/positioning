@@ -62,12 +62,12 @@ typedef struct {
 } TGnssMetaData;
 
 /**
- * Retrieve the metadata of all available GNSS sensors.
- * @param returns a a pointer an array of TGnssMetaData (maybe NULL if no metadata is available)
- * @return number of elements in the array of TGnssMetaData
+ * Provide meta information about GNSS service.
+ * The meta data of a service provides information about it's name, version, type, subtype, sampling frequency etc.
+ * @param data Meta data content about the sensor service.
+ * @return True if meta data is available.
  */
-int32_t getGnssMetaDataList(const TGnssMetaData** metadata);
-
+bool gnssGetMetaData(TGnssMetaData *data);
 
 #ifdef __cplusplus
 }

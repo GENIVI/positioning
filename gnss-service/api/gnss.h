@@ -294,14 +294,6 @@ typedef void (*GNSSSatelliteDetailCallback)(const TGNSSSatelliteDetail satellite
 typedef void (*GNSSPositionCallback)(const TGNSSPosition position[], uint16_t numElements);
 
 /**
- * Provide meta information about GNSS service.
- * The meta data of a service provides information about it's name, version, type, subtype, sampling frequency etc.
- * @param data Meta data content about the sensor service.
- * @return True if meta data is available.
- */
-bool gnssGetMetaData(TGnssMetaData *data);
-
-/**
  * Accessing static configuration information about the antenna position.
  * @param distance After calling the method the currently available antenna configuration data is written into this parameter.
  * @return Is true if data can be provided and false otherwise, e.g. missing initialization

@@ -39,12 +39,3 @@ bool gnssGetMetaData(TGnssMetaData *data)
 
     return true;
 }
-
-
-int32_t getGnssMetaDataList(const TGnssMetaData** metadata)
-{
-    *metadata = &gGnssMetaData;
-
-    return 1;
-    
-}
