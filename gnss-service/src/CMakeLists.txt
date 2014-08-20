@@ -40,7 +40,7 @@ if(WITH_GPSD)
     pkg_check_modules(GPSD libgps>=2.94)
     #generate library using gpsd as input
     set(LIB_SRC_USE_GPSD ${CMAKE_SOURCE_DIR}/src/gnss-use-gpsd.c 
-    ${CMAKE_SOURCE_DIR}/src/gnss-ext.c 
+    ${CMAKE_SOURCE_DIR}/src/gnss-impl.c 
     ${CMAKE_SOURCE_DIR}/src/gnss-meta-data.c)
     add_library(gnss-service-use-gpsd SHARED ${LIB_SRC_USE_GPSD})
     target_link_libraries(gnss-service-use-gpsd gps ${LIBRARIES})
