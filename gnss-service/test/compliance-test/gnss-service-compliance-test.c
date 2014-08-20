@@ -23,7 +23,7 @@
 #include <unistd.h>
 
 #include "gnss-init.h"
-#include "gnss-ext.h"
+#include "gnss.h"
 #include "log.h"
 
 DLT_DECLARE_CONTEXT(gCtx);

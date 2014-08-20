@@ -17,7 +17,7 @@
 **************************************************************************/
 
 #include "globals.h"
-#include "gnss-ext.h"
+#include "gnss.h"
 
 TGNSSSatelliteDetail gSatelliteDetail; //TODO: buffer full set of satellite details for one point in time
 GNSSSatelliteDetailCallback cbSatelliteDetail = 0;

@@ -24,7 +24,7 @@
 #include <time.h>
 
 #include "gnss-init.h"
-#include "gnss-ext.h"
+#include "gnss.h"
 #include "gnss-meta-data.h"
 
 extern pthread_mutex_t mutexCb;

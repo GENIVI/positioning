@@ -22,7 +22,7 @@
 
 #include "enhanced-position-adaptor.h"
 #include "gnss-init.h"
-#include "gnss-ext.h"
+#include "gnss.h"
 
 class EnhancedPosition
   : public org::genivi::positioning::EnhancedPosition_adaptor
