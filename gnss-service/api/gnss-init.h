@@ -26,7 +26,7 @@ extern "C" {
 
 
 // API Version
-#define GENIVI_GNSS_API_MAJOR 2
+#define GENIVI_GNSS_API_MAJOR 3
 #define GENIVI_GNSS_API_MINOR 0
 #define GENIVI_GNSS_API_MICRO 0
 

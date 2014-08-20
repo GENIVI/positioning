@@ -26,7 +26,7 @@
 #include <math.h>
 
 #include "globals.h"
-#include "gnss.h"
+#include "gnss-init.h"
 #include "log.h"
 #include "gps.h"
 

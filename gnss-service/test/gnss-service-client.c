@@ -22,7 +22,7 @@
 #include <stdbool.h>
 #include <unistd.h>
 
-#include "gnss.h"
+#include "gnss-init.h"
 #include "gnss-ext.h"
 #include "log.h"
 
@@ -109,11 +109,6 @@ void init()
     {
         exit(EXIT_FAILURE);
     }
-
-    if(!gnssExtendedInit())
-    {
-        exit(EXIT_FAILURE);
-    }
 }
 
 int main()
@@ -139,7 +134,6 @@ int main()
     gnssDeregisterSatelliteDetailCallback(&cbSatelliteDetail);
     gnssDeregisterPositionCallback(&cbPosition);
 
-    gnssExtendedDestroy();
     gnssDestroy();
 
     return EXIT_SUCCESS;

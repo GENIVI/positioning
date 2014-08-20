@@ -21,7 +21,7 @@
 #include <dbus-c++/dbus.h>
 
 #include "enhanced-position-adaptor.h"
-#include "gnss.h"
+#include "gnss-init.h"
 #include "gnss-ext.h"
 
 class EnhancedPosition

@@ -23,7 +23,7 @@
 #include <pthread.h>
 #include <time.h>
 
-#include "gnss.h"
+#include "gnss-init.h"
 #include "gnss-ext.h"
 #include "gnss-meta-data.h"
 

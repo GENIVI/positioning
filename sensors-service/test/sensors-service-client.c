@@ -24,7 +24,7 @@
 
 //include all sns header files here even if they are not yet used.
 //this helps us to find syntax error during compilation
-#include "sns.h"
+#include "sns-init.h"
 #include "acceleration.h"
 #include "gyroscope.h"
 #include "inclination.h"

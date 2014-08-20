@@ -294,21 +294,7 @@ typedef void (*GNSSSatelliteDetailCallback)(const TGNSSSatelliteDetail satellite
 typedef void (*GNSSPositionCallback)(const TGNSSPosition position[], uint16_t numElements);
 
 /**
- * Initialization of the extended GNSS service.
- * Must be called before using the extended GNSS service to set up the service.
- * @return True if initialization has been successfull.
- */
-bool gnssExtendedInit();
-
-/**
- * Destroy the extended GNSS service.
- * Must be called after using the extended GNSS service to shut down the service.
- * @return True if shutdown has been successfull.
- */
-bool gnssExtendedDestroy();
-
-/**
- * Provide meta information about extended GNSS service.
+ * Provide meta information about GNSS service.
  * The meta data of a service provides information about it's name, version, type, subtype, sampling frequency etc.
  * @param data Meta data content about the sensor service.
  * @return True if meta data is available.
@@ -320,7 +306,7 @@ bool gnssGetMetaData(TGnssMetaData *data);
  * @param distance After calling the method the currently available antenna configuration data is written into this parameter.
  * @return Is true if data can be provided and false otherwise, e.g. missing initialization
  *
- * Static configuration data for the extended GNSS service.
+ * Static configuration data for the GNSS service.
  * The reference point mentioned in the vehicle configuration lies underneath the center of the rear axle on the surface of the road.
  * The reference coordinate system is the car reference system as provided in the documentation.
  * See https://collab.genivi.org/wiki/display/genivi/LBSSensorServiceRequirementsBorg#LBSSensorServiceRequirementsBorg-ReferenceSystem
@@ -336,7 +322,7 @@ bool gnssGetAntennaPosition(TGNSSDistance3D *distance);
 bool gnssGetTime(TGNSSTime *utc);
 
 /**
- * Register extended GNSS UTC time callback.
+ * Register GNSS UTC time callback.
  * The callback will be invoked when new time data is available from the GNSS receiver.
  * The valid flags is updated. The data is only guaranteed to be updated when the valid flag is true.
  * @param callback The callback which should be registered.
@@ -345,7 +331,7 @@ bool gnssGetTime(TGNSSTime *utc);
 bool gnssRegisterTimeCallback(GNSSTimeCallback callback);
 
 /**
- * Deregister extended GNSS UTC time callback.
+ * Deregister GNSS UTC time callback.
  * After calling this method no new time will be delivered to the client.
  * @param callback The callback which should be deregistered.
  * @return True if callback has been deregistered successfully.

@@ -33,7 +33,7 @@
 #include <memory.h>
 
 #include "globals.h"
-#include "gnss.h"
+#include "gnss-init.h"
 #include "log.h"
 
 #define BUFLEN 256

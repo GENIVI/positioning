@@ -22,7 +22,7 @@
 #include <stdbool.h>
 #include <unistd.h>
 
-#include "gnss.h"
+#include "gnss-init.h"
 #include "gnss-ext.h"
 #include "log.h"
 
@@ -80,11 +80,6 @@ bool init()
         return false;
     }
 
-    if(!gnssExtendedInit())
-    {
-        return false;
-    }
-
     return true;
 }
 
@@ -111,7 +106,6 @@ int main()
         //deregister
         gnssDeregisterPositionCallback(&cbPosition);        
 
-        gnssExtendedDestroy();
         gnssDestroy();
     }
     

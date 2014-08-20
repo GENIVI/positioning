@@ -28,16 +28,6 @@ GNSSPositionCallback cbPosition = 0;
 TGNSSTime gTime;
 GNSSTimeCallback cbTime = 0;
 
-bool gnssExtendedInit()
-{
-    return true;
-}
-
-bool gnssExtendedDestroy()
-{
-    return true;
-}
-
 
 bool gnssRegisterSatelliteDetailCallback(GNSSSatelliteDetailCallback callback)
 {
