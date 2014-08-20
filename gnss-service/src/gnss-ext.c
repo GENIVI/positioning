@@ -22,8 +22,8 @@
 TGNSSSatelliteDetail gSatelliteDetail; //TODO: buffer full set of satellite details for one point in time
 GNSSSatelliteDetailCallback cbSatelliteDetail = 0;
 
-TGNSSSpatial gSpatial;
-GNSSSpatialCallback cbSpatial = 0;
+TGNSSPosition gPosition;
+GNSSPositionCallback cbPosition = 0;
 
 TGNSSTime gTime;
 GNSSTimeCallback cbTime = 0;
@@ -39,7 +39,7 @@ bool gnssExtendedDestroy()
 }
 
 
-bool gnssExtendedRegisterSatelliteDetailCallback(GNSSSatelliteDetailCallback callback)
+bool gnssRegisterSatelliteDetailCallback(GNSSSatelliteDetailCallback callback)
 {
     if(cbSatelliteDetail != 0) 
     {
@@ -53,7 +53,7 @@ bool gnssExtendedRegisterSatelliteDetailCallback(GNSSSatelliteDetailCallback cal
     return true;
 }
 
-bool gnssExtendedDeregisterSatelliteDetailCallback(GNSSSatelliteDetailCallback callback)
+bool gnssDeregisterSatelliteDetailCallback(GNSSSatelliteDetailCallback callback)
 {
     if(cbSatelliteDetail == callback && callback != 0)
     {
@@ -67,7 +67,7 @@ bool gnssExtendedDeregisterSatelliteDetailCallback(GNSSSatelliteDetailCallback c
     return false;
 }
 
-bool gnssExtendedGetSatelliteDetails(TGNSSSatelliteDetail* satelliteDetails, uint16_t count, uint16_t* numSatelliteDetails)
+bool gnssGetSatelliteDetails(TGNSSSatelliteDetail* satelliteDetails, uint16_t count, uint16_t* numSatelliteDetails)
 {
     if(!satelliteDetails || !count)
     {
@@ -83,26 +83,26 @@ bool gnssExtendedGetSatelliteDetails(TGNSSSatelliteDetail* satelliteDetails, uin
     return true;
 }
 
-bool gnssExtendedRegisterSpatialCallback(GNSSSpatialCallback callback)
+bool gnssRegisterPositionCallback(GNSSPositionCallback callback)
 {
-    if(cbSpatial != 0) 
+    if(cbPosition != 0) 
     {
         return false; //if already registered
     }
 
     pthread_mutex_lock(&mutexCb);
-    cbSpatial = callback;
+    cbPosition = callback;
     pthread_mutex_unlock(&mutexCb);
 
     return true;
 }
 
-bool gnssExtendedDeregisterSpatialCallback(GNSSSpatialCallback callback)
+bool gnssDeregisterPositionCallback(GNSSPositionCallback callback)
 {
-    if(cbSpatial == callback && callback != 0)
+    if(cbPosition == callback && callback != 0)
     {
         pthread_mutex_lock(&mutexCb);
-        cbSpatial = 0;
+        cbPosition = 0;
         pthread_mutex_unlock(&mutexCb);
 
         return true;
@@ -111,22 +111,22 @@ bool gnssExtendedDeregisterSpatialCallback(GNSSSpatialCallback callback)
     return false;
 }
 
-bool gnssExtendedGetSpatial(TGNSSSpatial* spatial)
+bool gnssGetPosition(TGNSSPosition* position)
 {
-    if(!spatial)
+    if(!position)
     {
         return false;
     }
 
     pthread_mutex_lock(&mutexData);
-    *spatial = gSpatial;
+    *position = gPosition;
     pthread_mutex_unlock(&mutexData);
 
     return true;
 }
 
 
-bool gnssExtendedRegisterTimeCallback(GNSSTimeCallback callback)
+bool gnssRegisterTimeCallback(GNSSTimeCallback callback)
 {
     if(cbTime != 0) 
     {
@@ -140,7 +140,7 @@ bool gnssExtendedRegisterTimeCallback(GNSSTimeCallback callback)
     return true;
 }
 
-bool gnssExtendedDeregisterTimeCallback(GNSSTimeCallback callback)
+bool gnssDeregisterTimeCallback(GNSSTimeCallback callback)
 {
     if(cbTime == callback && callback != 0)
     {
@@ -154,7 +154,7 @@ bool gnssExtendedDeregisterTimeCallback(GNSSTimeCallback callback)
     return false;
 }
 
-bool gnssExtendedGetTime(TGNSSTime* time)
+bool gnssGetTime(TGNSSTime* time)
 {
     if(!time)
     {

@@ -183,46 +183,46 @@ typedef struct {
 } TGNSSSatelliteDetail;
 
 /**
- * TGNSSSpatial::validityBits provides information about the currently valid signals 
+ * TGNSSPosition::validityBits provides information about the currently valid signals 
  * of the GNSS position and velocity including status and accuracy data.
- * It is a or'ed bitmask of the EGNSSLocationValidityBits values.
+ * It is a or'ed bitmask of the EGNSSPositionValidityBits values.
  */
 typedef enum {
     //position
-    GNSS_SPATIAL_LATITUDE_VALID        = 0x00000001,    /**< Validity bit for field TGNSSSpatial::latitude. */
-    GNSS_SPATIAL_LONGITUDE_VALID       = 0x00000002,    /**< Validity bit for field TGNSSSpatial::longitude. */
-    GNSS_SPATIAL_ALTITUDEMSL_VALID     = 0x00000004,    /**< Validity bit for field TGNSSSpatial::altitudeMSL. */
-    GNSS_SPATIAL_ALTITUDEELL_VALID     = 0x00000008,    /**< Validity bit for field TGNSSSpatial::altitudeEll. */
+    GNSS_POSITION_LATITUDE_VALID        = 0x00000001,    /**< Validity bit for field TGNSSPosition::latitude. */
+    GNSS_POSITION_LONGITUDE_VALID       = 0x00000002,    /**< Validity bit for field TGNSSPosition::longitude. */
+    GNSS_POSITION_ALTITUDEMSL_VALID     = 0x00000004,    /**< Validity bit for field TGNSSPosition::altitudeMSL. */
+    GNSS_POSITION_ALTITUDEELL_VALID     = 0x00000008,    /**< Validity bit for field TGNSSPosition::altitudeEll. */
     //velocity
-    GNSS_SPATIAL_HSPEED_VALID          = 0x00000010,    /**< Validity bit for field TGNSSSpatial::hSpeed. */
-    GNSS_SPATIAL_VSPEED_VALID          = 0x00000020,    /**< Validity bit for field TGNSSSpatial::vSpeed. */
-    GNSS_SPATIAL_HEADING_VALID         = 0x00000040,    /**< Validity bit for field TGNSSSpatial::heading. */
+    GNSS_POSITION_HSPEED_VALID          = 0x00000010,    /**< Validity bit for field TGNSSPosition::hSpeed. */
+    GNSS_POSITION_VSPEED_VALID          = 0x00000020,    /**< Validity bit for field TGNSSPosition::vSpeed. */
+    GNSS_POSITION_HEADING_VALID         = 0x00000040,    /**< Validity bit for field TGNSSPosition::heading. */
     //quality parameters: satellite constellation
-    GNSS_SPATIAL_PDOP_VALID            = 0x00000080,    /**< Validity bit for field TGNSSSpatial::pdop. */
-    GNSS_SPATIAL_HDOP_VALID            = 0x00000100,    /**< Validity bit for field TGNSSSpatial::hdop. */
-    GNSS_SPATIAL_VDOP_VALID            = 0x00000200,    /**< Validity bit for field TGNSSSpatial::vdop. */
+    GNSS_POSITION_PDOP_VALID            = 0x00000080,    /**< Validity bit for field TGNSSPosition::pdop. */
+    GNSS_POSITION_HDOP_VALID            = 0x00000100,    /**< Validity bit for field TGNSSPosition::hdop. */
+    GNSS_POSITION_VDOP_VALID            = 0x00000200,    /**< Validity bit for field TGNSSPosition::vdop. */
     
-    GNSS_SPATIAL_USAT_VALID            = 0x00000400,    /**< Validity bit for field TGNSSSpatial::usedSatellites. */
-    GNSS_SPATIAL_TSAT_VALID            = 0x00000800,    /**< Validity bit for field TGNSSSpatial::trackedSatellites. */
-    GNSS_SPATIAL_VSAT_VALID            = 0x00001000,    /**< Validity bit for field TGNSSSpatial::visibleSatellites. */
+    GNSS_POSITION_USAT_VALID            = 0x00000400,    /**< Validity bit for field TGNSSPosition::usedSatellites. */
+    GNSS_POSITION_TSAT_VALID            = 0x00000800,    /**< Validity bit for field TGNSSPosition::trackedSatellites. */
+    GNSS_POSITION_VSAT_VALID            = 0x00001000,    /**< Validity bit for field TGNSSPosition::visibleSatellites. */
     //quality parameters: error estimates
-    GNSS_SPATIAL_SHPOS_VALID           = 0x00002000,    /**< Validity bit for field TGNSSSpatial::sigmaHPosition. */
-    GNSS_SPATIAL_SALT_VALID            = 0x00004000,    /**< Validity bit for field TGNSSSpatial::sigmaAltitude. */
-    GNSS_SPATIAL_SHSPEED_VALID         = 0x00008000,    /**< Validity bit for field TGNSSSpatial::sigmaHSpeed. */
-    GNSS_SPATIAL_SVSPEED_VALID         = 0x00010000,    /**< Validity bit for field TGNSSSpatial::sigmaVSpeed. */
-    GNSS_SPATIAL_SHEADING_VALID        = 0x00020000,    /**< Validity bit for field TGNSSSpatial::sigmaHeading. */
+    GNSS_POSITION_SHPOS_VALID           = 0x00002000,    /**< Validity bit for field TGNSSPosition::sigmaHPosition. */
+    GNSS_POSITION_SALT_VALID            = 0x00004000,    /**< Validity bit for field TGNSSPosition::sigmaAltitude. */
+    GNSS_POSITION_SHSPEED_VALID         = 0x00008000,    /**< Validity bit for field TGNSSPosition::sigmaHSpeed. */
+    GNSS_POSITION_SVSPEED_VALID         = 0x00010000,    /**< Validity bit for field TGNSSPosition::sigmaVSpeed. */
+    GNSS_POSITION_SHEADING_VALID        = 0x00020000,    /**< Validity bit for field TGNSSPosition::sigmaHeading. */
     //quality parameters: overall GNSS fix status
-    GNSS_SPATIAL_STAT_VALID            = 0x00040000,    /**< Validity bit for field TGNSSSpatial::fixStatus. */
-    GNSS_SPATIAL_TYPE_VALID            = 0x00080000,    /**< Validity bit for field TGNSSSpatial::fixTypeBits. */    
-} EGNSSSpatialValidityBits;
+    GNSS_POSITION_STAT_VALID            = 0x00040000,    /**< Validity bit for field TGNSSPosition::fixStatus. */
+    GNSS_POSITION_TYPE_VALID            = 0x00080000,    /**< Validity bit for field TGNSSPosition::fixTypeBits. */    
+} EGNSSPositionValidityBits;
 
 /**
- * GNSS spatial data: position and velocity including status and accuracy.
+ * GNSS position data including velocity, status and accuracy.
  * This data structure provides all GNSS information which is typically needed 
  * for positioning applications such as GNSS/Dead Reckoning sensor fusion.
  */
 typedef struct {
-    uint64_t timestamp;             /**< Timestamp of the acquisition of the location data. [ms] */ 
+    uint64_t timestamp;             /**< Timestamp of the acquisition of the GNSS data. [ms] */ 
     //position
     double latitude;                /**< Latitude in WGS84 in degrees. */ 
     double longitude;               /**< Longitude in WGS84 in degrees. */ 
@@ -251,15 +251,15 @@ typedef struct {
                                          [bitwise or'ed @ref EGNSSFixType values]. */
 
     uint32_t validityBits;          /**< Bit mask indicating the validity of each corresponding value.
-                                         [bitwise or'ed @ref EGNSSSpatialValidityBits values].
+                                         [bitwise or'ed @ref EGNSSPositionValidityBits values].
                                          Must be checked before usage. */                                         
-} TGNSSSpatial;
+} TGNSSPosition;
 
 
 
 /**
- * Callback type for extended GNSS UTC date and time.
- * Use this type of callback if you want to register for extended GNSS UTC time data.
+ * Callback type for GNSS UTC date and time.
+ * Use this type of callback if you want to register for GNSS UTC time data.
  * This callback may return buffered data (numElements >1) for different reasons
  *   for (large) portions of data buffered at startup
  *   for data buffered during regular operation e.g. for performance optimization (reduction of callback invocation frequency)
@@ -282,16 +282,16 @@ typedef void (*GNSSTimeCallback)(const TGNSSTime time[], uint16_t numElements);
 typedef void (*GNSSSatelliteDetailCallback)(const TGNSSSatelliteDetail satelliteDetail[], uint16_t numElements);
 
 /**
- * Callback type for GNSS spatial data: position and velocity including status and accuracy
- * Use this type of callback if you want to register for GNSS spatial data.
+ * Callback type for GNSS position data
+ * Use this type of callback if you want to register for GNSS position data.
  * This callback may return buffered data (numElements >1) for different reasons
  *   for (large) portions of data buffered at startup
  *   for data buffered during regular operation e.g. for performance optimization (reduction of callback invocation frequency)
  * If the array contains (numElements >1), the elements will be ordered with rising timestamps 
- * @param time pointer to an array of TGNSSSpatial with size numElements 
+ * @param position pointer to an array of TGNSSPosition with size numElements 
  * @param numElements: allowed range: >=1. If numElements >1, buffered data are provided.  
  */
-typedef void (*GNSSSpatialCallback)(const TGNSSSpatial location[], uint16_t numElements);
+typedef void (*GNSSPositionCallback)(const TGNSSPosition position[], uint16_t numElements);
 
 /**
  * Initialization of the extended GNSS service.
@@ -313,7 +313,7 @@ bool gnssExtendedDestroy();
  * @param data Meta data content about the sensor service.
  * @return True if meta data is available.
  */
-bool gnssExtendedGetMetaData(TGnssMetaData *data);
+bool gnssGetMetaData(TGnssMetaData *data);
 
 /**
  * Accessing static configuration information about the antenna position.
@@ -325,15 +325,15 @@ bool gnssExtendedGetMetaData(TGnssMetaData *data);
  * The reference coordinate system is the car reference system as provided in the documentation.
  * See https://collab.genivi.org/wiki/display/genivi/LBSSensorServiceRequirementsBorg#LBSSensorServiceRequirementsBorg-ReferenceSystem
  */
-bool gnssExtendedGetAntennaPosition(TGNSSDistance3D *distance);
+bool gnssGetAntennaPosition(TGNSSDistance3D *distance);
 
 /**
  * Method to get the UTC date / time data of the GNSS receiver at a specific point in time.
- * The valid flag is updated. The data is only guaranteed to be updated when the valid flag is true.
+ * The valid flags is updated. The data is only guaranteed to be updated when the valid flag is true.
  * @param time After calling the method the current GNSS UTC date / time is written into this parameter.
  * @return Is true if data can be provided and false otherwise, e.g. missing initialization
  */
-bool gnssExtendedGetTime(TGNSSTime *utc);
+bool gnssGetTime(TGNSSTime *utc);
 
 /**
  * Register extended GNSS UTC time callback.
@@ -342,7 +342,7 @@ bool gnssExtendedGetTime(TGNSSTime *utc);
  * @param callback The callback which should be registered.
  * @return True if callback has been registered successfully.
  */
-bool gnssExtendedRegisterTimeCallback(GNSSTimeCallback callback);
+bool gnssRegisterTimeCallback(GNSSTimeCallback callback);
 
 /**
  * Deregister extended GNSS UTC time callback.
@@ -350,7 +350,7 @@ bool gnssExtendedRegisterTimeCallback(GNSSTimeCallback callback);
  * @param callback The callback which should be deregistered.
  * @return True if callback has been deregistered successfully.
  */
-bool gnssExtendedDeregisterTimeCallback(GNSSTimeCallback callback);
+bool gnssDeregisterTimeCallback(GNSSTimeCallback callback);
 
 /**
  * Method to get the GNSS satellite details at a specific point in time.
@@ -360,7 +360,7 @@ bool gnssExtendedDeregisterTimeCallback(GNSSTimeCallback callback);
  * @param numSatelliteDetails Number of elements written to the array *satelliteDetails.
  * @return Is true if data can be provided and false otherwise, e.g. missing initialization
  */
-bool gnssExtendedGetSatelliteDetails(TGNSSSatelliteDetail* satelliteDetails, uint16_t count, uint16_t* numSatelliteDetails);
+bool gnssGetSatelliteDetails(TGNSSSatelliteDetail* satelliteDetails, uint16_t count, uint16_t* numSatelliteDetails);
 
 /**
  * Register GNSS satellite detail callback.
@@ -369,7 +369,7 @@ bool gnssExtendedGetSatelliteDetails(TGNSSSatelliteDetail* satelliteDetails, uin
  * @param callback The callback which should be registered.
  * @return True if callback has been registered successfully.
  */
-bool gnssExtendedRegisterSatelliteDetailCallback(GNSSSatelliteDetailCallback callback);
+bool gnssRegisterSatelliteDetailCallback(GNSSSatelliteDetailCallback callback);
 
 /**
  * Deregister GNSS satellite detail callback.
@@ -377,32 +377,32 @@ bool gnssExtendedRegisterSatelliteDetailCallback(GNSSSatelliteDetailCallback cal
  * @param callback The callback which should be deregistered.
  * @return True if callback has been deregistered successfully.
  */
-bool gnssExtendedDeregisterSatelliteDetailCallback(GNSSSatelliteDetailCallback callback);
+bool gnssDeregisterSatelliteDetailCallback(GNSSSatelliteDetailCallback callback);
 
 /**
- * Method to get the GNSS spatial data (position, velocity, accuracy) at a specific point in time.
+ * Method to get the GNSS position data at a specific point in time.
  * All valid flags are updated. The data is only guaranteed to be updated when the valid flag is true.
- * @param positionVelocityAccuracy After calling the method current GNSS position, velocity, accuracy are written into this parameter.
+ * @param position After calling the method current GNSS position, velocity, accuracy are written into this parameter.
  * @return Is true if data can be provided and false otherwise, e.g. missing initialization
  */
-bool gnssExtendedGetSpatial(TGNSSSpatial* spatial);
+bool gnssGetPosition(TGNSSPosition* position);
 
 /**
- * Register GNSS spatial data (position, velocity, accuracy) callback.
- * The callback will be invoked when new spatial data data is available from the GNSS receiver.
+ * Register GNSS position callback.
+ * The callback will be invoked when new position data data is available from the GNSS receiver.
  * The valid flags is updated. The data is only guaranteed to be updated when the valid flag is true.
  * @param callback The callback which should be registered.
  * @return True if callback has been registered successfully.
  */
-bool gnssExtendedRegisterSpatialCallback(GNSSSpatialCallback callback);
+bool gnssRegisterPositionCallback(GNSSPositionCallback callback);
 
 /**
- * Deregister GNSS spatial data (position, velocity, accuracy) callback.
+ * Deregister GNSS position callback.
  * After calling this method no new data will be delivered to the client.
  * @param callback The callback which should be deregistered.
  * @return True if callback has been deregistered successfully.
  */
-bool gnssExtendedDeregisterSpatialCallback(GNSSSpatialCallback callback);
+bool gnssDeregisterPositionCallback(GNSSPositionCallback callback);
 
 
 /**
@@ -418,10 +418,10 @@ bool gnssExtendedDeregisterSpatialCallback(GNSSSpatialCallback callback);
  *              maximum values are written to this parameter and the return value will be false.
  * @return      True if the precision timing is available and fits in the range which can be represented by the delta parameter.
  */
-bool gnssExtendedGetPrecisionTimingOffset(int32_t *delta);
+bool gnssGetPrecisionTimingOffset(int32_t *delta);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* INCLUDE_GENIVI_SNS_GNSS_EXT */
+#endif /* INCLUDE_GENIVI_GNSS_EXT */

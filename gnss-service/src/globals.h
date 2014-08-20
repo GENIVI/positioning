@@ -31,14 +31,14 @@ extern pthread_mutex_t mutexCb;
 extern pthread_mutex_t mutexData;
 
 extern TGNSSSatelliteDetail gSatelliteDetail; //TODO: buffer full set of satellite details for one point in time
-extern TGNSSSpatial gSpatial;
+extern TGNSSPosition gPosition;
 extern TGNSSTime gTime;
 
 
 extern const TGnssMetaData gMetaData;
 
 extern GNSSSatelliteDetailCallback cbSatelliteDetail;
-extern GNSSSpatialCallback cbSpatial;
+extern GNSSPositionCallback cbPosition;
 extern GNSSTimeCallback cbTime;
 
 #endif /* GLOBALS_H */

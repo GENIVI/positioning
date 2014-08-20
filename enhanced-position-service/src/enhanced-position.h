@@ -61,11 +61,11 @@ private:
 
   static void cbSatelliteDetail(const TGNSSSatelliteDetail satelliteDetail[], uint16_t numElements);
 
-  static void cbSpatial(const TGNSSSpatial spatial[], uint16_t numElements);
-  static void sigPositionUpdate(const TGNSSSpatial spatial[], uint16_t numElements);
-  static void sigAccuracyUpdate(const TGNSSSpatial spatial[], uint16_t numElements);
-  static void sigStatusUpdate(const TGNSSSpatial spatial[], uint16_t numElements);  
-  static void sigSatelliteInfoUpdate(const TGNSSSpatial spatial[], uint16_t numElements);
+  static void cbPosition(const TGNSSPosition position[], uint16_t numElements);
+  static void sigPositionUpdate(const TGNSSPosition position[], uint16_t numElements);
+  static void sigAccuracyUpdate(const TGNSSPosition position[], uint16_t numElements);
+  static void sigStatusUpdate(const TGNSSPosition position[], uint16_t numElements);  
+  static void sigSatelliteInfoUpdate(const TGNSSPosition position[], uint16_t numElements);
   
   
   

@@ -32,18 +32,18 @@ DLT_DECLARE_CONTEXT(gCtx);
 #define TEST_PASSED EXIT_SUCCESS
 
 static int testResult = TEST_PASSED;
-static int cbSpatialSuccess = 0;
+static int cbPositionSuccess = 0;
 
-static void cbSpatial(const TGNSSSpatial spatial[], uint16_t numElements)
+static void cbPosition(const TGNSSPosition position[], uint16_t numElements)
 {
     int i;    
-    if(spatial == NULL || numElements < 1)
+    if(position == NULL || numElements < 1)
     {
-        LOG_ERROR_MSG(gCtx,"cbSpatial failed!");
+        LOG_ERROR_MSG(gCtx,"cbPosition failed!");
         testResult = TEST_FAILED;
         return;
     }
-    cbSpatialSuccess++;
+    cbPositionSuccess++;
     
     
 }
@@ -100,7 +100,7 @@ int main()
     if(init())
     {
         //register for GNSS
-        gnssExtendedRegisterSpatialCallback(&cbSpatial);        
+        gnssRegisterPositionCallback(&cbPosition);        
 
         //listen for events for about 10 seconds
         for(i = 0; i < 10; i++)
@@ -109,7 +109,7 @@ int main()
         }
 
         //deregister
-        gnssExtendedDeregisterSpatialCallback(&cbSpatial);        
+        gnssDeregisterPositionCallback(&cbPosition);        
 
         gnssExtendedDestroy();
         gnssDestroy();
@@ -122,7 +122,7 @@ int main()
          return EXIT_FAILURE;
     }
 
-    LOG_INFO(gCtx,"TEST_PASSED with %d successful callbacks", cbSpatialSuccess);
+    LOG_INFO(gCtx,"TEST_PASSED with %d successful callbacks", cbPositionSuccess);
 
     return EXIT_SUCCESS;
 }

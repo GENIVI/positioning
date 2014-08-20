@@ -29,12 +29,12 @@
 DLT_DECLARE_CONTEXT(gCtx);
 
 
-static void cbSpatial(const TGNSSSpatial spatial[], uint16_t numElements)
+static void cbPosition(const TGNSSPosition position[], uint16_t numElements)
 {
     int i;    
-    if(spatial == NULL || numElements < 1)
+    if(position == NULL || numElements < 1)
     {
-        LOG_ERROR_MSG(gCtx,"cbSpatial failed!");
+        LOG_ERROR_MSG(gCtx,"cbPosition failed!");
         return;
     }
 
@@ -43,19 +43,19 @@ static void cbSpatial(const TGNSSSpatial spatial[], uint16_t numElements)
         LOG_INFO(gCtx,"Location Update[%d/%d]: timestamp=%llu latitude=%.5f longitude=%.5f altitudeMSL=%.1f hSpeed=%.1f heading=%.1f\n hdop=%.1f usedSatellites=%d sigmaHPosition=%.1f sigmaHSpeed=%.1f sigmaHeading=%.1f fixStatus=%d fixTypeBits=0x%08X",
                  i+1,
                  numElements,
-                 spatial[i].timestamp, 
-                 spatial[i].latitude,
-                 spatial[i].longitude,
-                 spatial[i].altitudeMSL,
-                 spatial[i].hSpeed,
-                 spatial[i].heading,
-                 spatial[i].hdop,
-                 spatial[i].usedSatellites,
-                 spatial[i].sigmaHPosition,
-                 spatial[i].sigmaHSpeed,
-                 spatial[i].sigmaHeading,
-                 spatial[i].fixStatus,
-                 spatial[i].fixTypeBits);
+                 position[i].timestamp, 
+                 position[i].latitude,
+                 position[i].longitude,
+                 position[i].altitudeMSL,
+                 position[i].hSpeed,
+                 position[i].heading,
+                 position[i].hdop,
+                 position[i].usedSatellites,
+                 position[i].sigmaHPosition,
+                 position[i].sigmaHSpeed,
+                 position[i].sigmaHeading,
+                 position[i].fixStatus,
+                 position[i].fixTypeBits);
     }
 }
 
@@ -126,8 +126,8 @@ int main()
     LOG_INFO_MSG(gCtx,"Starting gnss-service-client...");
 
     // register for GNSS
-    gnssExtendedRegisterSatelliteDetailCallback(&cbSatelliteDetail);
-    gnssExtendedRegisterSpatialCallback(&cbSpatial);
+    gnssRegisterSatelliteDetailCallback(&cbSatelliteDetail);
+    gnssRegisterPositionCallback(&cbPosition);
 
     // enter endless loop
     while(1)
@@ -136,8 +136,8 @@ int main()
     }
 
     // deregister
-    gnssExtendedDeregisterSatelliteDetailCallback(&cbSatelliteDetail);
-    gnssExtendedDeregisterSpatialCallback(&cbSpatial);
+    gnssDeregisterSatelliteDetailCallback(&cbSatelliteDetail);
+    gnssDeregisterPositionCallback(&cbPosition);
 
     gnssExtendedDestroy();
     gnssDestroy();
