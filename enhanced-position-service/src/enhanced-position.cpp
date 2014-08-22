@@ -640,11 +640,6 @@ void EnhancedPosition::run()
     exit(EXIT_FAILURE);
   }
 
-  if(!gnssInit())
-  {
-    exit(EXIT_FAILURE);
-  }
-
   LOG_INFO_MSG(gCtx,"Starting EnhancedPosition dispatcher...");
 
   gnssRegisterPositionCallback(&cbPosition);
@@ -657,7 +652,6 @@ void EnhancedPosition::shutdown()
 
   gnssDeregisterPositionCallback(&cbPosition);
   gnssDeregisterSatelliteDetailCallback(&cbSatelliteDetail);
-  gnssDestroy();
   gnssDestroy();
 }
 

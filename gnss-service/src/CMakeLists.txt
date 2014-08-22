@@ -47,7 +47,7 @@ if(WITH_GPSD)
 elseif(WITH_REPLAYER)
     #generate library using replayer as input
     set(LIB_SRC_USE_REPLAYER ${CMAKE_SOURCE_DIR}/src/gnss-use-replayer.c 
-    ${CMAKE_SOURCE_DIR}/src/gnss-ext.c 
+    ${CMAKE_SOURCE_DIR}/src/gnss-impl.c 
     ${CMAKE_SOURCE_DIR}/src/gnss-meta-data.c)
     add_library(gnss-service-use-replayer SHARED ${LIB_SRC_USE_REPLAYER})
     target_link_libraries(gnss-service-use-replayer ${LIBRARIES})
