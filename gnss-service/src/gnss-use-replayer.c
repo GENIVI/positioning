@@ -33,8 +33,7 @@
 #include <memory.h>
 
 #include "globals.h"
-#include "gnss.h"
-#include "gnss-simple.h"
+#include "gnss-init.h"
 #include "log.h"
 
 #define BUFLEN 256
@@ -48,7 +47,7 @@ pthread_mutex_t mutexCb;
 pthread_mutex_t mutexData;
 
 bool isRunning = false;
-int s = NULL;
+int s = 0;
 
 void *listenForMessages( void *ptr );
 
@@ -100,34 +99,52 @@ void gnssGetVersion(int *major, int *minor, int *micro)
     }
 }
 
-bool processGVGNSAC(char* data, TGNSSAccuracy* pAccuracy)
+//backward compatible processing of GVGNSAC to the new TGNSSPosition
+bool processGVGNSAC(char* data, TGNSSPosition* pPosition)
 {
     //parse data like: 061064000,0$GVGNSP,061064000,49.02657,12.06527,336.70000,0X07
 
     //storage for buffered data
-    static TGNSSAccuracy buf_acc[MAX_BUF_MSG];
+    static TGNSSPosition buf_acc[MAX_BUF_MSG];
     static uint16_t buf_size = 0;
     static uint16_t last_countdown = 0;
 
     uint64_t timestamp;
     uint16_t countdown;
-    TGNSSAccuracy acc = { 0 };
+    TGNSSPosition pos = { 0 };
     uint16_t fixStatus;
+    uint32_t GVGNSAC_validityBits;
     uint32_t n = 0;
 
-    if(!data || !pAccuracy)
+    if(!data || !pPosition)
     {
         LOG_ERROR_MSG(gContext,"wrong parameter!");
         return false;
     }
 
     n = sscanf(data, "%llu,%hu$GVGNSAC,%llu,%f,%f,%f,%hu,%hu,%hu,%f,%f,%f,%hu,%x,%x",
-         &timestamp, &countdown, &acc.timestamp,
-         &acc.pdop, &acc.hdop, &acc.vdop, 
-         &acc.usedSatellites, &acc.trackedSatellites, &acc.visibleSatellites, 
-         &acc.sigmaLatitude, &acc.sigmaLongitude, &acc.sigmaAltitude,
-         &fixStatus, &acc.fixTypeBits, &acc.validityBits);
-    acc.fixStatus = fixStatus;
+         &timestamp, &countdown, &pos.timestamp,
+         &pos.pdop, &pos.hdop, &pos.vdop,
+         &pos.usedSatellites, &pos.trackedSatellites, &pos.visibleSatellites,
+         &pos.sigmaHPosition, &pos.sigmaHPosition, &pos.sigmaAltitude,
+         &fixStatus, &pos.fixTypeBits, &GVGNSAC_validityBits);
+    //fix status: order in enum has changed
+    if (fixStatus == 0) { pos.fixStatus = GNSS_FIX_STATUS_NO; }
+    if (fixStatus == 1) { pos.fixStatus = GNSS_FIX_STATUS_2D; }
+    if (fixStatus == 2) { pos.fixStatus = GNSS_FIX_STATUS_3D; }
+    if (fixStatus == 3) { pos.fixStatus = GNSS_FIX_STATUS_TIME; }
+    //map the old validity bits to the new validity bits
+    pos.validityBits = 0;
+    if (GVGNSAC_validityBits&0x00000001) { pos.validityBits |= GNSS_POSITION_PDOP_VALID; }
+    if (GVGNSAC_validityBits&0x00000002) { pos.validityBits |= GNSS_POSITION_HDOP_VALID; }
+    if (GVGNSAC_validityBits&0x00000004) { pos.validityBits |= GNSS_POSITION_VDOP_VALID; }
+    if (GVGNSAC_validityBits&0x00000008) { pos.validityBits |= GNSS_POSITION_USAT_VALID; }
+    if (GVGNSAC_validityBits&0x00000010) { pos.validityBits |= GNSS_POSITION_TSAT_VALID; }
+    if (GVGNSAC_validityBits&0x00000020) { pos.validityBits |= GNSS_POSITION_VSAT_VALID; }
+    if (GVGNSAC_validityBits&0x00000040) { pos.validityBits |= GNSS_POSITION_SHPOS_VALID; }
+    if (GVGNSAC_validityBits&0x00000100) { pos.validityBits |= GNSS_POSITION_SALT_VALID; }
+    if (GVGNSAC_validityBits&0x00000200) { pos.validityBits |= GNSS_POSITION_STAT_VALID; }
+    if (GVGNSAC_validityBits&0x00000400) { pos.validityBits |= GNSS_POSITION_TYPE_VALID; }
 
     if (n <= 0)
     {
@@ -135,7 +152,19 @@ bool processGVGNSAC(char* data, TGNSSAccuracy* pAccuracy)
         return false;
     }
 
-    *pAccuracy = acc;
+    //global Position: update the changed fields, retain the existing fields from other callbacks
+    pPosition->timestamp = pos.timestamp;
+    pPosition->pdop = pos.pdop;
+    pPosition->hdop = pos.hdop;
+    pPosition->vdop = pos.vdop;
+    pPosition->usedSatellites = pos.usedSatellites;
+    pPosition->trackedSatellites = pos.trackedSatellites;
+    pPosition->visibleSatellites = pos.visibleSatellites;
+    pPosition->sigmaHPosition = pos.sigmaHPosition;
+    pPosition->sigmaAltitude = pos.sigmaAltitude;
+    pPosition->fixStatus = pos.fixStatus;
+    pPosition->fixTypeBits = pos.fixTypeBits;
+    pPosition->validityBits |= pos.validityBits;
 
     //buffered data handling
     if (countdown < MAX_BUF_MSG) //enough space in buffer?
@@ -144,12 +173,12 @@ bool processGVGNSAC(char* data, TGNSSAccuracy* pAccuracy)
         {
             buf_size = countdown+1;
             last_countdown = countdown;
-            buf_acc[buf_size-countdown-1] = acc;
+            buf_acc[buf_size-countdown-1] = pos;
         }
         else if ((last_countdown-countdown) == 1) //sequence continued
         {
             last_countdown = countdown;
-            buf_acc[buf_size-countdown-1] = acc;
+            buf_acc[buf_size-countdown-1] = pos;
         }
         else //sequence interrupted: clear buffer
         {
@@ -163,16 +192,17 @@ bool processGVGNSAC(char* data, TGNSSAccuracy* pAccuracy)
         last_countdown = 0;
     }
 
-    if((cbAccuracy != 0) && (countdown == 0) && (buf_size >0) )
+    if((cbPosition != 0) && (countdown == 0) && (buf_size >0) )
     {
-        cbAccuracy(buf_acc,buf_size);
+        cbPosition(buf_acc,buf_size);
         buf_size = 0;
-        last_countdown = 0;        
+        last_countdown = 0;
     }
 
     return true;
 }
 
+//backward compatible processing of GVGNSP to the new TGNSSPosition
 static bool processGVGNSP(char* data, TGNSSPosition* pPosition)
 {
     //parse data like: 061064000,0$GVGNSP,061064000,49.02657,12.06527,336.70000,0X07
@@ -185,6 +215,7 @@ static bool processGVGNSP(char* data, TGNSSPosition* pPosition)
     uint64_t timestamp;
     uint16_t countdown;
     TGNSSPosition pos = { 0 };
+    uint32_t GVGNSP_validityBits;
     uint32_t n = 0;
 
     if(!data || !pPosition)
@@ -193,7 +224,13 @@ static bool processGVGNSP(char* data, TGNSSPosition* pPosition)
         return false;
     }
 
-    n = sscanf(data, "%llu,%hu$GVGNSP,%llu,%lf,%lf,%f,%x", &timestamp, &countdown, &pos.timestamp, &pos.latitude, &pos.longitude, &pos.altitude, &pos.validityBits);
+    n = sscanf(data, "%llu,%hu$GVGNSP,%llu,%lf,%lf,%f,%x", &timestamp, &countdown, &pos.timestamp, &pos.latitude, &pos.longitude, &pos.altitudeMSL, &GVGNSP_validityBits);
+
+    //map the old validity bits to the new validity bits
+    pos.validityBits = 0;
+    if (GVGNSP_validityBits&0x00000001) { pos.validityBits |= GNSS_POSITION_LATITUDE_VALID; }
+    if (GVGNSP_validityBits&0x00000002) { pos.validityBits |= GNSS_POSITION_LONGITUDE_VALID; }
+    if (GVGNSP_validityBits&0x00000004) { pos.validityBits |= GNSS_POSITION_ALTITUDEMSL_VALID; }
 
     if (n <= 0)
     {
@@ -233,34 +270,41 @@ static bool processGVGNSP(char* data, TGNSSPosition* pPosition)
     {
         cbPosition(buf_pos,buf_size);
         buf_size = 0;
-        last_countdown = 0;        
+        last_countdown = 0;
     }
 
     return true;
 }
 
-static bool processGVGNSC(char* data, TGNSSCourse* pCourse)
+//backward compatible processing of GVGNSC to the new TGNSSPosition
+static bool processGVGNSC(char* data, TGNSSPosition* pPosition)
 {
     //parse data like: 061064000,0$GVGNSC,061064000,0.00,0,131.90000,0X05
-    
+
     //storage for buffered data
-    static TGNSSCourse buf_course[MAX_BUF_MSG];
+    static TGNSSPosition buf_course[MAX_BUF_MSG];
     static uint16_t buf_size = 0;
-    static uint16_t last_countdown = 0;    
+    static uint16_t last_countdown = 0;
 
     uint64_t timestamp;
     uint16_t countdown;
-    TGNSSCourse course = { 0 };
+    TGNSSPosition pos = { 0 };
+    uint32_t GVGNSC_validityBits;
     uint32_t n = 0;
 
-    if(!data || !pCourse)
+    if(!data || !pPosition)
     {
         LOG_ERROR_MSG(gContext,"wrong parameter!");
         return false;
     }
 
-    n = sscanf(data, "%llu,%hu$GVGNSC,%llu,%f,%f,%f,%x", &timestamp, &countdown, &course.timestamp, &course.speed, &course.climb, &course.heading, &course.validityBits);    
+    n = sscanf(data, "%llu,%hu$GVGNSC,%llu,%f,%f,%f,%x", &timestamp, &countdown, &pos.timestamp, &pos.hSpeed, &pos.vSpeed, &pos.heading, &GVGNSC_validityBits);
 
+    //map the old validity bits to the new validity bits
+    pos.validityBits = 0;
+    if (GVGNSC_validityBits&0x00000001) { pos.validityBits |= GNSS_POSITION_HSPEED_VALID; }
+    if (GVGNSC_validityBits&0x00000002) { pos.validityBits |= GNSS_POSITION_VSPEED_VALID; }
+    if (GVGNSC_validityBits&0x00000004) { pos.validityBits |= GNSS_POSITION_HEADING_VALID; }
 
     if (n <= 0)
     {
@@ -268,7 +312,12 @@ static bool processGVGNSC(char* data, TGNSSCourse* pCourse)
         return false;
     }
 
-    *pCourse = course;
+    //global Position: update the changed fields, retain the existing fields from other callbacks
+    pPosition->timestamp = pos.timestamp;
+    pPosition->hSpeed = pos.hSpeed;
+    pPosition->vSpeed = pos.vSpeed;
+    pPosition->heading = pos.heading;
+    pPosition->validityBits |= pos.validityBits;
 
     //buffered data handling
     if (countdown < MAX_BUF_MSG) //enough space in buffer?
@@ -277,12 +326,12 @@ static bool processGVGNSC(char* data, TGNSSCourse* pCourse)
         {
             buf_size = countdown+1;
             last_countdown = countdown;
-            buf_course[buf_size-countdown-1] = course;
+            buf_course[buf_size-countdown-1] = pos;
         }
         else if ((last_countdown-countdown) == 1) //sequence continued
         {
             last_countdown = countdown;
-            buf_course[buf_size-countdown-1] = course;
+            buf_course[buf_size-countdown-1] = pos;
         }
         else //sequence interrupted: clear buffer
         {
@@ -296,11 +345,11 @@ static bool processGVGNSC(char* data, TGNSSCourse* pCourse)
         last_countdown = 0;
     }
 
-    if((cbCourse != 0) && (countdown == 0) && (buf_size >0) )
+    if((cbPosition != 0) && (countdown == 0) && (buf_size >0) )
     {
-        cbCourse(buf_course,buf_size);
+        cbPosition(buf_course,buf_size);
         buf_size = 0;
-        last_countdown = 0;        
+        last_countdown = 0;
     }
 
     return true;
@@ -436,11 +485,11 @@ void *listenForMessages( void *ptr )
         }
         else if(strcmp("GVGNSC", msgId) == 0)
         {
-             processGVGNSC(buf, &gCourse);
+             processGVGNSC(buf, &gPosition);
         }
         else if(strcmp("GVGNSAC", msgId) == 0)
         {
-             processGVGNSAC(buf, &gAccuracy);
+             processGVGNSAC(buf, &gPosition);
         }
         else if(strcmp("GVGNSSAT", msgId) == 0)
         {

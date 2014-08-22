@@ -85,8 +85,7 @@ std::map< uint16_t, ::DBus::Variant > EnhancedPosition::GetData(const std::vecto
 {
   std::map< uint16_t, ::DBus::Variant > Data;
 
-  TGNSSPosition pos;
-  TGNSSCourse course;
+  TGNSSPosition position;
 
   bool isPosRequested = false;
   bool isCourseRequested = false;
@@ -97,7 +96,6 @@ std::map< uint16_t, ::DBus::Variant > EnhancedPosition::GetData(const std::vecto
         (valuesToReturn[i] == POS_LONGITUDE) || 
         (valuesToReturn[i] == POS_ALTITUDE))
     {
-      //if any of the three IDs above is set, then gnssSimpleGetPosition will have to be called
       isPosRequested = true;
     }
 
@@ -105,49 +103,48 @@ std::map< uint16_t, ::DBus::Variant > EnhancedPosition::GetData(const std::vecto
         (valuesToReturn[i] == POS_SPEED) || 
         (valuesToReturn[i] == POS_CLIMB ))
     {
-      //if any of the three IDs above is set, then gnssSimpleGetCourse will have to be called
       isCourseRequested = true;
     }
   }
 
   if(isPosRequested)
   {
-    if(gnssSimpleGetPosition(&pos))
+    if(gnssGetPosition(&position))
     {
-      if (pos.validityBits && GNSS_POSITION_LATITUDE_VALID)
+      if (position.validityBits & GNSS_POSITION_LATITUDE_VALID)
       {
-        Data[POS_LATITUDE] = variant_double(pos.latitude);
+        Data[POS_LATITUDE] = variant_double(position.latitude);
       }
 
-      if (pos.validityBits && GNSS_POSITION_LONGITUDE_VALID)
+      if (position.validityBits & GNSS_POSITION_LONGITUDE_VALID)
       {
-        Data[POS_LONGITUDE] = variant_double(pos.longitude);
+        Data[POS_LONGITUDE] = variant_double(position.longitude);
       }
 
-      if (pos.validityBits && GNSS_POSITION_ALTITUDE_VALID)
+      if (position.validityBits & GNSS_POSITION_ALTITUDEMSL_VALID)
       {
-        Data[POS_ALTITUDE] = variant_double(pos.altitude);
+        Data[POS_ALTITUDE] = variant_double(position.altitudeMSL);
       }
     }
   }
 
   if(isCourseRequested)
   {
-    if(gnssSimpleGetCourse(&course))
+    if(gnssGetPosition(&position))
     {
-      if (course.validityBits && GNSS_COURSE_SPEED_VALID)
+      if (position.validityBits & GNSS_POSITION_HEADING_VALID)
       {
-        Data[POS_HEADING] = variant_double(course.heading);
+        Data[POS_HEADING] = variant_double(position.heading);
       }
 
-      if (course.validityBits && GNSS_COURSE_CLIMB_VALID)
+      if (position.validityBits & GNSS_POSITION_HSPEED_VALID)
       {
-        Data[POS_SPEED] = variant_double(course.speed);
+        Data[POS_SPEED] = variant_double(position.hSpeed);
       }
 
-      if (course.validityBits && GNSS_COURSE_HEADING_VALID)
+      if (position.validityBits & GNSS_POSITION_VSPEED_VALID)
       {
-        Data[POS_CLIMB] = variant_double(course.climb);
+        Data[POS_CLIMB] = variant_double(position.vSpeed);
       }
     }
   }
@@ -158,44 +155,40 @@ std::map< uint16_t, ::DBus::Variant > EnhancedPosition::GetData(const std::vecto
 std::map< uint16_t, ::DBus::Variant > EnhancedPosition::GetPosition()
 {
   std::map< uint16_t, ::DBus::Variant > Position;
-  TGNSSPosition pos;
-  TGNSSCourse course;
+  TGNSSPosition position;
    
-  if (gnssSimpleGetPosition(&pos))
-  {
-    if (pos.validityBits && GNSS_POSITION_LATITUDE_VALID)
+    if(gnssGetPosition(&position))
     {
-      Position[POS_LATITUDE] = variant_double(pos.latitude);
-    }
+      if (position.validityBits & GNSS_POSITION_LATITUDE_VALID)
+      {
+        Position[POS_LATITUDE] = variant_double(position.latitude);
+      }
 
-    if (pos.validityBits && GNSS_POSITION_LONGITUDE_VALID)
-    {
-      Position[POS_LONGITUDE] = variant_double(pos.longitude);
-    }
+      if (position.validityBits & GNSS_POSITION_LONGITUDE_VALID)
+      {
+        Position[POS_LONGITUDE] = variant_double(position.longitude);
+      }
 
-    if (pos.validityBits && GNSS_POSITION_ALTITUDE_VALID)
-    {
-      Position[POS_ALTITUDE] = variant_double(pos.altitude);
-    }
-  }
+      if (position.validityBits & GNSS_POSITION_ALTITUDEMSL_VALID)
+      {
+        Position[POS_ALTITUDE] = variant_double(position.altitudeMSL);
+      }
 
-  if(gnssSimpleGetCourse(&course))
-  {
-    if (pos.validityBits && GNSS_COURSE_SPEED_VALID)
-    {
-      Position[POS_HEADING] = variant_double(course.heading);
-    }
+      if (position.validityBits & GNSS_POSITION_HEADING_VALID)
+      {
+        Position[POS_HEADING] = variant_double(position.heading);
+      }
 
-    if (pos.validityBits && GNSS_COURSE_CLIMB_VALID)
-    {
-      Position[POS_SPEED] = variant_double(course.speed);
-    }
+      if (position.validityBits & GNSS_POSITION_HSPEED_VALID)
+      {
+        Position[POS_SPEED] = variant_double(position.hSpeed);
+      }
 
-    if (pos.validityBits && GNSS_COURSE_HEADING_VALID)
-    {
-      Position[POS_CLIMB] = variant_double(course.climb);
+      if (position.validityBits & GNSS_POSITION_VSPEED_VALID)
+      {
+        Position[POS_CLIMB] = variant_double(position.vSpeed);
+      }      
     }
-  }
 
   return Position;
 }  
@@ -245,17 +238,19 @@ std::map< uint16_t, ::DBus::Variant > EnhancedPosition::GetTime()
   return Time;
 }
 
-void EnhancedPosition::cbPosition(const TGNSSPosition pos[], uint16_t numElements)
+void EnhancedPosition::sigPositionUpdate(const TGNSSPosition position[], uint16_t numElements)
 {
   bool latChanged = false;
   bool lonChanged = false;
   bool altChanged = false;
+  bool speedChanged = false;
+  bool headingChanged = false;
+  bool climbChanged = false;
 
-  std::vector< uint16_t > position;
 
-  if (pos == NULL || numElements < 1)
+  if (position == NULL || numElements < 1)
   {
-    LOG_ERROR_MSG(gCtx,"cbPosition failed!");
+    LOG_ERROR_MSG(gCtx,"sigPositionUpdate failed!");
     return;
   }
 
@@ -264,23 +259,38 @@ void EnhancedPosition::cbPosition(const TGNSSPosition pos[], uint16_t numElement
     LOG_INFO(gCtx,"Position Update[%d/%d]: lat=%f lon=%f alt=%f",
              i+1,
              numElements,
-             pos[i].latitude, 
-             pos[i].longitude,
-             pos[i].altitude);
+             position[i].latitude, 
+             position[i].longitude,
+             position[i].altitudeMSL);
         
     if (latChanged == false)
     {
-      latChanged = (pos[i].validityBits && GNSS_POSITION_LATITUDE_VALID);
+      latChanged = (position[i].validityBits & GNSS_POSITION_LATITUDE_VALID);
     }
 
     if (lonChanged == false)
     {
-      lonChanged = (pos[i].validityBits && GNSS_POSITION_LONGITUDE_VALID);
+      lonChanged = (position[i].validityBits & GNSS_POSITION_LONGITUDE_VALID);
     }
 
     if (altChanged == false)
     {
-      altChanged = (pos[i].validityBits && GNSS_POSITION_ALTITUDE_VALID);
+      altChanged = (position[i].validityBits & GNSS_POSITION_ALTITUDEMSL_VALID);
+    }
+
+    if (speedChanged == false)
+    {
+      speedChanged = (position[i].validityBits & GNSS_POSITION_HSPEED_VALID);
+    }
+
+    if (headingChanged == false)
+    {
+      headingChanged = (position[i].validityBits & GNSS_POSITION_HEADING_VALID);
+    }
+
+    if (climbChanged == false)
+    {
+      climbChanged = (position[i].validityBits & GNSS_POSITION_VSPEED_VALID);
     }
 
   }
@@ -307,60 +317,6 @@ void EnhancedPosition::cbPosition(const TGNSSPosition pos[], uint16_t numElement
      it = changedValues.insert(it,POS_ALTITUDE);
   }
 
-  if (!mpSelf)
-  {
-    LOG_ERROR_MSG(gCtx,"Null pointer!");    
-    return;
-  }
-    
-  //notify clients
-  mpSelf->PositionUpdate(changedValues);
-}
-
-void EnhancedPosition::cbCourse(const TGNSSCourse course[], uint16_t numElements)
-{
-  bool speedChanged = false;
-  bool headingChanged = false;
-  bool climbChanged = false;
-  
-  if (course == NULL || numElements < 1)
-  {
-    LOG_ERROR_MSG(gCtx,"cbCourse failed!");
-    return;
-  }
-
-  for (int i = 0; i < numElements; i++)
-  {
-    LOG_INFO(gCtx,"Course Update[%d/%d]: speed=%f heading=%f climb=%f",
-             i+1,
-             numElements,
-             course[i].speed, 
-             course[i].heading, 
-             course[i].climb);        
-
-    if (speedChanged == false)
-    {
-      speedChanged = (course[i].validityBits && GNSS_COURSE_SPEED_VALID);
-    }
-
-    if (headingChanged == false)
-    {
-      headingChanged = (course[i].validityBits && GNSS_COURSE_HEADING_VALID);
-    }
-
-    if (climbChanged == false)
-    {
-      climbChanged = (course[i].validityBits && GNSS_COURSE_CLIMB_VALID);
-    }
-  }
-
-  //in a real product, the course would be used for dead-reckoning.
-  //in this proof of concept, the client application is simply notified 
-  //about changes of speed, heading and/or climb
-  std::vector< uint16_t > changedValues;
-  std::vector<uint16_t>::iterator it;
-  it = changedValues.begin();
-    
   if (speedChanged)
   {
      it = changedValues.insert(it,POS_SPEED);
@@ -384,113 +340,202 @@ void EnhancedPosition::cbCourse(const TGNSSCourse course[], uint16_t numElements
     
   //notify clients
   mpSelf->PositionUpdate(changedValues);
+
+
 }
 
-void EnhancedPosition::cbAccuracy(const TGNSSAccuracy accuracy[], uint16_t numElements)
+void EnhancedPosition::sigAccuracyUpdate(const TGNSSPosition position[], uint16_t numElements)
+{ 
+  bool pdopChanged = false;
+  bool hdopChanged = false;
+  bool vdopChanged = false;
+  bool sigmaHPosChanged = false;
+  bool sigmaAltitudeChanged = false;
+
+  if (position == NULL || numElements < 1)
+  {
+      LOG_ERROR_MSG(gCtx,"sigAccuracyUpdate failed!");
+      return;
+  }
+
+  for (int i = 0; i< numElements; i++)
+  {
+      LOG_INFO(gCtx,"Accuracy Update[%d/%d]: pdop=%f hdop=%f vdop=%f \
+               sigmaHPosition=%f sigmaAltitude=%f",
+               i+1,
+               numElements,
+               position[i].pdop, 
+               position[i].hdop,
+               position[i].vdop,
+               position[i].sigmaHPosition,
+               position[i].sigmaAltitude);
+
+    if (pdopChanged == false)
+    {
+      pdopChanged = (position[i].validityBits & GNSS_POSITION_PDOP_VALID);
+    }
+
+    if (hdopChanged == false)
+    {
+      hdopChanged = (position[i].validityBits & GNSS_POSITION_HDOP_VALID);
+    }
+
+    if (vdopChanged == false)
+    {
+      vdopChanged = (position[i].validityBits & GNSS_POSITION_VDOP_VALID);
+    }
+
+    if (sigmaHPosChanged == false)
+    {
+      sigmaHPosChanged = (position[i].validityBits & GNSS_POSITION_SHPOS_VALID);
+    }
+
+    if (sigmaAltitudeChanged == false)
+    {
+      sigmaAltitudeChanged = (position[i].validityBits & GNSS_POSITION_SALT_VALID);
+    }
+  }
+
+  //in a real product, the accuracy would be used for dead-reckoning.
+  //in this proof of concept, the client application is simply notified 
+  //about accuracy changes
+  std::vector<uint16_t>::iterator it;
+  
+  std::vector< uint16_t > changedAccuracyValues;
+  it = changedAccuracyValues.begin();
+
+  if (pdopChanged)
+  {
+    it = changedAccuracyValues.insert(it,POS_PDOP);
+  }
+
+  if (hdopChanged)
+  {
+    it = changedAccuracyValues.insert(it,POS_HDOP);
+  }
+  
+  if (vdopChanged)
+  {
+    it = changedAccuracyValues.insert(it,POS_VDOP);
+  }  
+
+  if (sigmaHPosChanged)
+  {
+    it = changedAccuracyValues.insert(it,POS_SIGMA_LATITUDE);
+    it = changedAccuracyValues.insert(it,POS_SIGMA_LONGITUDE);
+  }
+
+  if (sigmaAltitudeChanged)
+  {
+    it = changedAccuracyValues.insert(it,POS_VISIBLE_SATELLITES);
+  }
+
+  //todo: handle other field-changes here (accuracy and status)
+
+  if (!mpSelf)
+  {
+    LOG_ERROR_MSG(gCtx,"Null pointer!");    
+    return;
+  }
+  
+  mpSelf->AccuracyUpdate(changedAccuracyValues);
+}
+
+void EnhancedPosition::sigStatusUpdate(const TGNSSPosition position[], uint16_t numElements)
+{ 
+
+  bool fixStatusChanged = false;
+  bool fixTypeBitsChanged = false;
+
+  if (position == NULL || numElements < 1)
+  {
+      LOG_ERROR_MSG(gCtx,"sigStatusUpdate failed!");
+      return;
+  }
+
+  for (int i = 0; i< numElements; i++)
+  {
+      LOG_INFO(gCtx,"Status Update[%d/%d]: fixStatus=%d fixTypeBits=0x%08X",
+               i+1,
+               numElements,
+               position[i].fixStatus,
+               position[i].fixTypeBits);
+               
+    if (fixStatusChanged == false)
+    {
+      fixStatusChanged = (position[i].validityBits & GNSS_POSITION_STAT_VALID);
+    }
+
+    if (fixTypeBitsChanged == false)
+    {
+      fixTypeBitsChanged = (position[i].validityBits & GNSS_POSITION_TYPE_VALID);
+    }
+
+  }
+
+  //in a real product, the accuracy would be used for dead-reckoning.
+  //in this proof of concept, the client application is simply notified 
+  //about status changes
+  std::vector<uint16_t>::iterator it;
+  
+  std::vector< uint16_t > changedStatusValues;
+  it = changedStatusValues.begin();
+
+  if (fixStatusChanged)
+  {
+    it = changedStatusValues.insert(it,POS_GNSS_FIX_STATUS);
+  }
+
+  if (!mpSelf)
+  {
+    LOG_ERROR_MSG(gCtx,"Null pointer!");    
+    return;
+  }
+  
+  mpSelf->StatusUpdate(changedStatusValues);
+}
+
+
+
+void EnhancedPosition::sigSatelliteInfoUpdate(const TGNSSPosition position[], uint16_t numElements)
 { 
   //satellite info
   bool usedSatellitesChanged = false;
   bool trackedSatellitesChanged = false;
   bool visibleSatellitesChanged = false;
   
-  //status
-  bool fixStatusChanged = false;
-  bool fixTypeBitsChanged = false;
-  
-  //accuracy
-  bool pdopChanged = false;
-  bool hdopChanged = false;
-  bool vdopChanged = false;
-  bool sigmaLatitudeChanged = false;
-  bool sigmaLongitudeChanged = false;
-  bool sigmaAltitudeChanged = false;
 
-  if (accuracy == NULL || numElements < 1)
+  
+  if (position == NULL || numElements < 1)
   {
-      LOG_ERROR_MSG(gCtx,"cbAccuracy failed!");
+      LOG_ERROR_MSG(gCtx,"sigSatelliteInfoUpdate failed!");
       return;
   }
 
   for (int i = 0; i< numElements; i++)
   {
-      LOG_INFO(gCtx,"Accuracy Update[%d/%d]: usedSatellites=%d trackedSatellites=%d visibleSatellites=%d",
+      LOG_INFO(gCtx,"SatelliteInfo Update[%d/%d]: usedSatellites=%d trackedSatellites=%d visibleSatellites=%d",
                i+1,
                numElements,
-               accuracy[i].usedSatellites, 
-               accuracy[i].trackedSatellites,
-               accuracy[i].visibleSatellites);
-
-      LOG_INFO(gCtx,"Accuracy Update[%d/%d]: fixStatus=%d fixTypeBits=0x%08X",
-               i+1,
-               numElements,
-               accuracy[i].fixStatus,
-               accuracy[i].fixTypeBits);
-
-      LOG_INFO(gCtx,"Accuracy Update[%d/%d]: pdop=%f hdop=%f vdop=%f \
-               sigmaLatitude=%f sigmaLongitude=%f sigmaAltitude=%f",
-               i+1,
-               numElements,
-               accuracy[i].pdop, 
-               accuracy[i].hdop,
-               accuracy[i].vdop,
-               accuracy[i].sigmaLatitude,
-               accuracy[i].sigmaLongitude,
-               accuracy[i].sigmaAltitude);
+               position[i].usedSatellites, 
+               position[i].trackedSatellites,
+               position[i].visibleSatellites);
 
     if (usedSatellitesChanged == false)
     {
-      usedSatellitesChanged = (accuracy[i].validityBits && GNSS_ACCURACY_USAT_VALID);
+      usedSatellitesChanged = (position[i].validityBits & GNSS_POSITION_USAT_VALID);
     }
 
     if (trackedSatellitesChanged == false)
     {
-      trackedSatellitesChanged = (accuracy[i].validityBits && GNSS_ACCURACY_TSAT_VALID);
+      trackedSatellitesChanged = (position[i].validityBits & GNSS_POSITION_TSAT_VALID);
     }
 
     if (visibleSatellitesChanged == false)
     {
-      visibleSatellitesChanged = (accuracy[i].validityBits && GNSS_ACCURACY_VSAT_VALID);
+      visibleSatellitesChanged = (position[i].validityBits & GNSS_POSITION_VSAT_VALID);
     }
 
-    if (fixStatusChanged == false)
-    {
-      fixStatusChanged = (accuracy[i].validityBits && GNSS_ACCURACY_STAT_VALID);
-    }
-    
-    if (fixTypeBitsChanged == false)
-    {
-      fixTypeBitsChanged = (accuracy[i].validityBits && GNSS_ACCURACY_TYPE_VALID);
-    }
-
-    if (pdopChanged == false)
-    {
-      pdopChanged = (accuracy[i].validityBits && GNSS_ACCURACY_PDOP_VALID);
-    }
-
-    if (hdopChanged == false)
-    {
-      hdopChanged = (accuracy[i].validityBits && GNSS_ACCURACY_HDOP_VALID);
-    }
-
-    if (vdopChanged == false)
-    {
-      vdopChanged = (accuracy[i].validityBits && GNSS_ACCURACY_VDOP_VALID);
-    }
-
-    if (sigmaLatitudeChanged == false)
-    {
-      sigmaLatitudeChanged = (accuracy[i].validityBits && GNSS_ACCURACY_SLAT_VALID);
-    }
-
-    if (sigmaLongitudeChanged == false)
-    {
-      sigmaLongitudeChanged = (accuracy[i].validityBits && GNSS_ACCURACY_SLON_VALID);
-    }
-
-    if (sigmaAltitudeChanged == false)
-    {
-      sigmaAltitudeChanged = (accuracy[i].validityBits && GNSS_ACCURACY_SALT_VALID);
-    }
   }
 
   //in a real product, the accuracy would be used for dead-reckoning.
@@ -526,10 +571,16 @@ void EnhancedPosition::cbAccuracy(const TGNSSAccuracy accuracy[], uint16_t numEl
   
   mpSelf->SatelliteInfoUpdate(changedSatelliteInfoValues);
 
-  //todo: send other notifications
-  //mpSelf->AccuracyUpdate(changedAccuracyValues);
-  //mpSelf->StatusUpdate(changedStatusValues);
 }
+
+void EnhancedPosition::cbPosition(const TGNSSPosition position[], uint16_t numElements)
+{
+    sigPositionUpdate(position, numElements);
+    sigAccuracyUpdate(position, numElements);
+    sigStatusUpdate(position, numElements);
+    sigSatelliteInfoUpdate(position, numElements);
+}
+
 
 void EnhancedPosition::cbSatelliteDetail(const TGNSSSatelliteDetail satelliteDetail[], uint16_t numElements)
 {
@@ -580,7 +631,7 @@ bool EnhancedPosition::checkMajorVersion(int expectedMajor)
 
 void EnhancedPosition::run()
 {
-  if(!checkMajorVersion(2))
+  if(!checkMajorVersion(3))
   {
     exit(EXIT_FAILURE);
   }
@@ -590,28 +641,18 @@ void EnhancedPosition::run()
     exit(EXIT_FAILURE);
   }
 
-  if(!gnssSimpleInit())
-  {
-    exit(EXIT_FAILURE);
-  }
-
   LOG_INFO_MSG(gCtx,"Starting EnhancedPosition dispatcher...");
 
-  gnssSimpleRegisterPositionCallback(&cbPosition);
-  gnssSimpleRegisterCourseCallback(&cbCourse);
-  gnssExtendedRegisterAccuracyCallback(&cbAccuracy);
-  gnssExtendedRegisterSatelliteDetailCallback(&cbSatelliteDetail);
+  gnssRegisterPositionCallback(&cbPosition);
+  gnssRegisterSatelliteDetailCallback(&cbSatelliteDetail);
 }
 
 void EnhancedPosition::shutdown()
 {
   LOG_INFO_MSG(gCtx,"Shutting down EnhancedPosition dispatcher...");
 
-  gnssSimpleDeregisterPositionCallback(&cbPosition);
-  gnssSimpleDeregisterCourseCallback(&cbCourse);
-  gnssExtendedDeregisterAccuracyCallback(&cbAccuracy);
-  gnssExtendedDeregisterSatelliteDetailCallback(&cbSatelliteDetail);
-  gnssSimpleDestroy();
+  gnssDeregisterPositionCallback(&cbPosition);
+  gnssDeregisterSatelliteDetailCallback(&cbSatelliteDetail);
   gnssDestroy();
 }
 

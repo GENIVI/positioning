@@ -22,9 +22,8 @@
 #include <stdbool.h>
 #include <unistd.h>
 
+#include "gnss-init.h"
 #include "gnss.h"
-#include "gnss-simple.h"
-#include "gnss-ext.h"
 #include "log.h"
 
 DLT_DECLARE_CONTEXT(gCtx);
@@ -33,37 +32,22 @@ DLT_DECLARE_CONTEXT(gCtx);
 #define TEST_PASSED EXIT_SUCCESS
 
 static int testResult = TEST_PASSED;
+static int cbPositionSuccess = 0;
 
-
-static void cbPosition(const TGNSSPosition pos[], uint16_t numElements)
+static void cbPosition(const TGNSSPosition position[], uint16_t numElements)
 {
-    if(pos == NULL || numElements < 1)
+    int i;    
+    if(position == NULL || numElements < 1)
     {
         LOG_ERROR_MSG(gCtx,"cbPosition failed!");
         testResult = TEST_FAILED;
         return;
     }
+    cbPositionSuccess++;
+    
+    
 }
 
-static void cbCourse(const TGNSSCourse course[], uint16_t numElements)
-{
-    if(course == NULL || numElements < 1)
-    {
-        LOG_ERROR_MSG(gCtx,"cbCourse failed!");
-        testResult = TEST_FAILED;
-        return;
-    }
-}
-
-static void cbAccuracy(const TGNSSAccuracy accuracy[], uint16_t numElements)
-{
-    if(accuracy == NULL || numElements < 1)
-    {
-        LOG_ERROR_MSG(gCtx,"cbAccuracy failed!");
-        testResult = TEST_FAILED;
-        return;
-    }
-}
 
 bool checkMajorVersion(int expectedMajor)
 {
@@ -96,11 +80,6 @@ bool init()
         return false;
     }
 
-    if(!gnssSimpleInit())
-    {
-        return false;
-    }
-
     return true;
 }
 
@@ -116,9 +95,7 @@ int main()
     if(init())
     {
         //register for GNSS
-        gnssSimpleRegisterPositionCallback(&cbPosition);
-        gnssSimpleRegisterCourseCallback(&cbCourse);
-        gnssExtendedRegisterAccuracyCallback(&cbAccuracy);
+        gnssRegisterPositionCallback(&cbPosition);        
 
         //listen for events for about 10 seconds
         for(i = 0; i < 10; i++)
@@ -127,11 +104,8 @@ int main()
         }
 
         //deregister
-        gnssSimpleDeregisterPositionCallback(&cbPosition);
-        gnssSimpleDeregisterCourseCallback(&cbCourse);
-        gnssExtendedDeregisterAccuracyCallback(&cbAccuracy);
+        gnssDeregisterPositionCallback(&cbPosition);        
 
-        gnssSimpleDestroy();
         gnssDestroy();
     }
     
@@ -142,7 +116,7 @@ int main()
          return EXIT_FAILURE;
     }
 
-    LOG_INFO_MSG(gCtx,"TEST_PASSED");
+    LOG_INFO(gCtx,"TEST_PASSED with %d successful callbacks", cbPositionSuccess);
 
     return EXIT_SUCCESS;
 }

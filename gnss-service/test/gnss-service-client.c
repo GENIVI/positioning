@@ -22,17 +22,51 @@
 #include <stdbool.h>
 #include <unistd.h>
 
+#include "gnss-init.h"
 #include "gnss.h"
-#include "gnss-simple.h"
-#include "gnss-ext.h"
 #include "log.h"
 
 DLT_DECLARE_CONTEXT(gCtx);
 
-static void cbPosition(const TGNSSPosition pos[], uint16_t numElements)
+static void cbTime(const TGNSSTime time[], uint16_t numElements)
 {
-    int i;
-    if(pos == NULL || numElements < 1)
+    int i;    
+    if(time == NULL || numElements < 1)
+    {
+        LOG_ERROR_MSG(gCtx,"cbTime failed!");
+        return;
+    }
+
+    for (i = 0; i<numElements; i++)
+    {
+        if (time[i].validityBits & GNSS_TIME_DATE_VALID)
+        {
+            char month [12] [4] = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};         
+            LOG_INFO(gCtx,"Time Update[%d/%d]: timestamp=%llu UTC: %04d-%s-%02d %02d:%02d:%02d",
+                 i+1,
+                 numElements,
+                 time[i].timestamp, 
+                 time[i].year,
+                 month[time[i].month%12],
+                 time[i].day,
+                 time[i].hour,
+                 time[i].minute,
+                 time[i].second);
+        }
+        else
+        {
+            LOG_INFO(gCtx,"Time Update[%d/%d]: Invalid Date/Time",
+                 i+1,
+                 numElements);
+            
+        }
+    }
+}
+
+static void cbPosition(const TGNSSPosition position[], uint16_t numElements)
+{
+    int i;    
+    if(position == NULL || numElements < 1)
     {
         LOG_ERROR_MSG(gCtx,"cbPosition failed!");
         return;
@@ -40,53 +74,22 @@ static void cbPosition(const TGNSSPosition pos[], uint16_t numElements)
 
     for (i = 0; i<numElements; i++)
     {
-        LOG_INFO(gCtx,"Position Update[%d/%d]: lat=%f lon=%f",
+        LOG_INFO(gCtx,"Position Update[%d/%d]: timestamp=%llu latitude=%.5f longitude=%.5f altitudeMSL=%.1f hSpeed=%.1f heading=%.1f\n hdop=%.1f usedSatellites=%d sigmaHPosition=%.1f sigmaHSpeed=%.1f sigmaHeading=%.1f fixStatus=%d fixTypeBits=0x%08X",
                  i+1,
                  numElements,
-                 pos[i].latitude, 
-                 pos[i].longitude);
-    }
-}
-
-static void cbCourse(const TGNSSCourse course[], uint16_t numElements)
-{
-    int i;
-    if(course == NULL || numElements < 1)
-    {
-        LOG_ERROR_MSG(gCtx,"cbCourse failed!");
-        return;
-    }
-
-    for (i = 0; i<numElements; i++)
-    {
-        LOG_INFO(gCtx,"Course Updatee[%d/%d]: speed=%f heading=%f climb=%f",
-                 i+1,
-                 numElements,
-                 course[i].speed, 
-                 course[i].heading, 
-                 course[i].climb);        
-    }
-
-}
-
-static void cbAccuracy(const TGNSSAccuracy accuracy[], uint16_t numElements)
-{
-    int i;    
-    if(accuracy == NULL || numElements < 1)
-    {
-        LOG_ERROR_MSG(gCtx,"cbAccuracy failed!");
-        return;
-    }
-
-    for (i = 0; i<numElements; i++)
-    {
-        LOG_INFO(gCtx,"Accuracy Update[%d/%d]: usedSatellites=%d visibleSatellites=%d fixStatus=%d fixTypeBits=0x%08X",
-                 i+1,
-                 numElements,
-                 accuracy[i].usedSatellites, 
-                 accuracy[i].visibleSatellites,
-                 accuracy[i].fixStatus,
-                 accuracy[i].fixTypeBits);
+                 position[i].timestamp, 
+                 position[i].latitude,
+                 position[i].longitude,
+                 position[i].altitudeMSL,
+                 position[i].hSpeed,
+                 position[i].heading,
+                 position[i].hdop,
+                 position[i].usedSatellites,
+                 position[i].sigmaHPosition,
+                 position[i].sigmaHSpeed,
+                 position[i].sigmaHeading,
+                 position[i].fixStatus,
+                 position[i].fixTypeBits);
     }
 }
 
@@ -131,17 +134,12 @@ bool checkMajorVersion(int expectedMajor)
 
 void init()
 {
-    if(!checkMajorVersion(2))
+    if(!checkMajorVersion(3))
     {
         exit(EXIT_FAILURE);
     }
 
     if(!gnssInit())
-    {
-        exit(EXIT_FAILURE);
-    }
-
-    if(!gnssSimpleInit())
     {
         exit(EXIT_FAILURE);
     }
@@ -157,10 +155,9 @@ int main()
     LOG_INFO_MSG(gCtx,"Starting gnss-service-client...");
 
     // register for GNSS
-    gnssSimpleRegisterPositionCallback(&cbPosition);
-    gnssSimpleRegisterCourseCallback(&cbCourse);
-    gnssExtendedRegisterAccuracyCallback(&cbAccuracy);
-    gnssExtendedRegisterSatelliteDetailCallback(&cbSatelliteDetail);
+    gnssRegisterTimeCallback(&cbTime);    
+    gnssRegisterSatelliteDetailCallback(&cbSatelliteDetail);
+    gnssRegisterPositionCallback(&cbPosition);
 
     // enter endless loop
     while(1)
@@ -169,12 +166,10 @@ int main()
     }
 
     // deregister
-    gnssSimpleDeregisterPositionCallback(&cbPosition);
-    gnssSimpleDeregisterCourseCallback(&cbCourse);
-    gnssExtendedDeregisterAccuracyCallback(&cbAccuracy);
-    gnssExtendedDeregisterSatelliteDetailCallback(&cbSatelliteDetail);
+    gnssDeregisterTimeCallback(&cbTime);    
+    gnssDeregisterSatelliteDetailCallback(&cbSatelliteDetail);
+    gnssDeregisterPositionCallback(&cbPosition);
 
-    gnssSimpleDestroy();
     gnssDestroy();
 
     return EXIT_SUCCESS;

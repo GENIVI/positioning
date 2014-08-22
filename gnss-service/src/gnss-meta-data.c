@@ -18,6 +18,7 @@
 
 #include "globals.h"
 #include "gnss-meta-data.h"
+#include "gnss.h"
 
 const TGnssMetaData gGnssMetaData = {
     GENIVI_GNSS_API_MAJOR,  //version
@@ -27,7 +28,7 @@ const TGnssMetaData gGnssMetaData = {
     4                       //number of channels 
 };
 
-bool gnssSimpleGetMetaData(TGnssMetaData *data)
+bool gnssGetMetaData(TGnssMetaData *data)
 {
     if(!data)
     {
@@ -37,13 +38,4 @@ bool gnssSimpleGetMetaData(TGnssMetaData *data)
     *data = gGnssMetaData;
 
     return true;
-}
-
-
-int32_t getGnssMetaDataList(const TGnssMetaData** metadata)
-{
-    *metadata = &gGnssMetaData;
-
-    return 1;
-    
 }

@@ -33,7 +33,7 @@
 #include <memory.h>
 
 #include "globals.h"
-#include "sns.h"
+#include "sns-init.h"
 #include "log.h"
 
 #define BUFLEN 256

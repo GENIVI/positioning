@@ -23,7 +23,7 @@
 #include <pthread.h>
 #include <time.h>
 
-#include "sns.h"
+#include "sns-init.h"
 #include "wheel.h"
 #include "gyroscope.h"
 #include "vehicle-speed.h"

@@ -21,9 +21,8 @@
 #include <dbus-c++/dbus.h>
 
 #include "enhanced-position-adaptor.h"
+#include "gnss-init.h"
 #include "gnss.h"
-#include "gnss-simple.h"
-#include "gnss-ext.h"
 
 class EnhancedPosition
   : public org::genivi::positioning::EnhancedPosition_adaptor
@@ -62,11 +61,14 @@ private:
 
   static void cbSatelliteDetail(const TGNSSSatelliteDetail satelliteDetail[], uint16_t numElements);
 
-  static void cbAccuracy(const TGNSSAccuracy accuracy[], uint16_t numElements);
-
-  static void cbCourse(const TGNSSCourse course[], uint16_t numElements);
-
-  static void cbPosition(const TGNSSPosition pos[], uint16_t numElements);
+  static void cbPosition(const TGNSSPosition position[], uint16_t numElements);
+  static void sigPositionUpdate(const TGNSSPosition position[], uint16_t numElements);
+  static void sigAccuracyUpdate(const TGNSSPosition position[], uint16_t numElements);
+  static void sigStatusUpdate(const TGNSSPosition position[], uint16_t numElements);  
+  static void sigSatelliteInfoUpdate(const TGNSSPosition position[], uint16_t numElements);
+  
+  
+  
 
   static EnhancedPosition* mpSelf;
 };

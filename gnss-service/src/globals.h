@@ -23,25 +23,22 @@
 #include <pthread.h>
 #include <time.h>
 
+#include "gnss-init.h"
 #include "gnss.h"
-#include "gnss-simple.h"
-#include "gnss-ext.h"
 #include "gnss-meta-data.h"
 
 extern pthread_mutex_t mutexCb;
 extern pthread_mutex_t mutexData;
 
-extern TGNSSPosition gPosition;
-extern TGNSSCourse gCourse;
-extern TGNSSAccuracy gAccuracy;
 extern TGNSSSatelliteDetail gSatelliteDetail; //TODO: buffer full set of satellite details for one point in time
-extern TGNSSSimpleConfiguration gConfiguration;
+extern TGNSSPosition gPosition;
+extern TGNSSTime gTime;
+
 
 extern const TGnssMetaData gMetaData;
 
-extern GNSSPositionCallback cbPosition;
-extern GNSSCourseCallback cbCourse;
-extern GNSSAccuracyCallback cbAccuracy;
 extern GNSSSatelliteDetailCallback cbSatelliteDetail;
+extern GNSSPositionCallback cbPosition;
+extern GNSSTimeCallback cbTime;
 
 #endif /* GLOBALS_H */
