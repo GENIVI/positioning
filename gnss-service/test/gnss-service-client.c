@@ -28,6 +28,40 @@
 
 DLT_DECLARE_CONTEXT(gCtx);
 
+static void cbTime(const TGNSSTime time[], uint16_t numElements)
+{
+    int i;    
+    if(time == NULL || numElements < 1)
+    {
+        LOG_ERROR_MSG(gCtx,"cbTime failed!");
+        return;
+    }
+
+    for (i = 0; i<numElements; i++)
+    {
+        if (time[i].validityBits & GNSS_TIME_DATE_VALID)
+        {
+            char month [12] [4] = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};         
+            LOG_INFO(gCtx,"Time Update[%d/%d]: timestamp=%llu UTC: %04d-%s-%02d %02d:%02d:%02d",
+                 i+1,
+                 numElements,
+                 time[i].timestamp, 
+                 time[i].year,
+                 month[time[i].month%12],
+                 time[i].day,
+                 time[i].hour,
+                 time[i].minute,
+                 time[i].second);
+        }
+        else
+        {
+            LOG_INFO(gCtx,"Time Update[%d/%d]: Invalid Date/Time",
+                 i+1,
+                 numElements);
+            
+        }
+    }
+}
 
 static void cbPosition(const TGNSSPosition position[], uint16_t numElements)
 {
@@ -40,7 +74,7 @@ static void cbPosition(const TGNSSPosition position[], uint16_t numElements)
 
     for (i = 0; i<numElements; i++)
     {
-        LOG_INFO(gCtx,"Location Update[%d/%d]: timestamp=%llu latitude=%.5f longitude=%.5f altitudeMSL=%.1f hSpeed=%.1f heading=%.1f\n hdop=%.1f usedSatellites=%d sigmaHPosition=%.1f sigmaHSpeed=%.1f sigmaHeading=%.1f fixStatus=%d fixTypeBits=0x%08X",
+        LOG_INFO(gCtx,"Position Update[%d/%d]: timestamp=%llu latitude=%.5f longitude=%.5f altitudeMSL=%.1f hSpeed=%.1f heading=%.1f\n hdop=%.1f usedSatellites=%d sigmaHPosition=%.1f sigmaHSpeed=%.1f sigmaHeading=%.1f fixStatus=%d fixTypeBits=0x%08X",
                  i+1,
                  numElements,
                  position[i].timestamp, 
@@ -100,7 +134,7 @@ bool checkMajorVersion(int expectedMajor)
 
 void init()
 {
-    if(!checkMajorVersion(2))
+    if(!checkMajorVersion(3))
     {
         exit(EXIT_FAILURE);
     }
@@ -121,6 +155,7 @@ int main()
     LOG_INFO_MSG(gCtx,"Starting gnss-service-client...");
 
     // register for GNSS
+    gnssRegisterTimeCallback(&cbTime);    
     gnssRegisterSatelliteDetailCallback(&cbSatelliteDetail);
     gnssRegisterPositionCallback(&cbPosition);
 
@@ -131,6 +166,7 @@ int main()
     }
 
     // deregister
+    gnssDeregisterTimeCallback(&cbTime);    
     gnssDeregisterSatelliteDetailCallback(&cbSatelliteDetail);
     gnssDeregisterPositionCallback(&cbPosition);
 

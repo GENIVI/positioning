@@ -630,7 +630,7 @@ bool EnhancedPosition::checkMajorVersion(int expectedMajor)
 
 void EnhancedPosition::run()
 {
-  if(!checkMajorVersion(2))
+  if(!checkMajorVersion(3))
   {
     exit(EXIT_FAILURE);
   }
