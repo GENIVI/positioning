@@ -8,9 +8,9 @@
     this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 */
 
-package org.genivi.positioning.EnhancedPositionService
+package org.genivi.EnhancedPositionService
 
-import org.genivi.positioning.EnhancedPositionService.EnhancedPositionServiceTypes.* from "EnhancedPositionServiceTypes.fidl"
+import org.genivi.EnhancedPositionService.EnhancedPositionServiceTypes.* from "EnhancedPositionServiceTypes.fidl"
 
 <**
 	@description : PositionFeedback = This interface allows the application implementing the map-matching algorithm to provide a position feedback to the EnahncedPositionService

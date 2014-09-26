@@ -8,10 +8,9 @@
     this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 */
 
-package org.genivi.positioning.EnhancedPositionService
+package org.genivi.EnhancedPositionService
 
-import org.genivi.positioning.EnhancedPositionService.EnhancedPositionServiceTypes.* from "EnhancedPositionServiceTypes.fidl"
-import org.genivi.positioning.EnhancedPositionService.EnhancedPositionTypes.* from "EnhancedPositionTypes.fidl"
+import org.genivi.EnhancedPositionService.EnhancedPositionServiceTypes.* from "EnhancedPositionServiceTypes.fidl"
 
 <**
 	@description : EnhancedPosition = This interface offers functionalities to retrieve the enhanced position of the vehicle
@@ -37,10 +36,10 @@ interface EnhancedPosition {
 	**>
 	method GetData {
 		in {
-			DataType[] valuesToReturn
+			PositionDataKey[] valuesToReturn
 		}
 		out {
-			Data data
+			PositionData data
 		}
 	}
 
@@ -109,7 +108,7 @@ interface EnhancedPosition {
 	**>
 	broadcast PositionUpdate {
 		out {
-			DataType[] changedValues
+			PositionDataKey[] changedValues
 		}
 	}
 
@@ -118,7 +117,7 @@ interface EnhancedPosition {
 	**>
 	broadcast RotationRateUpdate {
 		out {
-			RotationRateType[] changedValues
+			RotationRateKey[] changedValues
 		}
 	}
 
@@ -127,7 +126,7 @@ interface EnhancedPosition {
 	**>
 	broadcast AccuracyUpdate {
 		out {
-			AccuracyInfoType[] changedValues
+			AccuracyInfoKey[] changedValues
 		}
 	}
 
@@ -136,7 +135,7 @@ interface EnhancedPosition {
 	**>
 	broadcast SatelliteInfoUpdate {
 		out {
-			SatelliteInfoType[] changedValues
+			SatelliteInfoKey[] changedValues
 		}
 	}
 
@@ -145,7 +144,7 @@ interface EnhancedPosition {
 	**>
 	broadcast StatusUpdate {
 		out {
-			StatusKey[] changedValues
+			StatusInfoKey[] changedValues
 		}
 	}
 
