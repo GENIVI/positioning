@@ -164,12 +164,14 @@ typedef enum {
 typedef struct {
     uint64_t timestamp;             /**< Timestamp of the acquisition of the satellite detail data. */
     EGNSSSystem system;             /**< Value representing the GNSS system. */
-    uint16_t satelliteId;           /**< Satellite ID. See also https://collab.genivi.org/issues/browse/GT-2299 
-                                         Numbering scheme as defined by NMEA-0183 (v3.01 or later) for the GSV sentence
+    uint16_t satelliteId;           /**< Satellite ID.
+                                         Satellite IDs are only unique within one satellite system.
+                                         Satellites of different systems can be distinguished by @field TGNSSSatelliteDetail::system.
+                                         Ranges:
                                          1..32: GPS satellites (by PRN)
                                          33..64: SBAS/WAAS satellites
                                          65..96: GLONASS satellites
-                                         Note: Later NMEA-0183 versions probably already have Galileo support
+                                         1..64: GALILEO satellites, @ref Galileo OS SIS ICD, http://www.gsc-europa.eu/gnss-markets/segments-applications/os-sis-icd.
                                     */
     uint16_t azimuth;               /**< Satellite Azimuth in degrees. Value range 0..359 */
     uint16_t elevation;             /**< Satellite Elevation in degrees. Value range 0..90 */
