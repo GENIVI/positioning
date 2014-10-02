@@ -37,15 +37,20 @@ typedef enum {
 
 /**
  * The SteeringAngle delivers the sensor values of the steering angle.
+ * The reference coordinate system including the sign of the angles are defined in ISO 8855:2011, section 7
+ *
  * You must check the valid bits before usage.
  */
 typedef struct {
     uint64_t timestamp;             /**< Timestamp of the acquisition of the steering angle signal [ms].
                                          All sensor/GNSS timestamps must be based on the same time source. */
-    float front;                    /**< Returns the steering angle of the front wheels [degree]. */
-    float rear;                     /**< Returns the steering angle of the rear wheels [degree]. This is only useful for vehicles with a steerable rear axis. */
-    float steeringWheel;            /**< Returns the angle of the steering wheel [degree]. Useful for vehicles where the wheel angles are not available.
-                                         Must be used in combination with the steeringRatio. */
+    float front;                    /**< Returns the mean steer angle of the front wheels [degree]. 
+                                         @ref ISO 8855:2011, section 7.1.3. */
+    float rear;                     /**< Returns the mean steer angle of the rear wheels [degree].
+                                         @ref ISO 8855:2011, section 7.1.3. */
+    float steeringWheel;            /**< Returns the angle of the steering wheel [degree].
+                                         @ref ISO 8855:2011, section 7.1.8.
+                                         Must be used in combination with the steeringRatio @ref TSteeringAngleConfiguration. */
     uint32_t validityBits;          /**< Bit mask indicating the validity of each corresponding value.
                                         [bitwise or'ed @ref ESteeringAngleValidityBits values].
                                         Must be checked before usage. */
@@ -55,9 +60,11 @@ typedef struct {
  * The SteeringAngleConfiguration delivers the static configuration values of the steering wheel sensor service.
  */
 typedef struct {
-    float sigmaSteeringAngle;       /**< Standard deviation of the steering front angle in [degree]. */
-    float sigmaSteeringWheelAngle;  /**< Standard deviation of the steering wheel angle in [degree]. */
-    float steeringRatio;            /**< Steering ratio between steering wheel and wheels. Only valid when static: Unit: [-] */
+    float sigmaSteeringAngle;       /**< Standard error estimate of the front steer angle in [degree]. -1 if invalid.*/
+    float sigmaSteeringWheelAngle;  /**< Standard error estimate of the steering wheel angle in [degree]. -1 if invalid.*/
+    float steeringRatio;            /**< Ratio between steering wheel angle change and front steer angle change.
+                                         @ref ISO 8855:2011, section 7.1.13.
+                                         Only valid when static. 0 if invalid. Unit: [-] */
 } TSteeringAngleConfiguration;
 
 /**
