@@ -12,7 +12,7 @@
 -->
 
 <constants  name="EnhancedPositionService">
-  <version>2.0.0 (04-06-2013)</version>
+  <version>3.0.0 (xx-10-2014)</version>
   <doc>
     <line>This document defines the constants that are used in the EnhancedPositionService APIs</line>
   </doc>
@@ -64,10 +64,10 @@
   <id name="PDOP" value="0x0080" />
   <id name="HDOP" value="0x0081" />
   <id name="VDOP" value="0x0082" />
-  <id name="SIGMA_LATITUDE" value="0x0083" />
-  <id name="SIGMA_LONGITUDE" value="0x0084" />
   <id name="SIGMA_ALTITUDE" value="0x0085" />
   <id name="SIGMA_HEADING" value="0x0086" />
+  <id name="SIGMA_HPOSITION" value="0x0087" />
+  
 
   <!-- Time -->
   <id name="YEAR" value="0x00a0" />

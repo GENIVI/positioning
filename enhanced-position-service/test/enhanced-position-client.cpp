@@ -81,14 +81,9 @@ void EnhancedPositionClient::RotationRateUpdate(const std::vector< uint16_t >& c
   LOG_INFO_MSG(gCtx,"RotationRateUpdate");
 }
 
-void EnhancedPositionClient::AccuracyUpdate(const std::vector< uint16_t >& changedValues)
+void EnhancedPositionClient::GNSSAccuracyUpdate(const std::vector< uint16_t >& changedValues)
 {
   LOG_INFO_MSG(gCtx,"AccuracyUpdate");
-}
-
-void EnhancedPositionClient::SatelliteInfoUpdate(const std::vector< uint16_t >& changedValues)
-{
-  LOG_INFO_MSG(gCtx,"SatelliteInfoUpdate");
 }
 
 void EnhancedPositionClient::StatusUpdate(const std::vector< uint16_t >& changedValues)

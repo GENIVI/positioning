@@ -43,7 +43,7 @@ public:
 
   std::map< uint16_t, ::DBus::Variant > GetRotationRate();
 
-  std::map< uint16_t, ::DBus::Variant > GetAccuracy();
+  std::map< uint16_t, ::DBus::Variant > GetGNSSAccuracy();
 
   std::map< uint16_t, ::DBus::Variant > GetSatelliteInfo();
   
@@ -63,10 +63,8 @@ private:
 
   static void cbPosition(const TGNSSPosition position[], uint16_t numElements);
   static void sigPositionUpdate(const TGNSSPosition position[], uint16_t numElements);
-  static void sigAccuracyUpdate(const TGNSSPosition position[], uint16_t numElements);
-  static void sigStatusUpdate(const TGNSSPosition position[], uint16_t numElements);  
-  static void sigSatelliteInfoUpdate(const TGNSSPosition position[], uint16_t numElements);
-  
+  static void sigGNSSAccuracyUpdate(const TGNSSPosition position[], uint16_t numElements);
+  static void sigStatusUpdate(const TGNSSPosition position[], uint16_t numElements); 
   
   
 

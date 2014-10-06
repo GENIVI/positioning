@@ -202,13 +202,13 @@ std::map< uint16_t, ::DBus::Variant > EnhancedPosition::GetRotationRate()
   return RotationRate;
 }
 
-std::map< uint16_t, ::DBus::Variant > EnhancedPosition::GetAccuracy()
+std::map< uint16_t, ::DBus::Variant > EnhancedPosition::GetGNSSAccuracy()
 {
-  std::map< uint16_t, ::DBus::Variant > Accuracy;
+  std::map< uint16_t, ::DBus::Variant > GNSSAccuracy;
 
   throw DBus::ErrorNotSupported("Method not supported yet");
 
-  return Accuracy;
+  return GNSSAccuracy;
 }
 
 std::map< uint16_t, ::DBus::Variant > EnhancedPosition::GetSatelliteInfo()
@@ -344,7 +344,7 @@ void EnhancedPosition::sigPositionUpdate(const TGNSSPosition position[], uint16_
 
 }
 
-void EnhancedPosition::sigAccuracyUpdate(const TGNSSPosition position[], uint16_t numElements)
+void EnhancedPosition::sigGNSSAccuracyUpdate(const TGNSSPosition position[], uint16_t numElements)
 { 
   bool pdopChanged = false;
   bool hdopChanged = false;
@@ -421,8 +421,7 @@ void EnhancedPosition::sigAccuracyUpdate(const TGNSSPosition position[], uint16_
 
   if (sigmaHPosChanged)
   {
-    it = changedAccuracyValues.insert(it,POS_SIGMA_LATITUDE);
-    it = changedAccuracyValues.insert(it,POS_SIGMA_LONGITUDE);
+    it = changedAccuracyValues.insert(it,POS_SIGMA_HPOSITION);
   }
 
   if (sigmaAltitudeChanged)
@@ -438,7 +437,7 @@ void EnhancedPosition::sigAccuracyUpdate(const TGNSSPosition position[], uint16_
     return;
   }
   
-  mpSelf->AccuracyUpdate(changedAccuracyValues);
+  mpSelf->GNSSAccuracyUpdate(changedAccuracyValues);
 }
 
 void EnhancedPosition::sigStatusUpdate(const TGNSSPosition position[], uint16_t numElements)
@@ -496,89 +495,11 @@ void EnhancedPosition::sigStatusUpdate(const TGNSSPosition position[], uint16_t 
 }
 
 
-
-void EnhancedPosition::sigSatelliteInfoUpdate(const TGNSSPosition position[], uint16_t numElements)
-{ 
-  //satellite info
-  bool usedSatellitesChanged = false;
-  bool trackedSatellitesChanged = false;
-  bool visibleSatellitesChanged = false;
-  
-
-  
-  if (position == NULL || numElements < 1)
-  {
-      LOG_ERROR_MSG(gCtx,"sigSatelliteInfoUpdate failed!");
-      return;
-  }
-
-  for (int i = 0; i< numElements; i++)
-  {
-      LOG_INFO(gCtx,"SatelliteInfo Update[%d/%d]: usedSatellites=%d trackedSatellites=%d visibleSatellites=%d",
-               i+1,
-               numElements,
-               position[i].usedSatellites, 
-               position[i].trackedSatellites,
-               position[i].visibleSatellites);
-
-    if (usedSatellitesChanged == false)
-    {
-      usedSatellitesChanged = (position[i].validityBits & GNSS_POSITION_USAT_VALID);
-    }
-
-    if (trackedSatellitesChanged == false)
-    {
-      trackedSatellitesChanged = (position[i].validityBits & GNSS_POSITION_TSAT_VALID);
-    }
-
-    if (visibleSatellitesChanged == false)
-    {
-      visibleSatellitesChanged = (position[i].validityBits & GNSS_POSITION_VSAT_VALID);
-    }
-
-  }
-
-  //in a real product, the accuracy would be used for dead-reckoning.
-  //in this proof of concept, the client application is simply notified 
-  //about accuracy changes
-  std::vector<uint16_t>::iterator it;
-  
-  std::vector< uint16_t > changedSatelliteInfoValues;
-  it = changedSatelliteInfoValues.begin();
-
-  if (usedSatellitesChanged)
-  {
-    it = changedSatelliteInfoValues.insert(it,POS_USED_SATELLITES);
-  }
-
-  if (trackedSatellitesChanged)
-  {
-    it = changedSatelliteInfoValues.insert(it,POS_TRACKED_SATELLITES);
-  }
-
-  if (visibleSatellitesChanged)
-  {
-    it = changedSatelliteInfoValues.insert(it,POS_VISIBLE_SATELLITES);
-  }
-
-  //todo: handle other field-changes here (accuracy and status)
-
-  if (!mpSelf)
-  {
-    LOG_ERROR_MSG(gCtx,"Null pointer!");    
-    return;
-  }
-  
-  mpSelf->SatelliteInfoUpdate(changedSatelliteInfoValues);
-
-}
-
 void EnhancedPosition::cbPosition(const TGNSSPosition position[], uint16_t numElements)
 {
     sigPositionUpdate(position, numElements);
-    sigAccuracyUpdate(position, numElements);
+    sigGNSSAccuracyUpdate(position, numElements);
     sigStatusUpdate(position, numElements);
-    sigSatelliteInfoUpdate(position, numElements);
 }
 
 

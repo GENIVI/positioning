@@ -32,8 +32,7 @@ public:
 
   void PositionUpdate(const std::vector< uint16_t >& changedValues);
   void RotationRateUpdate(const std::vector< uint16_t >& changedValues);
-  void AccuracyUpdate(const std::vector< uint16_t >& changedValues);
-  void SatelliteInfoUpdate(const std::vector< uint16_t >& changedValues);
+  void GNSSAccuracyUpdate(const std::vector< uint16_t >& changedValues);
   void StatusUpdate(const std::vector< uint16_t >& changedValues);
 
 };
