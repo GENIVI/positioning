@@ -37,18 +37,10 @@ public:
 
   ::DBus::Struct< uint16_t, uint16_t, uint16_t, std::string > GetVersion();
     
-  std::map< uint16_t, ::DBus::Variant > GetData(const std::vector< uint16_t >& valuesToReturn);
-
-  std::map< uint16_t, ::DBus::Variant > GetPosition();
-
-  std::map< uint16_t, ::DBus::Variant > GetRotationRate();
-
-  std::map< uint16_t, ::DBus::Variant > GetGNSSAccuracy();
+  std::map< uint16_t, ::DBus::Variant > GetPositionInfo(const std::vector< uint16_t >& valuesToReturn);
 
   std::map< uint16_t, ::DBus::Variant > GetSatelliteInfo();
   
-  std::map< uint16_t, ::DBus::Variant > GetStatus();
-
   std::map< uint16_t, ::DBus::Variant > GetTime();
 
   void run();

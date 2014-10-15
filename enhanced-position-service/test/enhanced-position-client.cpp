@@ -39,7 +39,7 @@ void EnhancedPositionClient::PositionUpdate(const std::vector< uint16_t >& chang
   LOG_INFO_MSG(gCtx,"Position Update");
   
   // retrieve the data 
-  std::map< uint16_t, ::DBus::Variant > posData = GetData(changedValues);
+  std::map< uint16_t, ::DBus::Variant > posData = GetPositionInfo(changedValues);
 
   for (int i = 0; i < changedValues.size(); i++)
   {

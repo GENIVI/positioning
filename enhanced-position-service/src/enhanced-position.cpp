@@ -81,7 +81,7 @@ EnhancedPosition::~EnhancedPosition()
   return Version;
 }
     
-std::map< uint16_t, ::DBus::Variant > EnhancedPosition::GetData(const std::vector< uint16_t >& valuesToReturn)
+std::map< uint16_t, ::DBus::Variant > EnhancedPosition::GetPositionInfo(const std::vector< uint16_t >& valuesToReturn)
 {
   std::map< uint16_t, ::DBus::Variant > Data;
 
@@ -152,65 +152,6 @@ std::map< uint16_t, ::DBus::Variant > EnhancedPosition::GetData(const std::vecto
   return Data;
 }   
 
-std::map< uint16_t, ::DBus::Variant > EnhancedPosition::GetPosition()
-{
-  std::map< uint16_t, ::DBus::Variant > Position;
-  TGNSSPosition position;
-   
-    if(gnssGetPosition(&position))
-    {
-      if (position.validityBits & GNSS_POSITION_LATITUDE_VALID)
-      {
-        Position[POS_LATITUDE] = variant_double(position.latitude);
-      }
-
-      if (position.validityBits & GNSS_POSITION_LONGITUDE_VALID)
-      {
-        Position[POS_LONGITUDE] = variant_double(position.longitude);
-      }
-
-      if (position.validityBits & GNSS_POSITION_ALTITUDEMSL_VALID)
-      {
-        Position[POS_ALTITUDE] = variant_double(position.altitudeMSL);
-      }
-
-      if (position.validityBits & GNSS_POSITION_HEADING_VALID)
-      {
-        Position[POS_HEADING] = variant_double(position.heading);
-      }
-
-      if (position.validityBits & GNSS_POSITION_HSPEED_VALID)
-      {
-        Position[POS_SPEED] = variant_double(position.hSpeed);
-      }
-
-      if (position.validityBits & GNSS_POSITION_VSPEED_VALID)
-      {
-        Position[POS_CLIMB] = variant_double(position.vSpeed);
-      }      
-    }
-
-  return Position;
-}  
-
-std::map< uint16_t, ::DBus::Variant > EnhancedPosition::GetRotationRate()
-{
-  std::map< uint16_t, ::DBus::Variant > RotationRate;
-
-  throw DBus::ErrorNotSupported("Method not supported yet");
-
-  return RotationRate;
-}
-
-std::map< uint16_t, ::DBus::Variant > EnhancedPosition::GetGNSSAccuracy()
-{
-  std::map< uint16_t, ::DBus::Variant > GNSSAccuracy;
-
-  throw DBus::ErrorNotSupported("Method not supported yet");
-
-  return GNSSAccuracy;
-}
-
 std::map< uint16_t, ::DBus::Variant > EnhancedPosition::GetSatelliteInfo()
 {
   std::map< uint16_t, ::DBus::Variant > SatelliteInfo;
@@ -218,15 +159,6 @@ std::map< uint16_t, ::DBus::Variant > EnhancedPosition::GetSatelliteInfo()
   throw DBus::ErrorNotSupported("Method not supported yet");
 
   return SatelliteInfo;
-}
-
-std::map< uint16_t, ::DBus::Variant > EnhancedPosition::GetStatus()
-{
-  std::map< uint16_t, ::DBus::Variant > Status;
-
-  throw DBus::ErrorNotSupported("Method not supported yet");
-
-  return Status;
 }
 
 std::map< uint16_t, ::DBus::Variant > EnhancedPosition::GetTime()
@@ -349,8 +281,7 @@ void EnhancedPosition::sigGNSSAccuracyUpdate(const TGNSSPosition position[], uin
   bool pdopChanged = false;
   bool hdopChanged = false;
   bool vdopChanged = false;
-  bool sigmaHPosChanged = false;
-  bool sigmaAltitudeChanged = false;
+  bool usatChanged = false; //used satellites
 
   if (position == NULL || numElements < 1)
   {
@@ -385,14 +316,9 @@ void EnhancedPosition::sigGNSSAccuracyUpdate(const TGNSSPosition position[], uin
       vdopChanged = (position[i].validityBits & GNSS_POSITION_VDOP_VALID);
     }
 
-    if (sigmaHPosChanged == false)
+    if (usatChanged == false)
     {
-      sigmaHPosChanged = (position[i].validityBits & GNSS_POSITION_SHPOS_VALID);
-    }
-
-    if (sigmaAltitudeChanged == false)
-    {
-      sigmaAltitudeChanged = (position[i].validityBits & GNSS_POSITION_SALT_VALID);
+      usatChanged = (position[i].validityBits & GNSS_POSITION_USAT_VALID);
     }
   }
 
@@ -419,14 +345,9 @@ void EnhancedPosition::sigGNSSAccuracyUpdate(const TGNSSPosition position[], uin
     it = changedAccuracyValues.insert(it,POS_VDOP);
   }  
 
-  if (sigmaHPosChanged)
+  if (usatChanged)
   {
-    it = changedAccuracyValues.insert(it,POS_SIGMA_HPOSITION);
-  }
-
-  if (sigmaAltitudeChanged)
-  {
-    it = changedAccuracyValues.insert(it,POS_VISIBLE_SATELLITES);
+    it = changedAccuracyValues.insert(it,POS_USED_SATELLITES);
   }
 
   //todo: handle other field-changes here (accuracy and status)
