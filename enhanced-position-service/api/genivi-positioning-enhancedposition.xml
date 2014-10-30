@@ -92,7 +92,7 @@
 
     <signal name="PositionUpdate">
       <doc>
-        <line>PositionUpdate = This signal is called to notifiy a client application of a position change. The update frequency is implementation specific. The maximum allowed frequency is 10Hz</line>
+        <line>PositionUpdate = This signal is called to notifiy a client application that updated positioning data is available. The update frequency is implementation specific. The maximum allowed frequency is 10Hz</line>
       </doc>
       <arg name="changedValues" type="t">
         <doc>
