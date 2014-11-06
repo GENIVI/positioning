@@ -48,7 +48,8 @@
           <line>Supported Keys (continued): ROLL_RATE,PITCH_RATE,YAW_RATE,...</line>
           <line>Supported Keys (continued): PDOP,HDOP,VDOP,...</line>
           <line>Supported Keys (continued): USED_SATELLITES,TRACKED_SATELLITES,VISIBLE_SATELLITES,...</line>
-          <line>Supported Keys (continued): SIGMA_HPOSITION,SIGMA_ALTITUDE,SIGMA_HEADING,...</line>
+          <line>Supported Keys (continued): SIGMA_HPOSITION,SIGMA_ALTITUDE,...</line>
+          <line>Supported Keys (continued): SIGMA_HEADING,SIGMA_SPEED,SIGMA_CLIMB,...</line>
           <line>Supported Keys (continued): GNSS_FIX_STATUS,DR_STATUS</line>
         </doc>
       </arg>
@@ -80,10 +81,12 @@
           <line>key = VDOP, value = value of type 'd', that represents vertical (altitude) dilution of precision</line>
           <line>key = USED_SATELLITES, value = value of type 'y', that represents the number of used satellites</line> 
           <line>key = TRACKED_SATELLITES, value = value of type 'y', that represents the number of tracked satellites</line> 
-          <line>key = VISIBLE_SATELLITES, value = value of type 'y', that represents the number of visible satellites</line>                     
+          <line>key = VISIBLE_SATELLITES, value = value of type 'y', that represents the number of visible satellites</line>
           <line>key = SIGMA_HPOSITION, value = value of type 'd', that represents the standard error estimate of the horizontal position in m</line>
           <line>key = SIGMA_ALTITUDE, value = value of type 'd', that represents the standard error estimate of the altitude in m</line>
           <line>key = SIGMA_HEADING, value = value of type 'd', that represents the standard error estimate of the heading in degrees</line>
+          <line>key = SIGMA_SPEED, value = value of type 'd', that represents the standard error estimate of the speed in m/s</line>
+          <line>key = SIGMA_CLIMB, value = value of type 'd', that represents the standard error estimate of the climb in degrees</line>
           <line>key = GNSS_FIX_STATUS, value = value of type 'q', that represents an enum(NO_FIX(0x01),TIME_FIX(0x01),2D_FIX(0x02),3D_FIX(0x03), ... )</line>
           <line>key = DR_STATUS, value = value of type 'b', where TRUE means that a dead-reckoning algorithm has been used to calculate the current position</line>
         </doc>

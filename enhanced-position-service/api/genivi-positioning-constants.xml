@@ -35,12 +35,14 @@
   <id name="USED_SATELLITES"        value="0x00001000" />
   <id name="TRACKED_SATELLITES"     value="0x00002000" />
   <id name="VISIBLE_SATELLITES"     value="0x00004000" />
-  <id name="SIGMA_ALTITUDE"         value="0x00008000" />
-  <id name="SIGMA_HEADING"          value="0x00010000" />
-  <id name="SIGMA_HPOSITION"        value="0x00020000" />
-  <id name="GNSS_FIX_STATUS"        value="0x00040000" />
-  <id name="DR_STATUS"              value="0x00080000" />
-  <id name="RELIABILTY_INDEX"       value="0x00100000" />
+  <id name="SIGMA_HPOSITION"        value="0x00008000" />  
+  <id name="SIGMA_ALTITUDE"         value="0x00010000" />
+  <id name="SIGMA_HEADING"          value="0x00020000" />
+  <id name="SIGMA_SPEED"            value="0x00040000" />
+  <id name="SIGMA_CLIMB"            value="0x00080000" />  
+  <id name="GNSS_FIX_STATUS"        value="0x00100000" />
+  <id name="DR_STATUS"              value="0x00200000" />
+  <id name="RELIABILTY_INDEX"       value="0x00400000" />
 
   <!-- Time Keys - for use in bit mask -->
   <id name="YEAR"                   value="0x01000000" />
