@@ -42,15 +42,15 @@
 
       <arg name="valuesToReturn" type="t" direction="in">
         <doc>
-          <line>valuesToReturn = Bit mask: Keys corresponding to requested values in one 64 unsigned bit integer, bitwise or'ed </line>
-          <line>Supported Keys:             LATITUDE,LONGITUDE,ALTITUDE,...</line>
-          <line>Supported Keys (continued): HEADING,SPEED,CLIMB,...</line>
-          <line>Supported Keys (continued): ROLL_RATE,PITCH_RATE,YAW_RATE,...</line>
-          <line>Supported Keys (continued): PDOP,HDOP,VDOP,...</line>
-          <line>Supported Keys (continued): USED_SATELLITES,TRACKED_SATELLITES,VISIBLE_SATELLITES,...</line>
-          <line>Supported Keys (continued): SIGMA_HPOSITION,SIGMA_ALTITUDE,...</line>
-          <line>Supported Keys (continued): SIGMA_HEADING,SIGMA_SPEED,SIGMA_CLIMB,...</line>
-          <line>Supported Keys (continued): GNSS_FIX_STATUS,DR_STATUS</line>
+          <line>valuesToReturn = Bitmask obtained as result of a bitwise OR operation on the keys corresponding to requested values</line>
+          <line>Keys: LATITUDE,LONGITUDE,ALTITUDE,</line>
+          <line> HEADING,SPEED,CLIMB,</line>
+          <line> ROLL_RATE,PITCH_RATE,YAW_RATE,</line>
+          <line> PDOP,HDOP,VDOP,</line>
+          <line> USED_SATELLITES,TRACKED_SATELLITES,VISIBLE_SATELLITES,</line>
+          <line> SIGMA_HPOSITION,SIGMA_ALTITUDE,</line>
+          <line> SIGMA_HEADING,SIGMA_SPEED,SIGMA_CLIMB,</line>
+          <line> GNSS_FIX_STATUS,DR_STATUS</line>
         </doc>
       </arg>
 
@@ -66,7 +66,7 @@
           <line>dictionary = array of tuples (key,value)</line>
           <line>Invalid data is not be returned to the client application</line>
           <line>The vehicle axis system is defined by ISO 8855: In short, the X-axis pointing is forwards, the Y-axis is pointing left, the Z-axis is pointing upwards</line>
-          <line>key = enum(LATITUDE,LONGITUDE,ALTITUDE,HEADING,SPEED,CLIMB,ROLL_RATE,PITCH_RATE,YAW_RATE,PDOP,HDOP,VDOP,USED_SATELLITES,TRACKED_SATELLITES,VISIBLE_SATELLITES,SIGMA_HPOSITION,SIGMA_ALTITUDE,SIGMA_HEADING,GNSS_FIX_STATUS,DR_STATUS,... ,ALL</line>
+          <line>key = enum(LATITUDE,LONGITUDE,ALTITUDE,HEADING,SPEED,CLIMB,ROLL_RATE,PITCH_RATE,YAW_RATE,PDOP,HDOP,VDOP,USED_SATELLITES,TRACKED_SATELLITES,VISIBLE_SATELLITES,SIGMA_HPOSITION,SIGMA_ALTITUDE,SIGMA_HEADING,SIGMA_SPEED,SIGMA_CLIMB,GNSS_FIX_STATUS,DR_STATUS</line>
           <line>key = LATITUDE, value = value of type 'd', that expresses the WGS84 latitude of the current position in degrees. Range [-90:+90]. Example: 48.053250</line>
           <line>key = LONGITUDE, value = value of type 'd', that expresses the WGS84 longitude of the current position in degrees. Range [-180:+180]. Example: 8.324500</line>
           <line>key = ALTITUDE, value = value of type 'd', that expresses the altitude above the sea level of the current position in meters</line>
@@ -99,14 +99,15 @@
       </doc>
       <arg name="changedValues" type="t">
         <doc>
-          <line>changedValues = Bit mask: Keys corresponding to changed values in one 64 unsigned bit integer, bitwise or'ed </line>
-          <line>Supported Keys:             LATITUDE,LONGITUDE,ALTITUDE,...</line>
-          <line>Supported Keys (continued): HEADING,SPEED,CLIMB,...</line>
-          <line>Supported Keys (continued): ROLL_RATE,PITCH_RATE,YAW_RATE,...</line>
-          <line>Supported Keys (continued): PDOP,HDOP,VDOP,...</line>
-          <line>Supported Keys (continued): USED_SATELLITES,TRACKED_SATELLITES,VISIBLE_SATELLITES,...</line>
-          <line>Supported Keys (continued): SIGMA_HPOSITION,SIGMA_ALTITUDE,SIGMA_HEADING,...</line>
-          <line>Supported Keys (continued): GNSS_FIX_STATUS,DR_STATUS</line>
+          <line>changedValues = Bitmask obtained as result of a bitwise OR operation on the keys corresponding to updated values</line>
+          <line>LATITUDE,LONGITUDE,ALTITUDE,</line>
+          <line> HEADING,SPEED,CLIMB,</line>
+          <line> ROLL_RATE,PITCH_RATE,YAW_RATE,</line>
+          <line> PDOP,HDOP,VDOP,</line>
+          <line> USED_SATELLITES,TRACKED_SATELLITES,VISIBLE_SATELLITES,</line>
+          <line> SIGMA_HPOSITION,SIGMA_ALTITUDE,</line>
+          <line> SIGMA_HEADING,SIGMA_SPEED,SIGMA_CLIMB,</line>
+          <line> GNSS_FIX_STATUS,DR_STATUS</line>
         </doc>
       </arg>
     </signal>
@@ -122,14 +123,13 @@
       </arg>        
       <arg name="satelliteInfo" type="a{qqqqqb}" direction="out">
         <doc>
-          <line>Represents an array(struct(system,satelliteId,azimuth,elevation,snr,inUse).
-                The system field identifies the satellite system: GPS, GLONASS, GALILEO, COMPASS, ...
-                The satelliteId is only unique within one satellite system.
-                Azimuth is in degrees. Value range 0..359.
-                Elevation is in degrees. Value range 0..90.
-                SNR (C/No) is in dBHz. Range 0 to 99, null when not tracking
-                inUse is set to true when the satellite is used for the fix
-          </line>  
+          <line>satelliteInfo = array(struct(system,satelliteId,azimuth,elevation,snr,inUse))</line> 
+          <line> system = enum(GPS, GLONASS, GALILEO, COMPASS, ... )</line> 
+          <line> satelliteId = satellite ID. This ID is unique within one satellite system</line> 
+          <line> azimuth = satellite azimuth in degrees. Value range 0..359</line> 
+          <line> elevation = satellite elevation in degrees. Value range 0..90</line> 
+          <line> snr = SNR (C/No) in dBHz. Range 0 to 99, null when not tracking</line> 
+          <line> inUse = flag indicating if the satellite is used for the fix (inUse=true)</line> 
         </doc>
       </arg>
     </method>
