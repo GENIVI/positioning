@@ -22,9 +22,9 @@ interface Configuration {
 	}
 	
     <**
-	    @description : SatelliteSystem = satellite system (GPS, Glonass, ...)
+	    @description : SatSystem = satellite system (GPS, GLONASS, ...)
     **>
-	attribute UInt16 SatelliteSystem 
+	attribute SatelliteSystem SatSystem 
 	
     <**
 	    @description : UpdateInterval = update interval

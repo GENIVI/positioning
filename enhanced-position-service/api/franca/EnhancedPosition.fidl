@@ -31,65 +31,32 @@ interface EnhancedPosition {
 	}
 
 	<**
-		@description : GetData = This method returns a given set of positioning data (e.g. Position, Course, Accuracy, Status, ... )
+		@description : GetPositionInfo = This method returns a given set of positioning data (e.g. Position, Course, Accuracy, Status, ... )
 		Note: If a requested value is invalid, it's not returned to the client application
 	**>
-	method GetData {
+	method GetPositionInfo {
 		in {
-			PositionDataKey[] valuesToReturn
+			<** @description : valuesToReturn = Bitmask obtained as result of a bitwise OR operation on the keys corresponding to the values to be returned **>
+			Bitmask valuesToReturn
 		}
 		out {
-			PositionData data
+			<** @description : timestamp = Timestamp of the acquisition of the position data [ms] **>
+			Timestamp timestamp 
+			<** @description : data = Position data **>
+			PositionInfo[] data
 		}
 	}
-
-	<**
-		@description : GetPosition = This method returns the current position
-		Note: If a requested value is invalid, it's not returned to the client application
-	**>
-	method GetPosition {
-		out {
-			PositionInfo position
-		}
-	}
-
-	<**
-		@description : GetRotationRate = This method returns the rotation rate
-		Note: If a requested value is invalid, it's not returned to the client application
-	**>
-	method GetRotationRate {
-		out {
-			RotationRate rotationRate
-		}
-	}
-
-	<**
-		@description : GetAccuracy = This method returns the accuracy
-		Note: If a requested value is invalid, it's not returned to the client application
-	**>
-	method GetAccuracy {
-		out {
-			AccuracyInfo accuracy
-		}
-	}
-
+	
 	<**
 		@description : GetSatelliteInfo = This method returns information about the current satellite constellation
 		Note: If a requested value is invalid, it's not returned to the client application
 	**>
 	method GetSatelliteInfo {
 		out {
-			SatelliteInfo satelliteInfo
-		}
-	}
-
-	<**
-		@description : GetStatus = This method returns the status of this service
-		Note: If a requested value is invalid, it's not returned to the client application
-	**>
-	method GetStatus {
-		out {
-			StatusInfo status
+			<** @description : timestamp = Timestamp of the acquisition of the satellite detail data [ms] **>
+			Timestamp timestamp
+			<** @description : satelliteInfo = satellite information **>
+			SatelliteInfo[] satelliteInfo
 		}
 	}
 
@@ -99,6 +66,9 @@ interface EnhancedPosition {
 	**>
 	method GetTime {
 		out {
+			<** @description : timestamp = Timestamp of the acquisition of the UTC date/time [ms] **>
+			Timestamp timestamp
+			<** @description : time = UTC date/time **>
 			TimeInfo time
 		}
 	}
@@ -108,43 +78,8 @@ interface EnhancedPosition {
 	**>
 	broadcast PositionUpdate {
 		out {
-			PositionDataKey[] changedValues
-		}
-	}
-
-	<**
-		@description : RotationRateUpdated = This signal is emitted when the rotation rate changes
-	**>
-	broadcast RotationRateUpdate {
-		out {
-			RotationRateKey[] changedValues
-		}
-	}
-
-	<**
-		@description : AccuracyUpdated = This signal is emitted when the accuracy changes
-	**>
-	broadcast AccuracyUpdate {
-		out {
-			AccuracyInfoKey[] changedValues
-		}
-	}
-
-	<**
-		@description : SatelliteInfoUpdate = This signal is emitted when information about the current satellite information is updated
-	**>
-	broadcast SatelliteInfoUpdate {
-		out {
-			SatelliteInfoKey[] changedValues
-		}
-	}
-
-	<**
-		@description : StatusUpdate = This signal is emitted when the status of this service changes
-	**>
-	broadcast StatusUpdate {
-		out {
-			StatusInfoKey[] changedValues
+			<** @description : valuesToReturn = Bitmask obtained as result of a bitwise OR operation on the keys corresponding to the values that changed **>
+			Bitmask changedValues
 		}
 	}
 

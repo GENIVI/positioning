@@ -14,6 +14,11 @@ typeCollection EnhancedPositionServiceTypes {
 	
 	typedef Handle is UInt32
 	
+	typedef Timestamp is UInt64
+	
+	<** @description: bitmask obtained as a result of an OR operation on enum values of type PositionInfoKey **>
+	typedef Bitmask is UInt64 
+	
 	<** @description: version.**>			
 	struct Version {
 		<** @description : when the major changes, then backward compatibility with previous releases is not granted.**>
@@ -26,17 +31,13 @@ typeCollection EnhancedPositionServiceTypes {
 		String date
 	}
 	
-	<** @description : genereic value (mapped to a dbus variant ('v') data type.**>
+	<** @description : Value = generic value (mapped to a dbus variant ('v') data type.**>
 	union Value {
 		UInt32 uInt32Value
 		String stringValue
 	}
-    
-	enumeration BasicEnum {
-		INVALID = 0x0000
-	}
 
-    <** @description: 2D geocoordinate.**>	
+    <** @description: Coordinate2D = 2D geocoordinate.**>	
 	struct Coordinate2D {
         <**	@description : latitude of a vertex of the polygon in format %3.6f. Range [-90:+90]. Example: 48.053250.**>
 		Double latitude
@@ -44,37 +45,42 @@ typeCollection EnhancedPositionServiceTypes {
 		Double longitude
 	}
 
-    <** @description: 3D geocoordinate.**>	
+    <** @description: Coordinate3D = 3D geocoordinate.**>	
 	struct Coordinate3D extends Coordinate2D {
         <**	@description : altitude above the sea level of the current position in meters.**>
 		Int32 altitude
 	}
 	
-	enumeration PositionDataKey extends BasicEnum {
-		TIMESTAMP       = 0x0001
-		LATITUDE        = 0x0020
-		LONGITUDE       = 0x0021
-		ALTITUDE        = 0x0022
-		HEADING         = 0x0030
-		SPEED           = 0x0031
-		CLIMB           = 0x0032
-		ROLL_RATE       = 0x0060
-		PITCH_RATE      = 0x0061
-		YAW_RATE        = 0x0062
-		PDOP            = 0x0080
-		HDOP            = 0x0081
-		VDOP            = 0x0082
-		SIGMA_LATITUDE  = 0x0083
-		SIGMA_LONGITUDE = 0x0084
-		SIGMA_ALTITUDE  = 0x0085
-		SIGMA_HEADING   = 0x0086
-		ALL             = 0xffff
+	enumeration PositionInfoKey {
+		LATITUDE           = "0x00000001"
+		LONGITUDE          = "0x00000002"
+		ALTITUDE           = "0x00000004"
+		HEADING            = "0x00000008"
+		SPEED              = "0x00000010"
+		CLIMB              = "0x00000020"
+		ROLL_RATE          = "0x00000040"
+		PITCH_RATE         = "0x00000080"
+		YAW_RATE           = "0x00000100"
+		PDOP               = "0x00000200"
+		HDOP               = "0x00000400"
+		VDOP               = "0x00000800"
+		USED_SATELLITES    = "0x00001000"
+        TRACKED_SATELLITES = "0x00002000"
+        VISIBLE_SATELLITES = "0x00004000"
+		SIGMA_HPOSITION    = "0x00008000"
+		SIGMA_ALTITUDE     = "0x00010000"
+		SIGMA_HEADING      = "0x00020000"
+		SIGMA_SPEED        = "0x00040000"
+        SIGMA_CLIMB        = "0x00080000"
+        GNSS_FIX_STATUS    = "0x00100000"
+        DR_STATUS          = "0x00200000"
+        RELIABILTY_INDEX   = "0x00400000"
+		ALL                = "0xffffffff"
 	} 
 	
 	<**	  
-       @description : PositioningData = array of tuples (key,value)
-	      key = enumeration PositionDataKey
-          key = TIMESTAMP, value = value of type 'UInt64', that represents a timestamp in ms
+       @description : PositioningInfo = array of tuples (key,value)
+	      key = enumeration PositionInfoKey
           key = LATITUDE, value = value of type 'Double', that expresses the latitude of the current position. Range [-90:+90]. Example: 48.053250
           key = LONGITUDE, value = value of type 'Double', that expresses the longitude of the current position. Range [-180:+180]. Example: 8.324500
           key = ALTITUDE, value = value of type 'Int32', that expresses the altitude above the sea level of the current position in meters
@@ -87,150 +93,49 @@ typeCollection EnhancedPositionServiceTypes {
           key = PDOP, value = value of type 'Double', that represents the positional (3D) dilution of precision
           key = HDOP, value = value of type 'Double', that represents the horizontal (2D) dilution of precision
           key = VDOP, value = value of type 'Double', that represents vertical (altitude) dilution of precision
-          key = SIGMA_LATITUDE, value = value of type 'Double', that represents the standard deviation for latitude in m
-          key = SIGMA_LONGITUDE, value = value of type 'Double', that represents the standard deviation for longitude in m
+          key = SIGMA_HPOSITION, value = value of type 'Double', that represents the standard deviation for the horizontal position in m
           key = SIGMA_ALTITUDE, value = value of type 'Double', that represents the standard deviation for altitude in m
           key = SIGMA_HEADING, value = value of type 'Double', that represents the standard deviation for altitude in degrees
+          key = USED_SATELLITES, value = value of type 'UInt8', that represents the number of used satellites
+          key = TRACKED_SATELLITES, value = value of type 'UInt8', that represents the number of tracked satellites 
+          key = VISIBLE_SATELLITES, value = value of type 'UInt8', that represents the number of visible satellites
+          key = GNSS_FIX_STATUS, value = value of type 'q', that represents an enum(NO_FIX(0x01),TIME_FIX(0x01),2D_FIX(0x02),3D_FIX(0x03), ... )
+          key = DR_STATUS, value = value of type 'b', where TRUE means that a dead-reckoning algorithm has been used to calculate the current position
     **>
-	map PositionData {
-		PositionDataKey to Value
-	}
-	
-	enumeration PositionInfoKey extends BasicEnum {
-		TIMESTAMP       = 0x0001
-		LATITUDE        = 0x0020
-		LONGITUDE       = 0x0021
-		ALTITUDE        = 0x0022
-		HEADING         = 0x0030
-		SPEED           = 0x0031
-		CLIMB           = 0x0032
-	} 
-	
-	<**	  
-       @description : PositionInfo = array of tuples (key,value)
-          key = enumeration PositionInfoKey
-          key = TIMESTAMP, value = value of type 'UInt64', that represents a timestamp in ms
-          key = LATITUDE, value = value of type 'Double', that expresses the latitude of the current position. Range [-90:+90]. Example: 48.053250
-          key = LONGITUDE, value = value of type 'Double', that expresses the longitude of the current position. Range [-180:+180]. Example: 8.324500 
-          key = ALTITUDE, value = value of type 'Int32', that expresses the altitude above the sea level of the current position in meters
-          key = HEADING, value = value of type 'Int32', that expresses the course angle in degree. Range [0:360]. 0 = north, 90 = east, 180 = south, 270 = west
-          key = SPEED, value = value of type 'Double', that expresses speed measured in m/s. A negative value indicates that the vehicle is moving backwards
-          key = CLIMB, value = value of type 'Int32', that expresses the road gradient in degrees
-    **>   
 	map PositionInfo {
 		PositionInfoKey to Value
 	}
 	
-	enumeration RotationRateKey extends BasicEnum {
-		TIMESTAMP       = 0x0001
-		ROLL_RATE       = 0x0060
-		PITCH_RATE      = 0x0061
-		YAW_RATE        = 0x0062
-	}
-	
 	<**	  
-       @description : RotationRate = array of tuples (key,value)
-          key = enumeration RotationRateKey
-          key = TIMESTAMP, value = value of type 'UInt64', that represents a timestamp in ms
-          key = ROLL_RATE, value = rotation rate around the X-axis in degrees/s. Range [-100:+100]
-          key = PITCH_RATE, value = rotation rate around the Y-axis in degrees/s. Range [-100:+100]
-          key = YAW_RATE, value = rotation rate around the Z-axis in degrees/s. Range [-100:+100]
+       @description : SatelliteInfo = array(struct(system,satelliteId,azimuth,elevation,snr,inUse))
+          system = enum(GPS, GLONASS, GALILEO, COMPASS, ... )
+          satelliteId = satellite ID. This ID is unique within one satellite system
+          azimuth = satellite azimuth in degrees. Value range 0..359
+          elevation = satellite elevation in degrees. Value range 0..90
+          snr = SNR (C/No) in dBHz. Range 0 to 99, null when not tracking
+          inUse = flag indicating if the satellite is used for the fix (inUse=true)
     **>
-	map RotationRate {
-		RotationRateKey to Value
-	}
-	
-	enumeration AccuracyInfoKey extends BasicEnum {
-		TIMESTAMP       = 0x0001
-		PDOP            = 0x0080
-		HDOP            = 0x0081
-		VDOP            = 0x0082
-		SIGMA_LATITUDE  = 0x0083
-		SIGMA_LONGITUDE = 0x0084
-		SIGMA_ALTITUDE  = 0x0085
-		SIGMA_HEADING   = 0x0086
-	}	
-		
-    <**	  
-       @description : AccuracyInfo = array of tuples (key,value)
-          key = enumeration AccuracyInfoKey
-          key = TIMESTAMP, value = value of type 't', that represents a timestamp in ms
-          key = PDOP, value = value of type 'd', that represents the positional (3D) dilution of precision
-          key = HDOP, value = value of type 'd', that represents the horizontal (2D) dilution of precision
-          key = VDOP, value = value of type 'd', that represents vertical (altitude) dilution of precision
-          key = SIGMA_LATITUDE, value = value of type 'd', that represents the standard deviation for latitude in m
-          key = SIGMA_LONGITUDE, value = value of type 'd', that represents the standard deviation for longitude in m
-          key = SIGMA_ALTITUDE, value = value of type 'd', that represents the standard deviation for altitude in m
-          key = SIGMA_HEADING, value = value of type 'd', that represents the standard deviation for altitude in degrees
-    **>    
-	map AccuracyInfo {
-		AccuracyInfoKey to Value
-	}
-	
-	enumeration SatelliteInfoKey extends BasicEnum {
-	    TIMESTAMP           = 0x0001
-	    USED_SATELLITES     = 0x00c0
-	    TRACKED_SATELLITES  = 0x00c1
-	    VISIBLE_SATELLITES  = 0x00c2
-	    SATELLITE_DETAILS   = 0x00c3
-	}
-	
-	struct SatelliteDetails {
-		UInt32 satId
+	struct SatelliteInfo {
+		UInt32 satellitId
 		Boolean inUse
 		UInt32 elevation
 		UInt32 azimuth
 		UInt32 snr
 	}
 	
-	<**	
-	   @description : SatelliteInfo = array of tuples (key,value)
-          key = enumeration SatelliteInfoKey
-          key = TIMESTAMP, value = value of type 'UInt64', that represents a timestamp in ms
-          key = USED_SATELLITES, value = value of type 'UInt8', that represents the number of used satellites
-          key = TRACKED_SATELLITES, value = value of type 'UInt8', that represents the number of tracked satellites 
-          key = VISIBLE_SATELLITES, value = value of type 'UInt8', that represents the number of visible satellites
-          key = SATELLITE_DETAILS, value = value of type SatelliteDetails[], that represents an array(struct(satId,inUse,elevation,azimuth,snr))
-                The satID numbering scheme shall be as defined by NMEA-0183 (v3.01 or later) for the GSV sentence:
-                1..32: GPS satellites (by PRN), 33..64: SBAS/WAAS satellites, 65..96: Glonass satellites
-                Note: Later NMEA-0183 versions probably already have Galileo support 
-    **>
-	map SatelliteInfo {
-		SatelliteInfoKey to Value
-	}
-	
-	enumeration StatusInfoKey extends BasicEnum {
-		TIMESTAMP       = 0x0001
-		GNSS_FIX_STATUS = 0x0070
-		DR_STATUS       = 0x0071
-	}
-	
-    <**	  
-       @description : StatusInfo = array of tuples (key,value)
-          key = enumeration StatusInfoKey
-          key = TIMESTAMP, value = value of type 'UInt64', that represents a timestamp in ms
-          key = GNSS_FIX_STATUS, value = value of type 'UInt16', that represents an enum(INVALID(0x00),NO_FIX(0x01),TIME_FIX(0x02),2D_FIX(0x03),3D_FIX(0x04), ... )
-          key = DR_STATUS, value = value of type 'Boolean', where TRUE means that a dead-reckoning algorithm has been used to calculate the current position
-    **>    
-	map StatusInfo {
-		StatusInfoKey to Value
-	}
-	
-	enumeration TimeInfoKey extends BasicEnum {
-		TIMESTAMP       = 0x0001
-	    YEAR            = 0x00a0
-	    MONTH           = 0x00a1
-	    DAY             = 0x00a2
-	    HOUR            = 0x00a3
-	    MINUTE          = 0x00a4
-	    SECOND          = 0x00a5
-	    MS              = 0x00a6
+	enumeration TimeInfoKey  {
+	    YEAR            = "0x01000000"
+	    MONTH           = "0x02000000"
+	    DAY             = "0x04000000"
+	    HOUR            = "0x08000000"
+	    MINUTE          = "0x10000000"
+	    SECOND          = "0x20000000"
+	    MS              = "0x40000000"
 	}
 
     <**	  
        @description : TimeInfo = array of tuples (key,value)
           key = enumeration TimeInfoKey
-          key = TIMESTAMP, value = value of type 'UInt64', that represents a timestamp in ms
           key = YEAR, value = value of type 'UInt16', 4 digits number that indicates the year. Example: 2012
           key = MONTH, value = value of type 'UInt8', 2 digits number that indicates the month. Example: 03 means March
           key = DAY, value = value of type 'UInt8', 2 digits number that indicates the day. Range [0:31]. Example: 07
@@ -242,6 +147,28 @@ typeCollection EnhancedPositionServiceTypes {
 	map TimeInfo {
 		TimeInfoKey to Value
 	}
+	
+	enumeration PositionFeedbackKey {
+		LATITUDE         = "0x00000001"
+	    LONGITUDE        = "0x00000002"
+	    ALTITUDE         = "0x00000004"
+	    HEADING          = "0x00000008"
+	    SPEED            = "0x00000010"
+	    CLIMB            = "0x00000020"
+	    RELIABILTY_INDEX = "0x00400000"
+	}
+	
+	enumeration PositionFeedbackType {
+		MAP_MATCHED_FEEDBACK = "0x00000001"
+	    TEST_FEEDBACK        = "0x00000002"
+	}
+	
+	enumeration SatelliteSystem {
+	    GPS                  = "0x00000001"
+        GLONASS              = "0x00000002"
+        GALILEO              = "0x00000003" 
+        COMPASS              = "0x00000004" 
+    }
 	
 }
 
