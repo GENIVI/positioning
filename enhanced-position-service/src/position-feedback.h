@@ -36,7 +36,7 @@ public:
 
   ::DBus::Struct< uint16_t, uint16_t, uint16_t, std::string > GetVersion();
 
-  void SetPositionFeedback(const std::vector< std::map< uint16_t, ::DBus::Variant > >& feedback, const uint64_t& timestamp, const uint16_t& feedbackType);
+  void SetPositionFeedback(const std::vector< std::map< uint64_t, ::DBus::Variant > >& feedback, const uint64_t& timestamp, const uint16_t& feedbackType);
   
   void run();
 

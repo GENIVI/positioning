@@ -80,32 +80,32 @@ EnhancedPosition::~EnhancedPosition()
 
   return Version;
 }
-    
-std::map< uint16_t, ::DBus::Variant > EnhancedPosition::GetPositionInfo(const std::vector< uint16_t >& valuesToReturn)
+
+
+
+void EnhancedPosition::GetPositionInfo(const uint64_t& valuesToReturn, uint64_t& timestamp, std::map< uint64_t, ::DBus::Variant >& data)
 {
-  std::map< uint16_t, ::DBus::Variant > Data;
+  //std::map< uint64_t, ::DBus::Variant > Data;
 
   TGNSSPosition position;
 
   bool isPosRequested = false;
   bool isCourseRequested = false;
 
-  for (int i = 0; i < valuesToReturn.size(); i++)
+  if ((valuesToReturn & POS_LATITUDE) || 
+      (valuesToReturn & POS_LONGITUDE) || 
+      (valuesToReturn & POS_ALTITUDE))
   {
-    if ((valuesToReturn[i] == POS_LATITUDE) || 
-        (valuesToReturn[i] == POS_LONGITUDE) || 
-        (valuesToReturn[i] == POS_ALTITUDE))
-    {
-      isPosRequested = true;
-    }
-
-    if ((valuesToReturn[i] == POS_HEADING) || 
-        (valuesToReturn[i] == POS_SPEED) || 
-        (valuesToReturn[i] == POS_CLIMB ))
-    {
-      isCourseRequested = true;
-    }
+    isPosRequested = true;
   }
+
+  if ((valuesToReturn & POS_HEADING) || 
+      (valuesToReturn & POS_SPEED) || 
+      (valuesToReturn & POS_CLIMB ))
+  {
+    isCourseRequested = true;
+  }
+
 
   if(isPosRequested)
   {
@@ -113,17 +113,17 @@ std::map< uint16_t, ::DBus::Variant > EnhancedPosition::GetPositionInfo(const st
     {
       if (position.validityBits & GNSS_POSITION_LATITUDE_VALID)
       {
-        Data[POS_LATITUDE] = variant_double(position.latitude);
+        data[POS_LATITUDE] = variant_double(position.latitude);
       }
 
       if (position.validityBits & GNSS_POSITION_LONGITUDE_VALID)
       {
-        Data[POS_LONGITUDE] = variant_double(position.longitude);
+        data[POS_LONGITUDE] = variant_double(position.longitude);
       }
 
       if (position.validityBits & GNSS_POSITION_ALTITUDEMSL_VALID)
       {
-        Data[POS_ALTITUDE] = variant_double(position.altitudeMSL);
+        data[POS_ALTITUDE] = variant_double(position.altitudeMSL);
       }
     }
   }
@@ -134,40 +134,33 @@ std::map< uint16_t, ::DBus::Variant > EnhancedPosition::GetPositionInfo(const st
     {
       if (position.validityBits & GNSS_POSITION_HEADING_VALID)
       {
-        Data[POS_HEADING] = variant_double(position.heading);
+        data[POS_HEADING] = variant_double(position.heading);
       }
 
       if (position.validityBits & GNSS_POSITION_HSPEED_VALID)
       {
-        Data[POS_SPEED] = variant_double(position.hSpeed);
+        data[POS_SPEED] = variant_double(position.hSpeed);
       }
 
       if (position.validityBits & GNSS_POSITION_VSPEED_VALID)
       {
-        Data[POS_CLIMB] = variant_double(position.vSpeed);
+        data[POS_CLIMB] = variant_double(position.vSpeed);
       }
     }
   }
 
-  return Data;
-}   
-
-std::map< uint16_t, ::DBus::Variant > EnhancedPosition::GetSatelliteInfo()
-{
-  std::map< uint16_t, ::DBus::Variant > SatelliteInfo;
-
-  throw DBus::ErrorNotSupported("Method not supported yet");
-
-  return SatelliteInfo;
 }
 
-std::map< uint16_t, ::DBus::Variant > EnhancedPosition::GetTime()
+
+
+void EnhancedPosition::GetSatelliteInfo(uint64_t& timestamp, std::vector< ::DBus::Struct< uint16_t, uint16_t, uint16_t, uint16_t, uint16_t, bool > >& satelliteInfo)
 {
-  std::map< uint16_t, ::DBus::Variant > Time;
-
   throw DBus::ErrorNotSupported("Method not supported yet");
+}
 
-  return Time;
+void EnhancedPosition::GetTime(uint64_t& timestamp, std::map< uint64_t, ::DBus::Variant >& time)
+{
+  throw DBus::ErrorNotSupported("Method not supported yet");
 }
 
 void EnhancedPosition::sigPositionUpdate(const TGNSSPosition position[], uint16_t numElements)
@@ -178,7 +171,14 @@ void EnhancedPosition::sigPositionUpdate(const TGNSSPosition position[], uint16_
   bool speedChanged = false;
   bool headingChanged = false;
   bool climbChanged = false;
+  bool pdopChanged = false;
+  bool hdopChanged = false;
+  bool vdopChanged = false;
+  bool usatChanged = false; //used satellites
+  bool fixStatusChanged = false;
+  bool fixTypeBitsChanged = false;
 
+  uint64_t changedValues = 0;
 
   if (position == NULL || numElements < 1)
   {
@@ -194,7 +194,23 @@ void EnhancedPosition::sigPositionUpdate(const TGNSSPosition position[], uint16_
              position[i].latitude, 
              position[i].longitude,
              position[i].altitudeMSL);
-        
+
+      LOG_INFO(gCtx,"Accuracy Update[%d/%d]: pdop=%f hdop=%f vdop=%f \
+               sigmaHPosition=%f sigmaAltitude=%f",
+               i+1,
+               numElements,
+               position[i].pdop, 
+               position[i].hdop,
+               position[i].vdop,
+               position[i].sigmaHPosition,
+               position[i].sigmaAltitude);
+
+      LOG_INFO(gCtx,"Status Update[%d/%d]: fixStatus=%d fixTypeBits=0x%08X",
+               i+1,
+               numElements,
+               position[i].fixStatus,
+               position[i].fixTypeBits);
+
     if (latChanged == false)
     {
       latChanged = (position[i].validityBits & GNSS_POSITION_LATITUDE_VALID);
@@ -225,82 +241,6 @@ void EnhancedPosition::sigPositionUpdate(const TGNSSPosition position[], uint16_
       climbChanged = (position[i].validityBits & GNSS_POSITION_VSPEED_VALID);
     }
 
-  }
-
-  //in a real product, the coordinates would be used for dead-reckoning.
-  //in this proof of concept, the client application is simply notified 
-  //about changes of latitude, longitude and/or altitude
-  std::vector< uint16_t > changedValues;
-  std::vector<uint16_t>::iterator it;
-  it = changedValues.begin();
-
-  if (latChanged)
-  {
-     it = changedValues.insert(it,POS_LATITUDE);
-  }
-
-  if (lonChanged)
-  {
-     it = changedValues.insert(it,POS_LONGITUDE);
-  }
-
-  if (altChanged)
-  {
-     it = changedValues.insert(it,POS_ALTITUDE);
-  }
-
-  if (speedChanged)
-  {
-     it = changedValues.insert(it,POS_SPEED);
-  }
-
-  if (headingChanged)
-  {
-     it = changedValues.insert(it,POS_HEADING);
-  }
-
-  if (climbChanged)
-  {
-     it = changedValues.insert(it,POS_CLIMB);
-  }
-
-  if (!mpSelf)
-  {
-    LOG_ERROR_MSG(gCtx,"Null pointer!");    
-    return;
-  }
-    
-  //notify clients
-  mpSelf->PositionUpdate(changedValues);
-
-
-}
-
-void EnhancedPosition::sigGNSSAccuracyUpdate(const TGNSSPosition position[], uint16_t numElements)
-{ 
-  bool pdopChanged = false;
-  bool hdopChanged = false;
-  bool vdopChanged = false;
-  bool usatChanged = false; //used satellites
-
-  if (position == NULL || numElements < 1)
-  {
-      LOG_ERROR_MSG(gCtx,"sigAccuracyUpdate failed!");
-      return;
-  }
-
-  for (int i = 0; i< numElements; i++)
-  {
-      LOG_INFO(gCtx,"Accuracy Update[%d/%d]: pdop=%f hdop=%f vdop=%f \
-               sigmaHPosition=%f sigmaAltitude=%f",
-               i+1,
-               numElements,
-               position[i].pdop, 
-               position[i].hdop,
-               position[i].vdop,
-               position[i].sigmaHPosition,
-               position[i].sigmaAltitude);
-
     if (pdopChanged == false)
     {
       pdopChanged = (position[i].validityBits & GNSS_POSITION_PDOP_VALID);
@@ -320,67 +260,7 @@ void EnhancedPosition::sigGNSSAccuracyUpdate(const TGNSSPosition position[], uin
     {
       usatChanged = (position[i].validityBits & GNSS_POSITION_USAT_VALID);
     }
-  }
 
-  //in a real product, the accuracy would be used for dead-reckoning.
-  //in this proof of concept, the client application is simply notified 
-  //about accuracy changes
-  std::vector<uint16_t>::iterator it;
-  
-  std::vector< uint16_t > changedAccuracyValues;
-  it = changedAccuracyValues.begin();
-
-  if (pdopChanged)
-  {
-    it = changedAccuracyValues.insert(it,POS_PDOP);
-  }
-
-  if (hdopChanged)
-  {
-    it = changedAccuracyValues.insert(it,POS_HDOP);
-  }
-  
-  if (vdopChanged)
-  {
-    it = changedAccuracyValues.insert(it,POS_VDOP);
-  }  
-
-  if (usatChanged)
-  {
-    it = changedAccuracyValues.insert(it,POS_USED_SATELLITES);
-  }
-
-  //todo: handle other field-changes here (accuracy and status)
-
-  if (!mpSelf)
-  {
-    LOG_ERROR_MSG(gCtx,"Null pointer!");    
-    return;
-  }
-  
-  mpSelf->GNSSAccuracyUpdate(changedAccuracyValues);
-}
-
-void EnhancedPosition::sigStatusUpdate(const TGNSSPosition position[], uint16_t numElements)
-{ 
-
-  bool fixStatusChanged = false;
-  bool fixTypeBitsChanged = false;
-
-  if (position == NULL || numElements < 1)
-  {
-      LOG_ERROR_MSG(gCtx,"sigStatusUpdate failed!");
-      return;
-  }
-
-  for (int i = 0; i< numElements; i++)
-  {
-      LOG_INFO(gCtx,"Status Update[%d/%d]: fixStatus=%d fixTypeBits=0x%08X",
-               i+1,
-               numElements,
-               position[i].fixStatus,
-               position[i].fixTypeBits);
-               
     if (fixStatusChanged == false)
     {
       fixStatusChanged = (position[i].validityBits & GNSS_POSITION_STAT_VALID);
@@ -393,17 +273,64 @@ void EnhancedPosition::sigStatusUpdate(const TGNSSPosition position[], uint16_t 
 
   }
 
-  //in a real product, the accuracy would be used for dead-reckoning.
+
+  //in a real product, the coordinates would be used for dead-reckoning.
   //in this proof of concept, the client application is simply notified 
-  //about status changes
-  std::vector<uint16_t>::iterator it;
+  //about changes of latitude, longitude and/or altitude
+
+  if (latChanged)
+  {
+     changedValues |= POS_LATITUDE;
+  }
+
+  if (lonChanged)
+  {
+     changedValues |= POS_LONGITUDE;
+  }
+
+  if (altChanged)
+  {
+     changedValues |= POS_ALTITUDE;
+  }
+
+  if (speedChanged)
+  {
+     changedValues |= POS_SPEED;
+  }
+
+  if (headingChanged)
+  {
+     changedValues |= POS_HEADING;
+  }
+
+  if (climbChanged)
+  {
+     changedValues |= POS_CLIMB;
+  }
+
+  if (pdopChanged)
+  {
+    changedValues |= POS_PDOP;
+  }
+
+  if (hdopChanged)
+  {
+    changedValues |= POS_HDOP;
+  }
   
-  std::vector< uint16_t > changedStatusValues;
-  it = changedStatusValues.begin();
+  if (vdopChanged)
+  {
+    changedValues |= POS_VDOP;
+  }  
+
+  if (usatChanged)
+  {
+    changedValues |= POS_USED_SATELLITES;
+  }
 
   if (fixStatusChanged)
   {
-    it = changedStatusValues.insert(it,POS_GNSS_FIX_STATUS);
+    changedValues |= POS_GNSS_FIX_STATUS;
   }
 
   if (!mpSelf)
@@ -411,16 +338,16 @@ void EnhancedPosition::sigStatusUpdate(const TGNSSPosition position[], uint16_t 
     LOG_ERROR_MSG(gCtx,"Null pointer!");    
     return;
   }
-  
-  mpSelf->StatusUpdate(changedStatusValues);
+
+  //notify clients
+  mpSelf->PositionUpdate(changedValues);
+
 }
 
 
 void EnhancedPosition::cbPosition(const TGNSSPosition position[], uint16_t numElements)
 {
     sigPositionUpdate(position, numElements);
-    sigGNSSAccuracyUpdate(position, numElements);
-    sigStatusUpdate(position, numElements);
 }
 
 

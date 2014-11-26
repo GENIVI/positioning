@@ -121,7 +121,7 @@
           <line>Timestamp of the acquisition of the satellite detail data [ms]</line>
         </doc>
       </arg>        
-      <arg name="satelliteInfo" type="a{qqqqqb}" direction="out">
+      <arg name="satelliteInfo" type="a(qqqqqb)" direction="out">
         <doc>
           <line>satelliteInfo = array(struct(system,satelliteId,azimuth,elevation,snr,inUse))</line> 
           <line> system = enum(GPS, GLONASS, GALILEO, COMPASS, ... )</line> 

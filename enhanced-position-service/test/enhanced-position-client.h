@@ -30,10 +30,7 @@ public:
 
   EnhancedPositionClient(DBus::Connection &connection, const char *path, const char *name);
 
-  void PositionUpdate(const std::vector< uint16_t >& changedValues);
-  void RotationRateUpdate(const std::vector< uint16_t >& changedValues);
-  void GNSSAccuracyUpdate(const std::vector< uint16_t >& changedValues);
-  void StatusUpdate(const std::vector< uint16_t >& changedValues);
+  void PositionUpdate(const uint64_t& changedValues);
 
 };
 

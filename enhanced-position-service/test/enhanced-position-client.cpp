@@ -34,61 +34,47 @@ EnhancedPositionClient::EnhancedPositionClient(DBus::Connection &connection, con
 {
 }
 
-void EnhancedPositionClient::PositionUpdate(const std::vector< uint16_t >& changedValues)
+void EnhancedPositionClient::PositionUpdate(const uint64_t& changedValues)
 {
   LOG_INFO_MSG(gCtx,"Position Update");
   
   // retrieve the data 
-  std::map< uint16_t, ::DBus::Variant > posData = GetPositionInfo(changedValues);
+  uint64_t timestamp;
+  std::map< uint64_t, ::DBus::Variant > posData;
+    
+  GetPositionInfo(changedValues, timestamp, posData);
 
-  for (int i = 0; i < changedValues.size(); i++)
+  if (changedValues & POS_LATITUDE)
   {
-    if (changedValues[i] == POS_LATITUDE)
-    {
-      LOG_INFO(gCtx,"LAT=%lf", posData[POS_LATITUDE].reader().get_double());
-    }
-
-    if (changedValues[i] == POS_LONGITUDE)
-    {
-      LOG_INFO(gCtx,"LON=%lf", posData[POS_LONGITUDE].reader().get_double());
-    }
-
-    if (changedValues[i] == POS_ALTITUDE)
-    {
-      LOG_INFO(gCtx,"ALT=%lf", posData[POS_ALTITUDE].reader().get_double());
-    }
-
-    if (changedValues[i] == POS_SPEED)
-    {
-      LOG_INFO(gCtx,"SPEED=%lf", posData[POS_SPEED].reader().get_double());
-    }
-
-    if (changedValues[i] == POS_CLIMB)
-    {
-      LOG_INFO(gCtx,"CLIMB=%lf", posData[POS_CLIMB].reader().get_double());
-    }
-
-    if (changedValues[i] == POS_HEADING)
-    {
-      LOG_INFO(gCtx,"HEADING=%lf", posData[POS_HEADING].reader().get_double());
-    }
+    LOG_INFO(gCtx,"LAT=%lf", posData[POS_LATITUDE].reader().get_double());
   }
 
-}
+  if (changedValues & POS_LONGITUDE)
+  {
+    LOG_INFO(gCtx,"LON=%lf", posData[POS_LONGITUDE].reader().get_double());
+  }
 
-void EnhancedPositionClient::RotationRateUpdate(const std::vector< uint16_t >& changedValues)
-{
-  LOG_INFO_MSG(gCtx,"RotationRateUpdate");
-}
+  if (changedValues & POS_ALTITUDE)
+  {
+    LOG_INFO(gCtx,"ALT=%lf", posData[POS_ALTITUDE].reader().get_double());
+  }
 
-void EnhancedPositionClient::GNSSAccuracyUpdate(const std::vector< uint16_t >& changedValues)
-{
-  LOG_INFO_MSG(gCtx,"AccuracyUpdate");
-}
+  if (changedValues & POS_SPEED)
+  {
+    LOG_INFO(gCtx,"SPEED=%lf", posData[POS_SPEED].reader().get_double());
+  }
 
-void EnhancedPositionClient::StatusUpdate(const std::vector< uint16_t >& changedValues)
-{
-  LOG_INFO_MSG(gCtx,"StatusUpdate");
+  if (changedValues & POS_CLIMB)
+  {
+    LOG_INFO(gCtx,"CLIMB=%lf", posData[POS_CLIMB].reader().get_double());
+  }
+
+  if (changedValues & POS_HEADING)
+  {
+    LOG_INFO(gCtx,"HEADING=%lf", posData[POS_HEADING].reader().get_double());
+  }
+
+
 }
 
 void signalhandler(int sig)
