@@ -106,10 +106,12 @@ void EnhancedPosition::GetPositionInfo(const uint64_t& valuesToReturn, uint64_t&
     isCourseRequested = true;
   }
 
-
-  if(isPosRequested)
+  if(gnssGetPosition(&position))
   {
-    if(gnssGetPosition(&position))
+
+    timestamp = position.timestamp;
+
+    if(isPosRequested)
     {
       if (position.validityBits & GNSS_POSITION_LATITUDE_VALID)
       {
@@ -126,11 +128,8 @@ void EnhancedPosition::GetPositionInfo(const uint64_t& valuesToReturn, uint64_t&
         data[POS_ALTITUDE] = variant_double(position.altitudeMSL);
       }
     }
-  }
 
-  if(isCourseRequested)
-  {
-    if(gnssGetPosition(&position))
+    if(isCourseRequested)
     {
       if (position.validityBits & GNSS_POSITION_HEADING_VALID)
       {

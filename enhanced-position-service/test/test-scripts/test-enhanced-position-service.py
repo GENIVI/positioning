@@ -31,12 +31,12 @@ import gobject
 import dbus.mainloop.glib
 
 #constants as defined in the Positioning API
-LATITUDE = 0x0020
-LONGITUDE = 0x0021
-ALTITUDE = 0x0022
-CLIMB = 0x0032
-SPEED = 0x0031
-HEADING = 0x0030
+LATITUDE  = 0x00000001
+LONGITUDE = 0x00000002
+ALTITUDE  = 0x00000004
+CLIMB     = 0x00000020
+SPEED     = 0x00000010
+HEADING   = 0x00000008
 
 print '\n--------------------------'
 print 'Positioning Test'
@@ -51,21 +51,24 @@ bus = dbus.SessionBus()
 #signal receiver
 def catchall_positioning_signals_handler(changedValues):
     print 'PositonUpdate'
-    changedfields = dbus.Array(signature='q')
-    position = enhanced_position_interface.GetPosition(changedValues)
-    for val in changedValues:
-        if val == LATITUDE:
-            print 'LATITUDE:' + str(position[dbus.UInt16(val)])
-        if val == LONGITUDE:
-            print 'LONGITUDE:' + str(position[dbus.UInt16(val)])    
-        if val == ALTITUDE:
-            print 'ALTITUDE:' + str(position[dbus.UInt16(val)])
-        if val == CLIMB:
-            print 'CLIMB:' + str(position[dbus.UInt16(val)])
-        if val == SPEED:
-            print 'SPEED:' + str(position[dbus.UInt16(val)])    
-        if val == HEADING:
-            print 'HEADING:' + str(position[dbus.UInt16(val)])
+    position = enhanced_position_interface.GetPositionInfo(changedValues)
+    timestamp = position[0]
+    print 'TIMESTAMP:' +str(timestamp)
+    data = position[1]
+    #print(data)
+    for key in data:
+        if key == LATITUDE:
+            print 'LATITUDE:' + str(data[dbus.UInt64(key)])
+        if key == LONGITUDE:
+            print 'LONGITUDE:' + str(data[dbus.UInt64(key)])
+        if key == ALTITUDE:
+            print 'ALTITUDE:' + str(data[dbus.UInt64(key)])
+        if key == CLIMB:
+            print 'CLIMB:' + str(data[dbus.UInt64(key)])
+        if key == SPEED:
+            print 'SPEED:' + str(data[dbus.UInt64(key)])
+        if key == HEADING:
+            print 'HEADING:' + str(data[dbus.UInt64(key)])
 
 #add signal receiver
 bus.add_signal_receiver(catchall_positioning_signals_handler, \

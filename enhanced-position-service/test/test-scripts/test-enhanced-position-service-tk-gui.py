@@ -57,12 +57,12 @@ import Queue
 from Tkinter import *
 
 #constants as defined in the Positioning API
-LATITUDE = 0x0020
-LONGITUDE = 0x0021
-ALTITUDE = 0x0022
-CLIMB = 0x0032
-SPEED = 0x0031
-HEADING = 0x0030
+LATITUDE  = 0x00000001
+LONGITUDE = 0x00000002
+ALTITUDE  = 0x00000004
+CLIMB     = 0x00000020
+SPEED     = 0x00000010
+HEADING   = 0x00000008
 
 if __name__ == '__main__':
 #According http://dbus.freedesktop.org/doc/dbus-python/doc/tutorial.html#setting-up-an-event-loop
@@ -96,20 +96,23 @@ def signalPositionUpdate(event):
     #print("signalPositionUpdate Event received by GUI thread")
     changedValues = commQueue.get()
     #print changedValues
-    position = enhanced_position_interface.GetPosition(changedValues)
-    for val in changedValues:
-        if val == LATITUDE:
-            labelLat.config(text='LATITUDE:' + str(position[dbus.UInt16(val)]))
-        if val == LONGITUDE:
-            labelLon.config(text='LONGITUDE:' + str(position[dbus.UInt16(val)]))   
-        if val == ALTITUDE:
-            labelAlt.config(text='ALTITUDE:' + str(position[dbus.UInt16(val)]))
-        if val == CLIMB:
-            labelClimb.config(text='CLIMB:' + str(position[dbus.UInt16(val)]))
-        if val == SPEED:
-            labelSpeed.config(text='SPEED:' + str(position[dbus.UInt16(val)]))
-        if val == HEADING:
-            labelHeading.config(text='HEADING:' + str(position[dbus.UInt16(val)]))
+    position = enhanced_position_interface.GetPositionInfo(changedValues)
+    timestamp = position[0]
+    #print 'TIMESTAMP:' +str(timestamp)
+    data = position[1]
+    for key in data:
+        if key == LATITUDE:
+            labelLat.config(text='LATITUDE:' + str(data[dbus.UInt16(key)]))
+        if key == LONGITUDE:
+            labelLon.config(text='LONGITUDE:' + str(data[dbus.UInt16(key)]))
+        if key == ALTITUDE:
+            labelAlt.config(text='ALTITUDE:' + str(data[dbus.UInt16(key)]))
+        if key == CLIMB:
+            labelClimb.config(text='CLIMB:' + str(data[dbus.UInt16(key)]))
+        if key == SPEED:
+            labelSpeed.config(text='SPEED:' + str(data[dbus.UInt16(key)]))
+        if key == HEADING:
+            labelHeading.config(text='HEADING:' + str(data[dbus.UInt16(key)]))
     #It's important to call update_idletasks() to update the GUI
     tk_root.update_idletasks()
 
