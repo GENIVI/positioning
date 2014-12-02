@@ -60,7 +60,8 @@
   <id name="GPS"                    value="0x00000001" />
   <id name="GLONASS"                value="0x00000002" />
   <id name="GALILEO"                value="0x00000003" />
-  <id name="COMPASS"                value="0x00000004" />
+  <id name="BEIDOU"                 value="0x00000004" /> <!-- Chinese Beidou Navigation Satellite System -->
+  <id name="COMPASS"                value="0x00000004" /> <!-- COMPASS is a synonym for BEIDOU -->
 
   <!-- PositionFeedback "Enum" -->
   <id name="MAP_MATCHED_FEEDBACK"   value="0x00000001" />
