@@ -30,7 +30,7 @@ public:
 
   EnhancedPositionClient(DBus::Connection &connection, const char *path, const char *name);
 
-  void PositionUpdate(const uint64_t& changedValues);
+  void positionUpdate(const uint64_t& changedValues);
 
 };
 

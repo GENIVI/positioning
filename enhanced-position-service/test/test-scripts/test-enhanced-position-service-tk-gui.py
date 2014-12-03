@@ -96,7 +96,7 @@ def signalPositionUpdate(event):
     #print("signalPositionUpdate Event received by GUI thread")
     changedValues = commQueue.get()
     #print changedValues
-    position = enhanced_position_interface.GetPositionInfo(changedValues)
+    position = enhanced_position_interface.getPositionInfo(changedValues)
     timestamp = position[0]
     #print 'TIMESTAMP:' +str(timestamp)
     data = position[1]
@@ -166,7 +166,7 @@ enhanced_position_interface = dbus.Interface(enhanced_position, dbus_interface='
 #register the signal handler
 bus.add_signal_receiver(catchall_positioning_signals_handler, \
                         dbus_interface = "org.genivi.positioning.EnhancedPosition", \
-                        signal_name = "PositionUpdate")
+                        signal_name = "positionUpdate")
 #create the dbus loop (must be global so we can terminate it)
 gobject.timeout_add(100, dbus_timeout_periodic)
 dbus_loop = gobject.MainLoop()

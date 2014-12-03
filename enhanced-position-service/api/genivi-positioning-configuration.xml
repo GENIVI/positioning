@@ -20,9 +20,9 @@
       <line>Configuration = This interface allows a client application to set and retrieve configuration options</line>
     </doc>
    
-    <method name="GetVersion">
+    <method name="getVersion">
       <doc>
-        <line>GetVersion = This method returns the API version implemented by the server application.</line>
+        <line>getVersion = This method returns the API version implemented by the server application.</line>
       </doc>
       <arg name="version" type="(qqqs)" direction="out">
         <doc>
@@ -35,16 +35,16 @@
       </arg>
     </method>
 
-    <method name="GetProperties">
+    <method name="getProperties">
       <doc>
-        <line>GetProperties = This method returns all global system properties.</line>
+        <line>getProperties = This method returns all global system properties.</line>
       </doc>
       <arg name="properties" type="a{sv}" direction="out" />
     </method>
 
-    <method name="SetProperty">
+    <method name="setProperty">
       <doc>
-        <line>SetProperty = This method changes the value of the specified property</line>
+        <line>setProperty = This method changes the value of the specified property</line>
         <line>Only properties that are listed as read-write are changeable</line>
         <line>On success a PropertyChanged signal will be emitted</line>
       </doc>
@@ -61,9 +61,9 @@
       <error name="org.genivi.positioning.Configuration.Error.InvalidProperty" />
     </method>
 
-    <signal name="PropertyChanged">
+    <signal name="propertyChanged">
       <doc>
-        <line>PropertyChanged = This signal is emitted when a property changes</line>
+        <line>propertyChanged = This signal is emitted when a property changes</line>
       </doc>
       <arg name="name" type="s">
         <doc>
@@ -77,21 +77,21 @@
       </arg>
     </signal>
 
-    <property name="SatelliteSystem" type="q" access="readwrite">
+    <property name="satelliteSystem" type="q" access="readwrite">
       <doc>
-        <line>SatelliteSystem = enum(INVALID,GPS,GLONASS,GALILEO,COMPASS, ... )</line>
+        <line>satelliteSystem = enum(INVALID,GPS,GLONASS,GALILEO,COMPASS, ... )</line>
       </doc>
     </property>
 
-    <property name="UpdateInterval" type="i" access="readwrite">
+    <property name="updateInterval" type="i" access="readwrite">
       <doc>
-        <line>UpdateInterval = update interval in ms</line>
+        <line>updateInterval = update interval in ms</line>
       </doc>
     </property>
 
-    <method name="GetSupportedProperties">
+    <method name="getSupportedProperties">
       <doc>
-        <line>GetSupportedProperties = This method returns all suppported global system properties</line>
+        <line>getSupportedProperties = This method returns all suppported global system properties</line>
       </doc>
       <arg name="properties" type="a{sv}" direction="out">
         <doc>

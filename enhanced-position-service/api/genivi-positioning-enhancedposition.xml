@@ -20,9 +20,9 @@
       <line>EnhancedPosition = This interface offers functionalities to retrieve the enhanced position of the vehicle</line>
     </doc>
 
-    <method name="GetVersion">
+    <method name="getVersion">
       <doc>
-        <line>GetVersion = This method returns the API version implemented by the server application</line>
+        <line>getVersion = This method returns the API version implemented by the server application</line>
       </doc>
       <arg name="version" type="(qqqs)" direction="out">
         <doc>
@@ -35,9 +35,9 @@
       </arg>
     </method>
 
-    <method name="GetPositionInfo">
+    <method name="getPositionInfo">
       <doc>
-        <line>GetPositionInfo = This method returns a given set of positioning data (e.g. Position, Course, Accuracy, Status, ... )</line>
+        <line>getPositionInfo = This method returns a given set of positioning data (e.g. Position, Course, Accuracy, Status, ... )</line>
       </doc>
 
       <arg name="valuesToReturn" type="t" direction="in">
@@ -93,9 +93,9 @@
       </arg>
     </method>
 
-    <signal name="PositionUpdate">
+    <signal name="positionUpdate">
       <doc>
-        <line>PositionUpdate = This signal is called to notifiy a client application that updated positioning data is available. The update frequency is implementation specific. The maximum allowed frequency is 10Hz</line>
+        <line>positionUpdate = This signal is called to notifiy a client application that updated positioning data is available. The update frequency is implementation specific. The maximum allowed frequency is 10Hz</line>
       </doc>
       <arg name="changedValues" type="t">
         <doc>
@@ -112,9 +112,9 @@
       </arg>
     </signal>
 
-    <method name="GetSatelliteInfo">
+    <method name="getSatelliteInfo">
       <doc>
-        <line>GetSatelliteInfo = This method returns information about the current satellite constellation</line>
+        <line>getSatelliteInfo = This method returns information about the current satellite constellation</line>
       </doc>
       <arg name="timestamp" type="t" direction="out">
         <doc>
@@ -134,9 +134,9 @@
       </arg>
     </method>
 
-    <method name="GetTime">
+    <method name="getTime">
       <doc>
-        <line>GetTime = This method returns UTC time and date</line>
+        <line>getTime = This method returns UTC time and date</line>
       </doc>
       <arg name="timestamp" type="t" direction="out">
         <doc>

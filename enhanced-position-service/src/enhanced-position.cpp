@@ -69,7 +69,7 @@ EnhancedPosition::~EnhancedPosition()
     mpSelf = 0;
 }
 
-::DBus::Struct< uint16_t, uint16_t, uint16_t, std::string > EnhancedPosition::GetVersion()
+::DBus::Struct< uint16_t, uint16_t, uint16_t, std::string > EnhancedPosition::getVersion()
 {
   ::DBus::Struct< uint16_t, uint16_t, uint16_t, std::string > Version;
 
@@ -83,7 +83,7 @@ EnhancedPosition::~EnhancedPosition()
 
 
 
-void EnhancedPosition::GetPositionInfo(const uint64_t& valuesToReturn, uint64_t& timestamp, std::map< uint64_t, ::DBus::Variant >& data)
+void EnhancedPosition::getPositionInfo(const uint64_t& valuesToReturn, uint64_t& timestamp, std::map< uint64_t, ::DBus::Variant >& data)
 {
   //std::map< uint64_t, ::DBus::Variant > Data;
 
@@ -152,12 +152,12 @@ void EnhancedPosition::GetPositionInfo(const uint64_t& valuesToReturn, uint64_t&
 
 
 
-void EnhancedPosition::GetSatelliteInfo(uint64_t& timestamp, std::vector< ::DBus::Struct< uint16_t, uint16_t, uint16_t, uint16_t, uint16_t, bool > >& satelliteInfo)
+void EnhancedPosition::getSatelliteInfo(uint64_t& timestamp, std::vector< ::DBus::Struct< uint16_t, uint16_t, uint16_t, uint16_t, uint16_t, bool > >& satelliteInfo)
 {
   throw DBus::ErrorNotSupported("Method not supported yet");
 }
 
-void EnhancedPosition::GetTime(uint64_t& timestamp, std::map< uint64_t, ::DBus::Variant >& time)
+void EnhancedPosition::getTime(uint64_t& timestamp, std::map< uint64_t, ::DBus::Variant >& time)
 {
   throw DBus::ErrorNotSupported("Method not supported yet");
 }
@@ -339,7 +339,7 @@ void EnhancedPosition::sigPositionUpdate(const TGNSSPosition position[], uint16_
   }
 
   //notify clients
-  mpSelf->PositionUpdate(changedValues);
+  mpSelf->positionUpdate(changedValues);
 
 }
 

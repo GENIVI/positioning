@@ -63,7 +63,7 @@ Configuration::~Configuration()
 {
 }
 
-::DBus::Struct< uint16_t, uint16_t, uint16_t, std::string > Configuration::GetVersion()
+::DBus::Struct< uint16_t, uint16_t, uint16_t, std::string > Configuration::getVersion()
 {
   ::DBus::Struct< uint16_t, uint16_t, uint16_t, std::string > Version;
 
@@ -75,7 +75,7 @@ Configuration::~Configuration()
   return Version;
 }
     
-std::map< std::string, ::DBus::Variant > Configuration::GetProperties()
+std::map< std::string, ::DBus::Variant > Configuration::getProperties()
 {
   std::map< std::string, ::DBus::Variant > Properties;
 
@@ -85,12 +85,12 @@ std::map< std::string, ::DBus::Variant > Configuration::GetProperties()
   return Properties;
 }
 
-void Configuration::SetProperty(const std::string& name, const ::DBus::Variant& value)
+void Configuration::setProperty(const std::string& name, const ::DBus::Variant& value)
 {
   throw DBus::ErrorNotSupported("Method not supported yet");
 }
 
-std::map< std::string, ::DBus::Variant > Configuration::GetSupportedProperties()
+std::map< std::string, ::DBus::Variant > Configuration::getSupportedProperties()
 {
   std::map< std::string, ::DBus::Variant > SupportedProperties;
 

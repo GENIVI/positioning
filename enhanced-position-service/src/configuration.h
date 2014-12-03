@@ -32,13 +32,13 @@ public:
 
   ~Configuration();
   
-  ::DBus::Struct< uint16_t, uint16_t, uint16_t, std::string > GetVersion();
+  ::DBus::Struct< uint16_t, uint16_t, uint16_t, std::string > getVersion();
     
-  std::map< std::string, ::DBus::Variant > GetProperties();
+  std::map< std::string, ::DBus::Variant > getProperties();
 
-  void SetProperty(const std::string& name, const ::DBus::Variant& value);
+  void setProperty(const std::string& name, const ::DBus::Variant& value);
 
-  std::map< std::string, ::DBus::Variant > GetSupportedProperties();
+  std::map< std::string, ::DBus::Variant > getSupportedProperties();
 
   void run();
 

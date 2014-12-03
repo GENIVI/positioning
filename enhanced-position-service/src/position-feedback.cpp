@@ -30,7 +30,7 @@ PositionFeedback::~PositionFeedback()
 {
 }
 
-::DBus::Struct< uint16_t, uint16_t, uint16_t, std::string > PositionFeedback::GetVersion()
+::DBus::Struct< uint16_t, uint16_t, uint16_t, std::string > PositionFeedback::getVersion()
 {
   ::DBus::Struct< uint16_t, uint16_t, uint16_t, std::string > Version;
 
@@ -42,7 +42,7 @@ PositionFeedback::~PositionFeedback()
   return Version;
 }
 
-void PositionFeedback::SetPositionFeedback(const std::vector< std::map< uint64_t, ::DBus::Variant > >& feedback, const uint64_t& timestamp, const uint16_t& feedbackType)
+void PositionFeedback::setPositionFeedback(const std::vector< std::map< uint64_t, ::DBus::Variant > >& feedback, const uint64_t& timestamp, const uint16_t& feedbackType)
 {
   throw DBus::ErrorNotSupported("Method not supported yet");
 }

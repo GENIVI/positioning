@@ -51,7 +51,7 @@ bus = dbus.SessionBus()
 #signal receiver
 def catchall_positioning_signals_handler(changedValues):
     print 'PositonUpdate'
-    position = enhanced_position_interface.GetPositionInfo(changedValues)
+    position = enhanced_position_interface.getPositionInfo(changedValues)
     timestamp = position[0]
     print 'TIMESTAMP:' +str(timestamp)
     data = position[1]
@@ -73,7 +73,7 @@ def catchall_positioning_signals_handler(changedValues):
 #add signal receiver
 bus.add_signal_receiver(catchall_positioning_signals_handler, \
                         dbus_interface = "org.genivi.positioning.EnhancedPosition", \
-                        signal_name = "PositionUpdate")
+                        signal_name = "positionUpdate")
 
 #timeout
 def timeout():

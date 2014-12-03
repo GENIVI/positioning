@@ -19,9 +19,9 @@
       <line>PositionFeedback = This interface allows the application implementing the map-matching algorithm to provide a position feedback to the EnahncedPositionService</line>
     </doc>
     
-    <method name="GetVersion">
+    <method name="getVersion">
       <doc>
-        <line>GetVersion = This method returns the API version implemented by the server application</line>
+        <line>getVersion = This method returns the API version implemented by the server application</line>
       </doc>
       <arg name="version" type="(qqqs)" direction="out">
         <doc>
@@ -34,9 +34,9 @@
       </arg>
     </method>
     
-   <method name="SetPositionFeedback">
+   <method name="setPositionFeedback">
       <doc>
-        <line>SetPositionFeedback = This method allows a client application to provide the EnhancedPositionService with a position feedback</line>
+        <line>setPositionFeedback = This method allows a client application to provide the EnhancedPositionService with a position feedback</line>
         <line>Note: This interface is typically used by the application that implements the map-matching algorithm</line>
         <line>Such application can hand over to the EnhancedPositionService an array of map-matched positions with different values of reliability</line>
       </doc>

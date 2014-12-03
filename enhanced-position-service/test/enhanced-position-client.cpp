@@ -34,7 +34,7 @@ EnhancedPositionClient::EnhancedPositionClient(DBus::Connection &connection, con
 {
 }
 
-void EnhancedPositionClient::PositionUpdate(const uint64_t& changedValues)
+void EnhancedPositionClient::positionUpdate(const uint64_t& changedValues)
 {
   LOG_INFO_MSG(gCtx,"Position Update");
   
@@ -42,7 +42,7 @@ void EnhancedPositionClient::PositionUpdate(const uint64_t& changedValues)
   uint64_t timestamp;
   std::map< uint64_t, ::DBus::Variant > posData;
     
-  GetPositionInfo(changedValues, timestamp, posData);
+  getPositionInfo(changedValues, timestamp, posData);
 
   if (changedValues & POS_LATITUDE)
   {

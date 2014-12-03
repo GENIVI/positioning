@@ -35,11 +35,11 @@ public:
 
   ~EnhancedPosition();
 
-  ::DBus::Struct< uint16_t, uint16_t, uint16_t, std::string > GetVersion();
+  ::DBus::Struct< uint16_t, uint16_t, uint16_t, std::string > getVersion();
 
-  void GetPositionInfo(const uint64_t& valuesToReturn, uint64_t& timestamp, std::map< uint64_t, ::DBus::Variant >& data);
-  void GetSatelliteInfo(uint64_t& timestamp, std::vector< ::DBus::Struct< uint16_t, uint16_t, uint16_t, uint16_t, uint16_t, bool > >& satelliteInfo);
-  void GetTime(uint64_t& timestamp, std::map< uint64_t, ::DBus::Variant >& time);
+  void getPositionInfo(const uint64_t& valuesToReturn, uint64_t& timestamp, std::map< uint64_t, ::DBus::Variant >& data);
+  void getSatelliteInfo(uint64_t& timestamp, std::vector< ::DBus::Struct< uint16_t, uint16_t, uint16_t, uint16_t, uint16_t, bool > >& satelliteInfo);
+  void getTime(uint64_t& timestamp, std::map< uint64_t, ::DBus::Variant >& time);
 
   void run();
 
