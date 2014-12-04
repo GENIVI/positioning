@@ -19,7 +19,7 @@
 #define ___CONFIGURATION_H
 
 #include <dbus-c++/dbus.h>
-#include "configuration-adaptor.h"
+#include "genivi-positioning-configuration_adaptor.h"
 
 class Configuration
   : public org::genivi::positioning::Configuration_adaptor

@@ -13,6 +13,9 @@
 # Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed with
 # this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
+# Update (2014/12/02) : Philippe Colliot <philippe.colliot@mpsa.com>,
+#				PSA Peugeot Citroen
+#		- introduce debug flag to disable verbosity
 # @licence end@
 ###########################################################################
 
@@ -30,6 +33,9 @@ option(WITH_REPLAYER
 
 option(WITH_TESTS
     "Compile test applications" OFF)
+
+option(WITH_DEBUG 
+	"Enable the debug messages" OFF)
 
 message(STATUS)
 message(STATUS "---------------------------------------------------------")
@@ -56,7 +62,9 @@ else()
     message(STATUS "Invalid cmake options!")
 endif()
 
-include_directories(api src test ${gnss-service_INCLUDE_DIRS} ${sensors-service_INCLUDE_DIRS})
+set(enhanced-position-service_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/api/include")
+
+include_directories(${enhanced-position-service_INCLUDE_DIRS} src test ${gnss-service_INCLUDE_DIRS} ${sensors-service_INCLUDE_DIRS})
 
 add_subdirectory(src)
 

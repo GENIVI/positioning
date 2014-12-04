@@ -20,7 +20,7 @@
 #include <stdio.h>
 
 #include "enhanced-position-client.h"
-#include "positioning-constants.h"
+#include "genivi-positioning-constants.h"
 #include "log.h"
 
 using namespace std;
@@ -44,34 +44,34 @@ void EnhancedPositionClient::PositionUpdate(const uint64_t& changedValues)
     
   GetPositionInfo(changedValues, timestamp, posData);
 
-  if (changedValues & POS_LATITUDE)
+  if (changedValues & GENIVI_ENHANCEDPOSITIONSERVICE_LATITUDE)
   {
-    LOG_INFO(gCtx,"LAT=%lf", posData[POS_LATITUDE].reader().get_double());
+    LOG_INFO(gCtx,"LAT=%lf", posData[GENIVI_ENHANCEDPOSITIONSERVICE_LATITUDE].reader().get_double());
   }
 
-  if (changedValues & POS_LONGITUDE)
+  if (changedValues & GENIVI_ENHANCEDPOSITIONSERVICE_LONGITUDE)
   {
-    LOG_INFO(gCtx,"LON=%lf", posData[POS_LONGITUDE].reader().get_double());
+    LOG_INFO(gCtx,"LON=%lf", posData[GENIVI_ENHANCEDPOSITIONSERVICE_LONGITUDE].reader().get_double());
   }
 
-  if (changedValues & POS_ALTITUDE)
+  if (changedValues & GENIVI_ENHANCEDPOSITIONSERVICE_ALTITUDE)
   {
-    LOG_INFO(gCtx,"ALT=%lf", posData[POS_ALTITUDE].reader().get_double());
+    LOG_INFO(gCtx,"ALT=%lf", posData[GENIVI_ENHANCEDPOSITIONSERVICE_ALTITUDE].reader().get_double());
   }
 
-  if (changedValues & POS_SPEED)
+  if (changedValues & GENIVI_ENHANCEDPOSITIONSERVICE_SPEED)
   {
-    LOG_INFO(gCtx,"SPEED=%lf", posData[POS_SPEED].reader().get_double());
+    LOG_INFO(gCtx,"SPEED=%lf", posData[GENIVI_ENHANCEDPOSITIONSERVICE_SPEED].reader().get_double());
   }
 
-  if (changedValues & POS_CLIMB)
+  if (changedValues & GENIVI_ENHANCEDPOSITIONSERVICE_CLIMB)
   {
-    LOG_INFO(gCtx,"CLIMB=%lf", posData[POS_CLIMB].reader().get_double());
+    LOG_INFO(gCtx,"CLIMB=%lf", posData[GENIVI_ENHANCEDPOSITIONSERVICE_CLIMB].reader().get_double());
   }
 
-  if (changedValues & POS_HEADING)
+  if (changedValues & GENIVI_ENHANCEDPOSITIONSERVICE_HEADING)
   {
-    LOG_INFO(gCtx,"HEADING=%lf", posData[POS_HEADING].reader().get_double());
+    LOG_INFO(gCtx,"HEADING=%lf", posData[GENIVI_ENHANCEDPOSITIONSERVICE_HEADING].reader().get_double());
   }
 
 

@@ -19,7 +19,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "enhanced-position.h"
-#include "positioning-constants.h"
+#include "genivi-positioning-constants.h"
 #include "log.h"
 
 DLT_IMPORT_CONTEXT(gCtx);
@@ -92,16 +92,16 @@ void EnhancedPosition::GetPositionInfo(const uint64_t& valuesToReturn, uint64_t&
   bool isPosRequested = false;
   bool isCourseRequested = false;
 
-  if ((valuesToReturn & POS_LATITUDE) || 
-      (valuesToReturn & POS_LONGITUDE) || 
-      (valuesToReturn & POS_ALTITUDE))
+  if ((valuesToReturn & GENIVI_ENHANCEDPOSITIONSERVICE_LATITUDE) ||
+      (valuesToReturn & GENIVI_ENHANCEDPOSITIONSERVICE_LONGITUDE) ||
+      (valuesToReturn & GENIVI_ENHANCEDPOSITIONSERVICE_ALTITUDE))
   {
     isPosRequested = true;
   }
 
-  if ((valuesToReturn & POS_HEADING) || 
-      (valuesToReturn & POS_SPEED) || 
-      (valuesToReturn & POS_CLIMB ))
+  if ((valuesToReturn & GENIVI_ENHANCEDPOSITIONSERVICE_HEADING) ||
+      (valuesToReturn & GENIVI_ENHANCEDPOSITIONSERVICE_SPEED) ||
+      (valuesToReturn & GENIVI_ENHANCEDPOSITIONSERVICE_CLIMB ))
   {
     isCourseRequested = true;
   }
@@ -115,17 +115,17 @@ void EnhancedPosition::GetPositionInfo(const uint64_t& valuesToReturn, uint64_t&
     {
       if (position.validityBits & GNSS_POSITION_LATITUDE_VALID)
       {
-        data[POS_LATITUDE] = variant_double(position.latitude);
+        data[GENIVI_ENHANCEDPOSITIONSERVICE_LATITUDE] = variant_double(position.latitude);
       }
 
       if (position.validityBits & GNSS_POSITION_LONGITUDE_VALID)
       {
-        data[POS_LONGITUDE] = variant_double(position.longitude);
+        data[GENIVI_ENHANCEDPOSITIONSERVICE_LONGITUDE] = variant_double(position.longitude);
       }
 
       if (position.validityBits & GNSS_POSITION_ALTITUDEMSL_VALID)
       {
-        data[POS_ALTITUDE] = variant_double(position.altitudeMSL);
+        data[GENIVI_ENHANCEDPOSITIONSERVICE_ALTITUDE] = variant_double(position.altitudeMSL);
       }
     }
 
@@ -133,17 +133,17 @@ void EnhancedPosition::GetPositionInfo(const uint64_t& valuesToReturn, uint64_t&
     {
       if (position.validityBits & GNSS_POSITION_HEADING_VALID)
       {
-        data[POS_HEADING] = variant_double(position.heading);
+        data[GENIVI_ENHANCEDPOSITIONSERVICE_HEADING] = variant_double(position.heading);
       }
 
       if (position.validityBits & GNSS_POSITION_HSPEED_VALID)
       {
-        data[POS_SPEED] = variant_double(position.hSpeed);
+        data[GENIVI_ENHANCEDPOSITIONSERVICE_SPEED] = variant_double(position.hSpeed);
       }
 
       if (position.validityBits & GNSS_POSITION_VSPEED_VALID)
       {
-        data[POS_CLIMB] = variant_double(position.vSpeed);
+        data[GENIVI_ENHANCEDPOSITIONSERVICE_CLIMB] = variant_double(position.vSpeed);
       }
     }
   }
@@ -279,57 +279,57 @@ void EnhancedPosition::sigPositionUpdate(const TGNSSPosition position[], uint16_
 
   if (latChanged)
   {
-     changedValues |= POS_LATITUDE;
+     changedValues |= GENIVI_ENHANCEDPOSITIONSERVICE_LATITUDE;
   }
 
   if (lonChanged)
   {
-     changedValues |= POS_LONGITUDE;
+     changedValues |= GENIVI_ENHANCEDPOSITIONSERVICE_LONGITUDE;
   }
 
   if (altChanged)
   {
-     changedValues |= POS_ALTITUDE;
+     changedValues |= GENIVI_ENHANCEDPOSITIONSERVICE_ALTITUDE;
   }
 
   if (speedChanged)
   {
-     changedValues |= POS_SPEED;
+     changedValues |= GENIVI_ENHANCEDPOSITIONSERVICE_SPEED;
   }
 
   if (headingChanged)
   {
-     changedValues |= POS_HEADING;
+     changedValues |= GENIVI_ENHANCEDPOSITIONSERVICE_HEADING;
   }
 
   if (climbChanged)
   {
-     changedValues |= POS_CLIMB;
+     changedValues |= GENIVI_ENHANCEDPOSITIONSERVICE_CLIMB;
   }
 
   if (pdopChanged)
   {
-    changedValues |= POS_PDOP;
+    changedValues |= GENIVI_ENHANCEDPOSITIONSERVICE_PDOP;
   }
 
   if (hdopChanged)
   {
-    changedValues |= POS_HDOP;
+    changedValues |= GENIVI_ENHANCEDPOSITIONSERVICE_HDOP;
   }
   
   if (vdopChanged)
   {
-    changedValues |= POS_VDOP;
+    changedValues |= GENIVI_ENHANCEDPOSITIONSERVICE_VDOP;
   }  
 
   if (usatChanged)
   {
-    changedValues |= POS_USED_SATELLITES;
+    changedValues |= GENIVI_ENHANCEDPOSITIONSERVICE_USED_SATELLITES;
   }
 
   if (fixStatusChanged)
   {
-    changedValues |= POS_GNSS_FIX_STATUS;
+    changedValues |= GENIVI_ENHANCEDPOSITIONSERVICE_GNSS_FIX_STATUS;
   }
 
   if (!mpSelf)

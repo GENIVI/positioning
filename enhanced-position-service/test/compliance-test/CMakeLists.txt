@@ -13,6 +13,9 @@
 # Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed with
 # this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
+# Update (2014/12/02) : Philippe Colliot <philippe.colliot@mpsa.com>,
+#				PSA Peugeot Citroen
+#		- generate the API of enhanced-position-service into the API folder
 # @licence end@
 ###########################################################################
 
@@ -20,7 +23,6 @@ message(STATUS "ENHANCED-POSITION-SERVICE-COMPLIANCE-TEST")
 
 INCLUDE(UsePkgConfig)
 
-include_directories("${PROJECT_SOURCE_DIR}/api")
 include_directories("${PROJECT_SOURCE_DIR}/../common")
 
 find_package(PkgConfig)

@@ -13,11 +13,15 @@
 # Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed with
 # this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
+# Update (2014/12/02) : Philippe Colliot <philippe.colliot@mpsa.com>,
+#				PSA Peugeot Citroen
+#		- introduce debug flag to disable verbosity
 # @licence end@
 ###########################################################################
 
 message(STATUS "TEST-LOG-REPLAYER")
 message(STATUS "WITH_DLT = ${WITH_DLT}")
+message(STATUS "WITH_DEBUG = ${WITH_DEBUG}")
 
 include_directories("${PROJECT_SOURCE_DIR}/src")
 
@@ -33,6 +37,10 @@ if(WITH_DLT)
     add_definitions("-DDLT_ENABLED=1")
     include_directories( ${DLT_INCLUDE_DIRS} )
     set(LIBRARIES ${LIBRARIES} ${DLT_LIBRARIES})
+endif()
+
+if(WITH_DEBUG)
+    add_definitions("-DDEBUG_ENABLED=1")
 endif()
 
 target_link_libraries(test-log-replayer ${LIBRARIES})
