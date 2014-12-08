@@ -117,7 +117,7 @@ bool checkMajorVersion(int expectedMajor)
 
 void init()
 {
-    if(!checkMajorVersion(2))
+    if(!checkMajorVersion(GENIVI_SNS_API_MAJOR))
     {
     	exit(EXIT_FAILURE);
     }
