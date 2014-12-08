@@ -14,7 +14,7 @@
 <node name="/org/genivi/positioning/PositionFeedback" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="introspect.xsd">
 
   <interface name="org.genivi.positioning.PositionFeedback">
-    <version>3.0.0-alpha (05-08-2014)</version>
+    <version>3.0.0 (19-11-2014)</version>
     <doc>
       <line>PositionFeedback = This interface allows the application implementing the map-matching algorithm to provide a position feedback to the EnahncedPositionService</line>
     </doc>
@@ -57,7 +57,8 @@
       </arg>
       <arg name="timestamp" type="t" direction="in">
         <doc>
-          <line>timestamp = timestamp in ms</line>
+          <line>timestamp = Original timestamp of the corresponding position data received from the EnhancedPosition API [ms]</line>
+          <line> Note: All timestamps must be based on the same time source.</line>
         </doc>
       </arg>
       <arg name="feedbackType" type="q" direction="in">

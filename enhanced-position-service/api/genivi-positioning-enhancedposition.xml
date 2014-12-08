@@ -15,7 +15,7 @@
 <node name="/org/genivi/positioning/EnhancedPosition" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="introspect.xsd">
 
   <interface name="org.genivi.positioning.EnhancedPosition">
-    <version>3.0.0-alpha (xx-10-2014)</version>
+    <version>3.0.0 (19-11-2014)</version>
     <doc>
       <line>EnhancedPosition = This interface offers functionalities to retrieve the enhanced position of the vehicle</line>
     </doc>
@@ -56,7 +56,8 @@
 
       <arg name="timestamp" type="t" direction="out">
         <doc>
-          <line>Timestamp of the acquisition of the position data [ms]</line>
+          <line>timestamp = Timestamp of the acquisition of the position data [ms]</line>
+          <line> Note: All timestamps must be based on the same time source.</line>
         </doc>
       </arg>
       
@@ -118,7 +119,8 @@
       </doc>
       <arg name="timestamp" type="t" direction="out">
         <doc>
-          <line>Timestamp of the acquisition of the satellite detail data [ms]</line>
+          <line>timestamp = Timestamp of the acquisition of the satellite detail data [ms]</line>
+          <line> Note: All timestamps must be based on the same time source.</line>
         </doc>
       </arg>        
       <arg name="satelliteInfo" type="a(qqqqqb)" direction="out">
@@ -140,7 +142,8 @@
       </doc>
       <arg name="timestamp" type="t" direction="out">
         <doc>
-          <line>Timestamp of the acquisition of the UTC date/time [ms]</line>
+          <line>timestamp = Timestamp of the acquisition of the UTC date/time [ms]</line>
+          <line> Note: All timestamps must be based on the same time source.</line>
         </doc>
       </arg>        
       <arg name="time" type="a{tv}" direction="out">
