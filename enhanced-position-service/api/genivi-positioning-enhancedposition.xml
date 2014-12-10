@@ -15,7 +15,7 @@
 <node name="/org/genivi/positioning/EnhancedPosition" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="introspect.xsd">
 
   <interface name="org.genivi.positioning.EnhancedPosition">
-    <version>3.0.0 (19-11-2014)</version>
+    <version>3.0.0 (10-Dec-2014)</version>
     <doc>
       <line>EnhancedPosition = This interface offers functionalities to retrieve the enhanced position of the vehicle</line>
     </doc>
