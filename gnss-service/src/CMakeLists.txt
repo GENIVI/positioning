@@ -13,6 +13,9 @@
 # Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed with
 # this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
+# Update (2014/12/02) : Philippe Colliot <philippe.colliot@mpsa.com>,
+#				PSA Peugeot Citroen
+#		- introduce debug flag to disable verbosity
 # @licence end@
 ###########################################################################
 
@@ -21,6 +24,7 @@ message(STATUS "WITH_DLT = ${WITH_DLT}")
 message(STATUS "WITH_GPSD = ${WITH_GPSD}")
 message(STATUS "WITH_REPLAYER = ${WITH_REPLAYER}")
 message(STATUS "WITH_TESTS = ${WITH_TESTS}")
+message(STATUS "WITH_DEBUG = ${WITH_DEBUG}")
 
 include_directories("${PROJECT_SOURCE_DIR}/api")
 
@@ -34,6 +38,10 @@ if(WITH_DLT)
     find_package(DLT REQUIRED)
     include_directories( ${DLT_INCLUDE_DIRS} )
     set(LIBRARIES ${LIBRARIES} ${DLT_LIBRARIES})
+endif()
+
+if(WITH_DEBUG)
+    add_definitions("-DDEBUG_ENABLED=1")
 endif()
 
 if(WITH_GPSD)

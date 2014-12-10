@@ -70,7 +70,7 @@ bool checkMajorVersion(int expectedMajor)
 
 bool init()
 {
-    if(!checkMajorVersion(2))
+    if(!checkMajorVersion(GENIVI_GNSS_API_MAJOR))
     {
         return false;
     }

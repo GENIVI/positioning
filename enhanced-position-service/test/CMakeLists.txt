@@ -13,6 +13,9 @@
 # Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed with
 # this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
+# Update (2014/12/02) : Philippe Colliot <philippe.colliot@mpsa.com>,
+#				PSA Peugeot Citroen
+#		- introduce debug flag to disable verbosity
 # @licence end@
 ###########################################################################
 
@@ -21,39 +24,25 @@ cmake_minimum_required(VERSION 2.6.0)
 
 message(STATUS "ENHANCED-POSITION-CLIENT")
 message(STATUS "WITH_DLT = ${WITH_DLT}")
+message(STATUS "WITH_DEBUG = ${WITH_DEBUG}")
 
 find_package(PkgConfig REQUIRED)
 
 pkg_check_modules(DBUS_CPP dbus-c++-1)
 
-include_directories(${DBUS_CPP_INCLUDE_DIRS})
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 include_directories(${DBUS_CPP_INCLUDE_DIRS})
-
-# Generate the client glue code before building the client
-add_custom_command(
-  OUTPUT  enhanced-position-proxy.h 
-  COMMAND dbusxx-xml2cpp ${CMAKE_CURRENT_SOURCE_DIR}/../api/genivi-positioning-enhancedposition.xml 
-  --proxy=enhanced-position-proxy.h
-  OUTPUT  position-feedback-proxy.h 
-  COMMAND dbusxx-xml2cpp ${CMAKE_CURRENT_SOURCE_DIR}/../api/genivi-positioning-positionfeedback.xml 
-  --proxy=position-feedback-proxy.h
-  OUTPUT  configuration-proxy.h 
-  COMMAND dbusxx-xml2cpp ${CMAKE_CURRENT_SOURCE_DIR}/../api/genivi-positioning-configuration.xml
-  --proxy=configuration-proxy.h
-  OUTPUT positioning-constants.h 
-  COMMAND xsltproc ${CMAKE_CURRENT_SOURCE_DIR}/../api/enum.xsl ${CMAKE_CURRENT_SOURCE_DIR}/../api/genivi-positioning-constants.xml > positioning-constants.h
-)
+include_directories(${enhanced-position-service_INCLUDE_DIRS})
 
 link_directories(${DBUS_CPP_LIBRARY_DIRS})
 
 add_executable(enhanced-position-client
-    enhanced-position-proxy.h
+    ${enhanced-position-service_INCLUDE_DIRS}/genivi-positioning-enhancedposition_proxy.h
     enhanced-position-client.h
     enhanced-position-client.cpp
-    position-feedback-proxy.h
-    configuration-proxy.h
-    positioning-constants.h
+    ${enhanced-position-service_INCLUDE_DIRS}/genivi-positioning-positionfeedback_proxy.h
+    ${enhanced-position-service_INCLUDE_DIRS}/genivi-positioning-configuration_proxy.h
+    ${enhanced-position-service_INCLUDE_DIRS}/genivi-positioning-constants.h
 )
 
 set(LIBRARIES 
@@ -66,6 +55,10 @@ if(WITH_DLT)
     find_package(DLT REQUIRED)
     include_directories( ${DLT_INCLUDE_DIRS} )
     set(LIBRARIES ${LIBRARIES} ${DLT_LIBRARIES})
+endif()
+
+if(WITH_DEBUG)
+    add_definitions("-DDEBUG_ENABLED=1")
 endif()
 
 target_link_libraries(enhanced-position-client ${LIBRARIES})

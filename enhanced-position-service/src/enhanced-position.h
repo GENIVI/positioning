@@ -20,7 +20,7 @@
 
 #include <dbus-c++/dbus.h>
 
-#include "enhanced-position-adaptor.h"
+#include "genivi-positioning-enhancedposition_adaptor.h"
 #include "gnss-init.h"
 #include "gnss.h"
 
@@ -36,20 +36,10 @@ public:
   ~EnhancedPosition();
 
   ::DBus::Struct< uint16_t, uint16_t, uint16_t, std::string > GetVersion();
-    
-  std::map< uint16_t, ::DBus::Variant > GetData(const std::vector< uint16_t >& valuesToReturn);
 
-  std::map< uint16_t, ::DBus::Variant > GetPosition();
-
-  std::map< uint16_t, ::DBus::Variant > GetRotationRate();
-
-  std::map< uint16_t, ::DBus::Variant > GetAccuracy();
-
-  std::map< uint16_t, ::DBus::Variant > GetSatelliteInfo();
-  
-  std::map< uint16_t, ::DBus::Variant > GetStatus();
-
-  std::map< uint16_t, ::DBus::Variant > GetTime();
+  void GetPositionInfo(const uint64_t& valuesToReturn, uint64_t& timestamp, std::map< uint64_t, ::DBus::Variant >& data);
+  void GetSatelliteInfo(uint64_t& timestamp, std::vector< ::DBus::Struct< uint16_t, uint16_t, uint16_t, uint16_t, uint16_t, bool > >& satelliteInfo);
+  void GetTime(uint64_t& timestamp, std::map< uint64_t, ::DBus::Variant >& time);
 
   void run();
 
@@ -60,15 +50,9 @@ private:
   bool checkMajorVersion(int expectedMajor);
 
   static void cbSatelliteDetail(const TGNSSSatelliteDetail satelliteDetail[], uint16_t numElements);
-
   static void cbPosition(const TGNSSPosition position[], uint16_t numElements);
+
   static void sigPositionUpdate(const TGNSSPosition position[], uint16_t numElements);
-  static void sigAccuracyUpdate(const TGNSSPosition position[], uint16_t numElements);
-  static void sigStatusUpdate(const TGNSSPosition position[], uint16_t numElements);  
-  static void sigSatelliteInfoUpdate(const TGNSSPosition position[], uint16_t numElements);
-  
-  
-  
 
   static EnhancedPosition* mpSelf;
 };

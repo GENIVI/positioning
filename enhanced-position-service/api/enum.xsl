@@ -30,8 +30,8 @@
 };
  -->
 
-enum EPOS_Constants {<xsl:for-each select="id">
-	POS_<xsl:value-of select="translate(@name,'-','_')"/> = <xsl:value-of select="@value"/>,</xsl:for-each>
+enum GENIVI_<xsl:value-of select="$constants"/>_Constants {<xsl:for-each select="id">
+	GENIVI_<xsl:value-of select="$constants"/>_<xsl:value-of select="translate(@name,'-','_')"/> = <xsl:value-of select="@value"/>,</xsl:for-each>
 };
   </xsl:template>
 </xsl:stylesheet>

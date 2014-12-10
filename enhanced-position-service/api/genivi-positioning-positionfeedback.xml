@@ -14,7 +14,7 @@
 <node name="/org/genivi/positioning/PositionFeedback" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="introspect.xsd">
 
   <interface name="org.genivi.positioning.PositionFeedback">
-    <version>3.0.0-alpha (05-08-2014)</version>
+    <version>3.0.0 (19-11-2014)</version>
     <doc>
       <line>PositionFeedback = This interface allows the application implementing the map-matching algorithm to provide a position feedback to the EnahncedPositionService</line>
     </doc>
@@ -40,12 +40,12 @@
         <line>Note: This interface is typically used by the application that implements the map-matching algorithm</line>
         <line>Such application can hand over to the EnhancedPositionService an array of map-matched positions with different values of reliability</line>
       </doc>
-      <arg name="feedback" type="aa{qv}" direction="in">
+      <arg name="feedback" type="aa{tv}" direction="in">
         <doc>
           <line>feedback = array[position]</line>
           <line>position = dictionary[key,value]</line>
           <line>dictionary = array of tuples (key,value)</line>
-          <line>key = enum(INVALID,LATITUDE,LONGITUDE,ALTITUDE,HEADING,SPEED,CLIMB,RELIABILTY_INDEX, ... )</line>
+          <line>key = enum(LATITUDE,LONGITUDE,ALTITUDE,HEADING,SPEED,CLIMB,RELIABILTY_INDEX, ... )</line>
           <line>key = LATITUDE, value = value of type 'd', that expresses the WGS84 latitude of the current position in degrees. Range [-90:+90]. Example: 48.053250</line>
           <line>key = LONGITUDE, value = value of type 'd', that expresses the WGS84 longitude of the current position in degrees. Range [-180:+180]. Example: 8.324500</line>
           <line>key = ALTITUDE, value = value of type 'd', that expresses the altitude above the sea level of the current position in meters</line>
@@ -57,7 +57,8 @@
       </arg>
       <arg name="timestamp" type="t" direction="in">
         <doc>
-          <line>timestamp = timestamp in ms</line>
+          <line>timestamp = Original timestamp of the corresponding position data received from the EnhancedPosition API [ms]</line>
+          <line> Note: All timestamps must be based on the same time source.</line>
         </doc>
       </arg>
       <arg name="feedbackType" type="q" direction="in">

@@ -103,7 +103,8 @@ typedef enum {
  * Note: the uncommon numbering of day and month is chosen to be compatible with the struct tm from the standard C-Library
  */
 typedef struct {
-    uint64_t timestamp;             /**< Timestamp of the acquisition of the UTC date/time. */
+    uint64_t timestamp;             /**< Timestamp of the acquisition of the UTC date/time [ms].
+                                         All sensor/GNSS timestamps must be based on the same time source. */
     uint16_t year;                  /**< Year fraction of the UTC time. Unit: [year] Number equivalent to the year (4 digits) */
     uint8_t month;                  /**< Month fraction of the UTC time. Unit: [month] Number betweeen 0 and 11 */
     uint8_t day;                    /**< Day of month fraction of the UTC time. Unit: [day]. Number between 1 and 31 */   
@@ -162,7 +163,8 @@ typedef enum {
  * Detailed data from one GNSS satellite.
  */
 typedef struct {
-    uint64_t timestamp;             /**< Timestamp of the acquisition of the satellite detail data. */
+    uint64_t timestamp;             /**< Timestamp of the acquisition of the satellite detail data [ms].
+                                         All sensor/GNSS timestamps must be based on the same time source. */
     EGNSSSystem system;             /**< Value representing the GNSS system. */
     uint16_t satelliteId;           /**< Satellite ID.
                                          Satellite IDs are only unique within one satellite system.
@@ -224,7 +226,8 @@ typedef enum {
  * for positioning applications such as GNSS/Dead Reckoning sensor fusion.
  */
 typedef struct {
-    uint64_t timestamp;             /**< Timestamp of the acquisition of the GNSS data. [ms] */ 
+    uint64_t timestamp;             /**< Timestamp of the acquisition of the GNSS data [ms].
+                                         All sensor/GNSS timestamps must be based on the same time source. */
     //position
     double latitude;                /**< Latitude in WGS84 in degrees. */ 
     double longitude;               /**< Longitude in WGS84 in degrees. */ 

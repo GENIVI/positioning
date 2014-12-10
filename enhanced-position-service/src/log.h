@@ -20,7 +20,7 @@
 #define INCLUDE_LOG
 
 // turn-on via cmake define:
-// $ cmake -DWITH_DLT=1 ..
+// $ cmake -DWITH_DLT=1 -DDEBUG_ENABLED=1 ..
 
 #if (!DLT_ENABLED)
 /*****************************************************************************/
@@ -46,6 +46,22 @@ typedef const char* NoDltContext;
 #define dlt_free() ;
 
 // log calls
+#if (!DEBUG_ENABLED)
+
+#define LOG_VERBOSE_MSG(context, msg) ;
+#define LOG_VERBOSE(context, fmt, ...) ;
+
+#define LOG_DEBUG_MSG(context, msg) ;
+#define LOG_DEBUG(context, fmt, ...) ;
+
+#define LOG_INFO_MSG(context, msg) ;
+#define LOG_INFO(context, fmt, ...) ;
+
+#define LOG_WARNING_MSG(context, msg) ;
+#define LOG_WARNING(context, fmt, ...) ;
+
+#else
+
 #define LOG_VERBOSE_MSG(context, msg) \
         fprintf(stderr, "[VERBO][%4s] " msg "\n", context)
 #define LOG_VERBOSE(context, fmt, ...) \
@@ -65,6 +81,7 @@ typedef const char* NoDltContext;
         fprintf(stderr, "[WARN ][%4s] " msg "\n", context)
 #define LOG_WARNING(context, fmt, ...) \
         fprintf(stderr, "[WARN ][%4s] " fmt "\n", context, __VA_ARGS__)
+#endif
 
 #define LOG_ERROR_MSG(context, msg) \
         fprintf(stderr, "[ERROR][%4s] " msg "\n", context)

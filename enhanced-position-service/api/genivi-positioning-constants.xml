@@ -12,84 +12,60 @@
 -->
 
 <constants  name="EnhancedPositionService">
-  <version>2.0.0 (04-06-2013)</version>
+  <version>3.0.0 (19-11-2014)</version>
   <doc>
     <line>This document defines the constants that are used in the EnhancedPositionService APIs</line>
+    <line>Constants for "Keys" are always individual bits within a 64 bit unsigned integer and are unique within the EnhancedPositionService</line>
+    <line>Constants for "Enums" increment consecutively and are only unique within the context of the specific enum</line>
   </doc>
 
-  <!-- special values -->
-  <id name="INVALID" value="0x0000" />
-  <id name="TIMESTAMP" value="0x0001" />
-  <id name="ALL" value="0xffff" />
+  <!-- PositionInfo and PositionFeedback Keys - for use in bit mask -->
+  <id name="LATITUDE"               value="0x00000001" />
+  <id name="LONGITUDE"              value="0x00000002" />
+  <id name="ALTITUDE"               value="0x00000004" />
+  <id name="HEADING"                value="0x00000008" />
+  <id name="SPEED"                  value="0x00000010" />
+  <id name="CLIMB"                  value="0x00000020" />
+  <id name="ROLL_RATE"              value="0x00000040" />
+  <id name="PITCH_RATE"             value="0x00000080" />
+  <id name="YAW_RATE"               value="0x00000100" />
+  <id name="PDOP"                   value="0x00000200" />
+  <id name="HDOP"                   value="0x00000400" />
+  <id name="VDOP"                   value="0x00000800" />
+  <id name="USED_SATELLITES"        value="0x00001000" />
+  <id name="TRACKED_SATELLITES"     value="0x00002000" />
+  <id name="VISIBLE_SATELLITES"     value="0x00004000" />
+  <id name="SIGMA_HPOSITION"        value="0x00008000" />  
+  <id name="SIGMA_ALTITUDE"         value="0x00010000" />
+  <id name="SIGMA_HEADING"          value="0x00020000" />
+  <id name="SIGMA_SPEED"            value="0x00040000" />
+  <id name="SIGMA_CLIMB"            value="0x00080000" />  
+  <id name="GNSS_FIX_STATUS"        value="0x00100000" />
+  <id name="DR_STATUS"              value="0x00200000" />
+  <id name="RELIABILTY_INDEX"       value="0x00400000" />
 
-  <!-- Position -->
-  <id name="LATITUDE" value="0x0020" />
-  <id name="LONGITUDE" value="0x0021" />
-  <id name="ALTITUDE" value="0x0022" />
+  <!-- Time Keys - for use in bit mask -->
+  <id name="YEAR"                   value="0x01000000" />
+  <id name="MONTH"                  value="0x02000000" />
+  <id name="DAY"                    value="0x04000000" />
+  <id name="HOUR"                   value="0x08000000" />
+  <id name="MINUTE"                 value="0x10000000" />
+  <id name="SECOND"                 value="0x20000000" />
+  <id name="MS"                     value="0x40000000" />
 
-  <!-- Course -->
-  <id name="HEADING" value="0x0030" />
-  <id name="SPEED" value="0x0031" />
-  <id name="CLIMB" value="0x0032" />
+  <!-- Generic "Enum" values -->
+  <id name="INVALID"                value="0x00000000" />
 
-  <!-- Address -->
-  <id name="COUNTRY" value="0x0040" />
-  <id name="CITY" value="0x0041" />
-  <id name="STREET" value="0x0042" />
-  <id name="NUMBER" value="0x0043" />
-  <id name="CROSSING" value="0x0044" />
-  <id name="DISTRICT" value="0x0045" />
-  <id name="TIMEZONE_OFFSET" value="0x0046" />
-  <id name="DAYLIGHT_OFFSET" value="0x0047" />
-  <id name="MATCH_TYPE" value="0x0048" />
+  <!-- SatelliteSystem "Enum" -->
+  <id name="GPS"                    value="0x00000001" />
+  <id name="GLONASS"                value="0x00000002" />
+  <id name="GALILEO"                value="0x00000003" />
+  <id name="BEIDOU"                 value="0x00000004" /> <!-- Chinese Beidou Navigation Satellite System -->
+  <id name="COMPASS"                value="0x00000004" /> <!-- COMPASS is a synonym for BEIDOU -->
 
-  <!-- RotationRate -->
-  <id name="ROLL_RATE" value="0x0060" />
-  <id name="PITCH_RATE" value="0x0061" />
-  <id name="YAW_RATE" value="0x0062" />
-
-  <!-- EnhancedPositionStatus -->
-  <id name="GNSS_FIX_STATUS" value="0x0070" />
-  <id name="DR_STATUS" value="0x0071" />
-
-  <!-- MapMatchedPositionStatus -->
-  <id name="MM_STATUS" value="0x0072" />
-
-  <!-- PositionFeedback -->
-  <id name="RELIABILTY_INDEX" value="0x0073" />
-  <id name="MAP_MATCHED_FEEDBACK" value="0x0074" />
-  <id name="TEST_FEEDBACK" value="0x0075" />
-
-  <!-- Accuracy -->
-  <id name="PDOP" value="0x0080" />
-  <id name="HDOP" value="0x0081" />
-  <id name="VDOP" value="0x0082" />
-  <id name="SIGMA_LATITUDE" value="0x0083" />
-  <id name="SIGMA_LONGITUDE" value="0x0084" />
-  <id name="SIGMA_ALTITUDE" value="0x0085" />
-  <id name="SIGMA_HEADING" value="0x0086" />
-
-  <!-- Time -->
-  <id name="YEAR" value="0x00a0" />
-  <id name="MONTH" value="0x00a1" />
-  <id name="DAY" value="0x00a2" />
-  <id name="HOUR" value="0x00a3" />
-  <id name="MINUTE" value="0x00a4" />
-  <id name="SECOND" value="0x00a5" />
-  <id name="MS" value="0x00a6" />
-
-  <!-- SatelliteSystem -->
-  <id name="GPS" value="0x00b0" />
-  <id name="GLONASS" value="0x00b1" />
-  <id name="GALILEO" value="0x00b2" />
-  <id name="COMPASS" value="0x00b3" />
-
-  <!-- SatelliteStatus -->
-
-  <id name="USED_SATELLITES"  value="0x00c0" />
-  <id name="TRACKED_SATELLITES"  value="0x00c1" />
-  <id name="VISIBLE_SATELLITES"  value="0x00c2" />
-  <id name="SATELLITE_DETAILS"  value="0x00c3" />
+  <!-- PositionFeedback "Enum" -->
+  <id name="MAP_MATCHED_FEEDBACK"   value="0x00000001" />
+  <id name="TEST_FEEDBACK"          value="0x00000002" />
 
   <!-- ... --> 
 </constants>

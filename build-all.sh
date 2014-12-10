@@ -14,6 +14,10 @@
 # Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed with
 # this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
+# Update (2014/12/02) : Philippe Colliot <philippe.colliot@mpsa.com>,
+#				PSA Peugeot Citroen
+#		- introduce debug flag to enable verbosity
+#		- generate the API of enhanced-position-service into the API folder
 # @licence end@
 ###########################################################################
 
@@ -21,10 +25,10 @@
 # Compiler Flags
 #--------------------------------------------------------------------------
 # modify the following flags as needed:
-GNSS_SERVICE_FLAGS='-DWITH_DLT=OFF -DWITH_GPSD=OFF -DWITH_REPLAYER=ON -DWITH_TESTS=ON'
-SENSORS_SERVICE_FLAGS='-DWITH_DLT=OFF -DWITH_REPLAYER=ON -DWITH_IPHONE=OFF -DWITH_TESTS=ON'
-ENHANCED_POSITION_SERVICE_FLAGS='-DWITH_DLT=OFF -DWITH_GPSD=OFF -DWITH_REPLAYER=ON -DWITH_IPHONE=OFF -DWITH_TESTS=ON'
-LOG_REPLAYER_FLAGS='-DWITH_DLT=OFF -DWITH_TESTS=ON'
+GNSS_SERVICE_FLAGS='-DWITH_DLT=OFF -DWITH_GPSD=OFF -DWITH_REPLAYER=ON -DWITH_TESTS=ON -DWITH_DEBUG=ON'
+SENSORS_SERVICE_FLAGS='-DWITH_DLT=OFF -DWITH_REPLAYER=ON -DWITH_IPHONE=OFF -DWITH_TESTS=ON -DWITH_DEBUG=ON'
+ENHANCED_POSITION_SERVICE_FLAGS='-DWITH_DLT=OFF -DWITH_GPSD=OFF -DWITH_REPLAYER=ON -DWITH_IPHONE=OFF -DWITH_TESTS=ON -DWITH_DEBUG=ON'
+LOG_REPLAYER_FLAGS='-DWITH_DLT=OFF -DWITH_TESTS=ON -DWITH_DEBUG=ON'
 #--------------------------------------------------------------------------
 
 TOP_SRC_DIR=$PWD
@@ -33,6 +37,7 @@ TOP_BIN_DIR=$PWD/build
 GNSS_SERVICE_SRC_DIR=$TOP_SRC_DIR/gnss-service
 SENSORS_SERVICE_SRC_DIR=$TOP_SRC_DIR/sensors-service
 ENHANCED_POSITION_SERVICE_SRC_DIR=$TOP_SRC_DIR/enhanced-position-service
+ENHANCED_POSITION_SERVICE_API_DIR=$ENHANCED_POSITION_SERVICE_SRC_DIR/api
 LOG_REPLAYER_SRC_DIR=$TOP_SRC_DIR/log-replayer
 
 GNSS_SERVICE_BIN_DIR=$TOP_BIN_DIR/gnss-service
@@ -84,6 +89,12 @@ buildEnhancedPositionService() {
 buildLogReplayer() {
     echo ''
     echo 'Building LogReplayer ->' $LOG_REPLAYER_SRC_DIR
+    echo ''
+    echo 'Generate DBus include files'
+	cd $ENHANCED_POSITION_SERVICE_API_DIR
+	cmake .
+    echo ''
+    echo 'Build the code'
     mkdir -p $LOG_REPLAYER_BIN_DIR
     cd $LOG_REPLAYER_BIN_DIR 
     cmake $LOG_REPLAYER_FLAGS $LOG_REPLAYER_SRC_DIR && make 

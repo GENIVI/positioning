@@ -17,7 +17,7 @@
 **************************************************************************/
 
 #include "configuration.h"
-#include "positioning-constants.h"
+#include "genivi-positioning-constants.h"
 #include "log.h"
 
 DLT_IMPORT_CONTEXT(gCtx);
@@ -80,7 +80,7 @@ std::map< std::string, ::DBus::Variant > Configuration::GetProperties()
   std::map< std::string, ::DBus::Variant > Properties;
 
   Properties["UpdateInterval"] = variant_int32(1000);
-  Properties["SatelliteSystem"] = variant_uint16(POS_GPS);
+  Properties["SatelliteSystem"] = variant_uint16(GENIVI_ENHANCEDPOSITIONSERVICE_GPS);
 
   return Properties;
 }
@@ -98,10 +98,10 @@ std::map< std::string, ::DBus::Variant > Configuration::GetSupportedProperties()
   updateIntervals.push_back(1000);
 
   std::vector< uint16_t > satelliteSystems;
-  satelliteSystems.push_back(POS_GPS);
-  satelliteSystems.push_back(POS_GLONASS);
-  satelliteSystems.push_back(POS_GALILEO);
-  satelliteSystems.push_back(POS_COMPASS);
+  satelliteSystems.push_back(GENIVI_ENHANCEDPOSITIONSERVICE_GPS);
+  satelliteSystems.push_back(GENIVI_ENHANCEDPOSITIONSERVICE_GLONASS);
+  satelliteSystems.push_back(GENIVI_ENHANCEDPOSITIONSERVICE_GALILEO);
+  satelliteSystems.push_back(GENIVI_ENHANCEDPOSITIONSERVICE_COMPASS);
 
   SupportedProperties["UpdateInterval"] = variant_array_int32(updateIntervals);
   SupportedProperties["SatelliteSystem"] =  variant_array_uint16(satelliteSystems);

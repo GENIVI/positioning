@@ -19,7 +19,7 @@
 #define __ENHANCED_POSITION_CLIENT_H
 
 #include <dbus-c++/dbus.h>
-#include "enhanced-position-proxy.h"
+#include "genivi-positioning-enhancedposition_proxy.h"
 
 class EnhancedPositionClient
   : public org::genivi::positioning::EnhancedPosition_proxy,
@@ -30,11 +30,7 @@ public:
 
   EnhancedPositionClient(DBus::Connection &connection, const char *path, const char *name);
 
-  void PositionUpdate(const std::vector< uint16_t >& changedValues);
-  void RotationRateUpdate(const std::vector< uint16_t >& changedValues);
-  void AccuracyUpdate(const std::vector< uint16_t >& changedValues);
-  void SatelliteInfoUpdate(const std::vector< uint16_t >& changedValues);
-  void StatusUpdate(const std::vector< uint16_t >& changedValues);
+  void PositionUpdate(const uint64_t& changedValues);
 
 };
 

@@ -134,7 +134,7 @@ bool checkMajorVersion(int expectedMajor)
 
 void init()
 {
-    if(!checkMajorVersion(3))
+    if(!checkMajorVersion(GENIVI_GNSS_API_MAJOR))
     {
         exit(EXIT_FAILURE);
     }
