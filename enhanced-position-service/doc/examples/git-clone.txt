@@ -1,9 +1,0 @@
-
-# clone git repository
-$ git clone https://git.genivi.org/srv/git/positioning
-
-# checkout taged version 'gemini-final'
-$ git checkout <release tag>
-
-# navigate to the GNSSService directory containing the D-Bus APIs
-$ cd EnhancedPositionService/api
