@@ -18,6 +18,9 @@
     <version>3.0.0 (10-Dec-2014)</version>
     <doc>
       <line>Configuration = This interface allows a client application to set and retrieve configuration options</line>
+      <line>For each configuration option, a property is provided</line>
+      <line>A key identifying a configuration option is a string containing the name of the property</line>
+      <line>The possible values for each configuration property including their data type are described as part of the documentation of the property</line>
     </doc>
    
     <method name="GetVersion">
@@ -37,9 +40,15 @@
 
     <method name="GetProperties">
       <doc>
-        <line>GetProperties = This method returns all global system properties.</line>
+        <line>GetProperties = This method returns the current values of all global system properties.</line>
       </doc>
-      <arg name="properties" type="a{sv}" direction="out" />
+      <arg name="properties" type="a{sv}" direction="out">
+        <doc>
+          <line>properties = array[property]</line>
+          <line>property = dictionary[key,value]</line>
+          <line>The possible values for each configuration property including their data type are described as part of the documentation of the property</line>
+        </doc>
+      </arg>
     </method>
 
     <method name="SetProperty">
@@ -79,7 +88,7 @@
 
     <property name="SatelliteSystem" type="q" access="readwrite">
       <doc>
-        <line>SatelliteSystem = enum(INVALID,GPS,GLONASS,GALILEO,COMPASS, ... )</line>
+        <line>SatelliteSystem = enum(GPS,GLONASS,GALILEO,COMPASS, ... )</line>
       </doc>
     </property>
 
@@ -91,14 +100,15 @@
 
     <method name="GetSupportedProperties">
       <doc>
-        <line>GetSupportedProperties = This method returns all suppported global system properties</line>
+        <line>GetSupportedProperties = This method returns all supported global system properties</line>
+        <line>For each property, an array of all possible values is provided</line>
       </doc>
       <arg name="properties" type="a{sv}" direction="out">
         <doc>
           <line>properties = array[property]</line>
           <line>property = dictionary[key,value]</line>
           <line>key = enum(SatelliteSystem,UpdateInterval, ... )</line>
-          <line>key = SatelliteSystem, value = value of type 'aq'; 'q' is an enum(INVALID,GPS,GLONASS,GALILEO,COMPASS, ...)</line>
+          <line>key = SatelliteSystem, value = value of type 'aq'; 'q' is an enum(GPS,GLONASS,GALILEO,COMPASS, ...)</line>
           <line>key = UpdateInterval, value = value of type 'ai'; 'i' is the update interval in ms</line>
         </doc>
       </arg>
