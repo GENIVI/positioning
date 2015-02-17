@@ -27,6 +27,9 @@ positioning_x.y.bb          //version x.y of a Yocto recipe for the positioning 
 How To Build
 ===============================
 
+First of all make sure that the following packages are installed: 
+libdbus-1-dev, libdbus-c++-dev, gpsd, libgps-dev, xsltproc
+
 To build the positioning proofs of concept please follow the following steps:
 
 ./build-all.sh 
@@ -93,7 +96,7 @@ sudo apt-get install libgps-dev
 
 To test  the enhanced-positon-service the package 'libdbus-c++-dev' must be installed.
 To install 'libdbus-c++-dev', please execute the following command:
-sudo apt-get install libdbus-c++-dev
+sudo apt-get install libdbus-c++-dev libdbus-1-dev xsltproc
 
 DWITH_TESTS=ON enables the compilation of the test application(s).
 
