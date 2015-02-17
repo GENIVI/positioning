@@ -20,7 +20,7 @@
 
 #include <dbus-c++/dbus.h>
 
-#include "genivi-positioning-enhancedposition_adaptor.h"
+#include "enhanced-position-adaptor.h"
 #include "gnss-init.h"
 #include "gnss.h"
 

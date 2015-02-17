@@ -34,15 +34,30 @@ include_directories(${CMAKE_CURRENT_BINARY_DIR})
 include_directories(${DBUS_CPP_INCLUDE_DIRS})
 include_directories(${enhanced-position-service_INCLUDE_DIRS})
 
+# Generate the client glue code before building the client
+add_custom_command(
+   OUTPUT  enhanced-position-proxy.h 
+   COMMAND dbusxx-xml2cpp ${CMAKE_CURRENT_SOURCE_DIR}/../api/genivi-positioning-enhancedposition.xml 
+   --proxy=enhanced-position-proxy.h
+   OUTPUT  position-feedback-proxy.h 
+   COMMAND dbusxx-xml2cpp ${CMAKE_CURRENT_SOURCE_DIR}/../api/genivi-positioning-positionfeedback.xml 
+   --proxy=position-feedback-proxy.h
+   OUTPUT  configuration-proxy.h 
+   COMMAND dbusxx-xml2cpp ${CMAKE_CURRENT_SOURCE_DIR}/../api/genivi-positioning-configuration.xml
+   --proxy=configuration-proxy.h
+   OUTPUT positioning-constants.h 
+   COMMAND xsltproc ${CMAKE_CURRENT_SOURCE_DIR}/../api/enum.xsl ${CMAKE_CURRENT_SOURCE_DIR}/../api/genivi-positioning-constants.xml > positioning-constants.h
+)
+
 link_directories(${DBUS_CPP_LIBRARY_DIRS})
 
 add_executable(enhanced-position-client
-    ${enhanced-position-service_INCLUDE_DIRS}/genivi-positioning-enhancedposition_proxy.h
+    enhanced-position-proxy.h
     enhanced-position-client.h
     enhanced-position-client.cpp
-    ${enhanced-position-service_INCLUDE_DIRS}/genivi-positioning-positionfeedback_proxy.h
-    ${enhanced-position-service_INCLUDE_DIRS}/genivi-positioning-configuration_proxy.h
-    ${enhanced-position-service_INCLUDE_DIRS}/genivi-positioning-constants.h
+    position-feedback-proxy.h
+    configuration-proxy.h
+    positioning-constants.h
 )
 
 set(LIBRARIES 
@@ -64,6 +79,7 @@ endif()
 target_link_libraries(enhanced-position-client ${LIBRARIES})
 
 message(STATUS "DBUS_CPP_LIBRARIES: " ${DBUS_CPP_LIBRARIES})
+
 
 
 

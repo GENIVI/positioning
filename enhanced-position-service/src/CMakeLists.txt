@@ -33,11 +33,27 @@ find_package(PkgConfig REQUIRED)
 
 pkg_check_modules(DBUS_CPP dbus-c++-1)
 
+include_directories("${PROJECT_SOURCE_DIR}/../api")
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 include_directories(${DBUS_CPP_INCLUDE_DIRS})
 include_directories(${gnss-service_INCLUDE_DIRS})
 include_directories(${sensors-service_INCLUDE_DIRS})
-include_directories(${enhanced-position-service_INCLUDE_DIRS})
+#include_directories(${enhanced-position-service_INCLUDE_DIRS})
+
+# Generate the client glue code before building the client
+add_custom_command(
+   OUTPUT  enhanced-position-adaptor.h 
+   COMMAND dbusxx-xml2cpp ${CMAKE_CURRENT_SOURCE_DIR}/../api/genivi-positioning-enhancedposition.xml 
+   --adaptor=enhanced-position-adaptor.h
+   OUTPUT  position-feedback-adaptor.h 
+   COMMAND dbusxx-xml2cpp ${CMAKE_CURRENT_SOURCE_DIR}/../api/genivi-positioning-positionfeedback.xml 
+   --adaptor=position-feedback-adaptor.h
+   OUTPUT  configuration-adaptor.h 
+   COMMAND dbusxx-xml2cpp ${CMAKE_CURRENT_SOURCE_DIR}/../api/genivi-positioning-configuration.xml
+   --adaptor=configuration-adaptor.h
+   OUTPUT positioning-constants.h 
+   COMMAND xsltproc ${CMAKE_CURRENT_SOURCE_DIR}/../api/enum.xsl ${CMAKE_CURRENT_SOURCE_DIR}/../api/genivi-positioning-constants.xml > positioning-constants.h
+)
 
 link_directories(
     ${DBUS_CPP_LIBRARY_DIRS}
@@ -48,13 +64,13 @@ add_executable(enhanced-position-service
     main.cpp
     enhanced-position.cpp
     enhanced-position.h
-    ${enhanced-position-service_INCLUDE_DIRS}/genivi-positioning-enhancedposition_adaptor.h
+    enhanced-position-adaptor.h
     position-feedback.cpp
     position-feedback.h
-    ${enhanced-position-service_INCLUDE_DIRS}/genivi-positioning-positionfeedback_adaptor.h
+    position-feedback-adaptor.h
     configuration.cpp
     configuration.h
-    ${enhanced-position-service_INCLUDE_DIRS}/genivi-positioning-configuration_adaptor.h
+    configuration-adaptor.h
 )
 
 set(LIBRARIES 
@@ -80,5 +96,6 @@ target_link_libraries(enhanced-position-service ${LIBRARIES})
 message(STATUS "DBUS_CPP_LIBRARIES: " ${DBUS_CPP_LIBRARIES})
 message(STATUS "GNSS_SERVICE_LIBRARIES: " ${gnss-service_LIBRARIES})
 message(STATUS "SENSORS_SERVICE_LIBRARIES: " ${sensors-service_LIBRARIES})
+
 
 

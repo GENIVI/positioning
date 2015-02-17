@@ -20,7 +20,7 @@
 #define ___POSITION_FEEDBACK_H
 
 #include <dbus-c++/dbus.h>
-#include "genivi-positioning-positionfeedback_adaptor.h"
+#include "position-feedback-adaptor.h"
 
 class PositionFeedback
   : public org::genivi::positioning::PositionFeedback_adaptor

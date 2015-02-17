@@ -89,12 +89,6 @@ buildEnhancedPositionService() {
 buildLogReplayer() {
     echo ''
     echo 'Building LogReplayer ->' $LOG_REPLAYER_SRC_DIR
-    echo ''
-    echo 'Generate DBus include files'
-	cd $ENHANCED_POSITION_SERVICE_API_DIR
-	cmake .
-    echo ''
-    echo 'Build the code'
     mkdir -p $LOG_REPLAYER_BIN_DIR
     cd $LOG_REPLAYER_BIN_DIR 
     cmake $LOG_REPLAYER_FLAGS $LOG_REPLAYER_SRC_DIR && make 
