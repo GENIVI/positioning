@@ -46,7 +46,7 @@ typedef enum {
 /**
  * Accelerometer type
  * TAccelerationConfiguration::typeBits provides information about the type of the accelerometer and the interpretation of the signals.
- * It is a or'ed bitmask of the EGyroscopeTypeBits values.
+ * It is a or'ed bitmask of the EAccelerationTypeBits values.
  */
 typedef enum {
     ACCELERATION_X_PROVIDED             = 0x00000001,   /**< An acceleration measurement for the x-axis is provided */
@@ -103,10 +103,11 @@ typedef struct {
     float sigmaX;           /**< Standard error estimate of the x-acceleration [m/s^2]. */
     float sigmaY;           /**< Standard error estimate of the y-acceleration [m/s^2]. */
     float sigmaZ;           /**< Standard error estimate of the z-acceleration [m/s^2]. */
-    EAccelerationTypeBits typeBits;/**< Bit mask indicating the type of the used gyroscope. */    
-    uint32_t validityBits;     /**< Bit mask indicating the validity of each corresponding value.
-                                     [bitwise or'ed @ref EAccelerationConfigValidityBits values].
-                                     Must be checked before usage. */
+    uint32_t typeBits;      /**< Bit mask indicating the type of the used accelerometer. 
+                                 [bitwise or'ed @ref EAccelerationTypeBits values]. */    
+    uint32_t validityBits;  /**< Bit mask indicating the validity of each corresponding value.
+                                 [bitwise or'ed @ref EAccelerationConfigValidityBits values].
+                                 Must be checked before usage. */
 } TAccelerationConfiguration;
 
 /**
@@ -145,9 +146,9 @@ typedef struct {
                                          If available it can be used for temperature compensation. 
                                          The measurement unit is unspecified. 
                                          Degrees celsius are preferred but any value linearly dependent on the temperature is fine.*/
-    uint32_t validityBits;         /**< Bit mask indicating the validity of each corresponding value.
-                                        [bitwise or'ed @ref EAccelerationValidityBits values].
-                                        Must be checked before usage. */
+    uint32_t validityBits;          /**< Bit mask indicating the validity of each corresponding value.
+                                         [bitwise or'ed @ref EAccelerationValidityBits values].
+                                         Must be checked before usage. */
 } TAccelerationData;
 
 /**

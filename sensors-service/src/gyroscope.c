@@ -28,6 +28,22 @@ bool snsGyroscopeInit()
 {
     cbGyroscope = 0;
 
+    //example gyroscope configuration for a 3-axis gyro
+    gGyroscopeConfiguration.angleYaw = 0;
+    gGyroscopeConfiguration.anglePitch = 0;
+    gGyroscopeConfiguration.angleRoll = 0;
+    gGyroscopeConfiguration.momentOfYawInertia = 0;
+    gGyroscopeConfiguration.sigmaGyroscope = 0;
+    gGyroscopeConfiguration.typeBits = 
+        GYROSCOPE_YAWRATE_PROVIDED |
+        GYROSCOPE_PITCHRATE_PROVIDED |
+        GYROSCOPE_ROLLRATE_PROVIDED;
+    gGyroscopeConfiguration.validityBits = 
+      GYROSCOPE_CONFIG_ANGLEYAW_VALID | 
+      GYROSCOPE_CONFIG_ANGLEPITCH_VALID |
+      GYROSCOPE_CONFIG_ANGLEROLL_VALID |
+      GYROSCOPE_CONFIG_TYPE_VALID;
+
     return true;
 }
 
@@ -98,6 +114,7 @@ bool snsGyroscopeGetMetaData(TSensorMetaData *data)
 
 bool snsGyroscopeGetConfiguration(TGyroscopeConfiguration* gyroConfig)
 {
+    *gyroConfig = gGyroscopeConfiguration;
     return true;
 }
 

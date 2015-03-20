@@ -96,10 +96,11 @@ typedef struct {
     float angleRoll;            /**< Euler angle of third rotation, around roll axis, to describe gyroscope orientation [degree]. For details, see above. */
     float momentOfYawInertia;   /**< Moment of yaw inertia. The pitch and roll inertia moments are not provided as they are not relevant for positioning. [kg*m^2] */
     float sigmaGyroscope;       /**< Standard error estimate of the gyroscope for all directions. [degree/s] */
-    EGyroscopeTypeBits typeBits;/**< Bit mask indicating the type of the used gyroscope. */
+    uint32_t typeBits;          /**< Bit mask indicating the type of the used gyroscope. 
+                                     [bitwise or'ed @ref EGyroscopeTypeBits values]. */
     uint32_t validityBits;      /**< Bit mask indicating the validity of each corresponding value.
-                                    [bitwise or'ed @ref EGyroscopeConfigValidityBits values].
-                                    Must be checked before usage. */
+                                     [bitwise or'ed @ref EGyroscopeConfigValidityBits values].
+                                     Must be checked before usage. */
 } TGyroscopeConfiguration;
 
 /**
