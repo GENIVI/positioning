@@ -19,7 +19,7 @@
 #include "globals.h"
 #include "sns-meta-data.h"
 
-#define NUM_SENSORS 3
+#define NUM_SENSORS 4
 
 const TSensorMetaData gSensorsMetaData[NUM_SENSORS] = {
     {GENIVI_SNS_API_MAJOR,        //version
@@ -33,7 +33,11 @@ const TSensorMetaData gSensorsMetaData[NUM_SENSORS] = {
     {GENIVI_SNS_API_MAJOR,        //version
      SENSOR_CATEGORY_PHYSICAL,    //category
      SENSOR_TYPE_VEHICLE_SPEED,   //type
-     100}                         //cycleTime in ms
+     100},                         //cycleTime in ms
+    {GENIVI_SNS_API_MAJOR,        //version
+     SENSOR_CATEGORY_PHYSICAL,    //category
+     SENSOR_TYPE_ACCELERATION,    //type
+     100}                         //cycleTime in ms     
 };
 
 int32_t getSensorMetaDataList(const TSensorMetaData** metadata)
