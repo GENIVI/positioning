@@ -59,6 +59,7 @@ elseif(WITH_REPLAYER)
     set(LIB_SRC_USE_REPLAYER ${CMAKE_SOURCE_DIR}/src/sns-use-replayer.c 
              ${CMAKE_SOURCE_DIR}/src/wheeltick.c 
              ${CMAKE_SOURCE_DIR}/src/gyroscope.c 
+             ${CMAKE_SOURCE_DIR}/src/acceleration.c
              ${CMAKE_SOURCE_DIR}/src/vehicle-speed.c
              ${CMAKE_SOURCE_DIR}/src/sns-meta-data.c)
 
