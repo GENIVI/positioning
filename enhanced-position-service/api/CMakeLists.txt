@@ -24,39 +24,42 @@ find_program(DBUSXML2CPP dbusxx-xml2cpp REQUIRED)
 
 set(GEN_DIR "${CMAKE_BINARY_DIR}/api")
 
+message(STATUS "CMAKE_CURRENT_SOURCE_DIR=" ${CMAKE_CURRENT_SOURCE_DIR})
+message(STATUS "CMAKE_BINARY_DIR=" "${CMAKE_BINARY_DIR}")
+
 execute_process(
 	WORKING_DIRECTORY ${GEN_DIR}
-    COMMAND dbusxx-xml2cpp ${CMAKE_CURRENT_SOURCE_DIR}/../api/genivi-positioning-enhancedposition.xml --adaptor=enhanced-position-adaptor.h
+    COMMAND dbusxx-xml2cpp ${CMAKE_CURRENT_SOURCE_DIR}/genivi-positioning-enhancedposition.xml --adaptor=enhanced-position-adaptor.h
 )
 
 execute_process(
 	WORKING_DIRECTORY ${GEN_DIR}
-    COMMAND dbusxx-xml2cpp ${CMAKE_CURRENT_SOURCE_DIR}/../api/genivi-positioning-enhancedposition.xml --proxy=enhanced-position-proxy.h
+    COMMAND dbusxx-xml2cpp ${CMAKE_CURRENT_SOURCE_DIR}/genivi-positioning-enhancedposition.xml --proxy=enhanced-position-proxy.h
 )
 
 execute_process(
 	WORKING_DIRECTORY ${GEN_DIR}
-    COMMAND dbusxx-xml2cpp ${CMAKE_CURRENT_SOURCE_DIR}/../api/genivi-positioning-positionfeedback.xml --adaptor=position-feedback-adaptor.h
+    COMMAND dbusxx-xml2cpp ${CMAKE_CURRENT_SOURCE_DIR}/genivi-positioning-positionfeedback.xml --adaptor=position-feedback-adaptor.h
 )
 
 execute_process(
 	WORKING_DIRECTORY ${GEN_DIR}
-    COMMAND dbusxx-xml2cpp ${CMAKE_CURRENT_SOURCE_DIR}/../api/genivi-positioning-positionfeedback.xml --proxy=position-feedback-proxy.h
+    COMMAND dbusxx-xml2cpp ${CMAKE_CURRENT_SOURCE_DIR}/genivi-positioning-positionfeedback.xml --proxy=position-feedback-proxy.h
 )
 
 execute_process(
 	WORKING_DIRECTORY ${GEN_DIR}
-    COMMAND dbusxx-xml2cpp ${CMAKE_CURRENT_SOURCE_DIR}/../api/genivi-positioning-configuration.xml --adaptor=configuration-adaptor.h
+    COMMAND dbusxx-xml2cpp ${CMAKE_CURRENT_SOURCE_DIR}/genivi-positioning-configuration.xml --adaptor=configuration-adaptor.h
 )
 
 execute_process(
 	WORKING_DIRECTORY ${GEN_DIR}
-    COMMAND dbusxx-xml2cpp ${CMAKE_CURRENT_SOURCE_DIR}/../api/genivi-positioning-configuration.xml --proxy=configuration-proxy.h
+    COMMAND dbusxx-xml2cpp ${CMAKE_CURRENT_SOURCE_DIR}/genivi-positioning-configuration.xml --proxy=configuration-proxy.h
 )
 
 execute_process(
 	WORKING_DIRECTORY ${GEN_DIR}
-    COMMAND xsltproc ${CMAKE_CURRENT_SOURCE_DIR}/../api/enum.xsl ${CMAKE_CURRENT_SOURCE_DIR}/../api/genivi-positioning-constants.xml
+    COMMAND xsltproc ${CMAKE_CURRENT_SOURCE_DIR}/enum.xsl ${CMAKE_CURRENT_SOURCE_DIR}/genivi-positioning-constants.xml
     OUTPUT_FILE positioning-constants.h
 )
 
