@@ -36,7 +36,7 @@ interface PositionFeedback {
 	**>
 	method SetPositionFeedback {
 		in {
-			PositionFeedback[] feedback
+			PositionFeedbackInfo feedback
 
 			<**
 				@description : timestamp = timestamp in ms
@@ -61,8 +61,8 @@ interface PositionFeedback {
           key = CLIMB, value = value of type ´i´, that expresses the inclination measured in degrees
           key = RELIABILTY_INDEX, value = value of type ´y´, that indicates the position feedabck reliabilty. It can assume values from 0 to 100
 	**>
-	map PositionFeedback {
-		PositionFeedbackKey to Value
+	map PositionFeedbackInfo {
+		PositionFeedbackType to Value
 	}
 
 }

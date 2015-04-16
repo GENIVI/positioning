@@ -31,15 +31,15 @@ interface EnhancedPosition {
 	**>
 	method GetPositionInfo {
             in {
-                <** @description : valuesToReturn = Bitmask obtained as result of a bitwise OR operation on the keys corresponding to the values to be returned **>
+                   <** @description : valuesToReturn = Bitmask obtained as result of a bitwise OR operation on the keys corresponding to the values to be returned **>
                    Bitmask valuesToReturn
                }
             out {
                 <** @description : timestamp = Timestamp of the acquisition of the position data [ms] **>
                 Timestamp timestamp 
                 <** @description : data = Position data **>
-                PositionInfo[] data
-            }
+                PositionInfo data
+                }
         }
 	
 	<**
@@ -51,8 +51,8 @@ interface EnhancedPosition {
                <** @description : timestamp = Timestamp of the acquisition of the satellite detail data [ms] **>
                Timestamp timestamp
                <** @description : satelliteInfo = satellite information **>
-               SatelliteInfo[] satelliteInfo
-           }
+               SatelliteInfo satelliteInfo
+               }
         }
 
 	<** @description : GetTime = This method returns UTC time and date.

@@ -20,11 +20,11 @@ typeCollection EnhancedPositionServiceTypes {
         <** @description: version **>			
 	struct Version {
             <** @description : when the major changes, then backward compatibility with previous releases is not granted **>
-            UInt16 ^major
+            UInt16 maj
             <** @description : when the minor changes, then backward compatibility with previous releases is granted, but something changed in the implementation of the API (e.g. new methods may have been added) **>
-            UInt16 ^minor
+            UInt16 min
             <** @description : when the micro changes, then backward compatibility with previous releases is granted (bug fixes or documentation modifications) **>
-            UInt16 ^micro
+            UInt16 mic
             <** @description : release date (e.g. 21-06-2011) **>
             String date
 	}
@@ -32,6 +32,8 @@ typeCollection EnhancedPositionServiceTypes {
 	<** @description : Value = generic value (mapped to a dbus variant ('v') data type)**>
 	union Value {
             UInt64 uInt64Value
+            Double doubleValue
+            Float  floatValue
             String stringValue
 	}
 
