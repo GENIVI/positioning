@@ -30,14 +30,15 @@ message(STATUS "WITH_TESTS = ${WITH_TESTS}")
 message(STATUS "WITH_DEBUG = ${WITH_DEBUG}")
 
 find_package(PkgConfig REQUIRED)
-
 pkg_check_modules(DBUS_CPP dbus-c++-1)
 
-include_directories(${CMAKE_CURRENT_BINARY_DIR})
-include_directories(${DBUS_CPP_INCLUDE_DIRS})
-include_directories(${gnss-service_INCLUDE_DIRS})
-include_directories(${sensors-service_INCLUDE_DIRS})
-include_directories(${enhanced-position-service_INCLUDE_DIRS})
+set(GEN_DIR "${CMAKE_BINARY_DIR}/api")
+
+include_directories( 
+    ${GEN_DIR} 
+    ${DBUS_CPP_INCLUDE_DIRS}
+    ${gnss-service_INCLUDE_DIRS}
+    ${sensors-service_INCLUDE_DIRS})
 
 link_directories(
     ${DBUS_CPP_LIBRARY_DIRS}
@@ -48,13 +49,10 @@ add_executable(enhanced-position-service
     main.cpp
     enhanced-position.cpp
     enhanced-position.h
-    ${enhanced-position-service_INCLUDE_DIRS}/genivi-positioning-enhancedposition_adaptor.h
     position-feedback.cpp
     position-feedback.h
-    ${enhanced-position-service_INCLUDE_DIRS}/genivi-positioning-positionfeedback_adaptor.h
     configuration.cpp
     configuration.h
-    ${enhanced-position-service_INCLUDE_DIRS}/genivi-positioning-configuration_adaptor.h
 )
 
 set(LIBRARIES 
@@ -80,5 +78,6 @@ target_link_libraries(enhanced-position-service ${LIBRARIES})
 message(STATUS "DBUS_CPP_LIBRARIES: " ${DBUS_CPP_LIBRARIES})
 message(STATUS "GNSS_SERVICE_LIBRARIES: " ${gnss-service_LIBRARIES})
 message(STATUS "SENSORS_SERVICE_LIBRARIES: " ${sensors-service_LIBRARIES})
+
 
 

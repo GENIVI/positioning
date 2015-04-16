@@ -40,6 +40,8 @@ option(WITH_DEBUG
 SET(CMAKE_INSTALL_RPATH "")
 #SET(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE) 
 
+message(STATUS "CMAKE_BINARY_DIR =" ${CMAKE_BINARY_DIR})
+
 message(STATUS)
 message(STATUS "---------------------------------------------------------")
 

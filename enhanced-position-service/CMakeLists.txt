@@ -62,10 +62,9 @@ else()
     message(STATUS "Invalid cmake options!")
 endif()
 
-set(enhanced-position-service_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/api/include")
+include_directories(src test ${gnss-service_INCLUDE_DIRS} ${sensors-service_INCLUDE_DIRS})
 
-include_directories(${enhanced-position-service_INCLUDE_DIRS} src test ${gnss-service_INCLUDE_DIRS} ${sensors-service_INCLUDE_DIRS})
-
+add_subdirectory(api)
 add_subdirectory(src)
 
 message(STATUS "---------------------------------------------------------")

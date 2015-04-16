@@ -19,17 +19,17 @@
 # @licence end@
 ###########################################################################
 
+cmake_minimum_required(VERSION 2.6.0)
 message(STATUS "ENHANCED-POSITION-SERVICE-COMPLIANCE-TEST")
 
-INCLUDE(UsePkgConfig)
-
-include_directories("${PROJECT_SOURCE_DIR}/../common")
+message(STATUS "GEN_DIR" ${CMAKE_BINARY_DIR}/api)
 
 find_package(PkgConfig)
 pkg_check_modules(DBUS REQUIRED dbus-1)
 
+include_directories( ${DBUS_INCLUDEDIR} ${DBUS_INCLUDE_DIRS} )
+
 link_directories ( ${DBUS_LIBDIR} ${DBUS_LIBRARY_DIRS}  )
-include_directories ( ${DBUS_INCLUDEDIR} ${DBUS_INCLUDE_DIRS} )
 
 set(SRCS ${CMAKE_SOURCE_DIR}/test/compliance-test/enhanced-position-service-compliance-test.c)
 

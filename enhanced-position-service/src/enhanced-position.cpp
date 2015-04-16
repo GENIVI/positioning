@@ -19,7 +19,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "enhanced-position.h"
-#include "genivi-positioning-constants.h"
+#include "positioning-constants.h"
 #include "log.h"
 
 DLT_IMPORT_CONTEXT(gCtx);

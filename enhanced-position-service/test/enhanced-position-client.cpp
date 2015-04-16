@@ -20,7 +20,7 @@
 #include <stdio.h>
 
 #include "enhanced-position-client.h"
-#include "genivi-positioning-constants.h"
+#include "positioning-constants.h"
 #include "log.h"
 
 using namespace std;

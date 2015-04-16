@@ -2,11 +2,11 @@
 # @licence app begin@
 # SPDX-License-Identifier: MPL-2.0
 #
-# Component Name: enhanced-position-service
+# Component Name: EnhancedPositionService
 #
-# Author: Philippe Colliot
+# Author: Marco Residori
 #
-# Copyright (C) 2014, PCA Peugeot Citroën
+# Copyright (C) 2015, XS Embedded GmbH
 # 
 # License:
 # This Source Code Form is subject to the terms of the
@@ -15,81 +15,56 @@
 #
 # @licence end@
 ###########################################################################
-project(enhanced-position-service)
-cmake_minimum_required(VERSION 2.8)
 
-message(STATUS "generation of DBus files for enhanced-position-service")
+cmake_minimum_required(VERSION 2.6)
+message(STATUS "Generate stubs and proxies of enhanced-position-service")
 
 find_program(XSLTPROC xsltproc REQUIRED)
 find_program(DBUSXML2CPP dbusxx-xml2cpp REQUIRED)
 
-set(cmake_create_dir cmake -E make_directory)
-
-set(API_DIR ${CMAKE_CURRENT_SOURCE_DIR})
+set(GEN_DIR "${CMAKE_BINARY_DIR}/api")
 
 execute_process(
-	WORKING_DIRECTORY ${API_DIR}
-        COMMAND ${cmake_create_dir} include
+	WORKING_DIRECTORY ${GEN_DIR}
+    COMMAND dbusxx-xml2cpp ${CMAKE_CURRENT_SOURCE_DIR}/../api/genivi-positioning-enhancedposition.xml --adaptor=enhanced-position-adaptor.h
 )
 
-set(TARGET_GENERATED_API_DIR ${API_DIR}/include)
-
-file (GLOB XML_TO_DBUS_PROXY 
-	${CMAKE_CURRENT_SOURCE_DIR}/genivi-positioning-configuration.xml
-	${CMAKE_CURRENT_SOURCE_DIR}/genivi-positioning-enhancedposition.xml
-	${CMAKE_CURRENT_SOURCE_DIR}/genivi-positioning-positionfeedback.xml
+execute_process(
+	WORKING_DIRECTORY ${GEN_DIR}
+    COMMAND dbusxx-xml2cpp ${CMAKE_CURRENT_SOURCE_DIR}/../api/genivi-positioning-enhancedposition.xml --proxy=enhanced-position-proxy.h
 )
-foreach (RAW_FILE ${XML_TO_DBUS_PROXY})
-	get_filename_component(FILE ${RAW_FILE} NAME_WE)
-	if(NOT EXISTS ${TARGET_GENERATED_API_DIR}/${FILE}_proxy.h)
-		execute_process(
-			COMMAND ${DBUSXML2CPP} ${RAW_FILE} --proxy=${TARGET_GENERATED_API_DIR}/${FILE}_proxy.h  
-		)
-	else()
-		if(${RAW_FILE} IS_NEWER_THAN ${TARGET_GENERATED_API_DIR}/${FILE}_proxy.h)
-			execute_process(
-				COMMAND ${DBUSXML2CPP} ${RAW_FILE} --proxy=${TARGET_GENERATED_API_DIR}/${FILE}_proxy.h  
-			)
-		endif()
-	endif()
-endforeach()
 
-file (GLOB XML_TO_DBUS_ADAPTOR
-	${CMAKE_CURRENT_SOURCE_DIR}/genivi-positioning-configuration.xml
-	${CMAKE_CURRENT_SOURCE_DIR}/genivi-positioning-enhancedposition.xml
-	${CMAKE_CURRENT_SOURCE_DIR}/genivi-positioning-positionfeedback.xml
+execute_process(
+	WORKING_DIRECTORY ${GEN_DIR}
+    COMMAND dbusxx-xml2cpp ${CMAKE_CURRENT_SOURCE_DIR}/../api/genivi-positioning-positionfeedback.xml --adaptor=position-feedback-adaptor.h
 )
-foreach (RAW_FILE ${XML_TO_DBUS_ADAPTOR})
-	get_filename_component(FILE ${RAW_FILE} NAME_WE)
-	if(NOT EXISTS ${TARGET_GENERATED_API_DIR}/${FILE}_adaptor.h)
-		execute_process(
-			COMMAND ${DBUSXML2CPP} ${RAW_FILE} --adaptor=${TARGET_GENERATED_API_DIR}/${FILE}_adaptor.h  
-		)
-	else()
-		if(${RAW_FILE} IS_NEWER_THAN ${TARGET_GENERATED_API_DIR}/${FILE}_adaptor.h)
-			execute_process(
-				COMMAND ${DBUSXML2CPP} ${RAW_FILE} --adaptor=${TARGET_GENERATED_API_DIR}/${FILE}_adaptor.h  
-			)
-		endif()
-	endif()
-endforeach()
 
-file (GLOB XML_TO_DBUS_CONSTANT
-	${CMAKE_CURRENT_SOURCE_DIR}/genivi-positioning-constants.xml
+execute_process(
+	WORKING_DIRECTORY ${GEN_DIR}
+    COMMAND dbusxx-xml2cpp ${CMAKE_CURRENT_SOURCE_DIR}/../api/genivi-positioning-positionfeedback.xml --proxy=position-feedback-proxy.h
 )
-foreach (RAW_FILE ${XML_TO_DBUS_CONSTANT})
-	get_filename_component(FILE ${RAW_FILE} NAME_WE)
-	if(NOT EXISTS ${TARGET_GENERATED_API_DIR}/${FILE}.h)
-		execute_process(
-			OUTPUT_FILE ${TARGET_GENERATED_API_DIR}/${FILE}.h
-			COMMAND ${XSLTPROC} ${CMAKE_CURRENT_SOURCE_DIR}/enum.xsl ${RAW_FILE}        
-		)
-	else()
-		if(${RAW_FILE} IS_NEWER_THAN ${TARGET_GENERATED_API_DIR}/${FILE}.h)
-			execute_process(
-				OUTPUT_FILE ${TARGET_GENERATED_API_DIR}/${FILE}.h
-				COMMAND ${XSLTPROC} ${CMAKE_CURRENT_SOURCE_DIR}/enum.xsl ${RAW_FILE}        
-			)
-		endif()
-	endif()
-endforeach()
+
+execute_process(
+	WORKING_DIRECTORY ${GEN_DIR}
+    COMMAND dbusxx-xml2cpp ${CMAKE_CURRENT_SOURCE_DIR}/../api/genivi-positioning-configuration.xml --adaptor=configuration-adaptor.h
+)
+
+execute_process(
+	WORKING_DIRECTORY ${GEN_DIR}
+    COMMAND dbusxx-xml2cpp ${CMAKE_CURRENT_SOURCE_DIR}/../api/genivi-positioning-configuration.xml --proxy=configuration-proxy.h
+)
+
+execute_process(
+	WORKING_DIRECTORY ${GEN_DIR}
+    COMMAND xsltproc ${CMAKE_CURRENT_SOURCE_DIR}/../api/enum.xsl ${CMAKE_CURRENT_SOURCE_DIR}/../api/genivi-positioning-constants.xml
+    OUTPUT_FILE positioning-constants.h
+)
+
+
+
+
+
+
+
+
+

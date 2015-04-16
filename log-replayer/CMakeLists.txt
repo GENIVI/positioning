@@ -29,7 +29,7 @@ option(WITH_TESTS
     "Compile test applications" OFF)
     
 option(WITH_DEBUG 
-	"Enable the debug messages" OFF)
+    "Enable the debug messages" OFF)
 
 message(STATUS)
 message(STATUS "---------------------------------------------------------")

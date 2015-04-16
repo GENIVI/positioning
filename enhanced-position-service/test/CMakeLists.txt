@@ -27,22 +27,18 @@ message(STATUS "WITH_DLT = ${WITH_DLT}")
 message(STATUS "WITH_DEBUG = ${WITH_DEBUG}")
 
 find_package(PkgConfig REQUIRED)
-
 pkg_check_modules(DBUS_CPP dbus-c++-1)
 
-include_directories(${CMAKE_CURRENT_BINARY_DIR})
+set(GEN_DIR "${CMAKE_BINARY_DIR}/api")
+
+include_directories(${GEN_DIR})  
 include_directories(${DBUS_CPP_INCLUDE_DIRS})
-include_directories(${enhanced-position-service_INCLUDE_DIRS})
 
 link_directories(${DBUS_CPP_LIBRARY_DIRS})
 
 add_executable(enhanced-position-client
-    ${enhanced-position-service_INCLUDE_DIRS}/genivi-positioning-enhancedposition_proxy.h
     enhanced-position-client.h
     enhanced-position-client.cpp
-    ${enhanced-position-service_INCLUDE_DIRS}/genivi-positioning-positionfeedback_proxy.h
-    ${enhanced-position-service_INCLUDE_DIRS}/genivi-positioning-configuration_proxy.h
-    ${enhanced-position-service_INCLUDE_DIRS}/genivi-positioning-constants.h
 )
 
 set(LIBRARIES 
@@ -64,6 +60,7 @@ endif()
 target_link_libraries(enhanced-position-client ${LIBRARIES})
 
 message(STATUS "DBUS_CPP_LIBRARIES: " ${DBUS_CPP_LIBRARIES})
+
 
 
 

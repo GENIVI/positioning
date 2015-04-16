@@ -17,7 +17,7 @@
 **************************************************************************/
 
 #include "configuration.h"
-#include "genivi-positioning-constants.h"
+#include "positioning-constants.h"
 #include "log.h"
 
 DLT_IMPORT_CONTEXT(gCtx);

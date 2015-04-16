@@ -19,7 +19,7 @@
 #define __ENHANCED_POSITION_CLIENT_H
 
 #include <dbus-c++/dbus.h>
-#include "genivi-positioning-enhancedposition_proxy.h"
+#include "enhanced-position-proxy.h"
 
 class EnhancedPositionClient
   : public org::genivi::positioning::EnhancedPosition_proxy,
