@@ -1,0 +1,3 @@
+As soon as the CommonAPI command line generator is integrated in the build process, 
+the generated files will be automatically built inside of the build directory.
+The directory 'gen' and its content will be deleted from the 'src' directory.

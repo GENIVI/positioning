@@ -67,7 +67,7 @@ interface EnhancedPosition {
             }
         }
 
-	<** @description : PositionUpdate = This signal is called to notifiy a client application of a position change. The update frequency is implementation specific. The maximal allowed frequency is 10Hz **>
+	<** @description : PositionUpdate = This signal is called to notify a client application of a position change. The update frequency is implementation specific. The maximal allowed frequency is 10Hz **>
 	broadcast PositionUpdate {
             out {
                 <** @description : valuesToReturn = Bitmask obtained as result of a bitwise OR operation on the keys corresponding to the values that changed **>

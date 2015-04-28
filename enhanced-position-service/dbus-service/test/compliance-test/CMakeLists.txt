@@ -22,8 +22,6 @@
 cmake_minimum_required(VERSION 2.6.0)
 message(STATUS "ENHANCED-POSITION-SERVICE-COMPLIANCE-TEST")
 
-message(STATUS "GEN_DIR" ${CMAKE_BINARY_DIR}/api)
-
 find_package(PkgConfig)
 pkg_check_modules(DBUS REQUIRED dbus-1)
 

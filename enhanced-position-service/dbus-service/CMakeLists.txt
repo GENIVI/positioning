@@ -40,8 +40,8 @@ option(WITH_DEBUG
 message(STATUS)
 message(STATUS "---------------------------------------------------------")
 
-set(gnss-service_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/../gnss-service/api")
-set(gnss-service_LIBRARY_DIRS "${PROJECT_BINARY_DIR}/../gnss-service/src")
+set(gnss-service_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/../../gnss-service/api")
+set(gnss-service_LIBRARY_DIRS "${PROJECT_BINARY_DIR}/../../gnss-service/src")
 
 if(WITH_GPSD)
     set(gnss-service_LIBRARIES "gnss-service-use-gpsd")
@@ -51,8 +51,8 @@ else()
     message(STATUS "Invalid cmake options!")
 endif()
 
-set(sensors-service_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/../sensors-service/api")
-set(sensors-service_LIBRARY_DIRS "${PROJECT_BINARY_DIR}/../sensors-service/src")
+set(sensors-service_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/../../sensors-service/api")
+set(sensors-service_LIBRARY_DIRS "${PROJECT_BINARY_DIR}/../../sensors-service/src")
 
 if(WITH_IPHONE)
     set(sensors-service_LIBRARIES "sensors-service-use-iphone")
@@ -77,3 +77,4 @@ if(WITH_TESTS)
 endif()
 
 message(STATUS)
+
