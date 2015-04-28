@@ -71,22 +71,22 @@ std::future<CommonAPI::CallStatus> PositionFeedbackDBusProxy::GetVersionAsync(Ge
  * SetPositionFeedback = This method allows a client application to provide the
  *  EnhancedPositionService with a position feedback
  */
-void PositionFeedbackDBusProxy::SetPositionFeedback(const std::vector<PositionFeedback::PositionFeedbackInfo>& feedback, const uint64_t& timestamp, const EnhancedPositionServiceTypes::PositionFeedbackType& feedbackType, CommonAPI::CallStatus& callStatus) {
-    CommonAPI::DBus::DBusProxyHelper<CommonAPI::DBus::DBusSerializableArguments<std::vector<PositionFeedback::PositionFeedbackInfo>, uint64_t, EnhancedPositionServiceTypes::PositionFeedbackType>,
+void PositionFeedbackDBusProxy::SetPositionFeedback(const PositionFeedback::PositionFeedbackInfo& feedback, const uint64_t& timestamp, const EnhancedPositionServiceTypes::PositionFeedbackType& feedbackType, CommonAPI::CallStatus& callStatus) {
+    CommonAPI::DBus::DBusProxyHelper<CommonAPI::DBus::DBusSerializableArguments<PositionFeedback::PositionFeedbackInfo, uint64_t, EnhancedPositionServiceTypes::PositionFeedbackType>,
                                      CommonAPI::DBus::DBusSerializableArguments<> >::callMethodWithReply(
         *this,
         "SetPositionFeedback",
-        "aa{i(yv)}ti",
+        "a{i(yv)}ti",
         feedback, timestamp, feedbackType,
         callStatus
         );
 }
-std::future<CommonAPI::CallStatus> PositionFeedbackDBusProxy::SetPositionFeedbackAsync(const std::vector<PositionFeedback::PositionFeedbackInfo>& feedback, const uint64_t& timestamp, const EnhancedPositionServiceTypes::PositionFeedbackType& feedbackType, SetPositionFeedbackAsyncCallback callback) {
-    return CommonAPI::DBus::DBusProxyHelper<CommonAPI::DBus::DBusSerializableArguments<std::vector<PositionFeedback::PositionFeedbackInfo>, uint64_t, EnhancedPositionServiceTypes::PositionFeedbackType>,
+std::future<CommonAPI::CallStatus> PositionFeedbackDBusProxy::SetPositionFeedbackAsync(const PositionFeedback::PositionFeedbackInfo& feedback, const uint64_t& timestamp, const EnhancedPositionServiceTypes::PositionFeedbackType& feedbackType, SetPositionFeedbackAsyncCallback callback) {
+    return CommonAPI::DBus::DBusProxyHelper<CommonAPI::DBus::DBusSerializableArguments<PositionFeedback::PositionFeedbackInfo, uint64_t, EnhancedPositionServiceTypes::PositionFeedbackType>,
                                      CommonAPI::DBus::DBusSerializableArguments<> >::callMethodAsync(
         *this,
         "SetPositionFeedback",
-        "aa{i(yv)}ti",
+        "a{i(yv)}ti",
         feedback, timestamp, feedbackType, 
         std::move(callback));
 }

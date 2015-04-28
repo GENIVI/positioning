@@ -47,7 +47,7 @@ const char* EnhancedPositionDBusStubAdapterInternal::getMethodsDBusIntrospection
             "<arg name=\"value\" type=\"uu\" direction=\"out\" />"
         "</method>\n"
         /**
-         * PositionUpdate = This signal is called to notifiy a client application of a
+         * PositionUpdate = This signal is called to notify a client application of a
          *  position change. The update frequency is implementation specific. The maximal
          *  allowed frequency is 10Hz
          */
@@ -75,8 +75,8 @@ const char* EnhancedPositionDBusStubAdapterInternal::getMethodsDBusIntrospection
         /**
          * GetSatelliteInfo = This method returns information about the current satellite
          *  constellation
-        		Note: If a requested value is invalid, it's not returned to
-         *  the client application
+                Note: If a requested value is invalid, it's not
+         *  returned to the client application
          */
         "<method name=\"GetSatelliteInfo\">\n"
             "<arg name=\"timestamp\" type=\"t\" direction=\"out\" />\n"
@@ -126,8 +126,8 @@ CommonAPI::DBus::DBusMethodWithReplyStubDispatcher<
 /**
  * GetSatelliteInfo = This method returns information about the current satellite
  *  constellation
-		Note: If a requested value is invalid, it's not returned to
- *  the client application
+        Note: If a requested value is invalid, it's not
+ *  returned to the client application
  */
 CommonAPI::DBus::DBusMethodWithReplyStubDispatcher<
     EnhancedPositionStub,
@@ -148,7 +148,7 @@ CommonAPI::DBus::DBusMethodWithReplyStubDispatcher<
 
 
 /**
- * PositionUpdate = This signal is called to notifiy a client application of a
+ * PositionUpdate = This signal is called to notify a client application of a
  *  position change. The update frequency is implementation specific. The maximal
  *  allowed frequency is 10Hz
  */
@@ -212,8 +212,8 @@ EnhancedPositionDBusStubAdapterInternal::EnhancedPositionDBusStubAdapterInternal
             /**
              * GetSatelliteInfo = This method returns information about the current satellite
              *  constellation
-            		Note: If a requested value is invalid, it's not returned to
-             *  the client application
+                    Note: If a requested value is invalid, it's not
+             *  returned to the client application
              */
             { { "GetSatelliteInfo", "" }, &org::genivi::EnhancedPositionService::EnhancedPositionDBusStubAdapterInternal::getSatelliteInfoStubDispatcher },
             /**

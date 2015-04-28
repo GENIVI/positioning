@@ -136,6 +136,18 @@ void ConfigurationStubDefault::GetVersion(EnhancedPositionServiceTypes::Version&
     // No operation in default
 }
 
+/**
+ * GetSupportedSatelliteSystems = This method returns a list of supported
+ *  satellite systems
+ */
+void ConfigurationStubDefault::GetSupportedSatelliteSystems(const std::shared_ptr<CommonAPI::ClientId> clientId, std::vector<EnhancedPositionServiceTypes::SatelliteSystem>& satelliteSystems) {
+    // Call old style methods in default 
+    GetSupportedSatelliteSystems(satelliteSystems);
+}
+void ConfigurationStubDefault::GetSupportedSatelliteSystems(std::vector<EnhancedPositionServiceTypes::SatelliteSystem>& satelliteSystems) {
+    // No operation in default
+}
+
 
 
 

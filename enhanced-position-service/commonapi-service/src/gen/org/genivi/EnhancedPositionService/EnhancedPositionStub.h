@@ -114,8 +114,8 @@ public:
     /**
      * GetSatelliteInfo = This method returns information about the current satellite
      *  constellation
-    		Note: If a requested value is invalid, it's not returned to
-     *  the client application
+            Note: If a requested value is invalid, it's not
+     *  returned to the client application
      */
     /// This is the method that will be called on remote calls on the method GetSatelliteInfo.
     virtual void GetSatelliteInfo(const std::shared_ptr<CommonAPI::ClientId> clientId, EnhancedPositionServiceTypes::Timestamp& timestamp, EnhancedPositionServiceTypes::SatelliteInfo& satelliteInfo) = 0;
@@ -127,7 +127,7 @@ public:
     /// This is the method that will be called on remote calls on the method GetTime.
     virtual void GetTime(const std::shared_ptr<CommonAPI::ClientId> clientId, EnhancedPositionServiceTypes::Timestamp& timestamp, EnhancedPositionServiceTypes::TimeInfo& time) = 0;
     /**
-     * PositionUpdate = This signal is called to notifiy a client application of a
+     * PositionUpdate = This signal is called to notify a client application of a
      *  position change. The update frequency is implementation specific. The maximal
      *  allowed frequency is 10Hz
      */

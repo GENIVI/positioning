@@ -103,7 +103,7 @@ public:
      *  EnhancedPositionService with a position feedback
      */
     /// This is the method that will be called on remote calls on the method SetPositionFeedback.
-    virtual void SetPositionFeedback(const std::shared_ptr<CommonAPI::ClientId> clientId, std::vector<PositionFeedback::PositionFeedbackInfo> feedback, uint64_t timestamp, EnhancedPositionServiceTypes::PositionFeedbackType feedbackType) = 0;
+    virtual void SetPositionFeedback(const std::shared_ptr<CommonAPI::ClientId> clientId, PositionFeedback::PositionFeedbackInfo feedback, uint64_t timestamp, EnhancedPositionServiceTypes::PositionFeedbackType feedbackType) = 0;
 
     using CommonAPI::Stub<PositionFeedbackStubAdapter, PositionFeedbackStubRemoteEvent>::initStubAdapter;
     typedef CommonAPI::Stub<PositionFeedbackStubAdapter, PositionFeedbackStubRemoteEvent>::StubAdapterType StubAdapterType;

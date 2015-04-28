@@ -53,7 +53,7 @@ class EnhancedPositionProxyBase: virtual public CommonAPI::Proxy {
 
 
     /**
-     * PositionUpdate = This signal is called to notifiy a client application of a
+     * PositionUpdate = This signal is called to notify a client application of a
      *  position change. The update frequency is implementation specific. The maximal
      *  allowed frequency is 10Hz
      */
@@ -76,8 +76,8 @@ class EnhancedPositionProxyBase: virtual public CommonAPI::Proxy {
     /**
      * GetSatelliteInfo = This method returns information about the current satellite
      *  constellation
-    		Note: If a requested value is invalid, it's not returned to
-     *  the client application
+            Note: If a requested value is invalid, it's not
+     *  returned to the client application
      */
     virtual void GetSatelliteInfo(CommonAPI::CallStatus& callStatus, EnhancedPositionServiceTypes::Timestamp& timestamp, EnhancedPositionServiceTypes::SatelliteInfo& satelliteInfo) = 0;
     virtual std::future<CommonAPI::CallStatus> GetSatelliteInfoAsync(GetSatelliteInfoAsyncCallback callback) = 0;

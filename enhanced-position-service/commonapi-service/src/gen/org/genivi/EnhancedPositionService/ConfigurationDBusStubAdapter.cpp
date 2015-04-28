@@ -73,6 +73,13 @@ const char* ConfigurationDBusStubAdapterInternal::getMethodsDBusIntrospectionXml
         "<method name=\"GetVersion\">\n"
             "<arg name=\"version\" type=\"(qqqs)\" direction=\"out\" />\n"
         "</method>\n"
+        /**
+         * GetSupportedSatelliteSystems = This method returns a list of supported
+         *  satellite systems
+         */
+        "<method name=\"GetSupportedSatelliteSystems\">\n"
+            "<arg name=\"satelliteSystems\" type=\"ai\" direction=\"out\" />\n"
+        "</method>\n"
 
     ;
     return introspectionData.c_str();
@@ -128,6 +135,15 @@ CommonAPI::DBus::DBusMethodWithReplyStubDispatcher<
     std::tuple<>,
     std::tuple<EnhancedPositionServiceTypes::Version>
     > ConfigurationDBusStubAdapterInternal::getVersionStubDispatcher(&ConfigurationStub::GetVersion, "(qqqs)");
+/**
+ * GetSupportedSatelliteSystems = This method returns a list of supported
+ *  satellite systems
+ */
+CommonAPI::DBus::DBusMethodWithReplyStubDispatcher<
+    ConfigurationStub,
+    std::tuple<>,
+    std::tuple<std::vector<EnhancedPositionServiceTypes::SatelliteSystem>>
+    > ConfigurationDBusStubAdapterInternal::getSupportedSatelliteSystemsStubDispatcher(&ConfigurationStub::GetSupportedSatelliteSystems, "ai");
 
 
 /**
@@ -206,7 +222,12 @@ ConfigurationDBusStubAdapterInternal::ConfigurationDBusStubAdapterInternal(
              * GetVersion = This method returns the API version implemented by the server
              *  application
              */
-            { { "GetVersion", "" }, &org::genivi::EnhancedPositionService::ConfigurationDBusStubAdapterInternal::getVersionStubDispatcher }
+            { { "GetVersion", "" }, &org::genivi::EnhancedPositionService::ConfigurationDBusStubAdapterInternal::getVersionStubDispatcher },
+            /**
+             * GetSupportedSatelliteSystems = This method returns a list of supported
+             *  satellite systems
+             */
+            { { "GetSupportedSatelliteSystems", "" }, &org::genivi::EnhancedPositionService::ConfigurationDBusStubAdapterInternal::getSupportedSatelliteSystemsStubDispatcher }
             }),
         stubAttributeTable_() {
 

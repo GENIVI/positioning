@@ -80,7 +80,7 @@ static CommonAPI::DBus::DBusMethodWithReplyStubDispatcher<
  */
 static CommonAPI::DBus::DBusMethodWithReplyStubDispatcher<
     PositionFeedbackStub,
-    std::tuple<std::vector<PositionFeedback::PositionFeedbackInfo>, uint64_t, EnhancedPositionServiceTypes::PositionFeedbackType>,
+    std::tuple<PositionFeedback::PositionFeedbackInfo, uint64_t, EnhancedPositionServiceTypes::PositionFeedbackType>,
     std::tuple<>
     > setPositionFeedbackStubDispatcher;
 

@@ -53,8 +53,8 @@ public:
      * SetPositionFeedback = This method allows a client application to provide the
      *  EnhancedPositionService with a position feedback
      */
-    virtual void SetPositionFeedback(const std::shared_ptr<CommonAPI::ClientId> clientId, std::vector<PositionFeedback::PositionFeedbackInfo> feedback, uint64_t timestamp, EnhancedPositionServiceTypes::PositionFeedbackType feedbackType);
-    virtual void SetPositionFeedback(std::vector<PositionFeedback::PositionFeedbackInfo> feedback, uint64_t timestamp, EnhancedPositionServiceTypes::PositionFeedbackType feedbackType);
+    virtual void SetPositionFeedback(const std::shared_ptr<CommonAPI::ClientId> clientId, PositionFeedback::PositionFeedbackInfo feedback, uint64_t timestamp, EnhancedPositionServiceTypes::PositionFeedbackType feedbackType);
+    virtual void SetPositionFeedback(PositionFeedback::PositionFeedbackInfo feedback, uint64_t timestamp, EnhancedPositionServiceTypes::PositionFeedbackType feedbackType);
 
 
 

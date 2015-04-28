@@ -40,7 +40,7 @@ public:
 
 
     /**
-     * PositionUpdate = This signal is called to notifiy a client application of a
+     * PositionUpdate = This signal is called to notify a client application of a
      *  position change. The update frequency is implementation specific. The maximal
      *  allowed frequency is 10Hz
      */
@@ -103,8 +103,8 @@ public:
     /**
      * GetSatelliteInfo = This method returns information about the current satellite
      *  constellation
-    		Note: If a requested value is invalid, it's not returned to
-     *  the client application
+            Note: If a requested value is invalid, it's not
+     *  returned to the client application
      * 
      * Calls GetSatelliteInfo with synchronous semantics.
      * 
@@ -248,8 +248,8 @@ std::future<CommonAPI::CallStatus> EnhancedPositionProxy<_AttributeExtensions...
 /**
  * GetSatelliteInfo = This method returns information about the current satellite
  *  constellation
-		Note: If a requested value is invalid, it's not returned to
- *  the client application
+        Note: If a requested value is invalid, it's not
+ *  returned to the client application
  */
 template <typename ... _AttributeExtensions>
 void EnhancedPositionProxy<_AttributeExtensions...>::GetSatelliteInfo(CommonAPI::CallStatus& callStatus, EnhancedPositionServiceTypes::Timestamp& timestamp, EnhancedPositionServiceTypes::SatelliteInfo& satelliteInfo) {

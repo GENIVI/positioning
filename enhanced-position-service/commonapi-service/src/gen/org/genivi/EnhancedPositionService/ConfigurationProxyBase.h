@@ -47,6 +47,7 @@ class ConfigurationProxyBase: virtual public CommonAPI::Proxy {
     typedef CommonAPI::ObservableAttribute<int32_t> UpdateIntervalAttribute;
 
     typedef std::function<void(const CommonAPI::CallStatus&, const EnhancedPositionServiceTypes::Version&)> GetVersionAsyncCallback;
+    typedef std::function<void(const CommonAPI::CallStatus&, const std::vector<EnhancedPositionServiceTypes::SatelliteSystem>&)> GetSupportedSatelliteSystemsAsyncCallback;
 
     /**
      * SatSystem = satellite system (GPS, GLONASS, ...)
@@ -64,6 +65,12 @@ class ConfigurationProxyBase: virtual public CommonAPI::Proxy {
      */
     virtual void GetVersion(CommonAPI::CallStatus& callStatus, EnhancedPositionServiceTypes::Version& version) = 0;
     virtual std::future<CommonAPI::CallStatus> GetVersionAsync(GetVersionAsyncCallback callback) = 0;
+    /**
+     * GetSupportedSatelliteSystems = This method returns a list of supported
+     *  satellite systems
+     */
+    virtual void GetSupportedSatelliteSystems(CommonAPI::CallStatus& callStatus, std::vector<EnhancedPositionServiceTypes::SatelliteSystem>& satelliteSystems) = 0;
+    virtual std::future<CommonAPI::CallStatus> GetSupportedSatelliteSystemsAsync(GetSupportedSatelliteSystemsAsyncCallback callback) = 0;
 };
 
 } // namespace EnhancedPositionService

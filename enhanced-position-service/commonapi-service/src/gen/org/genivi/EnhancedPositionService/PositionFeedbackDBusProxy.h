@@ -56,8 +56,8 @@ class PositionFeedbackDBusProxy: virtual public PositionFeedbackProxyBase, virtu
      * SetPositionFeedback = This method allows a client application to provide the
      *  EnhancedPositionService with a position feedback
      */
-    virtual void SetPositionFeedback(const std::vector<PositionFeedback::PositionFeedbackInfo>& feedback, const uint64_t& timestamp, const EnhancedPositionServiceTypes::PositionFeedbackType& feedbackType, CommonAPI::CallStatus& callStatus);
-    virtual std::future<CommonAPI::CallStatus> SetPositionFeedbackAsync(const std::vector<PositionFeedback::PositionFeedbackInfo>& feedback, const uint64_t& timestamp, const EnhancedPositionServiceTypes::PositionFeedbackType& feedbackType, SetPositionFeedbackAsyncCallback callback);
+    virtual void SetPositionFeedback(const PositionFeedback::PositionFeedbackInfo& feedback, const uint64_t& timestamp, const EnhancedPositionServiceTypes::PositionFeedbackType& feedbackType, CommonAPI::CallStatus& callStatus);
+    virtual std::future<CommonAPI::CallStatus> SetPositionFeedbackAsync(const PositionFeedback::PositionFeedbackInfo& feedback, const uint64_t& timestamp, const EnhancedPositionServiceTypes::PositionFeedbackType& feedbackType, SetPositionFeedbackAsyncCallback callback);
 
 
     virtual void getOwnVersion(uint16_t& ownVersionMajor, uint16_t& ownVersionMinor) const;

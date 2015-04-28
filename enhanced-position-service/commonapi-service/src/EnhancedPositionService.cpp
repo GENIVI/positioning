@@ -16,7 +16,7 @@ DLT_DECLARE_CONTEXT(gCtx);
 using namespace std;
 
 int main() {
-	DLT_REGISTER_APP("ENHP","ENHANCED_POSITION-SERVICE");
+    DLT_REGISTER_APP("ENHP","ENHANCED_POSITION-SERVICE");
     DLT_REGISTER_CONTEXT(gCtx,"ENHP","Global Context");
 
     std::shared_ptr<CommonAPI::Runtime> runtime = CommonAPI::Runtime::load();

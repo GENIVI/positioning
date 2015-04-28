@@ -83,6 +83,29 @@ public:
      * It will provide the same value for CallStatus as will be handed to the callback.
      */
     virtual std::future<CommonAPI::CallStatus> GetVersionAsync(GetVersionAsyncCallback callback);
+    /**
+     * GetSupportedSatelliteSystems = This method returns a list of supported
+     *  satellite systems
+     * 
+     * Calls GetSupportedSatelliteSystems with synchronous semantics.
+     * 
+    * All non-const parameters will be filled with the returned values.
+     * The CallStatus will be filled when the method returns and indicate either
+     * "SUCCESS" or which type of error has occurred. In case of an error, ONLY the CallStatus
+     * will be set.
+     */
+    virtual void GetSupportedSatelliteSystems(CommonAPI::CallStatus& callStatus, std::vector<EnhancedPositionServiceTypes::SatelliteSystem>& satelliteSystems);
+    /**
+     * Calls GetSupportedSatelliteSystems with asynchronous semantics.
+     * 
+     * The provided callback will be called when the reply to this call arrives or
+     * an error occurs during the call. The CallStatus will indicate either "SUCCESS"
+     * or which type of error has occurred. In case of any error, ONLY the CallStatus
+     * will have a defined value.
+     * The std::future returned by this method will be fulfilled at arrival of the reply.
+     * It will provide the same value for CallStatus as will be handed to the callback.
+     */
+    virtual std::future<CommonAPI::CallStatus> GetSupportedSatelliteSystemsAsync(GetSupportedSatelliteSystemsAsyncCallback callback);
 
 
     /**
@@ -215,6 +238,19 @@ void ConfigurationProxy<_AttributeExtensions...>::GetVersion(CommonAPI::CallStat
 template <typename ... _AttributeExtensions>
 std::future<CommonAPI::CallStatus> ConfigurationProxy<_AttributeExtensions...>::GetVersionAsync(GetVersionAsyncCallback callback) {
     return delegate_->GetVersionAsync(callback);
+}
+/**
+ * GetSupportedSatelliteSystems = This method returns a list of supported
+ *  satellite systems
+ */
+template <typename ... _AttributeExtensions>
+void ConfigurationProxy<_AttributeExtensions...>::GetSupportedSatelliteSystems(CommonAPI::CallStatus& callStatus, std::vector<EnhancedPositionServiceTypes::SatelliteSystem>& satelliteSystems) {
+    delegate_->GetSupportedSatelliteSystems(callStatus, satelliteSystems);
+}
+
+template <typename ... _AttributeExtensions>
+std::future<CommonAPI::CallStatus> ConfigurationProxy<_AttributeExtensions...>::GetSupportedSatelliteSystemsAsync(GetSupportedSatelliteSystemsAsyncCallback callback) {
+    return delegate_->GetSupportedSatelliteSystemsAsync(callback);
 }
 
 template <typename ... _AttributeExtensions>

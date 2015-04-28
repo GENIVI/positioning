@@ -60,8 +60,8 @@ class PositionFeedbackProxyBase: virtual public CommonAPI::Proxy {
      * SetPositionFeedback = This method allows a client application to provide the
      *  EnhancedPositionService with a position feedback
      */
-    virtual void SetPositionFeedback(const std::vector<PositionFeedback::PositionFeedbackInfo>& feedback, const uint64_t& timestamp, const EnhancedPositionServiceTypes::PositionFeedbackType& feedbackType, CommonAPI::CallStatus& callStatus) = 0;
-    virtual std::future<CommonAPI::CallStatus> SetPositionFeedbackAsync(const std::vector<PositionFeedback::PositionFeedbackInfo>& feedback, const uint64_t& timestamp, const EnhancedPositionServiceTypes::PositionFeedbackType& feedbackType, SetPositionFeedbackAsyncCallback callback) = 0;
+    virtual void SetPositionFeedback(const PositionFeedback::PositionFeedbackInfo& feedback, const uint64_t& timestamp, const EnhancedPositionServiceTypes::PositionFeedbackType& feedbackType, CommonAPI::CallStatus& callStatus) = 0;
+    virtual std::future<CommonAPI::CallStatus> SetPositionFeedbackAsync(const PositionFeedback::PositionFeedbackInfo& feedback, const uint64_t& timestamp, const EnhancedPositionServiceTypes::PositionFeedbackType& feedbackType, SetPositionFeedbackAsyncCallback callback) = 0;
 };
 
 } // namespace EnhancedPositionService

@@ -98,8 +98,8 @@ std::future<CommonAPI::CallStatus> EnhancedPositionDBusProxy::GetPositionInfoAsy
 /**
  * GetSatelliteInfo = This method returns information about the current satellite
  *  constellation
-		Note: If a requested value is invalid, it's not returned to
- *  the client application
+        Note: If a requested value is invalid, it's not
+ *  returned to the client application
  */
 void EnhancedPositionDBusProxy::GetSatelliteInfo(CommonAPI::CallStatus& callStatus, EnhancedPositionServiceTypes::Timestamp& timestamp, EnhancedPositionServiceTypes::SatelliteInfo& satelliteInfo) {
     CommonAPI::DBus::DBusProxyHelper<CommonAPI::DBus::DBusSerializableArguments<>,

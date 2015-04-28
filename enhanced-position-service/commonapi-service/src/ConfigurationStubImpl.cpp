@@ -30,7 +30,12 @@ DLT_IMPORT_CONTEXT(gCtx);
 using namespace org::genivi::EnhancedPositionService::EnhancedPositionServiceTypes;
 
 ConfigurationStubImpl::ConfigurationStubImpl() {
+
    setUpdateIntervalAttribute(1000); //set default time interval
+
+   mSupportedSatSystems.push_back(SatelliteSystem::GALILEO);
+   mSupportedSatSystems.push_back(SatelliteSystem::GPS);
+
    setSatSystemAttribute(SatelliteSystem::GALILEO); //set default GNSS system
 }
 
@@ -46,6 +51,16 @@ void ConfigurationStubImpl::GetVersion(EnhancedPositionServiceTypes::Version& ve
     version.date = std::string(VER_DATE);
 }
 
+//check if the value belongs to the list of supported satellite systems
+bool ConfigurationStubImpl::validateSatSystemAttributeRequestedValue(const EnhancedPositionServiceTypes::SatelliteSystem& value) {
+    return std::find(mSupportedSatSystems.begin(), mSupportedSatSystems.end(), value) != mSupportedSatSystems.end();
+}
+
+void ConfigurationStubImpl::GetSupportedSatelliteSystems(std::vector<EnhancedPositionServiceTypes::SatelliteSystem>& satelliteSystems) {
+	//add a list of supported satellite systems
+	satelliteSystems = mSupportedSatSystems;
+}
+
 void ConfigurationStubImpl::run()
 {
     LOG_INFO_MSG(gCtx,"Starting Configuration dispatcher...");
@@ -55,7 +70,7 @@ void ConfigurationStubImpl::run()
 
 void ConfigurationStubImpl::shutdown()
 {
-  LOG_INFO_MSG(gCtx,"Shutting down Configuration dispatcher...");
+    LOG_INFO_MSG(gCtx,"Shutting down Configuration dispatcher...");
 }
 
 

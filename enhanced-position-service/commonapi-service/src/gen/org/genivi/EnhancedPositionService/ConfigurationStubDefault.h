@@ -56,6 +56,13 @@ public:
     virtual void GetVersion(const std::shared_ptr<CommonAPI::ClientId> clientId, EnhancedPositionServiceTypes::Version& version);
     virtual void GetVersion(EnhancedPositionServiceTypes::Version& version);
 
+    /**
+     * GetSupportedSatelliteSystems = This method returns a list of supported
+     *  satellite systems
+     */
+    virtual void GetSupportedSatelliteSystems(const std::shared_ptr<CommonAPI::ClientId> clientId, std::vector<EnhancedPositionServiceTypes::SatelliteSystem>& satelliteSystems);
+    virtual void GetSupportedSatelliteSystems(std::vector<EnhancedPositionServiceTypes::SatelliteSystem>& satelliteSystems);
+
 
 
 

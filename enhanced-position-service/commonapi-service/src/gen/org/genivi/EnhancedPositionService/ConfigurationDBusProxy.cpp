@@ -74,6 +74,27 @@ std::future<CommonAPI::CallStatus> ConfigurationDBusProxy::GetVersionAsync(GetVe
         "",
         std::move(callback));
 }
+/**
+ * GetSupportedSatelliteSystems = This method returns a list of supported
+ *  satellite systems
+ */
+void ConfigurationDBusProxy::GetSupportedSatelliteSystems(CommonAPI::CallStatus& callStatus, std::vector<EnhancedPositionServiceTypes::SatelliteSystem>& satelliteSystems) {
+    CommonAPI::DBus::DBusProxyHelper<CommonAPI::DBus::DBusSerializableArguments<>,
+                                     CommonAPI::DBus::DBusSerializableArguments<std::vector<EnhancedPositionServiceTypes::SatelliteSystem>> >::callMethodWithReply(
+        *this,
+        "GetSupportedSatelliteSystems",
+        "",
+        callStatus
+        , satelliteSystems);
+}
+std::future<CommonAPI::CallStatus> ConfigurationDBusProxy::GetSupportedSatelliteSystemsAsync(GetSupportedSatelliteSystemsAsyncCallback callback) {
+    return CommonAPI::DBus::DBusProxyHelper<CommonAPI::DBus::DBusSerializableArguments<>,
+                                     CommonAPI::DBus::DBusSerializableArguments<std::vector<EnhancedPositionServiceTypes::SatelliteSystem>> >::callMethodAsync(
+        *this,
+        "GetSupportedSatelliteSystems",
+        "",
+        std::move(callback));
+}
 
 
 

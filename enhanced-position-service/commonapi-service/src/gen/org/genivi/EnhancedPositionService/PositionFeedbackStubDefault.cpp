@@ -44,11 +44,11 @@ void PositionFeedbackStubDefault::GetVersion(EnhancedPositionServiceTypes::Versi
  * SetPositionFeedback = This method allows a client application to provide the
  *  EnhancedPositionService with a position feedback
  */
-void PositionFeedbackStubDefault::SetPositionFeedback(const std::shared_ptr<CommonAPI::ClientId> clientId, std::vector<PositionFeedback::PositionFeedbackInfo> feedback, uint64_t timestamp, EnhancedPositionServiceTypes::PositionFeedbackType feedbackType) {
+void PositionFeedbackStubDefault::SetPositionFeedback(const std::shared_ptr<CommonAPI::ClientId> clientId, PositionFeedback::PositionFeedbackInfo feedback, uint64_t timestamp, EnhancedPositionServiceTypes::PositionFeedbackType feedbackType) {
     // Call old style methods in default 
     SetPositionFeedback(feedback, timestamp, feedbackType);
 }
-void PositionFeedbackStubDefault::SetPositionFeedback(std::vector<PositionFeedback::PositionFeedbackInfo> feedback, uint64_t timestamp, EnhancedPositionServiceTypes::PositionFeedbackType feedbackType) {
+void PositionFeedbackStubDefault::SetPositionFeedback(PositionFeedback::PositionFeedbackInfo feedback, uint64_t timestamp, EnhancedPositionServiceTypes::PositionFeedbackType feedbackType) {
     // No operation in default
 }
 

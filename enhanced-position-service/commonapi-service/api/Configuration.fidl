@@ -32,4 +32,13 @@ interface Configuration {
         }
     }
     
+     <** @description : GetSupportedSatelliteSystems = This method returns a list of supported satellite systems **>
+    method GetSupportedSatelliteSystems {
+        out {
+            <** @description : satelliteSystems = list of supported satellite systems **>
+            SatelliteSystem[] satelliteSystems
+        }
+    }
+    
+  
 }

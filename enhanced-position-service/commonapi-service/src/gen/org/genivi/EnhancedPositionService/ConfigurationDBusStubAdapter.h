@@ -103,6 +103,15 @@ static CommonAPI::DBus::DBusMethodWithReplyStubDispatcher<
     std::tuple<>,
     std::tuple<EnhancedPositionServiceTypes::Version>
     > getVersionStubDispatcher;
+/**
+ * GetSupportedSatelliteSystems = This method returns a list of supported
+ *  satellite systems
+ */
+static CommonAPI::DBus::DBusMethodWithReplyStubDispatcher<
+    ConfigurationStub,
+    std::tuple<>,
+    std::tuple<std::vector<EnhancedPositionServiceTypes::SatelliteSystem>>
+    > getSupportedSatelliteSystemsStubDispatcher;
 
 
 

@@ -120,6 +120,12 @@ public:
      */
     /// This is the method that will be called on remote calls on the method GetVersion.
     virtual void GetVersion(const std::shared_ptr<CommonAPI::ClientId> clientId, EnhancedPositionServiceTypes::Version& version) = 0;
+    /**
+     * GetSupportedSatelliteSystems = This method returns a list of supported
+     *  satellite systems
+     */
+    /// This is the method that will be called on remote calls on the method GetSupportedSatelliteSystems.
+    virtual void GetSupportedSatelliteSystems(const std::shared_ptr<CommonAPI::ClientId> clientId, std::vector<EnhancedPositionServiceTypes::SatelliteSystem>& satelliteSystems) = 0;
 
     using CommonAPI::Stub<ConfigurationStubAdapter, ConfigurationStubRemoteEvent>::initStubAdapter;
     typedef CommonAPI::Stub<ConfigurationStubAdapter, ConfigurationStubRemoteEvent>::StubAdapterType StubAdapterType;

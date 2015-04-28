@@ -75,7 +75,7 @@ public:
      * "SUCCESS" or which type of error has occurred. In case of an error, ONLY the CallStatus
      * will be set.
      */
-    virtual void SetPositionFeedback(const std::vector<PositionFeedback::PositionFeedbackInfo>& feedback, const uint64_t& timestamp, const EnhancedPositionServiceTypes::PositionFeedbackType& feedbackType, CommonAPI::CallStatus& callStatus);
+    virtual void SetPositionFeedback(const PositionFeedback::PositionFeedbackInfo& feedback, const uint64_t& timestamp, const EnhancedPositionServiceTypes::PositionFeedbackType& feedbackType, CommonAPI::CallStatus& callStatus);
     /**
      * Calls SetPositionFeedback with asynchronous semantics.
      * 
@@ -86,7 +86,7 @@ public:
      * The std::future returned by this method will be fulfilled at arrival of the reply.
      * It will provide the same value for CallStatus as will be handed to the callback.
      */
-    virtual std::future<CommonAPI::CallStatus> SetPositionFeedbackAsync(const std::vector<PositionFeedback::PositionFeedbackInfo>& feedback, const uint64_t& timestamp, const EnhancedPositionServiceTypes::PositionFeedbackType& feedbackType, SetPositionFeedbackAsyncCallback callback);
+    virtual std::future<CommonAPI::CallStatus> SetPositionFeedbackAsync(const PositionFeedback::PositionFeedbackInfo& feedback, const uint64_t& timestamp, const EnhancedPositionServiceTypes::PositionFeedbackType& feedbackType, SetPositionFeedbackAsyncCallback callback);
 
 
     /**
@@ -173,12 +173,12 @@ std::future<CommonAPI::CallStatus> PositionFeedbackProxy<_AttributeExtensions...
  *  EnhancedPositionService with a position feedback
  */
 template <typename ... _AttributeExtensions>
-void PositionFeedbackProxy<_AttributeExtensions...>::SetPositionFeedback(const std::vector<PositionFeedback::PositionFeedbackInfo>& feedback, const uint64_t& timestamp, const EnhancedPositionServiceTypes::PositionFeedbackType& feedbackType, CommonAPI::CallStatus& callStatus) {
+void PositionFeedbackProxy<_AttributeExtensions...>::SetPositionFeedback(const PositionFeedback::PositionFeedbackInfo& feedback, const uint64_t& timestamp, const EnhancedPositionServiceTypes::PositionFeedbackType& feedbackType, CommonAPI::CallStatus& callStatus) {
     delegate_->SetPositionFeedback(feedback, timestamp, feedbackType, callStatus);
 }
 
 template <typename ... _AttributeExtensions>
-std::future<CommonAPI::CallStatus> PositionFeedbackProxy<_AttributeExtensions...>::SetPositionFeedbackAsync(const std::vector<PositionFeedback::PositionFeedbackInfo>& feedback, const uint64_t& timestamp, const EnhancedPositionServiceTypes::PositionFeedbackType& feedbackType, SetPositionFeedbackAsyncCallback callback) {
+std::future<CommonAPI::CallStatus> PositionFeedbackProxy<_AttributeExtensions...>::SetPositionFeedbackAsync(const PositionFeedback::PositionFeedbackInfo& feedback, const uint64_t& timestamp, const EnhancedPositionServiceTypes::PositionFeedbackType& feedbackType, SetPositionFeedbackAsyncCallback callback) {
     return delegate_->SetPositionFeedbackAsync(feedback, timestamp, feedbackType, callback);
 }
 

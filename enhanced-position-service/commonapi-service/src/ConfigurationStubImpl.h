@@ -30,8 +30,15 @@ public:
     ConfigurationStubImpl();
     virtual ~ConfigurationStubImpl();
     void GetVersion(EnhancedPositionServiceTypes::Version& version);
+    void GetSupportedSatelliteSystems(std::vector<EnhancedPositionServiceTypes::SatelliteSystem>& satelliteSystems);
     void run();
     void shutdown();
+
+protected:
+    bool validateSatSystemAttributeRequestedValue(const EnhancedPositionServiceTypes::SatelliteSystem& value);
+
+private:
+    std::vector<EnhancedPositionServiceTypes::SatelliteSystem> mSupportedSatSystems;
 };
 
 #endif /* CONFIGURATIONSTUBIMPL_H_ */

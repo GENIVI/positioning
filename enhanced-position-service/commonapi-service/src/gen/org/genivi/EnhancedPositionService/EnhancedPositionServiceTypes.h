@@ -122,132 +122,130 @@ namespace EnhancedPositionServiceTypes {
     struct PositionInfoKeyComparator;
     /**
      * PositionInfo = array of tuples (key,value)
-                key = enumeration
+            key = enumeration
      *  PositionInfoKey
-                key = LATITUDE, value = value of type 'Double',
-     *  that expresses the latitude of the current position. Range [-90:+90]. Example:
+            key = LATITUDE, value = value of type 'Double', that
+     *  expresses the latitude of the current position. Range [-90:+90]. Example:
      *  48.053250
-                key = LONGITUDE, value = value of type 'Double', that
+            key = LONGITUDE, value = value of type 'Double', that
      *  expresses the longitude of the current position. Range [-180:+180]. Example:
      *  8.324500
-                key = ALTITUDE, value = value of type 'Double', that
+            key = ALTITUDE, value = value of type 'Double', that
      *  expresses the altitude above the sea level of the current position in meters
     
-     *             key = HEADING, value = value of type 'Double', that expresses the
+     *         key = HEADING, value = value of type 'Double', that expresses the
      *  course angle in degree. Range [0:360]. 0 = north, 90 = east, 180 = south, 270
      *  = west
-                key = SPEED, value = value of type 'Double', that
-     *  expresses speed measured in m/s. A negative value indicates that the vehicle
-     *  is moving backwards
-                key = CLIMB, value = value of type 'Double',
-     *  that expresses the road gradient in degrees
-                key = ROLL_RATE,
-     *  value = value of type 'Double', rotation rate around the X-axis in degrees/s.
-     *  Range [-100:+100]
-                key = PITCH_RATE, value = value of type
-     *  'Double', rotation rate around the Y-axis in degrees/s. Range [-100:+100]
+            key = SPEED, value = value of type 'Double', that expresses
+     *  speed measured in m/s. A negative value indicates that the vehicle is moving
+     *  backwards
+            key = CLIMB, value = value of type 'Double', that expresses
+     *  the road gradient in degrees
+            key = ROLL_RATE, value = value of type
+     *  'Double', rotation rate around the X-axis in degrees/s. Range [-100:+100]
        
-     *          key = YAW_RATE, value = value of type 'Double', rotation rate around
-     *  the Z-axis in degrees/s. Range [-100:+100]
-                key = PDOP, value =
-     *  value of type 'Double', that represents the positional (3D) dilution of
-     *  precision
-                key = HDOP, value = value of type 'Double', that
-     *  represents the horizontal (2D) dilution of precision
-                key = VDOP,
-     *  value = value of type 'Double', that represents vertical (altitude) dilution
+     *      key = PITCH_RATE, value = value of type 'Double', rotation rate around the
+     *  Y-axis in degrees/s. Range [-100:+100]
+            key = YAW_RATE, value = value
+     *  of type 'Double', rotation rate around the Z-axis in degrees/s. Range
+     *  [-100:+100]
+            key = PDOP, value = value of type 'Double', that
+     *  represents the positional (3D) dilution of precision
+            key = HDOP,
+     *  value = value of type 'Double', that represents the horizontal (2D) dilution
      *  of precision
-                key = USED_SATELLITES, value = value of type
-     *  'UInt8', that represents the number of used satellites
-                key =
-     *  TRACKED_SATELLITES, value = value of type 'UInt8', that represents the number
-     *  of tracked satellites 
-                key = VISIBLE_SATELLITES, value = value of
-     *  type 'UInt8', that represents the number of visible satellites
-               
-     *  key = SIGMA_HPOSITION, value = value of type 'Double', that represents the
-     *  standard deviation for the horizontal position in m
-                key =
-     *  SIGMA_ALTITUDE, value = value of type 'Double', that represents the standard
-     *  deviation for altitude in m
-                key = SIGMA_HEADING, value = value of
-     *  type 'Double', that represents the standard deviation for altitude in
-     *  degrees
-                key = SIGMA_SPEED, value = value of type 'Double', that
-     *  represents the standard error estimate of the speed in m/s</line>
-               
-     *  key = SIGMA_CLIMB, value = value of type 'Double', that represents the
-     *  standard error estimate of the climb in degrees</line>
-                key =
-     *  GNSS_FIX_STATUS, value = value of type 'UInt16', that represents an
+            key = VDOP, value = value of type 'Double', that
+     *  represents vertical (altitude) dilution of precision
+            key =
+     *  USED_SATELLITES, value = value of type 'UInt8', that represents the number of
+     *  used satellites
+            key = TRACKED_SATELLITES, value = value of type
+     *  'UInt8', that represents the number of tracked satellites 
+            key =
+     *  VISIBLE_SATELLITES, value = value of type 'UInt8', that represents the number
+     *  of visible satellites
+            key = SIGMA_HPOSITION, value = value of type
+     *  'Double', that represents the standard deviation for the horizontal position
+     *  in m
+            key = SIGMA_ALTITUDE, value = value of type 'Double', that
+     *  represents the standard deviation for altitude in m
+            key =
+     *  SIGMA_HEADING, value = value of type 'Double', that represents the standard
+     *  deviation for altitude in degrees
+            key = SIGMA_SPEED, value = value of
+     *  type 'Double', that represents the standard error estimate of the speed in
+     *  m/s</line>
+            key = SIGMA_CLIMB, value = value of type 'Double', that
+     *  represents the standard error estimate of the climb in degrees</line>
+           
+     *  key = GNSS_FIX_STATUS, value = value of type 'UInt16', that represents an
      *  enum(NO_FIX(0x01),TIME_FIX(0x01),2D_FIX(0x02),3D_FIX(0x03), ... )
-               
-     *  key = DR_STATUS, value = value of type 'Boolean', where TRUE means that a
+            key
+     *  = DR_STATUS, value = value of type 'Boolean', where TRUE means that a
      *  dead-reckoning algorithm has been used to calculate the current position
      */
     /**
      * PositionInfo = array of tuples (key,value)
-                key = enumeration
+            key = enumeration
      *  PositionInfoKey
-                key = LATITUDE, value = value of type 'Double',
-     *  that expresses the latitude of the current position. Range [-90:+90]. Example:
+            key = LATITUDE, value = value of type 'Double', that
+     *  expresses the latitude of the current position. Range [-90:+90]. Example:
      *  48.053250
-                key = LONGITUDE, value = value of type 'Double', that
+            key = LONGITUDE, value = value of type 'Double', that
      *  expresses the longitude of the current position. Range [-180:+180]. Example:
      *  8.324500
-                key = ALTITUDE, value = value of type 'Double', that
+            key = ALTITUDE, value = value of type 'Double', that
      *  expresses the altitude above the sea level of the current position in meters
     
-     *             key = HEADING, value = value of type 'Double', that expresses the
+     *         key = HEADING, value = value of type 'Double', that expresses the
      *  course angle in degree. Range [0:360]. 0 = north, 90 = east, 180 = south, 270
      *  = west
-                key = SPEED, value = value of type 'Double', that
-     *  expresses speed measured in m/s. A negative value indicates that the vehicle
-     *  is moving backwards
-                key = CLIMB, value = value of type 'Double',
-     *  that expresses the road gradient in degrees
-                key = ROLL_RATE,
-     *  value = value of type 'Double', rotation rate around the X-axis in degrees/s.
-     *  Range [-100:+100]
-                key = PITCH_RATE, value = value of type
-     *  'Double', rotation rate around the Y-axis in degrees/s. Range [-100:+100]
+            key = SPEED, value = value of type 'Double', that expresses
+     *  speed measured in m/s. A negative value indicates that the vehicle is moving
+     *  backwards
+            key = CLIMB, value = value of type 'Double', that expresses
+     *  the road gradient in degrees
+            key = ROLL_RATE, value = value of type
+     *  'Double', rotation rate around the X-axis in degrees/s. Range [-100:+100]
        
-     *          key = YAW_RATE, value = value of type 'Double', rotation rate around
-     *  the Z-axis in degrees/s. Range [-100:+100]
-                key = PDOP, value =
-     *  value of type 'Double', that represents the positional (3D) dilution of
-     *  precision
-                key = HDOP, value = value of type 'Double', that
-     *  represents the horizontal (2D) dilution of precision
-                key = VDOP,
-     *  value = value of type 'Double', that represents vertical (altitude) dilution
+     *      key = PITCH_RATE, value = value of type 'Double', rotation rate around the
+     *  Y-axis in degrees/s. Range [-100:+100]
+            key = YAW_RATE, value = value
+     *  of type 'Double', rotation rate around the Z-axis in degrees/s. Range
+     *  [-100:+100]
+            key = PDOP, value = value of type 'Double', that
+     *  represents the positional (3D) dilution of precision
+            key = HDOP,
+     *  value = value of type 'Double', that represents the horizontal (2D) dilution
      *  of precision
-                key = USED_SATELLITES, value = value of type
-     *  'UInt8', that represents the number of used satellites
-                key =
-     *  TRACKED_SATELLITES, value = value of type 'UInt8', that represents the number
-     *  of tracked satellites 
-                key = VISIBLE_SATELLITES, value = value of
-     *  type 'UInt8', that represents the number of visible satellites
-               
-     *  key = SIGMA_HPOSITION, value = value of type 'Double', that represents the
-     *  standard deviation for the horizontal position in m
-                key =
-     *  SIGMA_ALTITUDE, value = value of type 'Double', that represents the standard
-     *  deviation for altitude in m
-                key = SIGMA_HEADING, value = value of
-     *  type 'Double', that represents the standard deviation for altitude in
-     *  degrees
-                key = SIGMA_SPEED, value = value of type 'Double', that
-     *  represents the standard error estimate of the speed in m/s</line>
-               
-     *  key = SIGMA_CLIMB, value = value of type 'Double', that represents the
-     *  standard error estimate of the climb in degrees</line>
-                key =
-     *  GNSS_FIX_STATUS, value = value of type 'UInt16', that represents an
+            key = VDOP, value = value of type 'Double', that
+     *  represents vertical (altitude) dilution of precision
+            key =
+     *  USED_SATELLITES, value = value of type 'UInt8', that represents the number of
+     *  used satellites
+            key = TRACKED_SATELLITES, value = value of type
+     *  'UInt8', that represents the number of tracked satellites 
+            key =
+     *  VISIBLE_SATELLITES, value = value of type 'UInt8', that represents the number
+     *  of visible satellites
+            key = SIGMA_HPOSITION, value = value of type
+     *  'Double', that represents the standard deviation for the horizontal position
+     *  in m
+            key = SIGMA_ALTITUDE, value = value of type 'Double', that
+     *  represents the standard deviation for altitude in m
+            key =
+     *  SIGMA_HEADING, value = value of type 'Double', that represents the standard
+     *  deviation for altitude in degrees
+            key = SIGMA_SPEED, value = value of
+     *  type 'Double', that represents the standard error estimate of the speed in
+     *  m/s</line>
+            key = SIGMA_CLIMB, value = value of type 'Double', that
+     *  represents the standard error estimate of the climb in degrees</line>
+           
+     *  key = GNSS_FIX_STATUS, value = value of type 'UInt16', that represents an
      *  enum(NO_FIX(0x01),TIME_FIX(0x01),2D_FIX(0x02),3D_FIX(0x03), ... )
-               
-     *  key = DR_STATUS, value = value of type 'Boolean', where TRUE means that a
+            key
+     *  = DR_STATUS, value = value of type 'Boolean', where TRUE means that a
      *  dead-reckoning algorithm has been used to calculate the current position
      */
     typedef std::unordered_map<PositionInfoKey, Value, CommonAPI::EnumHasher<PositionInfoKey>> PositionInfo;
@@ -328,49 +326,47 @@ namespace EnhancedPositionServiceTypes {
     struct TimeInfoKeyComparator;
     /**
      * TimeInfo = array of tuples (key,value)
-              key = enumeration
-     *  TimeInfoKey
-              key = YEAR, value = value of type 'UInt16', 4 digits
-     *  number that indicates the year. Example: 2012
-              key = MONTH, value =
-     *  value of type 'UInt8', 2 digits number that indicates the month. Example: 03
-     *  means March
-              key = DAY, value = value of type 'UInt8', 2 digits
-     *  number that indicates the day. Range [0:31]. Example: 07
-              key =
-     *  HOUR, value = value of type 'UInt8', 2 digits number that indicates the hour.
-     *  Range [0:23].  Example: 01
-              key = MINUTE, value = value of type
-     *  'UInt8', 2 digits number that represents the minutes. Range [0:59]. Example:
-     *  01
-              key = SECOND, value = value of type 'UInt8', 2 digits number
-     *  that represents the seconds. Range [0:59]. Example: 01
-              key = MS,
-     *  value = value of type 'UInt16', 3 digits number that represents the
-     *  milliseconds. Range [0:999]. Example: 007
+            key = enumeration TimeInfoKey
+    
+     *         key = YEAR, value = value of type 'UInt16', 4 digits number that
+     *  indicates the year. Example: 2012
+            key = MONTH, value = value of type
+     *  'UInt8', 2 digits number that indicates the month. Example: 03 means March
+      
+     *       key = DAY, value = value of type 'UInt8', 2 digits number that indicates
+     *  the day. Range [0:31]. Example: 07
+            key = HOUR, value = value of type
+     *  'UInt8', 2 digits number that indicates the hour. Range [0:23].  Example: 01
+    
+     *         key = MINUTE, value = value of type 'UInt8', 2 digits number that
+     *  represents the minutes. Range [0:59]. Example: 01
+            key = SECOND, value
+     *  = value of type 'UInt8', 2 digits number that represents the seconds. Range
+     *  [0:59]. Example: 01
+            key = MS, value = value of type 'UInt16', 3
+     *  digits number that represents the milliseconds. Range [0:999]. Example: 007
      */
     /**
      * TimeInfo = array of tuples (key,value)
-              key = enumeration
-     *  TimeInfoKey
-              key = YEAR, value = value of type 'UInt16', 4 digits
-     *  number that indicates the year. Example: 2012
-              key = MONTH, value =
-     *  value of type 'UInt8', 2 digits number that indicates the month. Example: 03
-     *  means March
-              key = DAY, value = value of type 'UInt8', 2 digits
-     *  number that indicates the day. Range [0:31]. Example: 07
-              key =
-     *  HOUR, value = value of type 'UInt8', 2 digits number that indicates the hour.
-     *  Range [0:23].  Example: 01
-              key = MINUTE, value = value of type
-     *  'UInt8', 2 digits number that represents the minutes. Range [0:59]. Example:
-     *  01
-              key = SECOND, value = value of type 'UInt8', 2 digits number
-     *  that represents the seconds. Range [0:59]. Example: 01
-              key = MS,
-     *  value = value of type 'UInt16', 3 digits number that represents the
-     *  milliseconds. Range [0:999]. Example: 007
+            key = enumeration TimeInfoKey
+    
+     *         key = YEAR, value = value of type 'UInt16', 4 digits number that
+     *  indicates the year. Example: 2012
+            key = MONTH, value = value of type
+     *  'UInt8', 2 digits number that indicates the month. Example: 03 means March
+      
+     *       key = DAY, value = value of type 'UInt8', 2 digits number that indicates
+     *  the day. Range [0:31]. Example: 07
+            key = HOUR, value = value of type
+     *  'UInt8', 2 digits number that indicates the hour. Range [0:23].  Example: 01
+    
+     *         key = MINUTE, value = value of type 'UInt8', 2 digits number that
+     *  represents the minutes. Range [0:59]. Example: 01
+            key = SECOND, value
+     *  = value of type 'UInt8', 2 digits number that represents the seconds. Range
+     *  [0:59]. Example: 01
+            key = MS, value = value of type 'UInt16', 3
+     *  digits number that represents the milliseconds. Range [0:999]. Example: 007
      */
     typedef std::unordered_map<TimeInfoKey, Value, CommonAPI::EnumHasher<TimeInfoKey>> TimeInfo;
     enum class PositionFeedbackKey: int32_t {

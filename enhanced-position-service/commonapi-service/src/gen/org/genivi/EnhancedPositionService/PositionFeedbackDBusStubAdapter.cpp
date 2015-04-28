@@ -58,7 +58,7 @@ const char* PositionFeedbackDBusStubAdapterInternal::getMethodsDBusIntrospection
          *  EnhancedPositionService with a position feedback
          */
         "<method name=\"SetPositionFeedback\">\n"
-            "<arg name=\"feedback\" type=\"aa{i(yv)}\" direction=\"in\" />\n"
+            "<arg name=\"feedback\" type=\"a{i(yv)}\" direction=\"in\" />\n"
             "<arg name=\"timestamp\" type=\"t\" direction=\"in\" />\n"
             "<arg name=\"feedbackType\" type=\"i\" direction=\"in\" />\n"
         "</method>\n"
@@ -89,7 +89,7 @@ CommonAPI::DBus::DBusMethodWithReplyStubDispatcher<
  */
 CommonAPI::DBus::DBusMethodWithReplyStubDispatcher<
     PositionFeedbackStub,
-    std::tuple<std::vector<PositionFeedback::PositionFeedbackInfo>, uint64_t, EnhancedPositionServiceTypes::PositionFeedbackType>,
+    std::tuple<PositionFeedback::PositionFeedbackInfo, uint64_t, EnhancedPositionServiceTypes::PositionFeedbackType>,
     std::tuple<>
     > PositionFeedbackDBusStubAdapterInternal::setPositionFeedbackStubDispatcher(&PositionFeedbackStub::SetPositionFeedback, "");
 
@@ -140,7 +140,7 @@ PositionFeedbackDBusStubAdapterInternal::PositionFeedbackDBusStubAdapterInternal
              * SetPositionFeedback = This method allows a client application to provide the
              *  EnhancedPositionService with a position feedback
              */
-            { { "SetPositionFeedback", "aa{i(yv)}ti" }, &org::genivi::EnhancedPositionService::PositionFeedbackDBusStubAdapterInternal::setPositionFeedbackStubDispatcher }
+            { { "SetPositionFeedback", "a{i(yv)}ti" }, &org::genivi::EnhancedPositionService::PositionFeedbackDBusStubAdapterInternal::setPositionFeedbackStubDispatcher }
             }),
         stubAttributeTable_() {
 

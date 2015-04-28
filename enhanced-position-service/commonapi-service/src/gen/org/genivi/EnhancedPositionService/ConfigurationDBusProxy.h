@@ -54,6 +54,12 @@ class ConfigurationDBusProxy: virtual public ConfigurationProxyBase, virtual pub
      */
     virtual void GetVersion(CommonAPI::CallStatus& callStatus, EnhancedPositionServiceTypes::Version& version);
     virtual std::future<CommonAPI::CallStatus> GetVersionAsync(GetVersionAsyncCallback callback);
+    /**
+     * GetSupportedSatelliteSystems = This method returns a list of supported
+     *  satellite systems
+     */
+    virtual void GetSupportedSatelliteSystems(CommonAPI::CallStatus& callStatus, std::vector<EnhancedPositionServiceTypes::SatelliteSystem>& satelliteSystems);
+    virtual std::future<CommonAPI::CallStatus> GetSupportedSatelliteSystemsAsync(GetSupportedSatelliteSystemsAsyncCallback callback);
 
 
     virtual void getOwnVersion(uint16_t& ownVersionMajor, uint16_t& ownVersionMinor) const;
