@@ -5,4 +5,5 @@ IMPORTANT NOTE
 Please note that the Franca interfaces described in the current folder (*.fidl) are still a draft.
 The conversion of the D-Bus interfaces into Franca interfaces have not been completed yet.
 
-The official GENIVI interfaces of the EnhancedPositionService are those defined in the D-Bus XML files contained in the folder 'api' inside of 'dbus-service'
+The official GENIVI interfaces of the EnhancedPositionService are those defined in the D-Bus XML files 
+contained in the folder 'api' inside of 'dbus-service'
