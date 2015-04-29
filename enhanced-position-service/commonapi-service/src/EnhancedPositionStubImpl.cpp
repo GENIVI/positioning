@@ -63,38 +63,6 @@ void EnhancedPositionStubImpl::sigPositionUpdate(const TGNSSPosition position[],
 
   for (int i = 0; i< numElements; i++)
   {
-     LOG_INFO(gCtx,"Position Update[%d/%d]: \n \
-		 lat=%f \n \
-		 lon=%f \n \
-		 alt=%f \n \
-		 speed=%f \n \
-		 heading=%f \n \
-		 climb=%f \n \
-		 pdop=%f \n \
-		 hdop=%f \n \
-		 vdop=%f \n \
-		 sigmaHPosition=%f \n \
-		 sigmaAltitude=%f \n \
-		 usedSatellites=%d \n \
-		 fixStatus=%d \n \
-		 fixTypeBits=0x%08X \n",
-		 i+1,
-		 numElements,
-		 position[i].latitude,
-		 position[i].longitude,
-		 position[i].altitudeMSL,
-		 position[i].hSpeed,
-		 position[i].heading,
-		 position[i].vSpeed,
-		 position[i].pdop,
-		 position[i].hdop,
-		 position[i].vdop,
-		 position[i].sigmaHPosition,
-		 position[i].sigmaAltitude,
-		 position[i].usedSatellites,
-		 position[i].fixStatus,
-		 position[i].fixTypeBits);
-
     if (latChanged == false)
     {
       latChanged = (position[i].validityBits & GNSS_POSITION_LATITUDE_VALID);
@@ -155,6 +123,48 @@ void EnhancedPositionStubImpl::sigPositionUpdate(const TGNSSPosition position[],
       fixTypeBitsChanged = (position[i].validityBits & GNSS_POSITION_TYPE_VALID);
     }
 
+    //extend this OR statement if necessary (when more notifications are supported)
+    if(latChanged || lonChanged || altChanged)
+    {
+        LOG_INFO(gCtx,"Position Update[%d/%d]: lat=%f, lon=%f, alt=%f",
+             i+1,
+       		 numElements,
+       		 position[i].latitude,
+       		 position[i].longitude,
+       		 position[i].altitudeMSL);
+
+        /*LOG_INFO(gCtx,"Position Update[%d/%d]: \n \
+                     lat=%f \n \
+            		 lon=%f \n \
+            		 alt=%f \n \
+            		 speed=%f \n \
+            		 heading=%f \n \
+            		 climb=%f \n \
+            		 pdop=%f \n \
+            		 hdop=%f \n \
+            		 vdop=%f \n \
+            		 sigmaHPosition=%f \n \
+            		 sigmaAltitude=%f \n \
+            		 usedSatellites=%d \n \
+            		 fixStatus=%d \n \
+            		 fixTypeBits=0x%08X \n",
+            		 i+1,
+            		 numElements,
+            		 position[i].latitude,
+            		 position[i].longitude,
+            		 position[i].altitudeMSL,
+            		 position[i].hSpeed,
+            		 position[i].heading,
+            		 position[i].vSpeed,
+            		 position[i].pdop,
+            		 position[i].hdop,
+            		 position[i].vdop,
+            		 position[i].sigmaHPosition,
+            		 position[i].sigmaAltitude,
+            		 position[i].usedSatellites,
+            		 position[i].fixStatus,
+            		 position[i].fixTypeBits);*/
+     }
   }
 
   //in a real product, the coordinates would be used for dead-reckoning.
@@ -222,10 +232,10 @@ void EnhancedPositionStubImpl::sigPositionUpdate(const TGNSSPosition position[],
       return;
   }
 
-  //extend this list if necessary
-  if (latChanged || lonChanged || altChanged ) {
-	  LOG_INFO(gCtx,"firePositionUpdateEvent[%lld]",changedValues);
-      mpSelf->firePositionUpdateEvent(changedValues);
+  //extend this OR statement if necessary (when more notifications are supported)
+  if(latChanged || lonChanged || altChanged)
+  {
+    mpSelf->firePositionUpdateEvent(changedValues);
   }
 
 }

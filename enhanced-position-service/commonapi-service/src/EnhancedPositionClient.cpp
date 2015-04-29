@@ -67,6 +67,10 @@ void positionUpdate(std::shared_ptr<EnhancedPositionProxyDefault> proxy, const E
 }
 
 int main() {
+
+    DLT_REGISTER_APP("ENHC","ENHANCED-POSITION-CLIENT");
+    DLT_REGISTER_CONTEXT(gCtx,"ENHC","Global Context");
+
     std::shared_ptr < CommonAPI::Runtime > runtime = CommonAPI::Runtime::load();
     std::shared_ptr < CommonAPI::Factory > factory = runtime->createFactory();
 

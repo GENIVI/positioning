@@ -2,7 +2,7 @@
 Positioning Git Repository
 ============================
 
-The Positioning repository is a collection of 4 proofs of concept:
+The Positioning repository is a collection of 5 proofs of concept:
 * GNSSService
 * SensorsService
 * EnhancedPositionService
@@ -13,7 +13,7 @@ The Positioning repository is a collection of 4 proofs of concept:
 Directory Structure
 ===============================
 
-enhanced-position-service   //enhanced-position-service PoCs (1) dbus-service and 2) commonapi-service)
+enhanced-position-service   //enhanced-position-service PoCs (a dbus-service and a commonapi-service)
 gnss-service                //gnss-service PoC
 log-replayer                //log-replayer-PoC
 sensors-service             //sensors-service PoC
@@ -74,17 +74,17 @@ If you wish to change the default cmake-options, please
 3) delete the build directory,
 4) recompile the code from scratch.
 
----------
+--------------------
 Example
----------
+--------------------
 
 If you wish to activate DLT logging for the GNSSService, just change the  
 value of GNSS_SERVICE_FLAGS in the file build-all.sh as follows:
 GNSS_SERVICE_FLAGS='-DWITH_DLT=ON'
 
----------
-Notes & Dependencies
----------
+--------------------
+Dependencies
+--------------------
 
 DWITH_GPSD=ON requires that the package 'gpsd' is installed.
 To install 'gpsd', please execute the following commands:
@@ -95,7 +95,7 @@ To test the enhanced-positon-service (dbus-service) the package 'libdbus-c++-dev
 To install 'libdbus-c++-dev', please execute the following command:
 sudo apt-get install libdbus-c++-dev
 
-To test the enhanced-positon-service (commonapi-service) CommonAPI must be installed.
+To test the enhanced-positon-service (commonapi-service) the package CommonAPI must be installed.
 To install CommonAPI, please see http://git.projects.genivi.org/?p=ipc/common-api-runtime.git;a=blob;f=README
 
 DWITH_TESTS=ON enables the compilation of the test application(s).
