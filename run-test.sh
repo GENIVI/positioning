@@ -17,6 +17,16 @@
 # @licence end@
 ###########################################################################
 
+TOP_SRC_DIR=$PWD
+TOP_BIN_DIR=$PWD/build
+
+GNSS_SERVICE_BIN_DIR=$TOP_BIN_DIR/gnss-service
+SENSORS_SERVICE_BIN_DIR=$TOP_BIN_DIR/sensors-service
+ENHANCED_POSITION_SERVICE_DBUS_BIN_DIR=$TOP_BIN_DIR/enhanced-position-service/dbus
+ENHANCED_POSITION_SERVICE_FRANCA_BIN_DIR=$TOP_BIN_DIR/enhanced-position-service/franca
+LOG_REPLAYER_BIN_DIR=$TOP_BIN_DIR/log-replayer
+LOG_REPLAYER_LOGS_DIR=$TOP_BIN_DIR/log-replayer/logs
+
 usage() {
     echo "Usage: ./run-test.sh [service]"
     echo
@@ -32,10 +42,10 @@ usage() {
 
 testGnssService()
 {
-    build/gnss-service/test/gnss-service-client &
+    $GNSS_SERVICE_BIN_DIR/test/gnss-service-client &
     sleep 3
     echo 'Starting log replayer...'
-    build/log-replayer/src/log-replayer log-replayer/logs/20100411_Geko_Regensburg_short.log > /dev/null 2>&1 &
+    $LOG_REPLAYER_BIN_DIR/src/log-replayer $LOG_REPLAYER_LOGS_DIR/20100411_Geko_Regensburg_short.log > /dev/null 2>&1 &
     sleep 10
     echo 'Stopping test...'
     killall log-replayer
@@ -44,10 +54,10 @@ testGnssService()
 
 testSensorsService()
 {
-    build/sensors-service/test/sensors-service-client &
+    $SENSORS_SERVICE_BIN_DIR/test/sensors-service-client &
     sleep 3
     echo 'Starting log replayer...'
-    build/log-replayer/src/log-replayer log-replayer/logs/20100411_Geko_Regensburg_short.log > /dev/null 2>&1 &
+    $LOG_REPLAYER_BIN_DIR/src/log-replayer $LOG_REPLAYER_LOGS_DIR/20100411_Geko_Regensburg_short.log > /dev/null 2>&1 &
     sleep 10
     echo 'Stopping test...'
     killall log-replayer
@@ -56,12 +66,12 @@ testSensorsService()
 
 testEnhancedPositionService()
 {
-    build/enhanced-position-service/src/enhanced-position-service > /dev/null 2>&1 &
+    $ENHANCED_POSITION_SERVICE_DBUS_BIN_DIR/src/enhanced-position-service > /dev/null 2>&1 &
     sleep 3
-    build/enhanced-position-service/test/enhanced-position-client &
+    $ENHANCED_POSITION_SERVICE_DBUS_BIN_DIR/test/enhanced-position-client &
     sleep 3
     echo 'Starting log replayer...'
-    build/log-replayer/src/log-replayer log-replayer/logs/geneve-cologny.log > /dev/null  2>&1  &
+    $LOG_REPLAYER_BIN_DIR/src/log-replayer $LOG_REPLAYER_LOGS_DIR/geneve-cologny.log > /dev/null  2>&1  &
     sleep 20
     echo 'Stopping test...'
     killall enhanced-position-client 
@@ -72,10 +82,10 @@ testEnhancedPositionService()
 testEnhancedPositionService2()
 {
     echo 'Starting enhanced position service...'
-    build/log-replayer/src/log-replayer log-replayer/logs/geneve-cologny.log > /dev/null  2>&1  &
+    $LOG_REPLAYER_BIN_DIR/log-replayer $LOG_REPLAYER_LOGS_DIR/geneve-cologny.log > /dev/null  2>&1  &
     echo 'Starting log replayer...'
-    build/enhanced-position-service/src/enhanced-position-service > /dev/null 2>&1 &
-    sleep 300
+    $ENHANCED_POSITION_SERVICE_DBUS_BIN_DIR/src/enhanced-position-service > /dev/null 2>&1 &
+    sleep 10
     echo 'Stopping test...'
     killall enhanced-position-service
     killall log-replayer
@@ -84,11 +94,11 @@ testEnhancedPositionService2()
 testLogReplayer()
 {
     echo 'Starting log replayer...'
-    build/log-replayer/src/log-replayer log-replayer/logs/geneve-cologny.log  > /dev/null 2>&1 &
-    #build/log-replayer/src/log-replayer log-replayer/logs/20100411_Geko_Regensburg_short.log > /dev/null 2>&1 &
+    $LOG_REPLAYER_BIN_DIR/src/log-replayer $LOG_REPLAYER_LOGS_DIR/geneve-cologny.log  > /dev/null 2>&1 &
+    #$LOG_REPLAYER_LOGS_DIR/src/log-replayer $LOG_REPLAYER_LOGS_DIR/20100411_Geko_Regensburg_short.log > /dev/null 2>&1 &
     sleep 1
     echo 'Starting test application...'
-    build/log-replayer/test/test-log-replayer 9930 &
+    $LOG_REPLAYER_BIN_DIR/test/test-log-replayer 9930 &
     sleep 10
     echo 'Stopping test...'
     killall log-replayer

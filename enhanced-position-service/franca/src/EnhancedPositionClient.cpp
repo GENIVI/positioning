@@ -22,9 +22,9 @@ void getPositionInfoAsyncCallback(const CommonAPI::CallStatus& callStatus, const
 
     for ( auto it = posInfo.begin(); it != posInfo.end(); ++it ) {
         if (it->first == PositionInfoKey::LATITUDE)
-	    {
-	        LOG_INFO(gCtx,"LAT=%lf", it->second.get<double>());
-	    }
+        {
+            LOG_INFO(gCtx,"LAT=%lf", it->second.get<double>());
+        }
         if (it->first == PositionInfoKey::LONGITUDE)
         {
     	    LOG_INFO(gCtx,"LON=%lf", it->second.get<double>());

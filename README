@@ -13,7 +13,7 @@ The Positioning repository is a collection of 5 proofs of concept:
 Directory Structure
 ===============================
 
-enhanced-position-service   //enhanced-position-service PoCs (a dbus-service and a commonapi-service)
+enhanced-position-service   //2 enhanced-position-service PoCs (one with dbus interfaces and one with commonapi interfaces)
 gnss-service                //gnss-service PoC
 log-replayer                //log-replayer-PoC
 sensors-service             //sensors-service PoC

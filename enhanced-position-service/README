@@ -1,0 +1,9 @@
+The folder 'dbus' contains:
+- the interface description in DBU-XML (offcial GENIVI APIs)
+- a version of the PoC that offers D-Bus interfaces
+
+The folder 'franca' contains:
+- the interface description in Franca IDL (draft)
+- a version of the PoC that offers C++ interfaces generated using commonapi
+
+

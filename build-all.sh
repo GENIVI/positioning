@@ -36,14 +36,14 @@ TOP_BIN_DIR=$PWD/build
 
 GNSS_SERVICE_SRC_DIR=$TOP_SRC_DIR/gnss-service
 SENSORS_SERVICE_SRC_DIR=$TOP_SRC_DIR/sensors-service
-ENHANCED_POSITION_SERVICE_DBUS_SRC_DIR=$TOP_SRC_DIR/enhanced-position-service/dbus-service
-ENHANCED_POSITION_SERVICE_COMMONAPI_SRC_DIR=$TOP_SRC_DIR/enhanced-position-service/commonapi-service
+ENHANCED_POSITION_SERVICE_DBUS_SRC_DIR=$TOP_SRC_DIR/enhanced-position-service/dbus
+ENHANCED_POSITION_SERVICE_FRANCA_SRC_DIR=$TOP_SRC_DIR/enhanced-position-service/franca
 LOG_REPLAYER_SRC_DIR=$TOP_SRC_DIR/log-replayer
 
 GNSS_SERVICE_BIN_DIR=$TOP_BIN_DIR/gnss-service
 SENSORS_SERVICE_BIN_DIR=$TOP_BIN_DIR/sensors-service
-ENHANCED_POSITION_SERVICE_DBUS_BIN_DIR=$TOP_BIN_DIR/enhanced-position-service/dbus-service
-ENHANCED_POSITION_SERVICE_COMMONAPI_BIN_DIR=$TOP_BIN_DIR/enhanced-position-service/commonapi-service
+ENHANCED_POSITION_SERVICE_DBUS_BIN_DIR=$TOP_BIN_DIR/enhanced-position-service/dbus
+ENHANCED_POSITION_SERVICE_FRANCA_BIN_DIR=$TOP_BIN_DIR/enhanced-position-service/franca
 LOG_REPLAYER_BIN_DIR=$TOP_BIN_DIR/log-replayer
 
 usage() {
@@ -81,15 +81,15 @@ buildSensorsService() {
 
 buildEnhancedPositionService() {
     echo ''
-    echo 'Building EnhancedPositionService (D-Bus) ->' $SENSORS_SERVICE_SRC_DIR
+    echo 'Building EnhancedPositionService (D-Bus PoC) ->' $SENSORS_SERVICE_SRC_DIR
     mkdir -p $ENHANCED_POSITION_SERVICE_DBUS_BIN_DIR
     cd $ENHANCED_POSITION_SERVICE_DBUS_BIN_DIR 
     cmake $ENHANCED_POSITION_SERVICE_FLAGS $ENHANCED_POSITION_SERVICE_DBUS_SRC_DIR && make
 
     echo ''
-    echo 'Building EnhancedPositionService (CommonAPI) ->' $SENSORS_SERVICE_SRC_DIR
-    mkdir -p $ENHANCED_POSITION_SERVICE_COMMONAPI_BIN_DIR
-    cd $ENHANCED_POSITION_SERVICE_COMMONAPI_BIN_DIR 
+    echo 'Building EnhancedPositionService (Franca PoC) ->' $SENSORS_SERVICE_SRC_DIR
+    mkdir -p $ENHANCED_POSITION_SERVICE_FRANCA_BIN_DIR
+    cd $ENHANCED_POSITION_SERVICE_FRANCA_BIN_DIR 
     cmake $ENHANCED_POSITION_SERVICE_FLAGS $ENHANCED_POSITION_SERVICE_COMMONAPI_SRC_DIR && make
 }
 
@@ -137,7 +137,7 @@ if [ $# -ge 1 ]; then
                 rm -rf $SENSORS_SERVICE_BIN_DIR 
             elif [ "$2" = "enhpos" ]; then
                 rm -rf $ENHANCED_POSITION_SERVICE_DBUS_BIN_DIR
-                rm -rf $ENHANCED_POSITION_SERVICE_COMMONAPI_BIN_DIR
+                rm -rf $ENHANCED_POSITION_SERVICE_FRANCA_BIN_DIR
             elif [ "$2" = "repl" ]; then
                 rm -rf $LOG_REPLAYER_BIN_DIR
             fi
