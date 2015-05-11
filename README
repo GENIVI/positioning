@@ -91,12 +91,13 @@ To install 'gpsd', please execute the following commands:
 sudo apt-get install gpsd
 sudo apt-get install libgps-dev
 
-To test the enhanced-positon-service (dbus-service) the package 'libdbus-c++-dev' must be installed.
-To install 'libdbus-c++-dev', please execute the following command:
+To test the enhanced-positon-service (dbus-service) the packages 'libdbus-c++-dev' and 'xsltproc' must be installed.
+To install these packages, please execute the following commands:
 sudo apt-get install libdbus-c++-dev
+sudo apt-get install xsltproc
 
 To test the enhanced-positon-service (commonapi-service) the package CommonAPI must be installed.
-To install CommonAPI, please see http://git.projects.genivi.org/?p=ipc/common-api-runtime.git;a=blob;f=README
+To install CommonAPI, please see http://git.projects.genivi.org/?p=ipc/common-api-dbus-runtime.git;a=blob;f=README
 
 DWITH_TESTS=ON enables the compilation of the test application(s).
 
