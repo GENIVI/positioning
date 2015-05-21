@@ -29,7 +29,7 @@ include_directories( ${DBUS_INCLUDEDIR} ${DBUS_INCLUDE_DIRS} )
 
 link_directories ( ${DBUS_LIBDIR} ${DBUS_LIBRARY_DIRS}  )
 
-set(SRCS ${CMAKE_SOURCE_DIR}/test/compliance-test/enhanced-position-service-compliance-test.c)
+set(SRCS ${CMAKE_CURRENT_SOURCE_DIR}/enhanced-position-service-compliance-test.c)
 
 add_executable(enhanced-position-service-compliance-test ${SRCS})
 

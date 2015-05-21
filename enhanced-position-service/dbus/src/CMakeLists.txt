@@ -79,5 +79,4 @@ message(STATUS "DBUS_CPP_LIBRARIES: " ${DBUS_CPP_LIBRARIES})
 message(STATUS "GNSS_SERVICE_LIBRARIES: " ${gnss-service_LIBRARIES})
 message(STATUS "SENSORS_SERVICE_LIBRARIES: " ${sensors-service_LIBRARIES})
 
-
-
+install(TARGETS enhanced-position-service DESTINATION bin)

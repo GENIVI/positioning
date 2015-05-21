@@ -30,7 +30,7 @@ include_directories("${PROJECT_SOURCE_DIR}/src")
 
 find_package(PkgConfig)
 
-set(SRCS ${CMAKE_SOURCE_DIR}/test/compliance-test/gnss-service-compliance-test.c)
+set(SRCS ${CMAKE_CURRENT_SOURCE_DIR}/gnss-service-compliance-test.c)
 
 add_executable(gnss-service-compliance-test ${SRCS})
 

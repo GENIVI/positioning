@@ -61,6 +61,7 @@ target_link_libraries(enhanced-position-client ${LIBRARIES})
 
 message(STATUS "DBUS_CPP_LIBRARIES: " ${DBUS_CPP_LIBRARIES})
 
+install(TARGETS enhanced-position-client DESTINATION bin)
 
 
 

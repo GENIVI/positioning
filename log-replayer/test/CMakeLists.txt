@@ -27,7 +27,7 @@ include_directories("${PROJECT_SOURCE_DIR}/src")
 
 find_package(PkgConfig)
 
-set(SRCS ${CMAKE_SOURCE_DIR}/test/test-log-replayer.c)
+set(SRCS ${CMAKE_CURRENT_SOURCE_DIR}/test-log-replayer.c)
 add_executable(test-log-replayer ${SRCS})
 set(LIBRARIES pthread)
 
@@ -45,6 +45,7 @@ endif()
 
 target_link_libraries(test-log-replayer ${LIBRARIES})
 
+install(TARGETS test-log-replayer DESTINATION bin)
 
 
 

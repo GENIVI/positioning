@@ -22,7 +22,7 @@ message(STATUS "WITH_TESTS = ${WITH_TESTS}")
 
 find_package(PkgConfig)
 
-set(LIB_SRCS ${CMAKE_SOURCE_DIR}/src/log-replayer.c)
+set(LIB_SRCS ${CMAKE_CURRENT_SOURCE_DIR}/log-replayer.c)
 
 set(LIBRARIES pthread)
 
@@ -37,6 +37,8 @@ endif()
 add_executable(log-replayer ${LIB_SRCS})
 
 target_link_libraries(log-replayer ${LIBRARIES})
+
+install(TARGETS log-replayer DESTINATION bin)
 
 message(STATUS "---------------------------------------------------------")
 

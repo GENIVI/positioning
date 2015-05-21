@@ -8,7 +8,6 @@ The Positioning repository is a collection of 5 proofs of concept:
 * EnhancedPositionService
 * LogReplayer
 
-
 ===============================
 Directory Structure
 ===============================
@@ -28,30 +27,60 @@ How To Build
 ===============================
 
 To build the positioning proofs of concept please follow the following steps:
+First create and enter the build folder
+mkdir ./build
+cd build
 
-./build-all.sh 
+To build:
+cmake ../
+make
 
-or
+To build with tests:
+cmake -DWITH_TESTS=ON -DWITH_DEBUG=ON ../
+make
 
-./build-all.sh [command] [service]
+To build with tests and with dbus interface based on Franca and CommonAPI (see below how to configure CommonAPI):
+cmake -DWITH_DBUS_INTERFACE=OFF -DWITH_FRANCA_INTERFACE=ON -DWITH_TESTS=ON -DWITH_DEBUG=ON ../
+make
 
-command:
-  make            Build
-  clean           Clean
-  help            Print Help
+===============================
+Compiler Options and default setting
+(see dependencies below)
+===============================
 
-service:
-  gnss            Test GNSSService
-  sns             Test SensorsService
-  enhpos          Test EnhancedPositionService
-  repl            Test Replayer
+option(WITH_ENHANCED_POSITION_SERVICE
+       "Build the Enhanced Positioning Service" ON)
+option(WITH_GNSS_SERVICE
+       "Build the GNSS Service" ON)
+option(WITH_LOG_REPLAYER
+       "Build the Log Replayer" ON)
+option(WITH_SENSORS_SERVICE
+       "Build the Sensors Service" ON)
+option(WITH_FRANCA_INTERFACE
+       "Build using the Franca interfaces" OFF)
+option(WITH_DBUS_INTERFACE
+       "Build using the D-Bus interfaces" ON)
+option(WITH_DEBUG
+        "Enable the debug messages" OFF)
+option(WITH_DLT
+    "Enable DLT logging" OFF)
+option(WITH_GPSD
+    "Use GPSD as source of GPS data" OFF)
+option(WITH_REPLAYER
+    "Use REPLAYER as source of GPS data" ON)
+option(WITH_TESTS
+    "Compile test applications" OFF)
+option(WITH_IPHONE
+    "Use IPHONE as source of sensors data" OFF)
 
+Just set the option to ON or OFF on the command line.
 
 ===============================
 How To Test
 ===============================
 
-To test the positioning proofs of concept please use the following test application:
+To test the positioning proofs of concept please use the following test application (under top folder):
+(please note that you need to build with -DWITH_TESTS=ON and -DWITH_DEBUG=ON to see something displayed)
 
 ./run-test.sh [command]
 
@@ -63,40 +92,21 @@ service:
   kill            Kill all test applications
   help            Print Help
 
-
 ===============================
-Compiler Options
-===============================
-
-If you wish to change the default cmake-options, please 
-1) open the file build-all.sh, 
-2) edit the compiler flags, 
-3) delete the build directory,
-4) recompile the code from scratch.
-
---------------------
-Example
---------------------
-
-If you wish to activate DLT logging for the GNSSService, just change the  
-value of GNSS_SERVICE_FLAGS in the file build-all.sh as follows:
-GNSS_SERVICE_FLAGS='-DWITH_DLT=ON'
-
---------------------
 Dependencies
---------------------
+===============================
 
 DWITH_GPSD=ON requires that the package 'gpsd' is installed.
 To install 'gpsd', please execute the following commands:
 sudo apt-get install gpsd
 sudo apt-get install libgps-dev
 
-To test the enhanced-positon-service (dbus-service) the packages 'libdbus-c++-dev' and 'xsltproc' must be installed.
+To test the enhanced-position-service (dbus-service) the packages 'libdbus-c++-dev' and 'xsltproc' must be installed.
 To install these packages, please execute the following commands:
 sudo apt-get install libdbus-c++-dev
 sudo apt-get install xsltproc
 
-To test the enhanced-positon-service (commonapi-service) the package CommonAPI must be installed.
+To test the enhanced-position-service (commonapi-service) the package CommonAPI must be installed.
 To install CommonAPI, please see http://git.projects.genivi.org/?p=ipc/common-api-dbus-runtime.git;a=blob;f=README
 
 DWITH_TESTS=ON enables the compilation of the test application(s).

@@ -23,6 +23,7 @@ find_program(XSLTPROC xsltproc REQUIRED)
 find_program(DBUSXML2CPP dbusxx-xml2cpp REQUIRED)
 
 set(GEN_DIR "${CMAKE_BINARY_DIR}/api")
+file(MAKE_DIRECTORY ${GEN_DIR})
 
 message(STATUS "CMAKE_CURRENT_SOURCE_DIR=" ${CMAKE_CURRENT_SOURCE_DIR})
 message(STATUS "CMAKE_BINARY_DIR=" "${CMAKE_BINARY_DIR}")
@@ -63,11 +64,9 @@ execute_process(
     OUTPUT_FILE positioning-constants.h
 )
 
-
-
-
-
-
-
-
-
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/genivi-positioning-enhancedposition.xml
+        ${CMAKE_CURRENT_SOURCE_DIR}/genivi-positioning-positionfeedback.xml
+        ${CMAKE_CURRENT_SOURCE_DIR}/genivi-positioning-configuration.xml
+        ${CMAKE_CURRENT_SOURCE_DIR}/genivi-positioning-constants.xml
+        DESTINATION share/dbus-1/interfaces
+)

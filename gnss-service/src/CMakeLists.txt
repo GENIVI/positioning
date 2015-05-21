@@ -47,18 +47,20 @@ endif()
 if(WITH_GPSD)
     pkg_check_modules(GPSD libgps>=2.94)
     #generate library using gpsd as input
-    set(LIB_SRC_USE_GPSD ${CMAKE_SOURCE_DIR}/src/gnss-use-gpsd.c 
-    ${CMAKE_SOURCE_DIR}/src/gnss-impl.c 
-    ${CMAKE_SOURCE_DIR}/src/gnss-meta-data.c)
+    set(LIB_SRC_USE_GPSD ${CMAKE_CURRENT_SOURCE_DIR}/gnss-use-gpsd.c 
+    ${CMAKE_CURRENT_SOURCE_DIR}/gnss-impl.c 
+    ${CMAKE_CURRENT_SOURCE_DIR}/gnss-meta-data.c)
     add_library(gnss-service-use-gpsd SHARED ${LIB_SRC_USE_GPSD})
     target_link_libraries(gnss-service-use-gpsd gps ${LIBRARIES})
+    install(TARGETS gnss-service-use-gpsd DESTINATION lib)
 elseif(WITH_REPLAYER)
     #generate library using replayer as input
-    set(LIB_SRC_USE_REPLAYER ${CMAKE_SOURCE_DIR}/src/gnss-use-replayer.c 
-    ${CMAKE_SOURCE_DIR}/src/gnss-impl.c 
-    ${CMAKE_SOURCE_DIR}/src/gnss-meta-data.c)
+    set(LIB_SRC_USE_REPLAYER ${CMAKE_CURRENT_SOURCE_DIR}/gnss-use-replayer.c 
+    ${CMAKE_CURRENT_SOURCE_DIR}/gnss-impl.c 
+    ${CMAKE_CURRENT_SOURCE_DIR}/gnss-meta-data.c)
     add_library(gnss-service-use-replayer SHARED ${LIB_SRC_USE_REPLAYER})
     target_link_libraries(gnss-service-use-replayer ${LIBRARIES})
+    install(TARGETS gnss-service-use-replayer DESTINATION lib)
 else()
     message(STATUS "Invalid cmake options!")
 endif()

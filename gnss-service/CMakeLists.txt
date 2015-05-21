@@ -34,27 +34,17 @@ option(WITH_REPLAYER
 option(WITH_TESTS
     "Compile test applications" OFF)
 
-option(WITH_DEBUG 
-	"Enable the debug messages" OFF)
-
 SET(CMAKE_INSTALL_RPATH "")
 #SET(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE) 
 
 message(STATUS "CMAKE_BINARY_DIR =" ${CMAKE_BINARY_DIR})
-
-message(STATUS)
-message(STATUS "---------------------------------------------------------")
 
 add_subdirectory(src)
 message(STATUS "---------------------------------------------------------")
 
 if(WITH_TESTS)
     add_subdirectory(test)
-message(STATUS "---------------------------------------------------------")
-
-add_subdirectory(test/compliance-test)
-
-message(STATUS "---------------------------------------------------------")
+    message(STATUS "---------------------------------------------------------")
+    add_subdirectory(test/compliance-test)
+    message(STATUS "---------------------------------------------------------")
 endif()
-
-message(STATUS)

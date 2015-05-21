@@ -27,19 +27,16 @@ option(WITH_DLT
 
 option(WITH_TESTS
     "Compile test applications" OFF)
-    
-option(WITH_DEBUG 
-    "Enable the debug messages" OFF)
 
-message(STATUS)
 message(STATUS "---------------------------------------------------------")
 
 add_subdirectory(src)
+message(STATUS "---------------------------------------------------------")
+
 add_subdirectory(logs)
+message(STATUS "---------------------------------------------------------")
 
 if(WITH_TESTS)
-add_subdirectory(test)
+    add_subdirectory(test)
+    message(STATUS "---------------------------------------------------------")
 endif()
-
-message(STATUS "---------------------------------------------------------")
-message(STATUS)

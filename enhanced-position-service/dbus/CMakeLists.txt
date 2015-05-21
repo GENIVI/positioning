@@ -34,9 +34,6 @@ option(WITH_REPLAYER
 option(WITH_TESTS
     "Compile test applications" OFF)
 
-option(WITH_DEBUG 
-	"Enable the debug messages" OFF)
-
 message(STATUS)
 message(STATUS "---------------------------------------------------------")
 
@@ -65,8 +62,9 @@ endif()
 include_directories(src test ${gnss-service_INCLUDE_DIRS} ${sensors-service_INCLUDE_DIRS})
 
 add_subdirectory(api)
-add_subdirectory(src)
+message(STATUS "---------------------------------------------------------")
 
+add_subdirectory(src)
 message(STATUS "---------------------------------------------------------")
 
 if(WITH_TESTS)
