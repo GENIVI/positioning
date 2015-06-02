@@ -40,7 +40,7 @@ cmake -DWITH_TESTS=ON -DWITH_DEBUG=ON ../
 make
 
 To build with tests and with dbus interface based on Franca and CommonAPI (see below how to configure CommonAPI):
-cmake -DWITH_DBUS_INTERFACE=OFF -DWITH_FRANCA_INTERFACE=ON -DWITH_TESTS=ON -DWITH_DEBUG=ON ../
+cmake -DWITH_DBUS_INTERFACE=ON -DWITH_FRANCA_INTERFACE=OFF -DWITH_TESTS=ON -DWITH_DEBUG=ON -DWITH_DLT=OFF ../
 make
 
 ===============================

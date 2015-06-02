@@ -82,7 +82,7 @@ testEnhancedPositionService()
 testEnhancedPositionService2()
 {
     echo 'Starting enhanced position service...'
-    $LOG_REPLAYER_BIN_DIR/log-replayer $LOG_REPLAYER_LOGS_DIR/geneve-cologny.log > /dev/null  2>&1  &
+    $LOG_REPLAYER_BIN_DIR/src/log-replayer $LOG_REPLAYER_LOGS_DIR/geneve-cologny.log > /dev/null  2>&1  &
     echo 'Starting log replayer...'
     $ENHANCED_POSITION_SERVICE_DBUS_BIN_DIR/src/enhanced-position-service > /dev/null 2>&1 &
     sleep 10

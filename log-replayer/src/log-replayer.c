@@ -191,7 +191,7 @@ int main(int argc, char* argv[])
         char* gnssstr = "GVGNSP,GVGNSC,GVGNSAC,GVGNSSAT";
         if(strstr(gnssstr, msgId) != NULL)
         {
-            LOG_DEBUG(gContext,"Sending Packet to %s:%d",IPADDR,PORT1);
+            LOG_DEBUG(gContext,"Sending Packet to %s:%d",ipaddr,PORT1);
             LOG_DEBUG(gContext,"MsgID:%s", msgId);
             LOG_DEBUG(gContext,"Len:%d", (int)strlen(buf));
             LOG_DEBUG(gContext,"Data:%s", buf);
@@ -209,7 +209,7 @@ int main(int argc, char* argv[])
         char* snsstr = "GVSNSVEHSP,GVSNSGYRO,GVSNSWHTK"; //subset currently supported for new log format
         if(strstr(snsstr, msgId) != NULL)
         {
-            LOG_DEBUG(gContext,"Sending Packet to %s:%d",IPADDR,PORT2);
+            LOG_DEBUG(gContext,"Sending Packet to %s:%d",ipaddr,PORT2);
             LOG_DEBUG(gContext,"MsgID:%s", msgId);
             LOG_DEBUG(gContext,"Len:%d", (int)strlen(buf));
             LOG_DEBUG(gContext,"Data:%s", buf);
