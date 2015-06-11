@@ -22,7 +22,7 @@
 $| = 1;
 open(MON,"dbus-monitor|");
 while (<MON>) {
-	if (/^method call.*;\ interface=org\.genivi\.positioning/) {
+	if (/^method call.*;\ interface=org\.genivi\.EnhancedPositionService/) {
 		$serial=$_;
 		$serial=~s/.*serial=//;
 		$serial=~s/\ path=.*//;
@@ -45,7 +45,7 @@ while (<MON>) {
 			$active=1;
 			print $_;
 		}
-	} elsif (/^signal.*;\ interface=org\.genivi\.positioning/) {
+	} elsif (/^signal.*;\ interface=org\.genivi\.EnhancedPositionService/) {
 		$active=1;
 		print $_;
 	} elsif (/^ +/) {
