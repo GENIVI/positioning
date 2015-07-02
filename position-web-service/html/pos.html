@@ -1,0 +1,103 @@
+<!------------------------------------------------------------------------- 
+ @licence app begin@
+ SPDX-License-Identifier: MPL-2.0
+
+ Component Name: PositionWebService
+
+ Author: Marco Residori
+
+ Copyright (C) 2014, XS Embedded GmbH
+ 
+ License:
+ This Source Code Form is subject to the terms of the
+ Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed with
+ this file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+ @licence end@
+------------------------------------------------------------------------->
+
+<!DOCTYPE html>
+
+<html lang='en-US'>
+	<head>
+		<meta http-equiv='Content-Type' content='text/html; charset=utf-8' />
+		<title>PositionWebService PoC</title>
+		<link rel='stylesheet' href='style.css' />
+        <script>
+            //CALLBACKS
+            function getCurrentPositionSuccessCallback(position){
+                alert("Position: lat=" + position.latitude + " lon=" + position.longitude);
+            }
+
+            function getCurrentPositionErrorCallback(position){
+                alert("Error retrieving positioning data");
+            }
+
+            function watchPositionSuccessCallback(position){
+                document.getElementById('latitude').innerHTML = position.latitude;
+                document.getElementById('longitude').innerHTML = position.longitude;
+                document.getElementById('altitude').innerHTML = position.altitude;
+                document.getElementById('speed').innerHTML = position.speed;
+            }
+
+            function watchPositionErrorCallback() {
+                alert("Error watching positioning data");
+            }
+            //CALLBACKS
+        </script>
+		<script type='text/javascript' charset='utf-8' src='PositionWebService.js'>
+		</script>
+	</head>
+
+	<body>
+		<object id='plugin' type='application/x-position-web-service' width='0' height='0'></object>
+		<header id='header'>
+			<h1>Position Web Service PoC</h1>
+		</header>
+		<section id='display'>
+			<table>
+                <!-- Label -->
+			    <tr class='title'>
+			        <th colspan='4'>POSITIONING DATA</th>
+			    </tr>
+				<tr class='label'>
+					<th class='type'>Type</th>
+					<th class='attribute' colspan='2'>Attribute</th>
+					<th class='value'>Value</th>
+				</tr>
+				<!-- Positioning Info -->
+				<tr>
+					<td rowspan='4'>Position Info</td>
+					<td colspan='2'>Latitude</td>
+					<td id='latitude'>--</td>
+				</tr>
+				<tr>
+					<td colspan='2'>Longitude</td>
+					<td id='longitude'>--</td>
+				</tr>
+				<tr>
+					<td colspan='2'>Altitude</td>
+					<td id='altitude'>--</td>
+				</tr>
+                <tr>
+					<td colspan='2'>Speed</td>
+					<td id='speed'>--</td>
+				</tr>
+                <tr>
+                   <td colspan='1'>
+					<button type="button" onclick="watchPosition(watchPositionSuccessCallback,watchPositionErrorCallback)">Start</button>
+                   </td>
+                   <td colspan='2'>
+					<button type="button" onclick="getCurrentPosition(getCurrentPositionSuccessCallback,getCurrentPositionErrorCallback)">Get Position</button>
+                   </td>	
+                    <td colspan='1'>		
+					<button type="button" onclick="clearWatch()">Stop</button>
+                   </td>
+				</tr>
+                
+            </table>
+		</section>
+	</body>
+</html>
+
+

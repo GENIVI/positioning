@@ -1,0 +1,53 @@
+===========================================
+POSITION WEB SERVICE POC
+===========================================
+The PositionWebService is a simple proof of concept (PoC) showing how positioning information 
+provided over D-Bus by the GENIVI EnhancedPositionService can be accessed within a web browser.
+
+This PoC was developed to investigate how to match the already defined positioning D-Bus 
+interface with the Web API being defined by the W3C (the focus was not code performance or stability).
+
+The translation D-Bus <-> JavaScript is realized using a FireBreath NPAPI plugin.
+
+NOTE: The JavaScript API implemented by the PoC is not part of the GENIVI standardized APIs.
+
+NOTE: The GENIVI PoC "Web API for Vehicle Data" from LG Electronics 
+      (http://git.projects.genivi.org/?p=web-api-vehicle.git) was used as reference during 
+      the development of this PoC.
+ 
+===========================================
+DEPENDENCIES
+===========================================
+In order to build and run this proof of concept, the GENIVI EnhancedPositionService
+must be installed (please read the README file in the directory enhanced-position-service
+for more information about its dependencies).
+ 
+IMPORTANT NOTE: Please install the DBus cpp bindings: https://github.com/stratustech/dbus-cpp
+                The default version of the libdbus-c++ provided by distributions like Ubuntu 
+                is old and has serious bug in the DBus dispatcher, that is (partially) solved 
+                by the version indicated above.
+
+On top of the EnhancedPositionService, the software packages Boost and Firebreath must also be installed.
+FireBreath is a "framework that allows easy creation of powerful browser plugins" (http://www.firebreath.org).
+All necessary packages are automatically downloaded and installed by the script build-all.sh.
+
+===========================================
+HOW TO BUILD THE POC
+===========================================
+
+# first of all build the EnhancedPositionService PoC
+cd positioning/
+mkdir build
+cm build
+cmake -DWITH_DBUS_INTERFACE=ON -DWITH_FRANCA_INTERFACE=OFF -DWITH_TESTS=ON -DWITH_DEBUG=ON -DWITH_DLT=OFF ../
+make
+
+# then build the PositionWebService PoC
+cd positioning/position-web-service/script
+./build-all.sh
+
+===========================================
+HOW TO RUN THE POC
+===========================================
+cd positioning/position-web-service/script
+./run-test.sh

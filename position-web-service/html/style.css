@@ -1,0 +1,114 @@
+/*
+//
+// @licence app begin@
+// SPDX-License-Identifier: MPL-2.0
+//
+// Component Name: PositionWebService
+//
+// Author: Marco Residori
+//
+// Copyright (C) 2014, XS Embedded GmbH
+// 
+// License:
+// This Source Code Form is subject to the terms of the
+// Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed with
+// this file, You can obtain one at http://mozilla.org/MPL/2.0/.
+//
+// @licence end@
+//
+*/
+
+body {
+	width: 1000px;
+	font-family: Verdana, Geneva, Arial, sans-serif;
+	font-size: 14px;
+	padding: 0px;
+	margin-left: auto;
+	margin-right: auto;
+    background-color:#222244;
+    color: white;
+}
+
+.title {
+	background-color: #111144;
+    color: #888888
+}
+
+.label {
+    background-color: #777799;
+	color: white;
+}
+
+.type { width: 100px; }
+
+.attribute { width: 260px; }
+
+.value { width: 120px; }
+
+button {
+    background-color: #777799;
+    color: white;
+    font-size: 100%;
+    text-transform: uppercase;
+    width:100%;
+    height:100%;
+ }
+
+table {
+	width: 100%;
+	border: thin solid gray;
+	border-collapse: collapse;
+}
+
+td, th {
+	border: thin solid gray;
+	padding: 5px;
+	text-align: center;
+}
+
+select {
+	width: 100%;
+	margin: 0px;
+}
+
+#header h1 {
+    width: 480px;
+	font-size: 24px;
+	text-align: center;
+}
+
+#display {
+	width: 480px;
+	margin: 0px 0px 10px 0px;
+	float: left;
+}
+
+#control {
+	width: 480px;
+	margin: 0px 0px 10px 500px;
+}
+
+#footer {
+	width: 1000px;
+	font-size: 14px;
+	text-align: center;
+	clear: left;
+}
+
+@media screen and (max-width: 1000px) {
+	body {
+		width: 500px;
+	}
+	
+	#display {
+		float: none;
+	}
+	
+	#control {
+		margin: 10px 0px 0px 0px;
+	}
+	
+	#footer {
+		width: 500px;
+	}
+}

@@ -2,11 +2,12 @@
 Positioning Git Repository
 ============================
 
-The Positioning repository is a collection of 5 proofs of concept:
+The Positioning repository is a collection of 6 proofs of concept:
 * GNSSService
 * SensorsService
 * EnhancedPositionService
 * LogReplayer
+* PositionWebService
 
 ===============================
 Directory Structure
@@ -16,6 +17,7 @@ enhanced-position-service   //2 enhanced-position-service PoCs (one with dbus in
 gnss-service                //gnss-service PoC
 log-replayer                //log-replayer-PoC
 sensors-service             //sensors-service PoC
+position-web-servce         //position-web-service PoC
 architecture.png            //architecture overview
 build-all.sh                //script to build the PoCs (usage: build-all.sh help) 
 run-test.sh                 //script to run a quick test for each PoC (usage: run-test.sh help) 
@@ -40,7 +42,7 @@ cmake -DWITH_TESTS=ON -DWITH_DEBUG=ON ../
 make
 
 To build with tests and with dbus interface based on Franca and CommonAPI (see below how to configure CommonAPI):
-cmake -DWITH_DBUS_INTERFACE=ON -DWITH_FRANCA_INTERFACE=OFF -DWITH_TESTS=ON -DWITH_DEBUG=ON -DWITH_DLT=OFF ../
+cmake -DWITH_DBUS_INTERFACE=ON -DWITH_FRANCA_INTERFACE=OFF -DWITH_TESTS=ON -DWITH_DEBUG=ON -DWITH_DLT=OFF -DCMAKE_BUILD_TYPE=Debug ../
 make
 
 ===============================
@@ -103,8 +105,10 @@ sudo apt-get install libgps-dev
 
 To test the enhanced-position-service (dbus-service) the packages 'libdbus-c++-dev' and 'xsltproc' must be installed.
 To install these packages, please execute the following commands:
-sudo apt-get install libdbus-c++-dev
 sudo apt-get install xsltproc
+sudo apt-get install libdbus-c++-dev
+NOTE: please use this version of of the dbus-c++ bindings https://github.com/stratustech/dbus-cpp.git 
+      It fixes a problem in the dispatcher that causes deadlocks when a method is called within a signal handler.     
 
 To test the enhanced-position-service (commonapi-service) the package CommonAPI must be installed.
 To install CommonAPI, please see http://git.projects.genivi.org/?p=ipc/common-api-dbus-runtime.git;a=blob;f=README
