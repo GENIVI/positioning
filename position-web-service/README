@@ -27,7 +27,7 @@ IMPORTANT NOTE: Please install the DBus cpp bindings: https://github.com/stratus
                 is old and has serious bug in the DBus dispatcher, that is (partially) solved 
                 by the version indicated above.
 
-On top of the EnhancedPositionService, the software packages Boost and Firebreath must also be installed.
+On top of the EnhancedPositionService, the software packages libgtk-2.0-dev, boost and Firebreath must also be installed.
 FireBreath is a "framework that allows easy creation of powerful browser plugins" (http://www.firebreath.org).
 All necessary packages are automatically downloaded and installed by the script build-all.sh.
 

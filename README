@@ -99,14 +99,12 @@ Dependencies
 ===============================
 
 DWITH_GPSD=ON requires that the package 'gpsd' is installed.
-To install 'gpsd', please execute the following commands:
-sudo apt-get install gpsd
-sudo apt-get install libgps-dev
+To install 'gpsd', please execute the following command:
+sudo apt-get install gpsd libgps-dev
 
-To test the enhanced-position-service (dbus-service) the packages 'libdbus-c++-dev' and 'xsltproc' must be installed.
-To install these packages, please execute the following commands:
-sudo apt-get install xsltproc
-sudo apt-get install libdbus-c++-dev
+To test the enhanced-position-service (dbus-service) the packages 'libdbus-1-dev', libdbus-c++-dev' and 'xsltproc' must be installed.
+To install these packages, please execute the following command:
+sudo apt-get install libdbus-1-dev libdbus-c++-dev xsltproc
 NOTE: please use this version of of the dbus-c++ bindings https://github.com/stratustech/dbus-cpp.git 
       It fixes a problem in the dispatcher that causes deadlocks when a method is called within a signal handler.     
 
