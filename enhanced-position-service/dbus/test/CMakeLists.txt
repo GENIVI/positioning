@@ -29,7 +29,7 @@ message(STATUS "WITH_DEBUG = ${WITH_DEBUG}")
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(DBUS_CPP dbus-c++-1)
 
-set(GEN_DIR "${CMAKE_BINARY_DIR}/api")
+set(GEN_DIR "${CMAKE_BINARY_DIR}/enhanced-position-service/dbus/api")
 
 include_directories(${GEN_DIR})  
 include_directories(${DBUS_CPP_INCLUDE_DIRS})
