@@ -108,8 +108,12 @@ sudo apt-get install libdbus-1-dev libdbus-c++-dev xsltproc
 NOTE: please use this version of of the dbus-c++ bindings https://github.com/stratustech/dbus-cpp.git 
       It fixes a problem in the dispatcher that causes deadlocks when a method is called within a signal handler.     
 
-To test the enhanced-position-service (commonapi-service) the package CommonAPI must be installed.
-To install CommonAPI, please see http://git.projects.genivi.org/?p=ipc/common-api-dbus-runtime.git;a=blob;f=README
+To test the enhanced-position-service (commonapi-service) the package CommonAPI and CommonAPI code generators must be installed.
+Please see: 
+http://git.projects.genivi.org/?p=ipc/common-api-runtime.git;a=blob;f=INSTALL
+http://git.projects.genivi.org/?p=ipc/common-api-dbus-runtime.git;a=blob;f=INSTALL
+http://git.projects.genivi.org/?p=ipc/common-api-dbus-tools.git;a=blob;f=INSTALL
+http://git.projects.genivi.org/?p=ipc/common-api-tools.git;a=blob;f=INSTALL
 
 DWITH_TESTS=ON enables the compilation of the test application(s).
 

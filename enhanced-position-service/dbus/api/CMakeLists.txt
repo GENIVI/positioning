@@ -22,7 +22,7 @@ message(STATUS "Generate stubs and proxies of enhanced-position-service")
 find_program(XSLTPROC xsltproc REQUIRED)
 find_program(DBUSXML2CPP dbusxx-xml2cpp REQUIRED)
 
-set(GEN_DIR "${CMAKE_BINARY_DIR}/api")
+set(GEN_DIR "${CMAKE_BINARY_DIR}/enhanced-position-service/dbus/api")
 file(MAKE_DIRECTORY ${GEN_DIR})
 
 message(STATUS "CMAKE_CURRENT_SOURCE_DIR=" ${CMAKE_CURRENT_SOURCE_DIR})

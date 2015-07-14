@@ -19,8 +19,8 @@
 #ifndef POSITIONFEEDBACKSTUBIMPL_H_
 #define POSITIONFEEDBACKSTUBIMPL_H_
 
-#include <CommonAPI/CommonAPI.h>
-#include <org/genivi/EnhancedPositionService/PositionFeedbackStubDefault.h>
+#include <CommonAPI/CommonAPI.hpp>
+#include <org/genivi/EnhancedPositionService/PositionFeedbackStubDefault.hpp>
 
 using namespace org::genivi::EnhancedPositionService;
 
@@ -29,8 +29,10 @@ class PositionFeedbackStubImpl: public PositionFeedbackStubDefault {
 public:
     PositionFeedbackStubImpl();
     virtual ~PositionFeedbackStubImpl();
-    void GetVersion(EnhancedPositionServiceTypes::Version& version);
-    void SetPositionFeedback(std::vector<PositionFeedback::PositionFeedbackInfo> feedback, uint64_t timestamp, EnhancedPositionServiceTypes::PositionFeedbackType feedbackType);
+
+    void GetVersion(const std::shared_ptr<CommonAPI::ClientId> _client, GetVersionReply_t _reply);
+    void SetPositionFeedback(const std::shared_ptr<CommonAPI::ClientId> _client, ::org::genivi::EnhancedPositionService::EnhancedPositionServiceTypes::PositionFeedbackInfo _feedback, uint64_t _timestamp, ::org::genivi::EnhancedPositionService::EnhancedPositionServiceTypes::PositionFeedbackType _feedbackType, SetPositionFeedbackReply_t _reply);
+
     void run();
     void shutdown();
 

@@ -16,7 +16,7 @@
 * @licence end@
 **************************************************************************/
 
-#include "ConfigurationStubImpl.h"
+#include "ConfigurationStubImpl.hpp"
 #include "log.h"
 
 //Configuration-interface version
@@ -27,45 +27,44 @@
 
 DLT_IMPORT_CONTEXT(gCtx);
 
-using namespace org::genivi::EnhancedPositionService::EnhancedPositionServiceTypes;
+using namespace org::genivi::EnhancedPositionService;
 
 ConfigurationStubImpl::ConfigurationStubImpl() {
 
    setUpdateIntervalAttribute(1000); //set default time interval
 
-   mSupportedSatSystems.push_back(SatelliteSystem::GALILEO);
-   mSupportedSatSystems.push_back(SatelliteSystem::GPS);
+   mSupportedSatSystems.push_back(EnhancedPositionServiceTypes::SatelliteSystem::GALILEO);
+   mSupportedSatSystems.push_back(EnhancedPositionServiceTypes::SatelliteSystem::GPS);
 
-   setSatSystemAttribute(SatelliteSystem::GALILEO); //set default GNSS system
+   setSatSystemAttribute(EnhancedPositionServiceTypes::SatelliteSystem::GALILEO); //set default GNSS system
 }
 
 ConfigurationStubImpl::~ConfigurationStubImpl() {
 }
 
-void ConfigurationStubImpl::GetVersion(EnhancedPositionServiceTypes::Version& version) {
+void ConfigurationStubImpl::GetVersion(const std::shared_ptr<CommonAPI::ClientId> _client, GetVersionReply_t _reply) {
     LOG_INFO_MSG(gCtx,"GetVersion");
 
-    version.maj = VER_MAJOR;
-    version.min = VER_MINOR;
-    version.mic = VER_MICRO;
-    version.date = std::string(VER_DATE);
+    EnhancedPositionServiceTypes::Version ConfigurationVersion(VER_MAJOR,VER_MINOR,VER_MICRO,std::string(VER_DATE));
+    
+    _reply(ConfigurationVersion);
 }
 
 //check if the value belongs to the list of supported satellite systems
 bool ConfigurationStubImpl::validateSatSystemAttributeRequestedValue(const EnhancedPositionServiceTypes::SatelliteSystem& value) {
-    return std::find(mSupportedSatSystems.begin(), mSupportedSatSystems.end(), value) != mSupportedSatSystems.end();
+    return true; //(std::find(mSupportedSatSystems.begin(), mSupportedSatSystems.end(), value) != mSupportedSatSystems.end());
 }
 
-void ConfigurationStubImpl::GetSupportedSatelliteSystems(std::vector<EnhancedPositionServiceTypes::SatelliteSystem>& satelliteSystems) {
+void ConfigurationStubImpl::GetSupportedSatelliteSystems(const std::shared_ptr<CommonAPI::ClientId> _client, GetSupportedSatelliteSystemsReply_t _reply) {
 	//add a list of supported satellite systems
-	satelliteSystems = mSupportedSatSystems;
+    _reply(mSupportedSatSystems);
 }
 
 void ConfigurationStubImpl::run()
 {
     LOG_INFO_MSG(gCtx,"Starting Configuration dispatcher...");
     setUpdateIntervalAttribute(1000); //set default time interval
-    setSatSystemAttribute(SatelliteSystem::GALILEO); //set default GNSS system
+    setSatSystemAttribute(EnhancedPositionServiceTypes::SatelliteSystem::GALILEO); //set default GNSS system
 }
 
 void ConfigurationStubImpl::shutdown()

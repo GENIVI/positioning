@@ -1,0 +1,7 @@
+
+Copy the configuration file commonapi-dbus.ini in a directory of your choice
+
+Set the environment variable COMMONAPI_DBUS_DEFAULT_CONFIG before starting the EnhancedPositionService.
+
+Example:
+export COMMONAPI_DBUS_DEFAULT_CONFIG=<your path>/commonapi-dbus.ini

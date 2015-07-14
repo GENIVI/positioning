@@ -4,14 +4,14 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-#include <CommonAPI/CommonAPI.h>
-#include <org/genivi/EnhancedPositionService/EnhancedPositionProxy.h>
+#include <CommonAPI/CommonAPI.hpp>
+#include <org/genivi/EnhancedPositionService/EnhancedPositionProxy.hpp>
 #include "log.h"
+#include <unistd.h>
 
 DLT_DECLARE_CONTEXT(gCtx);
 
 using namespace org::genivi::EnhancedPositionService;
-using namespace org::genivi::EnhancedPositionService::EnhancedPositionServiceTypes;
 
 void getPositionInfoAsyncCallback(const CommonAPI::CallStatus& callStatus, const EnhancedPositionServiceTypes::Timestamp& timestamp, const EnhancedPositionServiceTypes::PositionInfo& posInfo)
 {
@@ -21,27 +21,27 @@ void getPositionInfoAsyncCallback(const CommonAPI::CallStatus& callStatus, const
     }
 
     for ( auto it = posInfo.begin(); it != posInfo.end(); ++it ) {
-        if (it->first == PositionInfoKey::LATITUDE)
+        if (it->first == EnhancedPositionServiceTypes::PositionInfoKey::LATITUDE)
         {
             LOG_INFO(gCtx,"LAT=%lf", it->second.get<double>());
         }
-        if (it->first == PositionInfoKey::LONGITUDE)
+        if (it->first == EnhancedPositionServiceTypes::PositionInfoKey::LONGITUDE)
         {
     	    LOG_INFO(gCtx,"LON=%lf", it->second.get<double>());
         }
-        if (it->first == PositionInfoKey::ALTITUDE)
+        if (it->first == EnhancedPositionServiceTypes::PositionInfoKey::ALTITUDE)
         {
             LOG_INFO(gCtx,"ALT=%lf", it->second.get<float>());
         }
-        if (it->first == PositionInfoKey::SPEED)
+        if (it->first == EnhancedPositionServiceTypes::PositionInfoKey::SPEED)
         {
             LOG_INFO(gCtx,"SPEED=%lf", it->second.get<float>());
         }
-        if (it->first == PositionInfoKey::CLIMB)
+        if (it->first == EnhancedPositionServiceTypes::PositionInfoKey::CLIMB)
         {
             LOG_INFO(gCtx,"CLIMB=%lf", it->second.get<float>());
         }
-        if (it->first == PositionInfoKey::HEADING)
+        if (it->first == EnhancedPositionServiceTypes::PositionInfoKey::HEADING)
         {
             LOG_INFO(gCtx,"HEADING=%lf", it->second.get<float>());
         }
@@ -71,11 +71,12 @@ int main() {
     DLT_REGISTER_APP("ENHC","ENHANCED-POSITION-CLIENT");
     DLT_REGISTER_CONTEXT(gCtx,"ENHC","Global Context");
 
-    std::shared_ptr < CommonAPI::Runtime > runtime = CommonAPI::Runtime::load();
-    std::shared_ptr < CommonAPI::Factory > factory = runtime->createFactory();
+    std::shared_ptr < CommonAPI::Runtime > runtime = CommonAPI::Runtime::get();
 
-    const std::string& serviceAddress = "local:org.genivi.positioning.EnhancedPosition:org.genivi.positioning.EnhancedPosition";
-    std::shared_ptr<EnhancedPositionProxyDefault> myProxy = factory->buildProxy<EnhancedPositionProxy>(serviceAddress);
+    const std::string &domain = "local";
+    const std::string &instance = "EnhancedPositionService";
+
+    std::shared_ptr<EnhancedPositionProxyDefault> myProxy = runtime->buildProxy<EnhancedPositionProxy>(domain,instance);
 
     LOG_INFO_MSG(gCtx,"EnhancedPositionClient");
 

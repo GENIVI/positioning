@@ -61,7 +61,7 @@ endif()
 
 include_directories(src test ${gnss-service_INCLUDE_DIRS} ${sensors-service_INCLUDE_DIRS})
 
-#add_subdirectory(api)
+add_subdirectory(api)
 add_subdirectory(src)
 
 

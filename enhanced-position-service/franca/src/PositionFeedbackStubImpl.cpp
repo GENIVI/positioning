@@ -16,7 +16,7 @@
 * @licence end@
 **************************************************************************/
 
-#include "PositionFeedbackStubImpl.h"
+#include "PositionFeedbackStubImpl.hpp"
 #include "log.h"
 
 //PositionFeedback-interface version
@@ -33,17 +33,18 @@ PositionFeedbackStubImpl::PositionFeedbackStubImpl() {
 PositionFeedbackStubImpl::~PositionFeedbackStubImpl() {
 }
 
-void PositionFeedbackStubImpl::GetVersion(EnhancedPositionServiceTypes::Version& version) {
+void PositionFeedbackStubImpl::GetVersion(const std::shared_ptr<CommonAPI::ClientId> _client, GetVersionReply_t _reply) {
     LOG_INFO_MSG(gCtx,"GetVersion");
 
-    version.maj = VER_MAJOR;
-    version.min = VER_MINOR;
-    version.mic = VER_MICRO;
-    version.date = std::string(VER_DATE);
+    EnhancedPositionServiceTypes::Version PositionFeedbackVersion(VER_MAJOR,VER_MINOR,VER_MICRO,std::string(VER_DATE));
+
+    _reply(PositionFeedbackVersion);
 }
 
-void PositionFeedbackStubImpl::SetPositionFeedback(std::vector<PositionFeedback::PositionFeedbackInfo> feedback, uint64_t timestamp, EnhancedPositionServiceTypes::PositionFeedbackType feedbackType) {
+void PositionFeedbackStubImpl::SetPositionFeedback(const std::shared_ptr<CommonAPI::ClientId> _client, ::org::genivi::EnhancedPositionService::EnhancedPositionServiceTypes::PositionFeedbackInfo _feedback, uint64_t _timestamp, ::org::genivi::EnhancedPositionService::EnhancedPositionServiceTypes::PositionFeedbackType _feedbackType, SetPositionFeedbackReply_t _reply) 
+{
     LOG_WARNING_MSG(gCtx,"Method not supported yet");
+    _reply(); 
 }
 
 void PositionFeedbackStubImpl::run()

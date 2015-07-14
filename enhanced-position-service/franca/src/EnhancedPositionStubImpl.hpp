@@ -19,8 +19,8 @@
 #ifndef ENHANCEDPOSITIONSTUBIMPL_H_
 #define ENHANCEDPOSITIONSTUBIMPL_H_
 
-#include <CommonAPI/CommonAPI.h>
-#include <org/genivi/EnhancedPositionService/EnhancedPositionStubDefault.h>
+#include <CommonAPI/CommonAPI.hpp>
+#include <org/genivi/EnhancedPositionService/EnhancedPositionStubDefault.hpp>
 #include "gnss-init.h"
 #include "gnss.h"
 
@@ -31,8 +31,11 @@ class EnhancedPositionStubImpl: public EnhancedPositionStubDefault {
 public:
     EnhancedPositionStubImpl();
     virtual ~EnhancedPositionStubImpl();
-    void GetVersion(EnhancedPositionServiceTypes::Version& version);
-    void GetPositionInfo(EnhancedPositionServiceTypes::Bitmask valuesToReturn, EnhancedPositionServiceTypes::Timestamp& timestamp, EnhancedPositionServiceTypes::PositionInfo& data);
+
+
+    void GetVersion(const std::shared_ptr<CommonAPI::ClientId> _client, GetVersionReply_t _reply);
+
+    void GetPositionInfo(const std::shared_ptr<CommonAPI::ClientId> _client, ::org::genivi::EnhancedPositionService::EnhancedPositionServiceTypes::Bitmask _valuesToReturn, GetPositionInfoReply_t _reply);
     void run();
     void shutdown();
 private:

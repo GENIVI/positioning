@@ -1,6 +1,4 @@
 # Copyright (C) 2014 BMW Group
-# Author: Manfred Bathelt (manfred.bathelt@bmw.de)
-# Author: Juergen Gehring (juergen.gehring@bmw.de)
 # Author: Marco Residori (marco_residori@mentor.com)
 # This Source Code Form is subject to the terms of the Mozilla Public
 # License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -26,56 +24,51 @@ message(STATUS "WITH_REPLAYER = ${WITH_REPLAYER}")
 message(STATUS "WITH_TESTS = ${WITH_TESTS}")
 message(STATUS "WITH_DEBUG = ${WITH_DEBUG}")
 
-set(DBUS_LIB_PATH /usr/lib)
-# DBus Path
-if (DBUS_LIB_PATH)
-  message(STATUS "DBUS_LIB_PATH = " ${DBUS_LIB_PATH})
-else()
-  message(FATAL_ERROR "Please specify the path to your patched DBus library using -D DBUS_LIB_PATH=yourPath")
-endif()
+find_package(PkgConfig REQUIRED)
+find_package(CommonAPI 3.1.2 REQUIRED)
+find_package(CommonAPI-DBus 3.1.2 REQUIRED)
 
 # CommonAPI
 include(FindPkgConfig)
 pkg_check_modules (DBUS "dbus-1 >= 1.4")
-pkg_check_modules (COMMONAPI "CommonAPI >= 2.1")
-pkg_check_modules (COMMONAPI_DBUS "CommonAPI-DBus >= 2.1")
+pkg_check_modules(COMMONAPI "CommonAPI >= 3.1")
+pkg_check_modules (COMMONAPI_DBUS "CommonAPI-DBus >= 3.1")
 
 # Source Files
-set(PRJ_SRC_PATH .)
-set(PRJ_SRC_GEN_PATH gen/org/genivi/EnhancedPositionService)
+set(PRJ_SRC_PATH ${CMAKE_CURRENT_SOURCE_DIR})
+set(PRJ_SRC_GEN_ROOT ${CMAKE_BINARY_DIR}/enhanced-position-service/franca/api)
+set(PRJ_SRC_GEN_PATH ${PRJ_SRC_GEN_ROOT}/org/genivi/EnhancedPositionService)
 
 set(PRJ_NAME_CLIENT ${PROJECT_NAME}Client)
 set(PRJ_NAME_SERVICE ${PROJECT_NAME}Service)
 
-STRING(REGEX REPLACE "^e" "E" PRJ_DATA_IMPL "${PRJ_NAME}")
-FILE(GLOB PRJ_PROXY_GEN_SRCS ${PRJ_SRC_GEN_PATH}/*Proxy.cpp ${PRJ_SRC_GEN_PATH}/*Types.cpp ${PRJ_SRC_GEN_PATH}/${PRJ_DATA_IMPL}.cpp)
-FILE(GLOB PRJ_STUB_GEN_SRCS ${PRJ_SRC_GEN_PATH}/*Stub*.cpp ${PRJ_SRC_GEN_PATH}/*Types.cpp ${PRJ_SRC_GEN_PATH}/${PRJ_DATA_IMPL}.cpp)
+FILE(GLOB PRJ_PROXY_GEN_SRCS ${PRJ_SRC_GEN_PATH}/*Proxy.cpp ${PRJ_SRC_GEN_PATH}/*Types.cpp)
+FILE(GLOB PRJ_STUB_GEN_SRCS ${PRJ_SRC_GEN_PATH}/*Stub*.cpp ${PRJ_SRC_GEN_PATH}/*Types.cpp)
 FILE(GLOB PRJ_STUB_IMPL_SRCS ${PRJ_SRC_PATH}/*Stub*.cpp)
 
 set(PRJ_CLIENT_SRCS ${PRJ_SRC_PATH}/${PRJ_NAME_CLIENT}.cpp ${PRJ_PROXY_GEN_SRCS})
 set(PRJ_SERVICE_SRCS ${PRJ_SRC_PATH}/${PRJ_NAME_SERVICE}.cpp ${PRJ_STUB_GEN_SRCS} ${PRJ_STUB_IMPL_SRCS})
 
+message(STATUS "PRJ_SRC_GEN_ROOT = " ${PRJ_SRC_GEN_ROOT})
 message(STATUS "PRJ_SRC_PATH = " ${PRJ_SRC_PATH})
 message(STATUS "PRJ_SRC_GEN_PATH = " ${PRJ_SRC_GEN_PATH})
-
-# Paths
-message(STATUS "COMMONAPI_INCLUDEDIR = " ${COMMONAPI_INCLUDEDIR})
-message(STATUS "COMMONAPI_DBUS_INCLUDEDIR = " ${COMMONAPI_DBUS_INCLUDEDIR})
+message(STATUS "COMMONAPI_INCLUDE_DIRS = " ${COMMONAPI_INCLUDE_DIRS})
+message(STATUS "COMMONAPI_DBUS_INCLUDE_DIRS = " ${COMMONAPI_DBUS_INCLUDE_DIRS})
 message(STATUS "PRJ_CLIENT_SRCS = " ${PRJ_CLIENT_SRCS})
 message(STATUS "PRJ_SERVICE_SRCS = " ${PRJ_SERVICE_SRCS})
 
 include_directories(
-    gen
+    ${PRJ_SRC_GEN_ROOT}
     ${DBUS_INCLUDE_DIRS}
-    ${COMMONAPI_INCLUDEDIR}/CommonAPI-2.1
-    ${COMMONAPI_DBUS_INCLUDEDIR}
+    ${COMMONAPI_INCLUDE_DIRS}
+    ${COMMONAPI_DBUS_INCLUDE_DIRS}
     ${CMAKE_CURRENT_BINARY_DIR}
     ${gnss-service_INCLUDE_DIRS}
     ${sensors-service_INCLUDE_DIRS}
 )
 
 link_directories(
-    ${DBUS_LIB_PATH}
+    ${DBUS_LIBDIR}
     ${gnss-service_LIBRARY_DIRS}
     ${sensors-service_LIBRARY_DIRS}
     ${COMMONAPI_LIBDIR}
@@ -83,7 +76,7 @@ link_directories(
 )
 
 set(LIBRARIES 
-    ${DBUS_CPP_LIBRARIES}
+    ${DBUS_LIBRARIES}
     ${gnss-service_LIBRARIES}
     ${sensors-service_LIBRARIES}
 )
@@ -108,5 +101,10 @@ target_link_libraries(${PRJ_NAME_CLIENT} ${LIBRARIES} CommonAPI CommonAPI-DBus)
 add_executable(${PRJ_NAME_SERVICE} ${PRJ_SERVICE_SRCS})
 target_link_libraries(${PRJ_NAME_SERVICE} ${LIBRARIES} CommonAPI CommonAPI-DBus)
 
+message(STATUS "CMAKE_CURRENT_BINARY_DIR!!!!!!!!!! = " ${CMAKE_CURRENT_BINARY_DIR})
+message(STATUS "PRJ_STUB_IMPL_SRCS!!!!!!!!!! = " ${PRJ_STUB_IMPL_SRCS})
+message(STATUS "PRJ_STUB_GEN_SRCS!!!!!!!!!! = " ${PRJ_STUB_GEN_SRCS})
+message(STATUS "COMMONAPI_INCLUDE_DIRS!!!!!!!!!! = " ${COMMONAPI_INCLUDE_DIRS})
+message(STATUS "COMMONAPI_LIBDIR!!!!!!!!!! = " ${COMMONAPI_LIBDIR})
 
 

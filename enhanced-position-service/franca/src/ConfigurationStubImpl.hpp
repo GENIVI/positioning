@@ -19,8 +19,8 @@
 #ifndef CONFIGURATIONSTUBIMPL_H_
 #define CONFIGURATIONSTUBIMPL_H_
 
-#include <CommonAPI/CommonAPI.h>
-#include <org/genivi/EnhancedPositionService/ConfigurationStubDefault.h>
+#include <CommonAPI/CommonAPI.hpp>
+#include <org/genivi/EnhancedPositionService/ConfigurationStubDefault.hpp>
 
 using namespace org::genivi::EnhancedPositionService;
 
@@ -29,8 +29,8 @@ class ConfigurationStubImpl: public ConfigurationStubDefault {
 public:
     ConfigurationStubImpl();
     virtual ~ConfigurationStubImpl();
-    void GetVersion(EnhancedPositionServiceTypes::Version& version);
-    void GetSupportedSatelliteSystems(std::vector<EnhancedPositionServiceTypes::SatelliteSystem>& satelliteSystems);
+    void GetVersion(const std::shared_ptr<CommonAPI::ClientId> _client, GetVersionReply_t _reply);
+    void GetSupportedSatelliteSystems(const std::shared_ptr<CommonAPI::ClientId> _client, GetSupportedSatelliteSystemsReply_t _reply);
     void run();
     void shutdown();
 
