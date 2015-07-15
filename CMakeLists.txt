@@ -34,6 +34,8 @@ option(WITH_DBUS_INTERFACE
 option(WITH_DEBUG
         "Enable the debug messages" OFF)
 
+message(STATUS "---------------------------------------------------------")
+
 if(WITH_ENHANCED_POSITION_SERVICE)
 	add_subdirectory(enhanced-position-service)
 endif(WITH_ENHANCED_POSITION_SERVICE)

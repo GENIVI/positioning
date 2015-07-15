@@ -37,8 +37,6 @@ option(WITH_TESTS
 SET(CMAKE_INSTALL_RPATH "")
 #SET(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE) 
 
-message(STATUS "CMAKE_BINARY_DIR =" ${CMAKE_BINARY_DIR})
-
 add_subdirectory(src)
 message(STATUS "---------------------------------------------------------")
 

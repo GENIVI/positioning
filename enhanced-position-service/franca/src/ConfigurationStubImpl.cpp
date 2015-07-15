@@ -52,7 +52,15 @@ void ConfigurationStubImpl::GetVersion(const std::shared_ptr<CommonAPI::ClientId
 
 //check if the value belongs to the list of supported satellite systems
 bool ConfigurationStubImpl::validateSatSystemAttributeRequestedValue(const EnhancedPositionServiceTypes::SatelliteSystem& value) {
-    return true; //(std::find(mSupportedSatSystems.begin(), mSupportedSatSystems.end(), value) != mSupportedSatSystems.end());
+
+    for (unsigned int i = 0; i < mSupportedSatSystems.size(); i++)
+    {
+       if(mSupportedSatSystems[i] == value)
+       {   
+           return true; //found
+       }
+    }
+    return false; //not found
 }
 
 void ConfigurationStubImpl::GetSupportedSatelliteSystems(const std::shared_ptr<CommonAPI::ClientId> _client, GetSupportedSatelliteSystemsReply_t _reply) {

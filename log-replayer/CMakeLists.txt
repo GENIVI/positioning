@@ -28,15 +28,14 @@ option(WITH_DLT
 option(WITH_TESTS
     "Compile test applications" OFF)
 
-message(STATUS "---------------------------------------------------------")
 
 add_subdirectory(src)
 message(STATUS "---------------------------------------------------------")
 
 add_subdirectory(logs)
-message(STATUS "---------------------------------------------------------")
 
 if(WITH_TESTS)
     add_subdirectory(test)
     message(STATUS "---------------------------------------------------------")
 endif()
+

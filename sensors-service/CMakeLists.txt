@@ -37,9 +37,6 @@ option(WITH_IPHONE
 option(WITH_TESTS
     "Compile test applications" OFF)
 
-message(STATUS)
-message(STATUS "---------------------------------------------------------")
-
 add_subdirectory(src)
 message(STATUS "---------------------------------------------------------")
 

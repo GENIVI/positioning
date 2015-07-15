@@ -34,9 +34,6 @@ option(WITH_REPLAYER
 option(WITH_TESTS
     "Compile test applications" OFF)
 
-message(STATUS)
-message(STATUS "---------------------------------------------------------")
-
 set(gnss-service_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/../../gnss-service/api")
 set(gnss-service_LIBRARY_DIRS "${PROJECT_BINARY_DIR}/../../gnss-service/src")
 

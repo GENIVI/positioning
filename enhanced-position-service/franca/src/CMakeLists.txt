@@ -15,9 +15,7 @@ set(CMAKE_VERBOSE_MAKEFILE on)
 set(CMAKE_CXX_FLAGS "-Wall -std=c++0x")
 set(CMAKE_BUILD_TYPE Debug)
 
-message(STATUS)
-message(STATUS "---------------------------------------------------------")
-message(STATUS "ENHANCED-POSITION-SERVICE-COMMON-API")
+message(STATUS "ENHANCED-POSITION-SERVICE-FRANCA")
 message(STATUS "WITH_DLT = ${WITH_DLT}")
 message(STATUS "WITH_GPSD = ${WITH_GPSD}")
 message(STATUS "WITH_REPLAYER = ${WITH_REPLAYER}")
@@ -100,11 +98,5 @@ target_link_libraries(${PRJ_NAME_CLIENT} ${LIBRARIES} CommonAPI CommonAPI-DBus)
 # Build service
 add_executable(${PRJ_NAME_SERVICE} ${PRJ_SERVICE_SRCS})
 target_link_libraries(${PRJ_NAME_SERVICE} ${LIBRARIES} CommonAPI CommonAPI-DBus)
-
-message(STATUS "CMAKE_CURRENT_BINARY_DIR!!!!!!!!!! = " ${CMAKE_CURRENT_BINARY_DIR})
-message(STATUS "PRJ_STUB_IMPL_SRCS!!!!!!!!!! = " ${PRJ_STUB_IMPL_SRCS})
-message(STATUS "PRJ_STUB_GEN_SRCS!!!!!!!!!! = " ${PRJ_STUB_GEN_SRCS})
-message(STATUS "COMMONAPI_INCLUDE_DIRS!!!!!!!!!! = " ${COMMONAPI_INCLUDE_DIRS})
-message(STATUS "COMMONAPI_LIBDIR!!!!!!!!!! = " ${COMMONAPI_LIBDIR})
 
 

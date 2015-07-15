@@ -40,7 +40,6 @@ target_link_libraries(log-replayer ${LIBRARIES})
 
 install(TARGETS log-replayer DESTINATION bin)
 
-message(STATUS "---------------------------------------------------------")
 
 
 

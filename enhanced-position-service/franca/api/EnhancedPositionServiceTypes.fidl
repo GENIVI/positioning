@@ -38,29 +38,29 @@ typeCollection EnhancedPositionServiceTypes {
     }
 
     enumeration PositionInfoKey {
-        LATITUDE           = 0x00000001
-        LONGITUDE          = 0x00000002
-        ALTITUDE           = 0x00000004
-        HEADING            = 0x00000008
-        SPEED              = 0x00000010
-        CLIMB              = 0x00000020
-        ROLL_RATE          = 0x00000040
-        PITCH_RATE         = 0x00000080
-        YAW_RATE           = 0x00000100
-        PDOP               = 0x00000200
-        HDOP               = 0x00000400
-        VDOP               = 0x00000800
-        USED_SATELLITES    = 0x00001000
-        TRACKED_SATELLITES = 0x00002000
-        VISIBLE_SATELLITES = 0x00004000
-        SIGMA_HPOSITION    = 0x00008000
-        SIGMA_ALTITUDE     = 0x00010000
-        SIGMA_HEADING      = 0x00020000
-        SIGMA_SPEED        = 0x00040000
-        SIGMA_CLIMB        = 0x00080000
-        GNSS_FIX_STATUS    = 0x00100000
-        DR_STATUS          = 0x00200000
-        RELIABILTY_INDEX   = 0x00400000
+        LATITUDE           = 1
+        LONGITUDE          = 2
+        ALTITUDE           = 4
+        HEADING            = 8
+        SPEED              = 16
+        CLIMB              = 32
+        ROLL_RATE          = 64
+        PITCH_RATE         = 128
+        YAW_RATE           = 256
+        PDOP               = 512
+        HDOP               = 1024
+        VDOP               = 2048
+        USED_SATELLITES    = 4096
+        TRACKED_SATELLITES = 8192
+        VISIBLE_SATELLITES = 16384
+        SIGMA_HPOSITION    = 32768
+        SIGMA_ALTITUDE     = 65536
+        SIGMA_HEADING      = 131072
+        SIGMA_SPEED        = 262144
+        SIGMA_CLIMB        = 524288
+        GNSS_FIX_STATUS    = 1048576
+        DR_STATUS          = 2097152
+        RELIABILTY_INDEX   = 4194304
     } 
     
     <** @description : PositionInfo = array of tuples (key,value)
@@ -93,10 +93,10 @@ typeCollection EnhancedPositionServiceTypes {
     }
 
     enumeration SatelliteSystem {
-        GPS     = 0x00000001
-        GLONASS = 0x00000002
-        GALILEO = 0x00000003
-        COMPASS = 0x00000004 
+        GPS     = 1
+        GLONASS = 2
+        GALILEO = 3
+        COMPASS = 4 
     }
     
     <** @description : SatelliteInfo = array(struct(system,satelliteId,azimuth,elevation,snr,inUse))
@@ -116,14 +116,17 @@ typeCollection EnhancedPositionServiceTypes {
         Boolean inUse
     }
     
+    <** @description: since the hexadecimal format is not supported by Franca yet
+           the bitmask below is expressed using numbers in decimal format.
+           Example: 0x01000000 = 16777216 **> 
     enumeration TimeInfoKey  {
-        YEAR   = 0x01000000
-        MONTH  = 0x02000000
-        DAY    = 0x04000000
-        HOUR   = 0x08000000
-        MINUTE = 0x10000000
-        SECOND = 0x20000000
-        MS     = 0x40000000
+        YEAR   = 16777216   
+        MONTH  = 33554432  
+        DAY    = 67108864   
+        HOUR   = 134217728  
+        MINUTE = 268435456  
+        SECOND = 536870912  
+        MS     = 1073741824 
     }
 
     <** @description : TimeInfo = array of tuples (key,value)
@@ -141,18 +144,18 @@ typeCollection EnhancedPositionServiceTypes {
     }
     
     enumeration PositionFeedbackKey {
-        LATITUDE         = 0x00000001
-        LONGITUDE        = 0x00000002
-        ALTITUDE         = 0x00000004
-        HEADING          = 0x00000008
-        SPEED            = 0x00000010
-        CLIMB            = 0x00000020
-        RELIABILTY_INDEX = 0x00400000
+        LATITUDE         = 1
+        LONGITUDE        = 2
+        ALTITUDE         = 4
+        HEADING          = 8
+        SPEED            = 16
+        CLIMB            = 32
+        RELIABILTY_INDEX = 64
     }
     
     enumeration PositionFeedbackType {
-        MAP_MATCHED_FEEDBACK = 0x00000001
-        TEST_FEEDBACK        = 0x00000002
+        MAP_MATCHED_FEEDBACK = 1
+        TEST_FEEDBACK        = 2
     }
 
     <**
