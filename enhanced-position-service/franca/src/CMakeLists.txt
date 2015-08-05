@@ -23,8 +23,8 @@ message(STATUS "WITH_TESTS = ${WITH_TESTS}")
 message(STATUS "WITH_DEBUG = ${WITH_DEBUG}")
 
 find_package(PkgConfig REQUIRED)
-find_package(CommonAPI 3.1.2 REQUIRED)
-find_package(CommonAPI-DBus 3.1.2 REQUIRED)
+find_package(CommonAPI 3.1.3 REQUIRED)
+find_package(CommonAPI-DBus 3.1.3 REQUIRED)
 
 # CommonAPI
 include(FindPkgConfig)
@@ -77,6 +77,8 @@ set(LIBRARIES
     ${DBUS_LIBRARIES}
     ${gnss-service_LIBRARIES}
     ${sensors-service_LIBRARIES}
+    CommonAPI
+    CommonAPI-DBus
 )
 
 if(WITH_DLT)
@@ -93,10 +95,10 @@ endif()
 
 # Build Client
 add_executable(${PRJ_NAME_CLIENT} ${PRJ_CLIENT_SRCS})
-target_link_libraries(${PRJ_NAME_CLIENT} ${LIBRARIES} CommonAPI CommonAPI-DBus)
+target_link_libraries(${PRJ_NAME_CLIENT} ${LIBRARIES})
 
 # Build service
 add_executable(${PRJ_NAME_SERVICE} ${PRJ_SERVICE_SRCS})
-target_link_libraries(${PRJ_NAME_SERVICE} ${LIBRARIES} CommonAPI CommonAPI-DBus)
+target_link_libraries(${PRJ_NAME_SERVICE} ${LIBRARIES})
 
 
