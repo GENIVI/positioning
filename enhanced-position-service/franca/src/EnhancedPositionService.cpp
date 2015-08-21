@@ -24,30 +24,29 @@ int main() {
 
     std::string domain = "local";
     std::string instance = "EnhancedPositionService";
-	std::string connection = "EnhancedPositionService";
 
     std::shared_ptr<EnhancedPositionStubImpl> myServiceEnhancedPosition = std::make_shared<EnhancedPositionStubImpl>();
     
-    bool successfullyRegistered = runtime->registerService(domain, instance, myServiceEnhancedPosition, connection);
+    bool successfullyRegistered = runtime->registerService(domain, instance, myServiceEnhancedPosition);
     while (!successfullyRegistered) {
 		std::this_thread::sleep_for(std::chrono::milliseconds(100));
-		successfullyRegistered = runtime->registerService(domain, instance, myServiceEnhancedPosition, connection);
+		successfullyRegistered = runtime->registerService(domain, instance, myServiceEnhancedPosition);
 	}
     myServiceEnhancedPosition->run();
 
     std::shared_ptr<PositionFeedbackStubImpl> myServicePositionFeedback = std::make_shared<PositionFeedbackStubImpl>();
-    successfullyRegistered = runtime->registerService(domain, instance, myServicePositionFeedback, connection);
+    successfullyRegistered = runtime->registerService(domain, instance, myServicePositionFeedback);
     while (!successfullyRegistered) {
 		std::this_thread::sleep_for(std::chrono::milliseconds(100));
-		successfullyRegistered = runtime->registerService(domain, instance, myServicePositionFeedback, connection);
+		successfullyRegistered = runtime->registerService(domain, instance, myServicePositionFeedback);
 	}
     myServicePositionFeedback->run();
 
     std::shared_ptr<ConfigurationStubImpl> myServiceConfiguration = std::make_shared<ConfigurationStubImpl>();
-    successfullyRegistered = runtime->registerService(domain, instance, myServiceConfiguration, connection);
+    successfullyRegistered = runtime->registerService(domain, instance, myServiceConfiguration);
     while (!successfullyRegistered) {
 		std::this_thread::sleep_for(std::chrono::milliseconds(100));
-		successfullyRegistered = runtime->registerService(domain, instance, myServiceConfiguration, connection);
+		successfullyRegistered = runtime->registerService(domain, instance, myServiceConfiguration);
 	}
     myServiceConfiguration->run();
     

@@ -1,0 +1,104 @@
+{
+	"unicast" : "192.168.0.101",
+	"logging" :
+	{
+		"level" : "debug",
+		"console" : "true",
+		"file" : { "enable" : "false", "path" : "/var/log/vsomeip.log" },
+		"dlt" : "false"
+	},
+	"applications" : 
+	[
+		{
+         "name" : "EnhancedPositionService",
+         "id" : "0x4444"
+		},
+		{
+         "name" : "EnhancedPositionClient",
+         "id" : "0x5555"
+		}			
+	],
+	"servicegroups" :
+	[
+		{
+			"name" : "default",
+			"delays" :
+			{
+				"initial" : { "minimum" : "10", "maximum" : "100" },
+				"repetition-base" : "200",
+				"repetition-max" : "3",
+				"cyclic-offer" : "2000",
+				"cyclic-request" : "2001"
+			},
+	         "services" : 
+	         [
+	            {
+	               "service" : "0x3E9",
+	               "instance" : "0x7D0",
+	               "unreliable" : "30509",
+	               "events" :
+				   [
+					   {
+					       "event" : "0xbba",
+						   "is_field" : "true"
+					   },
+					   {
+					       "event" : "0xfa2",
+						   "is_field" : "true"
+					   }
+				   ],
+	               "eventgroups" :
+				   [
+						{
+							"eventgroup" : "0xbba",
+							"events" : [ "0xbba" ]
+						},
+						{
+							"eventgroup" : "0xfa2",
+							"events" : [ "0xfa2" ]
+						}
+				   ]
+	            }
+	         ],
+	         "services" : 
+	         [
+	            {
+	               "service" : "0x3EA",
+	               "instance" : "0x7D0",
+	               "unreliable" : "30509",
+	               "events" :
+				   [
+				       {
+					       "event" : "0x2328",
+						   "is_field" : "true"
+					   }
+				   ],
+	               "eventgroups" :
+				   [
+						{
+							"eventgroup" : "0x2328",
+							"events" : [ "0x2328" ]
+						}
+				   ]
+	            }
+	         ],
+	         "services" : 
+	         [
+	            {
+	               "service" : "0x3EB",
+	               "instance" : "0x7D0",
+	               "unreliable" : "30509"
+	            }
+	         ]
+		}
+	],
+	"routing" : "EnhancedPositionService",
+	"service-discovery" :
+	{
+		"enable" : "true",
+		"multicast" : "224.244.224.245",
+		"port" : "30490",
+		"protocol" : "udp"
+	}
+}
+

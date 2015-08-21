@@ -15,6 +15,9 @@
 #
 # Update (2015/05/11) : Jonathan Maw <jonathan.maw@codethink.co.uk>
 #               - First write
+# Update (2015/08/19) : Marco Residori <marco_residori@mentor.com>
+#               - Added option WITH_FRANCA_SOMEIP_INTERFACE
+#               - Renamed WITH_FRANCA_INTERFACE to WITH_FRANCA_DBUS_INTERFACE
 # @licence end@
 ###########################################################################
 cmake_minimum_required(VERSION 2.6.0)
@@ -27,12 +30,14 @@ option(WITH_LOG_REPLAYER
        "Build the Log Replayer" ON)
 option(WITH_SENSORS_SERVICE
        "Build the Sensors Service" ON)
-option(WITH_FRANCA_INTERFACE
-       "Build using the Franca interfaces" OFF)
+option(WITH_FRANCA_DBUS_INTERFACE
+       "Build using the Franca DBus interfaces" OFF)
+option(WITH_FRANCA_SOMEIP_INTERFACE
+       "Build using the Franca SomeIP interfaces" OFF)
 option(WITH_DBUS_INTERFACE
        "Build using the D-Bus interfaces" ON)
 option(WITH_DEBUG
-        "Enable the debug messages" OFF)
+       "Enable the debug messages" OFF)
 
 message(STATUS "---------------------------------------------------------")
 

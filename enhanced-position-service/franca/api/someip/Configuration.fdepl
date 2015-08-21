@@ -1,0 +1,45 @@
+import "platform:/plugin/org.genivi.commonapi.someip/deployment/CommonAPI-SOMEIP_deployment_spec.fdepl"
+import "../Configuration.fidl"
+import "../EnhancedPositionServiceTypes.fidl"
+
+define org.genivi.commonapi.someip.deployment for interface org.genivi.EnhancedPositionService.Configuration {
+	SomeIpServiceID = 1001
+
+	attribute SatSystem {
+            SomeIpGetterID = 3000
+		    SomeIpSetterID = 3001
+		    SomeIpNotifierID = 3002
+		    SomeIpGetterReliable    = true
+            SomeIpSetterReliable    = true
+            SomeIpNotifierReliable  = true
+            SomeIpEventGroups = { 3002 }
+    }
+
+    attribute UpdateInterval {
+            SomeIpGetterID = 4000
+		    SomeIpSetterID = 4001
+		    SomeIpNotifierID = 4002
+            SomeIpGetterReliable    = true
+            SomeIpSetterReliable    = true
+            SomeIpNotifierReliable  = true
+            SomeIpEventGroups = { 4002 }       
+    }
+
+	method GetVersion {
+        	SomeIpMethodID = 5000
+	        SomeIpReliable = true
+	}
+   
+    method GetSupportedSatelliteSystems {
+            SomeIpMethodID = 6000
+	        SomeIpReliable = true
+    }
+}
+
+define org.genivi.commonapi.someip.deployment for provider EnhancedPositionService {
+	instance org.genivi.EnhancedPositionService.Configuration {
+		InstanceId = "EnhancedPositionService"
+		SomeIpInstanceID = 2000
+		SomeIpUnicastAddress = "127.0.0.1"
+	}
+}

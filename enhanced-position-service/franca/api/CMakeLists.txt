@@ -28,23 +28,15 @@ option(COMMONAPI_TOOL_GENERATOR
        "Absolute path to CommonAPI code generator" "")
 option(COMMONAPI_DBUS_TOOL_GENERATOR
        "Absolute path to CommonAPI-DBus code generator" "")
+option(COMMONAPI_SOMEIP_TOOL_GENERATOR
+       "Absolute path to CommonAPI-SomeIP code generator" "")
 
 set(COMMONAPI_FIDL_DIR "${CMAKE_CURRENT_SOURCE_DIR}")
 set(COMMONAPI_GEN_DIR "${CMAKE_BINARY_DIR}/enhanced-position-service/franca/api")
 
-find_package(PkgConfig REQUIRED)
-
-include(FindPkgConfig)
-
-message("CMAKE_BINARY_DIR" ${CMAKE_BINARY_DIR})
-message("COMMONAPI_GEN_DIR" ${COMMONAPI_GEN_DIR})
-message("COMMONAPI_FIDL_DIR" ${COMMONAPI_FIDL_DIR})
-message("CMAKE_CURRENT_SOURCE_DIR" ${CMAKE_CURRENT_SOURCE_DIR})
-
-# generate code from fidl
 file(GLOB FIDL_FILES "${COMMONAPI_FIDL_DIR}/*.fidl")
-message("FIDL_FILES: ${FIDL_FILES}")
 
+# generate CommonAPI generic code from fidl files
 if (COMMONAPI_TOOL_GENERATOR)
     execute_process(WORKING_DIRECTORY ${COMMONAPI_FIDL_DIR}
                 COMMAND ${COMMONAPI_TOOL_GENERATOR} -sk -d ${COMMONAPI_GEN_DIR} ${FIDL_FILES})
@@ -53,13 +45,45 @@ else ()
     message (FATAL_ERROR "Set the variable -DCOMMONAPI_TOOL_GENERATOR=<path>")
 endif ()
 
-if (COMMONAPI_DBUS_TOOL_GENERATOR)
-     execute_process(WORKING_DIRECTORY ${COMMONAPI_FIDL_DIR}
+# generate DBus specific code from fidl files
+if (WITH_FRANCA_DBUS_INTERFACE)
+
+    if (COMMONAPI_DBUS_TOOL_GENERATOR)
+        execute_process(WORKING_DIRECTORY ${COMMONAPI_FIDL_DIR}
                 COMMAND ${COMMONAPI_DBUS_TOOL_GENERATOR} -d ${COMMONAPI_GEN_DIR} ${FIDL_FILES})
-     message("COMMONAPI_DBUS_TOOL_GENERATOR=" ${COMMONAPI_DBUS_TOOL_GENERATOR})
-else ()
-    message (FATAL_ERROR "Set the variable -DCOMMONAPI_DBUS_TOOL_GENERATOR=<path>")
+        message("COMMONAPI_DBUS_TOOL_GENERATOR=" ${COMMONAPI_DBUS_TOOL_GENERATOR})
+    else ()
+        message (FATAL_ERROR "Set the variable -DCOMMONAPI_DBUS_TOOL_GENERATOR=<path>")
+    endif ()
+
 endif ()
+
+# generate SomeIP specific code from fidl files
+if (WITH_FRANCA_SOMEIP_INTERFACE)
+
+    file(GLOB SOMEIP_FDEPL_FILES "${COMMONAPI_FIDL_DIR}/someip/*.fdepl")
+    message("SOMEIP_FDEPL_FILES: ${SOMEIP_FDEPL_FILES}")
+
+    if (COMMONAPI_SOMEIP_TOOL_GENERATOR)
+        execute_process(WORKING_DIRECTORY ${COMMONAPI_FIDL_DIR} 
+                COMMAND ${COMMONAPI_SOMEIP_TOOL_GENERATOR} -d ${COMMONAPI_GEN_DIR} ${SOMEIP_FDEPL_FILES})
+        message("COMMONAPI_SOMEIP_TOOL_GENERATOR=" ${COMMONAPI_SOMEIP_TOOL_GENERATOR})
+    else ()
+        message (FATAL_ERROR "Set the variable -DCOMMONAPI_SOMEIP_TOOL_GENERATOR=<path>")
+    endif ()
+
+endif ()
+
+message("FIDL_FILES: ${FIDL_FILES}")
+message("COMMONAPI_FIDL_DIR" ${COMMONAPI_FIDL_DIR})
+message("COMMONAPI_GEN_DIR" ${COMMONAPI_GEN_DIR})
+message("CMAKE_BINARY_DIR" ${CMAKE_BINARY_DIR})
+message("CMAKE_CURRENT_SOURCE_DIR" ${CMAKE_CURRENT_SOURCE_DIR})
+
+
+
+
+
 
 
 

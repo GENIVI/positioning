@@ -13,7 +13,7 @@ The Positioning repository is a collection of 6 proofs of concept:
 Directory Structure
 ===============================
 
-enhanced-position-service   //2 enhanced-position-service PoCs (one with dbus interfaces and one with commonapi interfaces)
+enhanced-position-service   //3 enhanced-position-service PoCs (one with dbus interfaces, one with commonapi-dbus interfaces and one one with commonapi-someip interfaces)
 gnss-service                //gnss-service PoC
 log-replayer                //log-replayer-PoC
 sensors-service             //sensors-service PoC
@@ -41,8 +41,16 @@ To build with tests:
 cmake -DWITH_TESTS=ON -DWITH_DEBUG=ON ../
 make
 
-To build with tests and with dbus interface based on Franca and CommonAPI (see below how to configure CommonAPI):
-cmake -DWITH_DBUS_INTERFACE=ON -DWITH_FRANCA_INTERFACE=OFF -DWITH_TESTS=ON -DWITH_DEBUG=ON -DWITH_DLT=OFF -DCMAKE_BUILD_TYPE=Debug ../
+To build with tests and with dbus interfaces:
+cmake -DWITH_DBUS_INTERFACE=ON -DWITH_FRANCA_DBUS_INTERFACE=OFF -DWITH_FRANCA_SOMEIP_INTERFACE=OFF -DWITH_TESTS=ON -DWITH_DEBUG=ON -DWITH_DLT=OFF -DCMAKE_BUILD_TYPE=Debug ../
+make
+
+To build with tests and with interfaces based on Franca and CommonAPI (see below how to configure CommonAPI):
+cmake -DWITH_DBUS_INTERFACE=ON -DWITH_FRANCA_DBUS_INTERFACE=ON -DWITH_FRANCA_SOMEIP_INTERFACE=ON 
+-DWITH_TESTS=ON -DWITH_DEBUG=ON -DWITH_DLT=OFF -DCMAKE_BUILD_TYPE=Debug 
+-DCOMMONAPI_TOOL_GENERATOR=<path to generator> 
+-DCOMMONAPI_DBUS_TOOL_GENERATOR=<path to generator> 
+-DCOMMONAPI_SOMEIP_TOOL_GENERATOR=<path to generator> ../
 make
 
 ===============================
@@ -58,8 +66,10 @@ option(WITH_LOG_REPLAYER
        "Build the Log Replayer" ON)
 option(WITH_SENSORS_SERVICE
        "Build the Sensors Service" ON)
-option(WITH_FRANCA_INTERFACE
-       "Build using the Franca interfaces" OFF)
+option(WITH_FRANCA_DBUS_INTERFACE
+       "Build using the Franca DBus interfaces" OFF)
+option(WITH_FRANCA_SOMEIP_INTERFACE
+       "Build using the Franca SomeIP interfaces" OFF)
 option(WITH_DBUS_INTERFACE
        "Build using the D-Bus interfaces" ON)
 option(WITH_DEBUG

@@ -1,0 +1,9 @@
+import "platform:/plugin/org.genivi.commonapi.someip/deployment/CommonAPI-SOMEIP_deployment_spec.fdepl"
+import "../EnhancedPositionServiceTypes.fidl"
+
+define org.genivi.commonapi.someip.deployment for typeCollection
+org.genivi.EnhancedPositionService.EnhancedPositionServiceTypes as EnhancedPositionServiceTypes {
+
+}
+
+

@@ -59,11 +59,12 @@ void positionUpdate(std::shared_ptr<EnhancedPositionProxyDefault> proxy, const E
     }
 
     std::function<void(const CommonAPI::CallStatus&,
-		               const EnhancedPositionServiceTypes::Timestamp&,
-		               const EnhancedPositionServiceTypes::PositionInfo&)> fcb = getPositionInfoAsyncCallback;
+    		               const EnhancedPositionServiceTypes::Timestamp&,
+    		               const EnhancedPositionServiceTypes::PositionInfo&)> fcb = getPositionInfoAsyncCallback;
 
     proxy->GetPositionInfoAsync(changedValues,getPositionInfoAsyncCallback);
 
+    LOG_INFO_MSG(gCtx,"Position Update finished");
 }
 
 int main() {
@@ -73,10 +74,12 @@ int main() {
 
     std::shared_ptr < CommonAPI::Runtime > runtime = CommonAPI::Runtime::get();
 
-    const std::string &domain = "local";
-    const std::string &instance = "EnhancedPositionService";
+    const std::string domain = "local";
+    const std::string instance = "EnhancedPositionService";
+    const std::string connection = "EnhancedPositionClient";
 
-    std::shared_ptr<EnhancedPositionProxyDefault> myProxy = runtime->buildProxy<EnhancedPositionProxy>(domain,instance);
+    std::shared_ptr<EnhancedPositionProxyDefault> myProxy =
+    		runtime->buildProxy<EnhancedPositionProxy>(domain, instance);
 
     LOG_INFO_MSG(gCtx,"EnhancedPositionClient");
 
@@ -84,12 +87,14 @@ int main() {
         usleep(10);
     }
 
+    std::cout << "Proxy available" << std::endl;
+
     myProxy->getPositionUpdateEvent().subscribe([&](const EnhancedPositionServiceTypes::Bitmask& changedValues) {
         positionUpdate(myProxy, changedValues);
     });
 
     while (true) {
-        std::this_thread::sleep_for(std::chrono::seconds(5));
+        std::this_thread::sleep_for(std::chrono::seconds(20));
     }
 
     return 0;

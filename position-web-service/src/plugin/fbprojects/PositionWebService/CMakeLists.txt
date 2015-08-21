@@ -34,6 +34,7 @@ set(ENHANCED_POS_SERVICE_API ${CMAKE_CURRENT_SOURCE_DIR}/../../../../../enhanced
 message(STATUS "ENHANCED_POS_SERVICE_API: " ${ENHANCED_POS_SERVICE_API})
 
 message(STATUS "BINARY DIR: " ${CMAKE_CURRENT_BINARY_DIR})
+message(STATUS "BINARY DIR: " ${DBUS_CPP_INCLUDE_DIRS})
 
 add_custom_target (
   interfaceGenerator ALL

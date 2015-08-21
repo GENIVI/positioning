@@ -15,14 +15,16 @@
 #
 # Update (2015/05/11) : Jonathan Maw <jonathan.maw@codethink.co.uk>
 #               - First write
+# Update (2015/08/19) : Marco Residori <marco_residori@mentor.com>
+#               - Added support of WITH_FRANCA_SOMEIP_INTERFACE and WITH_FRANCA_DBUS_INTERFACE
 # @licence end@
 ###########################################################################
 cmake_minimum_required(VERSION 2.6.0)
 
 if(WITH_DBUS_INTERFACE)
 	add_subdirectory(dbus)
-endif(WITH_DBUS_INTERFACE)
+endif()
 
-if(WITH_FRANCA_INTERFACE)
+if(WITH_FRANCA_DBUS_INTERFACE OR WITH_FRANCA_SOMEIP_INTERFACE)
 	add_subdirectory(franca)
-endif(WITH_FRANCA_INTERFACE)
+endif()

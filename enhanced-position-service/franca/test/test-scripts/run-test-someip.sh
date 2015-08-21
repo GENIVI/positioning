@@ -22,25 +22,30 @@ TOP_DIR=../../../..
 LOGS_DIR=$TOP_DIR/log-replayer/logs
 LOGREPLAYER_DIR=$TOP_DIR/build/log-replayer/src
 ENHPOS_DIR=$TOP_DIR/build/enhanced-position-service/franca/src
-ENHPOS_CONFIG=$TOP_DIR/enhanced-position-service/franca/res/commonapi-dbus.ini
+ENHPOS_RES=$TOP_DIR/enhanced-position-service/franca/res
 
 echo "Test started"
 
 $LOGREPLAYER_DIR/log-replayer $LOGS_DIR/geneve-cologny.log > /dev/null 2>&1 &
 
-export COMMONAPI_DBUS_DEFAULT_CONFIG=$ENHPOS_CONFIG
-$ENHPOS_DIR/EnhancedPositionService &
+COMMONAPI_DEFAULT_CONFIG=$ENHPOS_RES/commonapi4someip.ini \
+VSOMEIP_CONFIGURATION_FILE=$ENHPOS_RES/EnhancedPositionService.json \
+VSOMEIP_APPLICATION_NAME=EnhancedPositionService \
+$ENHPOS_DIR/EnhancedPositionServiceSomeIP &
 
 sleep 1
 
-$ENHPOS_DIR/EnhancedPositionClient &
+COMMONAPI_DEFAULT_CONFIG=$ENHPOS_RES/commonapi4someip.ini \
+VSOMEIP_CONFIGURATION_FILE=$ENHPOS_RES/EnhancedPositionService.json \
+VSOMEIP_APPLICATION_NAME=EnhancedPositionClient \
+$ENHPOS_DIR/EnhancedPositionClientSomeIP &
 
 sleep 10
 
 echo "Test finished"
 
-killall EnhancedPositionClient
-killall EnhancedPositionService
+killall EnhancedPositionClientSomeIP
+killall EnhancedPositionServiceSomeIP
 killall log-replayer
 
 

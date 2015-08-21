@@ -84,8 +84,8 @@ testEnhancedPositionService2()
     echo 'Starting enhanced position service...'
     $LOG_REPLAYER_BIN_DIR/src/log-replayer $LOG_REPLAYER_LOGS_DIR/geneve-cologny.log > /dev/null  2>&1  &
     echo 'Starting log replayer...'
-    $ENHANCED_POSITION_SERVICE_DBUS_BIN_DIR/src/enhanced-position-service > /dev/null 2>&1 &
-    sleep 10
+    $ENHANCED_POSITION_SERVICE_DBUS_BIN_DIR/src/enhanced-position-service &
+    sleep 1000
     echo 'Stopping test...'
     killall enhanced-position-service
     killall log-replayer
