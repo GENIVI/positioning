@@ -7,17 +7,18 @@ The master branch is a development branch.
 The head revision is not guaranteed to be stable.
 Stable versions are marked using git tags.
  
-The positoning repository contains the standardized APIs and the proof of concept of three GENIVI components: 
-GNSSService, SensorsService and EnhancedPositionService.
+The positioning repository contains the standardized APIs and the proof of concept of three GENIVI components: 
+the GNSSService, the SensorsService and the EnhancedPositionService.
 
-Prefixes have been used to identify the tags of these trhee components:
+Prefixes have been used to distinguish tags referring to different components:
  GNSS -> GNSSService
  SNS -> SensorsService
  ENPOS -> EnhancedPositionService
 
 The versions used in the tags must always match the versions of the GENIVI components specifications contained in the folder 'doc'.
 Example: 
-The tag ENPOS-3.0.0 identifies a stable version that contains GENIVI_EnhancedPositionService_ComponentSpecification.pdf v3.0.0
+The tag ENPOS-3.0.0 identifies a stable version of the EnhancedPositionService that contains the document
+GENIVI_EnhancedPositionService_ComponentSpecification.pdf version 3.0.0.
 
 Versions
 ------------

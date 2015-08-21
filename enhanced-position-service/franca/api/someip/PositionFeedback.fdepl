@@ -3,23 +3,23 @@ import "../PositionFeedback.fidl"
 import "../EnhancedPositionServiceTypes.fidl"
 
 define org.genivi.commonapi.someip.deployment for interface org.genivi.EnhancedPositionService.PositionFeedback {
-	SomeIpServiceID = 1003
+    SomeIpServiceID = 1003
 
-	method GetVersion {
+    method GetVersion {
         SomeIpMethodID = 5000
-	    SomeIpReliable = true
-	}
+        SomeIpReliable = true
+    }
 
-	method SetPositionFeedback {
+    method SetPositionFeedback {
         SomeIpMethodID = 6000
-	    SomeIpReliable = true
-	}
+        SomeIpReliable = true
+    }
 }
 
 define org.genivi.commonapi.someip.deployment for provider EnhancedPositionService {
-	instance org.genivi.EnhancedPositionService.PositionFeedback {
-		InstanceId = "EnhancedPositionService"
-		SomeIpInstanceID = 2000
-		SomeIpUnicastAddress = "127.0.0.1"
-	}
+    instance org.genivi.EnhancedPositionService.PositionFeedback {
+        InstanceId = "EnhancedPositionService"
+        SomeIpInstanceID = 2000
+        SomeIpUnicastAddress = "127.0.0.1"
+    }
 }
