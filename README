@@ -2,7 +2,7 @@
 Positioning Git Repository
 ============================
 
-The Positioning repository is a collection of 6 proofs of concept:
+The Positioning repository is a collection of proofs of concept:
 * GNSSService
 * SensorsService
 * EnhancedPositionService
@@ -13,7 +13,10 @@ The Positioning repository is a collection of 6 proofs of concept:
 Directory Structure
 ===============================
 
-enhanced-position-service   //3 enhanced-position-service PoCs (one with dbus interfaces, one with commonapi-dbus interfaces and one one with commonapi-someip interfaces)
+enhanced-position-service   //three enhanced-position-service PoCs: 
+                              1) with dbus interfaces, 
+                              2) with commonapi-dbus interfaces, 
+                              3) with commonapi-someip interfaces.
 gnss-service                //gnss-service PoC
 log-replayer                //log-replayer-PoC
 sensors-service             //sensors-service PoC
@@ -22,7 +25,6 @@ architecture.png            //architecture overview
 build-all.sh                //script to build the PoCs (usage: build-all.sh help) 
 run-test.sh                 //script to run a quick test for each PoC (usage: run-test.sh help) 
 positioning_x.y.bb          //version x.y of a Yocto recipe for the positioning PoCs
-
 
 ===============================
 How To Build
@@ -41,12 +43,12 @@ To build with tests:
 cmake -DWITH_TESTS=ON -DWITH_DEBUG=ON ../
 make
 
-To build with tests and with dbus interfaces:
+To build with dbus interfaces:
 cmake -DWITH_DBUS_INTERFACE=ON -DWITH_FRANCA_DBUS_INTERFACE=OFF -DWITH_FRANCA_SOMEIP_INTERFACE=OFF -DWITH_TESTS=ON -DWITH_DEBUG=ON -DWITH_DLT=OFF -DCMAKE_BUILD_TYPE=Debug ../
 make
 
-To build with tests and with interfaces based on Franca and CommonAPI (see below how to configure CommonAPI):
-cmake -DWITH_DBUS_INTERFACE=ON -DWITH_FRANCA_DBUS_INTERFACE=ON -DWITH_FRANCA_SOMEIP_INTERFACE=ON 
+To build with interfaces based on Franca and CommonAPI (see below how to configure CommonAPI):
+cmake -DWITH_DBUS_INTERFACE=OFF -DWITH_FRANCA_DBUS_INTERFACE=ON -DWITH_FRANCA_SOMEIP_INTERFACE=ON 
 -DWITH_TESTS=ON -DWITH_DEBUG=ON -DWITH_DLT=OFF -DCMAKE_BUILD_TYPE=Debug 
 -DCOMMONAPI_TOOL_GENERATOR=<path to generator> 
 -DCOMMONAPI_DBUS_TOOL_GENERATOR=<path to generator> 
@@ -119,9 +121,12 @@ sudo apt-get install libdbus-1-dev libdbus-c++-dev xsltproc
 To test the enhanced-position-service (commonapi-service) the package CommonAPI and CommonAPI code generators must be installed.
 Please see: 
 http://git.projects.genivi.org/?p=ipc/common-api-runtime.git;a=blob;f=INSTALL
+http://git.projects.genivi.org/?p=ipc/common-api-tools.git;a=blob;f=INSTALL
 http://git.projects.genivi.org/?p=ipc/common-api-dbus-runtime.git;a=blob;f=INSTALL
 http://git.projects.genivi.org/?p=ipc/common-api-dbus-tools.git;a=blob;f=INSTALL
-http://git.projects.genivi.org/?p=ipc/common-api-tools.git;a=blob;f=INSTALL
+http://git.projects.genivi.org/?p=common-api/cpp-someip-runtime.git;a=blob;f=INSTALL
+http://git.projects.genivi.org/?p=common-api/cpp-someip-tools.git;a=blob;f=INSTALL
+http://git.projects.genivi.org/?p=vSomeIP.git;a=blob;f=README
 
 DWITH_TESTS=ON enables the compilation of the test application(s).
 
