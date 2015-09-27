@@ -73,7 +73,7 @@ int main(int argc, char* argv[])
     {
         readBytes = recvfrom(s, buf, BUFLEN, 0, (struct sockaddr *) &si_other, &slen);
 
-        if(readBytes == -1)
+        if(readBytes < 0)
         {
             LOG_ERROR_MSG(gContext,"recvfrom() failed!");
             return EXIT_FAILURE;

@@ -438,7 +438,6 @@ void *listenForMessages( void *ptr )
 {  
     struct sockaddr_in si_me;
     struct sockaddr_in si_other;
-    //int s;
     socklen_t slen = sizeof(si_other);
     ssize_t readBytes = 0;
     char buf[BUFLEN];
@@ -471,7 +470,7 @@ void *listenForMessages( void *ptr )
     { 
         readBytes = recvfrom(s, buf, BUFLEN, 0, (struct sockaddr *)&si_other, (socklen_t *)&slen);
 
-        if(readBytes == -1)
+        if(readBytes < 0)
         {
             LOG_ERROR_MSG(gContext,"recvfrom() failed!");
             exit(EXIT_FAILURE);
