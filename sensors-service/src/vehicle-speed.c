@@ -80,7 +80,7 @@ bool snsVehicleSpeedDeregisterCallback(VehicleSpeedCallback callback)
 
 bool snsVehicleSpeedGetMetaData(TSensorMetaData *data)
 {
-    if(data != 0) 
+    if(!data) 
     {
         return false;
     }

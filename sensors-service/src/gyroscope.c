@@ -102,7 +102,7 @@ bool snsGyroscopeDeregisterCallback(GyroscopeCallback callback)
 
 bool snsGyroscopeGetMetaData(TSensorMetaData *data)
 {
-    if(data != 0) 
+    if(!data) 
     {
         return false;
     }

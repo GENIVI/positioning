@@ -106,7 +106,7 @@ bool snsAccelerationDeregisterCallback(AccelerationCallback callback)
 
 bool snsAccelerationGetMetaData(TSensorMetaData *data)
 {
-    if(data != 0) 
+    if(!data) 
     {
         return false;
     }
