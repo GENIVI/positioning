@@ -22,6 +22,7 @@
 message(STATUS "GNSS-SERVICE-COMPLIANCE-TEST")
 message( STATUS "WITH_DLT = ${WITH_DLT}")
 message( STATUS "WITH_GPSD = ${WITH_GPSD}")
+message( STATUS "WITH_NMEA = ${WITH_NMEA}")
 message( STATUS "WITH_REPLAYER = ${WITH_REPLAYER}")
 message(STATUS "WITH_DEBUG = ${WITH_DEBUG}")
 
@@ -36,7 +37,9 @@ add_executable(gnss-service-compliance-test ${SRCS})
 
 if(WITH_GPSD)
     pkg_check_modules(GPSD libgps>=2.94)
-    set(LIBRARIES gnss-service-use-gpsd gps)  
+    set(LIBRARIES gnss-service-use-gpsd gps)
+elseif(WITH_NMEA)
+    set(LIBRARIES gnss-service-use-nmea rt)    
 elseif(WITH_REPLAYER)
     set(LIBRARIES gnss-service-use-replayer) 
 else()

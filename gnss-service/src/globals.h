@@ -27,18 +27,18 @@
 #include "gnss.h"
 #include "gnss-meta-data.h"
 
-extern pthread_mutex_t mutexCb;
-extern pthread_mutex_t mutexData;
-
-extern TGNSSSatelliteDetail gSatelliteDetail; //TODO: buffer full set of satellite details for one point in time
-extern TGNSSPosition gPosition;
-extern TGNSSTime gTime;
-
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 extern const TGnssMetaData gMetaData;
 
-extern GNSSSatelliteDetailCallback cbSatelliteDetail;
-extern GNSSPositionCallback cbPosition;
-extern GNSSTimeCallback cbTime;
+void updateGNSSTime(const TGNSSTime time[], uint16_t numElements);
+void updateGNSSPosition(const TGNSSPosition position[], uint16_t numElements);
+void updateGNSSSatelliteDetail(const TGNSSSatelliteDetail satelliteDetail[], uint16_t numElements);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* GLOBALS_H */

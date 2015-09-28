@@ -35,8 +35,6 @@
 static struct gps_data_t gpsdata;
 
 pthread_t listenerThread;
-pthread_mutex_t mutexCb;
-pthread_mutex_t mutexData;
 bool isRunning = false;
 
 DLT_DECLARE_CONTEXT(gContext);
@@ -256,10 +254,7 @@ bool extractPosition(struct gps_data_t* pGpsData, TGNSSPosition* pPosition)
    
     if (positionAvailable || velocityAvailable || fixStatusChanged || satellitesChanged)
     {
-        if(cbPosition != 0)
-        {
-            cbPosition(pPosition,1);
-        }
+        updateGNSSPosition(pPosition,1);
     }
     
     return true;
@@ -297,10 +292,7 @@ bool extractTime(struct gps_data_t* pGpsData, TGNSSTime* pTime)
             LOG_DEBUG(gContext,"UTC: %04d-%s-%02d %02d:%02d:%02d", pTime->year, month[pTime->month%12], pTime->day, pTime->hour, pTime->minute, pTime->second);
         }
 
-        if(cbTime != 0)
-        {
-            cbTime(pTime,1);
-        }
+        updateGNSSTime(pTime,1);
     }
     return true;
 }
@@ -349,21 +341,16 @@ void *listen( void *ptr )
         {
             if(gps_read(&gpsdata))
             {
-                pthread_mutex_lock(&mutexData);
-
-
-                if(!extractPosition(&gpsdata,&gPosition))
+                TGNSSPosition position;
+                if(!extractPosition(&gpsdata,&position))
                 {
                     LOG_ERROR_MSG(gContext,"error extracting position data");
                 }
-
-                if(!extractTime(&gpsdata,&gTime))
+                TGNSSTime time;
+                if(!extractTime(&gpsdata,&time))
                 {
                     LOG_ERROR_MSG(gContext,"error extracting Time");
                 }
-
-
-                pthread_mutex_unlock(&mutexData);
             }
         }
     }

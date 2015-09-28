@@ -22,6 +22,7 @@
 message(STATUS "GNSS-SERVICE-CLIENT")
 message( STATUS "WITH_DLT = ${WITH_DLT}")
 message( STATUS "WITH_GPSD = ${WITH_GPSD}")
+message( STATUS "WITH_NMEA = ${WITH_NMEA}")
 message( STATUS "WITH_REPLAYER = ${WITH_REPLAYER}")
 message(STATUS "WITH_DEBUG = ${WITH_DEBUG}")
 
@@ -35,7 +36,9 @@ set(SRCS ${CMAKE_CURRENT_SOURCE_DIR}/gnss-service-client.c)
 add_executable(gnss-service-client ${SRCS})
 
 if(WITH_GPSD)
-    set(LIBRARIES gnss-service-use-gpsd gps)  
+    set(LIBRARIES gnss-service-use-gpsd gps)
+elseif(WITH_NMEA)
+    set(LIBRARIES gnss-service-use-nmea rt)     
 elseif(WITH_REPLAYER)
     set(LIBRARIES gnss-service-use-replayer) 
 else()

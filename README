@@ -55,6 +55,10 @@ cmake -DWITH_DBUS_INTERFACE=OFF -DWITH_FRANCA_DBUS_INTERFACE=ON -DWITH_FRANCA_SO
 -DCOMMONAPI_SOMEIP_TOOL_GENERATOR=<path to generator> ../
 make
 
+To build with tests and reading GPS NMEA data from a GPS receiver attached to /dev/ttyACM0 at 38400
+cmake -DWITH_NMEA=ON -DWITH_TESTS=ON -DWITH_DEBUG=ON -DGNSS_DEVICE=\"/dev/ttyACM0\" -DGNSS_BAUDRATE=B38400 ../
+make
+
 ===============================
 Compiler Options and default setting
 (see dependencies below)
@@ -80,6 +84,8 @@ option(WITH_DLT
     "Enable DLT logging" OFF)
 option(WITH_GPSD
     "Use GPSD as source of GPS data" OFF)
+option(WITH_NMEA
+    "Use NMEA as source of GPS data" OFF)   
 option(WITH_REPLAYER
     "Use REPLAYER as source of GPS data" ON)
 option(WITH_TESTS
@@ -135,6 +141,11 @@ To download the DLT-daemon, just execute the following command:
 git clone git://git.projects.genivi.org/dlt-daemon.git
 To install the DLT-daemon, etxract the tarball and follow the 
 instructions in the file install.txt.
+Note: You may have to call 
+  export PKG_CONFIG_PATH=/usr/lib/pkgconfig
+before  
+  sudo ldconfig
+to add DLT to the pkgconfig search path before calling cmake
 
 DWITH_IPHONE=ON requires that the iPhone app 'SensorLogger' is
 installed on a iPhone and that the option to broadcast the

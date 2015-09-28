@@ -27,6 +27,9 @@ option(WITH_DLT
 
 option(WITH_GPSD
     "Use GPSD as source of GPS data" OFF)
+    
+option(WITH_NMEA
+    "Use NMEA as source of GPS data" OFF)    
 
 option(WITH_REPLAYER
     "Use REPLAYER as source of GPS data" ON)
@@ -39,6 +42,8 @@ set(gnss-service_LIBRARY_DIRS "${PROJECT_BINARY_DIR}/../../gnss-service/src")
 
 if(WITH_GPSD)
     set(gnss-service_LIBRARIES "gnss-service-use-gpsd")
+elseif(WITH_NMEA)
+    set(gnss-service_LIBRARIES "gnss-service-use-nmea")
 elseif(WITH_REPLAYER)
     set(gnss-service_LIBRARIES "gnss-service-use-replayer")
 else()

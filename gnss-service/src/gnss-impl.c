@@ -19,14 +19,20 @@
 #include "globals.h"
 #include "gnss.h"
 
+pthread_mutex_t mutexCb  = PTHREAD_MUTEX_INITIALIZER;   //protects the callbacks
+pthread_mutex_t mutexData = PTHREAD_MUTEX_INITIALIZER;  //protects the data
+
+
 TGNSSSatelliteDetail gSatelliteDetail; //TODO: buffer full set of satellite details for one point in time
 GNSSSatelliteDetailCallback cbSatelliteDetail = 0;
 
 TGNSSPosition gPosition;
-GNSSPositionCallback cbPosition = 0;
+volatile GNSSPositionCallback cbPosition = 0;
 
 TGNSSTime gTime;
 GNSSTimeCallback cbTime = 0;
+
+
 
 
 bool gnssRegisterSatelliteDetailCallback(GNSSSatelliteDetailCallback callback)
@@ -156,4 +162,56 @@ bool gnssGetTime(TGNSSTime* time)
     pthread_mutex_unlock(&mutexData);
 
     return true;
+}
+
+
+void updateGNSSTime(const TGNSSTime time[], uint16_t numElements)
+//void updateGNSSTime(const TGNSSTime* gnss_time)
+{
+    if (time != NULL && numElements > 0)
+    {
+        pthread_mutex_lock(&mutexData);
+        gTime = time[numElements-1];
+        pthread_mutex_unlock(&mutexData);
+        pthread_mutex_lock(&mutexCb);
+        if (cbTime)
+        {
+            cbTime(time, numElements);
+        }
+        pthread_mutex_unlock(&mutexCb);
+    }
+}
+
+
+void updateGNSSPosition(const TGNSSPosition position[], uint16_t numElements)
+//void updateGNSSPosition(const TGNSSPosition* gnss_pos)
+{
+    if (position != NULL && numElements > 0)
+    {
+        pthread_mutex_lock(&mutexData);
+        gPosition = position[numElements-1];
+        pthread_mutex_unlock(&mutexData);
+        pthread_mutex_lock(&mutexCb);
+        if (cbPosition)
+        {
+            cbPosition(position, numElements);
+        }
+        pthread_mutex_unlock(&mutexCb);
+    }
+}
+
+void updateGNSSSatelliteDetail(const TGNSSSatelliteDetail satelliteDetail[], uint16_t numElements)
+{
+    if (satelliteDetail != NULL && numElements > 0)
+    {
+        pthread_mutex_lock(&mutexData);
+        gSatelliteDetail = satelliteDetail[numElements-1];
+        pthread_mutex_unlock(&mutexData);
+        pthread_mutex_lock(&mutexCb);
+        if (cbSatelliteDetail)
+        {
+            cbSatelliteDetail(satelliteDetail, numElements);
+        }
+        pthread_mutex_unlock(&mutexCb);
+    }
 }
