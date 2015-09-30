@@ -80,9 +80,11 @@ typedef enum {
                                                            Correction data from a RTK fixed solution is taken into account */
     GNSS_FIX_TYPE_RTK_FLOAT             = 0x00008000, /**< RTK = Real Time Kinematic
                                                            Correction data from a RTK floating solution is taken into account */
+    GNSS_FIX_TYPE_SSR                   = 0x00010000, /**< SSR = State Space Representation
+                                                           Correction data according the SSR standard from RTCM SC104 or similar are taken into account */
     //Information about position propagation
     GNSS_FIX_TYPE_ESTIMATED             = 0x00100000, /**< The position is propagated without additional sensor input */
-    GNSS_FIX_TYPE_DEAD_RECKONING        = 0x00200000, /**< The position is propagated supported with additional sensor input */
+    GNSS_FIX_TYPE_DEAD_RECKONING        = 0x00200000, /**< The position is propagated with support of additional sensor input, e.g. from inertial and/or vehicle sensors */
     //Information to identify artificial GNSS fixes
     GNSS_FIX_TYPE_MANUAL                = 0x10000000, /**< Position is set by manual input */
     GNSS_FIX_TYPE_SIMULATOR_MODE        = 0x20000000, /**< Position is simulated */
@@ -120,19 +122,26 @@ typedef struct {
 
 /**
  * Enumeration to describe the type of GNSS system to which a particular GNSS satellite belongs.
+ * For GNSS systems providing different signals (frequencies), separate values are provided for each signal.
+ * The enumeration values can be used in bitmasks to represent combinations of satellite systems,
+ * e.g. in case of multiconstellation GNSS or GNSS + augmentation systems 
  */
 typedef enum {
-    GNSS_SYSTEM_GPS = 1,                    /**< GPS */
-    GNSS_SYSTEM_GLONASS = 2,                /**< GLONASS */
-    GNSS_SYSTEM_GALILEO = 3,                /**< GALILEO */
-    GNSS_SYSTEM_COMPASS = 4,                /**< COMPASS / Bei Du */
-    /* Numbers > 100 are used to identify SBAS (satellite based augmentation system) */
-    GNSS_SYSTEM_SBAS_WAAS = 101,            /**< WASS (North America) */
-    GNSS_SYSTEM_SBAS_EGNOS = 102,           /**< EGNOS (Europe) */
-    GNSS_SYSTEM_SBAS_MSAS = 103,            /**< MSAS (Japan) */
-    GNSS_SYSTEM_SBAS_QZSS_SAIF = 104,       /**< QZSS-SAIF (Japan) */
-    GNSS_SYSTEM_SBAS_SDCM = 105,            /**< SDCM (Russia) */
-    GNSS_SYSTEM_SBAS_GAGAN = 106,           /**< GAGAN (India) */
+    GNSS_SYSTEM_GPS            = 0x00000001,       /**< GPS (L1 signal)*/
+    GNSS_SYSTEM_GLONASS        = 0x00000002,       /**< GLONASS (L1 signal) */
+    GNSS_SYSTEM_GALILEO        = 0x00000004,       /**< GALILEO (E1 signal) */
+    GNSS_SYSTEM_BEIDOU         = 0x00000008,       /**< BeiDou aka COMPASS (B1 signal) */
+    GNSS_SYSTEM_GPS_L2         = 0x00000010,       /**< GPS (L2 signal) */
+    GNSS_SYSTEM_GPS_L5         = 0x00000020,       /**< GPS (L5 signal) */
+    GNSS_SYSTEM_GLONASS_L2     = 0x00000040,       /**< GLONASS (L2 signal) */
+    GNSS_SYSTEM_BEIDOU_B2      = 0x00000080,       /**< BeiDou aka COMPASS (B2 signal) */
+    /* Numbers >= 0x00010000 are used to identify SBAS (satellite based augmentation system) */
+    GNSS_SYSTEM_SBAS_WAAS      = 0x00010000,       /**< WASS (North America) */
+    GNSS_SYSTEM_SBAS_EGNOS     = 0x00020000,       /**< EGNOS (Europe) */
+    GNSS_SYSTEM_SBAS_MSAS      = 0x00040000,       /**< MSAS (Japan) */
+    GNSS_SYSTEM_SBAS_QZSS_SAIF = 0x00080000,       /**< QZSS-SAIF (Japan) */
+    GNSS_SYSTEM_SBAS_SDCM      = 0x00100000,       /**< SDCM (Russia) */
+    GNSS_SYSTEM_SBAS_GAGAN     = 0x00200000,       /**< GAGAN (India) */
 } EGNSSSystem;
 
 /**
@@ -218,6 +227,9 @@ typedef enum {
     //quality parameters: overall GNSS fix status
     GNSS_POSITION_STAT_VALID            = 0x00040000,    /**< Validity bit for field TGNSSPosition::fixStatus. */
     GNSS_POSITION_TYPE_VALID            = 0x00080000,    /**< Validity bit for field TGNSSPosition::fixTypeBits. */    
+    //gnss system information
+    GNSS_POSITION_ASYS_VALID            = 0x00100000,    /**< Validity bit for field TGNSSPosition::activated_systems. */
+    GNSS_POSITION_USYS_VALID            = 0x00200000,    /**< Validity bit for field TGNSSPosition::used_systems. */
 } EGNSSPositionValidityBits;
 
 /**
@@ -254,7 +266,12 @@ typedef struct {
     EGNSSFixStatus fixStatus;       /**< Value representing the GNSS mode. */ 
     uint32_t fixTypeBits;           /**< Bit mask indicating the sources actually used for the GNSS calculation. 
                                          [bitwise or'ed @ref EGNSSFixType values]. */
-
+    //gnss system information
+    uint32_t activated_systems;     /**< Bit mask indicating the satellite systems that are activated for use
+                                         [bitwise or'ed @ref EGNSSSystem values].*/
+    uint32_t used_systems;          /**< Bit mask indicating the satellite systems that are actually used for the position fix
+                                         [bitwise or'ed @ref EGNSSSystem values].*/
+    //validity bits
     uint32_t validityBits;          /**< Bit mask indicating the validity of each corresponding value.
                                          [bitwise or'ed @ref EGNSSPositionValidityBits values].
                                          Must be checked before usage. */                                         
@@ -402,6 +419,24 @@ bool gnssDeregisterPositionCallback(GNSSPositionCallback callback);
  * @return      True if the precision timing is available and fits in the range which can be represented by the delta parameter.
  */
 bool gnssGetPrecisionTimingOffset(int32_t *delta);
+
+/**
+ * Send a configuration request to use a specific set of GNSS satellite systems
+ *
+ * No immediate confirmation is provided as the configuration request
+ * is typically executed asynchronously by the GNSS receiver.
+ * To verify when the configuration change has been executed,
+ * the corresponding fields @ref activated_systems and @ref used_systems
+ * in @ref TGNSSPosition updates have to be monitored
+ *
+ * @param activate_systems  Bit mask indicating the satellite systems which shall be activated for use
+ *                          [bitwise or'ed @ref EGNSSSystem values].
+ *
+ * @return True if the configuration request has been accepted.
+ * @return False if the configuration request has not been accepted or is not supported at all.
+ *
+*/
+bool gnssConfigGNSSSystems(uint32_t activate_systems);
 
 #ifdef __cplusplus
 }

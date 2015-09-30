@@ -162,9 +162,15 @@ bool extractPosition(const GPS_DATA& gps_data, uint64_t timestamp, TGNSSPosition
     {
         gnss_pos.fixStatus = GNSS_FIX_STATUS_3D;
     }
-    
+
+    //hardcoded values for standard GPS receiver
     gnss_pos.fixTypeBits = GNSS_FIX_TYPE_SINGLE_FREQUENCY;
-    
+    gnss_pos.validityBits |= GNSS_POSITION_TYPE_VALID;
+    gnss_pos.activated_systems = GNSS_SYSTEM_GPS;
+    gnss_pos.validityBits |= GNSS_POSITION_ASYS_VALID;
+    gnss_pos.used_systems = GNSS_SYSTEM_GPS;
+    gnss_pos.validityBits |= GNSS_POSITION_USYS_VALID;
+
     return true;
 }
 
@@ -340,8 +346,8 @@ void* loop_GNSS_NMEA_device(void* dev)
             if (nmea_res == NMEA_GPRMC)
             {
                 uint64_t timestamp = gnss_get_timestamp();
-                TGNSSTime gnss_time;
-                TGNSSPosition gnss_pos;
+                TGNSSTime gnss_time = { 0 };
+                TGNSSPosition gnss_pos = { 0 };
                 if (extractTime(gps_data, timestamp, gnss_time))
                 {
                     updateGNSSTime(&gnss_time, 1);
@@ -408,4 +414,9 @@ void gnssGetVersion(int *major, int *minor, int *micro)
     {
         *micro = GENIVI_GNSS_API_MICRO;
     }
+}
+
+bool gnssConfigGNSSSystems(uint32_t activate_systems)
+{
+    return false; //satellite system configuration request not supported by NMEA protocol
 }
