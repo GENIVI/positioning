@@ -39,7 +39,9 @@ bool snsWheeltickInit()
 
 bool snsWheeltickDestroy()
 {
+    pthread_mutex_lock(&mutexCb);
     cbWheelticks = 0;
+    pthread_mutex_unlock(&mutexCb);
 
     return true;
 }

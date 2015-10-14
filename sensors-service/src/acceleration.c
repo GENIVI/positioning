@@ -53,7 +53,9 @@ bool snsAccelerationInit()
 
 bool snsAccelerationDestroy()
 {
+    pthread_mutex_lock(&mutexCb);
     cbAcceleration = 0;
+    pthread_mutex_unlock(&mutexCb);
 
     return true;
 }

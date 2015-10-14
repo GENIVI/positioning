@@ -27,7 +27,9 @@ bool snsVehicleSpeedInit()
 
 bool snsVehicleSpeedDestroy()
 {
+    pthread_mutex_lock(&mutexCb);
     cbVehicleSpeed = 0;
+    pthread_mutex_unlock(&mutexCb);
 
     return true;
 }

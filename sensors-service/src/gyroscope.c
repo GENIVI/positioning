@@ -49,7 +49,9 @@ bool snsGyroscopeInit()
 
 bool snsGyroscopeDestroy()
 {
+    pthread_mutex_lock(&mutexCb);
     cbGyroscope = 0;
+    pthread_mutex_unlock(&mutexCb);
 
     return true;
 }
