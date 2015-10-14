@@ -35,6 +35,7 @@
 #define PORT2 9931   //port used for sensor data
 #define PORT3 9932   //port used for vehicle data
 #define IPADDR_DEFAULT "127.0.0.1"
+#define MAXDELTA 1000000  //max value to avoid overflow
 
 DLT_DECLARE_CONTEXT(gContext);
 
@@ -97,16 +98,21 @@ bool getStrToSend(FILE* file, char* line, int dim)
     LOG_DEBUG(gContext,"Waiting %lu ms", delta);
     LOG_DEBUG_MSG(gContext,"------------------------------------------------");
 
-    if(timestamp >= lastTimestamp)
+    lastTimestamp = timestamp;
+
+    if(delta < 0)
     {
-        usleep(delta*1000); // TODO time drift issues
-    }
-    else
-    {
-        LOG_WARNING(gContext,"timestamp steps backward at %ld, ignoring line", timestamp);
+        LOG_WARNING(gContext,"timestamp steps backward at %ld. ignoring line", timestamp);
+        return true;
     }
 
-    lastTimestamp = timestamp;
+    if(delta > MAXDELTA)
+    {
+        LOG_WARNING(gContext,"timestamp - lastTimestamp too big at %ld. ignoring line to avoid overflow", timestamp);
+        return true;
+    }
+
+    usleep(delta*1000); // TODO time drift issues
 
     return true;
 }

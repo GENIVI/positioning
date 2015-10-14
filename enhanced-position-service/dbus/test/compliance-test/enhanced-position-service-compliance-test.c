@@ -95,7 +95,7 @@ bool getPositioningData()
         return false; 
     }
 
-    dbus_uint16_t array[2];
+    dbus_uint16_t array[3];
     int size = 3;
     array[0]=LAT;
     array[1]=LON;
@@ -256,7 +256,7 @@ bool getPositioningData()
                 dbus_message_iter_get_basic(&value_iter, (void *)&altitude);
                 printf("altitude=%f\n",altitude); //should be 'd' instead (the PoC will have to be corrected)
 
-                if(altitude > 9000 || longitude < -1000)
+                if(altitude > 9000 || altitude < -1000)
                 {
                     fprintf(stderr, "altitude value out of range\n");
                     return false;

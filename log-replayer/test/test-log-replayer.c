@@ -37,6 +37,7 @@ int main(int argc, char* argv[])
     struct sockaddr_in si_me, si_other;
     int s;
     socklen_t slen = sizeof(si_other);
+    ssize_t readBytes = 0;
     char buf[BUFLEN];
     int port = 0;
     
@@ -70,11 +71,15 @@ int main(int argc, char* argv[])
 
     while(1)
     {
-        if(recvfrom(s, buf, BUFLEN, 0, (struct sockaddr *) &si_other, &slen)==-1)
+        readBytes = recvfrom(s, buf, BUFLEN, 0, (struct sockaddr *) &si_other, &slen);
+
+        if(readBytes == -1)
         {
             LOG_ERROR_MSG(gContext,"recvfrom() failed!");
             return EXIT_FAILURE;
         }
+
+        buf[readBytes] = '\0';
 
         LOG_INFO(gContext,"Received packet from %s:%d", 
                  inet_ntoa(si_other.sin_addr), 
