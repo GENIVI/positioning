@@ -26,8 +26,11 @@ TAccelerationConfiguration gAccelerationConfiguration;
 
 bool snsAccelerationInit()
 {
+    pthread_mutex_lock(&mutexCb);
     cbAcceleration = 0;
-
+    pthread_mutex_unlock(&mutexCb);
+    
+    pthread_mutex_lock(&mutexData);
     //example accelerometer configuration for a 3-axis accelerometer
     gAccelerationConfiguration.dist2RefPointX = 0;
     gAccelerationConfiguration.dist2RefPointY = 0;
@@ -47,6 +50,7 @@ bool snsAccelerationInit()
       ACCELERATION_CONFIG_ANGLEPITCH_VALID |
       ACCELERATION_CONFIG_ANGLEROLL_VALID |
       ACCELERATION_CONFIG_TYPE_VALID;
+    pthread_mutex_unlock(&mutexData);
 
     return true;
 }
@@ -76,13 +80,19 @@ bool snsAccelerationGetAccelerationData(TAccelerationData * accelerationData)
 
 bool snsAccelerationRegisterCallback(AccelerationCallback callback)
 {
-    //printf("snsAccelerationRegisterCallback\n");
-    if(cbAcceleration != 0) 
+    if(!callback)
     {
         return false;
     }
 
+    //printf("snsAccelerationRegisterCallback\n");
     pthread_mutex_lock(&mutexCb);
+    if(cbAcceleration != 0) 
+    {   
+        //already registered
+        pthread_mutex_unlock(&mutexCb);
+        return false;
+    }
     cbAcceleration = callback;
     pthread_mutex_unlock(&mutexCb);
 
@@ -91,17 +101,20 @@ bool snsAccelerationRegisterCallback(AccelerationCallback callback)
 
 bool snsAccelerationDeregisterCallback(AccelerationCallback callback)
 {
-    //printf("snsAccelerationDeregisterCallback\n");
-    if(cbAcceleration == callback && callback != 0)
+    if(!callback)
     {
-        pthread_mutex_lock(&mutexCb);
-        cbAcceleration = 0;
-        pthread_mutex_unlock(&mutexCb);
-
-        return true;
+        return false;
     }
 
-    return false;
+    //printf("snsAccelerationDeregisterCallback\n");
+    pthread_mutex_lock(&mutexCb);
+    if(cbAcceleration == callback)
+    {
+        cbAcceleration = 0;
+    }
+    pthread_mutex_unlock(&mutexCb);
+
+    return true;
 }
 
 bool snsAccelerationGetMetaData(TSensorMetaData *data)
@@ -120,7 +133,15 @@ bool snsAccelerationGetMetaData(TSensorMetaData *data)
 
 bool snsAccelerationGetAccelerationConfiguration(TAccelerationConfiguration* config)
 {
+    if(!config) 
+    {
+        return false;
+    }
+
+    pthread_mutex_lock(&mutexData);
     *config = gAccelerationConfiguration;
+    pthread_mutex_unlock(&mutexData);
+
     return true;
 }
 

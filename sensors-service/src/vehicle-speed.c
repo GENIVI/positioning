@@ -20,7 +20,9 @@ TVehicleSpeedData gVehicleSpeedData;
 
 bool snsVehicleSpeedInit()
 {
+    pthread_mutex_lock(&mutexCb);
     cbVehicleSpeed = 0;
+    pthread_mutex_unlock(&mutexCb);
 
     return true;
 }
@@ -50,13 +52,19 @@ bool snsVehicleSpeedGetVehicleSpeedData(TVehicleSpeedData* vehicleSpeed)
 
 bool snsVehicleSpeedRegisterCallback(VehicleSpeedCallback callback)
 {
-    //printf("snsVehicleSpeedRegisterCallback\n");
-    if(cbVehicleSpeed != 0) 
+    if(!callback)
     {
         return false;
     }
 
+    //printf("snsVehicleSpeedRegisterCallback\n");
     pthread_mutex_lock(&mutexCb);
+    if(cbVehicleSpeed != 0) 
+    {
+        //already registered
+        pthread_mutex_unlock(&mutexCb);
+        return false;
+    }
     cbVehicleSpeed = callback;
     pthread_mutex_unlock(&mutexCb);
 
@@ -65,15 +73,18 @@ bool snsVehicleSpeedRegisterCallback(VehicleSpeedCallback callback)
 
 bool snsVehicleSpeedDeregisterCallback(VehicleSpeedCallback callback)
 {
-    //printf("snsGyroscopeDeregisterCallback\n");
-    if(cbVehicleSpeed == callback && callback != 0)
+    if(!callback)
     {
-        pthread_mutex_lock(&mutexCb);
-        cbVehicleSpeed = 0;
-        pthread_mutex_unlock(&mutexCb);
-
-        return true;
+        return false;
     }
+
+    //printf("snsGyroscopeDeregisterCallback\n");
+    pthread_mutex_lock(&mutexCb);
+    if(cbVehicleSpeed == callback)
+    {
+        cbVehicleSpeed = 0;
+    }
+    pthread_mutex_unlock(&mutexCb);
 
     return false;
 }

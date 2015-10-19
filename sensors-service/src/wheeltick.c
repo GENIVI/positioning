@@ -26,13 +26,17 @@ bool snsWheeltickInit()
 {
     int i;
 
+    pthread_mutex_lock(&mutexCb);
+    cbWheelticks = 0;
+    pthread_mutex_unlock(&mutexCb);
+
+    pthread_mutex_lock(&mutexData);
     for(i = 0; i < WHEEL_NUM_ELEMENTS; i++)
     {
         gWheelticks.elements[i].wheeltickCounter = 0;
         gWheelticks.elements[i].wheeltickIdentifier = WHEEL_INVALID;
     }
-
-    cbWheelticks = 0;
+    pthread_mutex_unlock(&mutexData);
 
     return true;
 }
@@ -62,13 +66,19 @@ bool snsWheeltickGetWheelticks(TWheelticks * ticks)
 
 bool snsWheeltickRegisterCallback(WheeltickCallback callback)
 {
-    //printf("snsWheeltickRegisterCallback\n");
-    if(cbWheelticks != 0) 
+    if(!callback)
     {
         return false;
     }
 
+    //printf("snsWheeltickRegisterCallback\n");
     pthread_mutex_lock(&mutexCb);
+    if(cbWheelticks != 0) 
+    {
+        //already registered
+        pthread_mutex_unlock(&mutexCb);
+        return false; 
+    }
     cbWheelticks = callback;
     pthread_mutex_unlock(&mutexCb);
 
@@ -77,15 +87,18 @@ bool snsWheeltickRegisterCallback(WheeltickCallback callback)
 
 bool snsWheeltickDeregisterCallback(WheeltickCallback callback)
 {
-    //printf("snsWheeltickDeregisterCallback\n");
-    if(cbWheelticks == callback && callback != 0)
+    if(!callback)
     {
-        pthread_mutex_lock(&mutexCb);
-        cbWheelticks = 0;
-        pthread_mutex_unlock(&mutexCb);
-
-        return true;
+        return false;
     }
 
-    return false;
+    //printf("snsWheeltickDeregisterCallback\n");
+    pthread_mutex_lock(&mutexCb);
+    if(cbWheelticks == callback)
+    { 
+        cbWheelticks = 0;      
+    }
+    pthread_mutex_unlock(&mutexCb);  
+
+    return true;
 }

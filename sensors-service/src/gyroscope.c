@@ -26,8 +26,11 @@ TGyroscopeConfiguration gGyroscopeConfiguration;
 
 bool snsGyroscopeInit()
 {
+    pthread_mutex_lock(&mutexCb);
     cbGyroscope = 0;
+    pthread_mutex_unlock(&mutexCb);
 
+    pthread_mutex_lock(&mutexData);
     //example gyroscope configuration for a 3-axis gyro
     gGyroscopeConfiguration.angleYaw = 0;
     gGyroscopeConfiguration.anglePitch = 0;
@@ -43,6 +46,7 @@ bool snsGyroscopeInit()
       GYROSCOPE_CONFIG_ANGLEPITCH_VALID |
       GYROSCOPE_CONFIG_ANGLEROLL_VALID |
       GYROSCOPE_CONFIG_TYPE_VALID;
+    pthread_mutex_unlock(&mutexData);
 
     return true;
 }
@@ -72,13 +76,19 @@ bool snsGyroscopeGetGyroscopeData(TGyroscopeData * gyroData)
 
 bool snsGyroscopeRegisterCallback(GyroscopeCallback callback)
 {
-    //printf("snsGyroscopeRegisterCallback\n");
-    if(cbGyroscope != 0) 
+    if(!callback)
     {
         return false;
     }
 
+    //printf("snsGyroscopeRegisterCallback\n");
     pthread_mutex_lock(&mutexCb);
+    if(cbGyroscope != 0) 
+    {   
+        //already registered
+        pthread_mutex_unlock(&mutexCb);
+        return false;
+    }
     cbGyroscope = callback;
     pthread_mutex_unlock(&mutexCb);
 
@@ -87,17 +97,20 @@ bool snsGyroscopeRegisterCallback(GyroscopeCallback callback)
 
 bool snsGyroscopeDeregisterCallback(GyroscopeCallback callback)
 {
-    //printf("snsGyroscopeDeregisterCallback\n");
-    if(cbGyroscope == callback && callback != 0)
+    if(!callback)
     {
-        pthread_mutex_lock(&mutexCb);
-        cbGyroscope = 0;
-        pthread_mutex_unlock(&mutexCb);
-
-        return true;
+        return false;
     }
 
-    return false;
+    //printf("snsGyroscopeDeregisterCallback\n");
+    pthread_mutex_lock(&mutexCb);
+    if(cbGyroscope == callback)
+    { 
+        cbGyroscope = 0;
+    }
+    pthread_mutex_unlock(&mutexCb);
+
+    return true;
 }
 
 bool snsGyroscopeGetMetaData(TSensorMetaData *data)
@@ -116,7 +129,15 @@ bool snsGyroscopeGetMetaData(TSensorMetaData *data)
 
 bool snsGyroscopeGetConfiguration(TGyroscopeConfiguration* gyroConfig)
 {
+    if(!gyroConfig) 
+    {
+        return false;
+    }
+
+    pthread_mutex_lock(&mutexData);
     *gyroConfig = gGyroscopeConfiguration;
+    pthread_mutex_unlock(&mutexData);
+
     return true;
 }
 
