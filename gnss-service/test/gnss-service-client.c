@@ -74,7 +74,7 @@ static void cbPosition(const TGNSSPosition position[], uint16_t numElements)
 
     for (i = 0; i<numElements; i++)
     {
-        LOG_INFO(gCtx,"Position Update[%d/%d]: timestamp=%llu latitude=%.5f longitude=%.5f altitudeMSL=%.1f hSpeed=%.1f heading=%.1f\n hdop=%.1f usedSatellites=%d sigmaHPosition=%.1f sigmaHSpeed=%.1f sigmaHeading=%.1f\n fixStatus=%d fixTypeBits=0x%08X activated_systems=0x%08X used_systems=0x%08X",
+        LOG_INFO(gCtx,"Position Update[%d/%d]: timestamp=%llu latitude=%.5f longitude=%.5f altitudeMSL=%.1f hSpeed=%.1f heading=%.1f\n hdop=%.1f usedSatellites=%d sigmaHPosition=%.1f sigmaHSpeed=%.1f sigmaHeading=%.1f\n fixStatus=%d fixTypeBits=0x%08X activatedSystems=0x%08X usedSystems=0x%08X",
                  i+1,
                  numElements,
                  position[i].timestamp, 

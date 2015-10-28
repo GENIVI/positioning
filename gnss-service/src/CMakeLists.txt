@@ -58,6 +58,12 @@ elseif(WITH_NMEA)
     #generate library using NMEA parser as input
     add_definitions(-DGNSS_DEVICE=${GNSS_DEVICE})
     add_definitions(-DGNSS_BAUDRATE=${GNSS_BAUDRATE})
+    if(GNSS_CHIPSET)
+        add_definitions(-DGNSS_CHIPSET_${GNSS_CHIPSET})
+    endif(GNSS_CHIPSET)
+    if(GNSS_DELAY)
+        add_definitions(-DGNSS_DELAY=${GNSS_DELAY})
+    endif(GNSS_DELAY)
     set(LIB_SRC_USE_NMEA ${CMAKE_CURRENT_SOURCE_DIR}/gnss-use-nmea.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/hnmea.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/gnss-impl.c
@@ -65,6 +71,9 @@ elseif(WITH_NMEA)
     add_library(gnss-service-use-nmea SHARED ${LIB_SRC_USE_NMEA})
     target_link_libraries(gnss-service-use-nmea pthread ${LIBRARIES})
     install(TARGETS gnss-service-use-nmea DESTINATION lib)
+    #for glibc <2.17, clock_gettime is in librt: http://linux.die.net/man/2/clock_gettime
+    #TODO: is there a nice way to detect glibc version in CMake?
+    set(LIBRARIES ${LIBRARIES} rt)
 elseif(WITH_REPLAYER)
     #generate library using replayer as input
     set(LIB_SRC_USE_REPLAYER ${CMAKE_CURRENT_SOURCE_DIR}/gnss-use-replayer.c 

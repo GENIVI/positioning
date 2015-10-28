@@ -22,6 +22,7 @@
 #include "hnmea.h"
 #include "string.h"
 #include "stdlib.h"
+#include "math.h"
 
 //some example/test strings
 char test_gprmc[] = "$GPRMC,112911.000,A,4856.3328,N,01146.8259,E,35.75,108.51,050807,,,A*57";
@@ -55,6 +56,9 @@ void HNMEA_Init_GPS_DATA(GPS_DATA* gps_data)
     gps_data->usat          = -99;
     gps_data->fix2d         = -1;
     gps_data->fix3d         = -1;
+    gps_data->hacc          = 999.9;
+    gps_data->vacc          = 999.9;
+    
 }
 
 
@@ -680,6 +684,143 @@ void HNMEA_Parse_GPGSA(char* line, GPS_DATA* gps_data)
     gps_data->valid |= gps_data->valid_new;
 }
 
+void HNMEA_Parse_GPGST(char* line, GPS_DATA* gps_data)
+{
+    enum { MAX_FIELD_LEN = 128};
+    char field[MAX_FIELD_LEN];
+    int i = 0;      // field index
+    int l = 0;      // line character index
+    int f = 0;      // field character index
+    int stop = 0;   // stop flag
+    int len = strlen(line);
+
+    
+    float lat_std = 0.0;
+    int lat_std_valid = 0;
+    float lon_std = 0.0;
+    float alt_std = 0.0;
+    
+    gps_data->valid_new = 0;
+
+    //outer loop - stop at line end
+    while ( (l < len ) && (stop == 0) )
+    {
+        //inner loop - stop at line and and field separator
+        while ( (f < MAX_FIELD_LEN) && (l< len) && (line[l] != ',') && (line[l] != '*') )
+        {
+            field[f] = line[l];
+            l++;
+            f++;
+        }
+        field[f] = '\0'; // add string terminator
+
+        switch (i)
+        {
+            case 0: //$GPGST
+            {
+                //cross-check for sentence name
+                if (strncmp (field, "$GPGST", 6) != 0)
+                {
+                    // force termination of loop
+                    stop = 1;
+                }
+                break;
+            }
+            case 1: //time hhmmss.sss
+            {
+                //length check
+                if (strlen (field) >=6)
+                {
+                    gps_data->time_ss = atoi(field+4);
+                    field[4] = '\0';
+                    gps_data->time_mm = atoi(field+2);
+                    field[2] = '\0';
+                    gps_data->time_hh = atoi(field);
+                    gps_data->valid_new |= GPS_DATA_TIME;
+                }
+                break;
+            }
+            case 2: // RMS value of the standard deviation of the ranges
+            {
+                //ignore
+                break;
+            }
+            case 3: //Standard deviation of semi-major axis,
+            {
+                //ignore
+                break;
+            }
+            case 4: //Standard deviation of semi-minor axis
+            {
+                //ignore
+                break;
+            }
+            case 5: //Orientation of semi-major axis
+            {
+                //ignore
+                break;
+            }
+            case 6: //Standard deviation of latitude, error in meters
+            {
+                //length check
+                if (strlen (field) >=1)
+                {
+                    lat_std = atof(field);
+                    lat_std_valid = 1;
+                }
+                break;
+            }
+            case 7: //Standard deviation of longitude, error in meters
+            {
+                //length check
+                if ((strlen (field) >=1) && (lat_std_valid))
+                {
+                    lon_std = atof(field);
+                    gps_data->hacc = sqrt(lat_std*lat_std + lon_std*lon_std);
+                    gps_data->valid_new |= GPS_DATA_HACC;
+                }
+                break;
+            }
+            case 8: //Standard deviation of altitude, error in meters
+            {
+                //length check
+                if (strlen (field) >=1)
+                {
+                    alt_std = atof(field);
+                    gps_data->vacc = alt_std;
+                    gps_data->valid_new |= GPS_DATA_VACC;
+                }
+                break;
+            }
+            default:
+            {
+                stop = 1;
+                break;
+            }
+        }
+
+        //one more field?
+        if ( line[l] == ',' )
+        {
+            //skip separator
+            l++;
+            //reset 
+            f = 0;
+            //increment field index
+            i++;
+        }
+        else 
+        {
+            // force termination of loop
+            stop = 1;
+        }
+    }
+
+    //update validity mask with new data
+    gps_data->valid |= gps_data->valid_new;
+}
+
+
 
 NMEA_RESULT HNMEA_Parse(char* line, GPS_DATA* gps_data)
 {
@@ -714,6 +855,18 @@ NMEA_RESULT HNMEA_Parse(char* line, GPS_DATA* gps_data)
         {
             HNMEA_Parse_GPGSA(line, gps_data);
             ret = NMEA_GPGSA;
+        }
+        else
+        {
+            ret = NMEA_BAD_CHKSUM;
+        }
+    }
+    if (strncmp (line, "$GPGST", 6) == 0)
+    {
+        if (HNMEA_Checksum_Valid(line))
+        {
+            HNMEA_Parse_GPGST(line, gps_data);
+            ret = NMEA_GPGST;
         }
         else
         {

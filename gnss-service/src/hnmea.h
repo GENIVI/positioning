@@ -32,7 +32,8 @@ typedef enum {
     NMEA_GPRMC,         //GPRMC Sentence
     NMEA_GPGGA,         //GPGGA Sentence
     NMEA_GPGSA,         //GPGSA Sentence
-    NMEA_GPGSV          //GPGSV Sentence
+    NMEA_GPGSV,         //GPGSV Sentence
+    NMEA_GPGST          //GPGST Sentence
 } NMEA_RESULT;
 
 //bitmap for GPS data
@@ -50,7 +51,9 @@ typedef enum {
     GPS_DATA_PDOP   = 0x0400,  //PDOP
     GPS_DATA_USAT   = 0x0800,  //number of used satellites
     GPS_DATA_FIX2D  = 0x1000,  //at least 2D Fix
-    GPS_DATA_FIX3D  = 0x2000   //3D Fix (GPS_DATA_FIX2D will be set also)
+    GPS_DATA_FIX3D  = 0x2000,  //3D Fix (GPS_DATA_FIX2D will be set also)
+    GPS_DATA_HACC   = 0x4000,  //horizontal accuracy
+    GPS_DATA_VACC   = 0x8000   //vertical accuracy
 } GPS_DATA_TYPE;
 
 typedef struct {
@@ -74,6 +77,8 @@ typedef struct {
     int usat;       //number of satellites
     int fix2d;      //GPS status: at least 2D Fix
     int fix3d;      //GPS status: 3D Fix - fix2d will be set also 
+    float hacc;     //horizontal accuracy in m
+    float vacc;     //vertical accuracy in m
 } GPS_DATA;
 
 void HNMEA_Init_GPS_DATA(GPS_DATA* gps_data);

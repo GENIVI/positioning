@@ -16,6 +16,10 @@
 * @licence end@
 **************************************************************************/
 
+#include "sns-init.h"
+#include "acceleration.h"
+#include "gyroscope.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
@@ -33,7 +37,6 @@
 #include <memory.h>
 
 #include "globals.h"
-#include "sns-init.h"
 #include "log.h"
 
 #define BUFLEN 256
@@ -45,8 +48,6 @@
 DLT_DECLARE_CONTEXT(gContext);
 
 pthread_t listenerThread;
-pthread_mutex_t mutexCb;
-pthread_mutex_t mutexData;
 bool isRunning = false;
 
 void *listenForMessages( void *ptr );
@@ -94,7 +95,47 @@ void snsGetVersion(int *major, int *minor, int *micro)
     }
 }
 
-bool processGVSNSWHTK(char* data, TWheelticks* pWheelticks)
+bool snsAccelerationInit()
+{
+    return iAccelerationInit();
+}
+
+bool snsAccelerationDestroy()
+{
+    return iAccelerationDestroy();
+}
+
+bool snsGyroscopeInit()
+{
+    return iGyroscopeInit();
+}
+
+bool snsGyroscopeDestroy()
+{
+    return iGyroscopeDestroy();
+}
+
+bool snsVehicleSpeedInit()
+{
+    return iVehicleSpeedInit();
+}
+
+bool snsVehicleSpeedDestroy()
+{
+    return iVehicleSpeedDestroy();
+}
+
+bool snsWheeltickInit()
+{
+    return iWheeltickInit();
+}
+
+bool snsWheeltickDestroy()
+{
+    return iWheeltickDestroy();
+}
+
+bool processGVSNSWHTK(char* data)
 {
     //parse data like: 061076000,0$GVSNSWHTK,061076000,7,266,8,185,0,0,0,0
     
@@ -108,7 +149,7 @@ bool processGVSNSWHTK(char* data, TWheelticks* pWheelticks)
     TWheelticks whtk = { 0 };
     uint32_t n = 0;
 
-    if(!data || !pWheelticks)
+    if(!data)
     {
         LOG_ERROR_MSG(gContext,"wrong parameter!");
         return false;
@@ -127,8 +168,6 @@ bool processGVSNSWHTK(char* data, TWheelticks* pWheelticks)
         return false;
     }
 
-    *pWheelticks = whtk;
-
     //buffered data handling
     if (countdown < MAX_BUF_MSG) //enough space in buffer?
     {
@@ -155,9 +194,9 @@ bool processGVSNSWHTK(char* data, TWheelticks* pWheelticks)
         last_countdown = 0;
     }
 
-    if((cbWheelticks != 0) && (countdown == 0) && (buf_size >0) )
+    if((countdown == 0) && (buf_size >0) )
     {
-        cbWheelticks(buf_whtk,buf_size);
+        updateWheelticks(buf_whtk,buf_size);
         buf_size = 0;
         last_countdown = 0;        
     }
@@ -165,7 +204,7 @@ bool processGVSNSWHTK(char* data, TWheelticks* pWheelticks)
     return true;
 }
 
-static bool processGVSNSGYRO(char* data, TGyroscopeData* pGyroscopeData)
+static bool processGVSNSGYRO(char* data)
 {
     //parse data like: 061074000,0$GVSNSGYRO,061074000,-38.75,0,0,0,0X01
     
@@ -179,7 +218,7 @@ static bool processGVSNSGYRO(char* data, TGyroscopeData* pGyroscopeData)
     TGyroscopeData gyro = { 0 };
     uint32_t n = 0;
 
-    if(!data || !pGyroscopeData)
+    if(!data )
     {
         LOG_ERROR_MSG(gContext,"wrong parameter!");
         return false;
@@ -193,8 +232,6 @@ static bool processGVSNSGYRO(char* data, TGyroscopeData* pGyroscopeData)
         return false;
     }
 
-    *pGyroscopeData = gyro;
-
     //buffered data handling
     if (countdown < MAX_BUF_MSG) //enough space in buffer?
     {
@@ -221,9 +258,9 @@ static bool processGVSNSGYRO(char* data, TGyroscopeData* pGyroscopeData)
         last_countdown = 0;
     }
 
-    if((cbGyroscope != 0) && (countdown == 0) && (buf_size >0) )
+    if((countdown == 0) && (buf_size >0) )
     {
-        cbGyroscope(buf_gyro,buf_size);
+        updateGyroscopeData(buf_gyro,buf_size);
         buf_size = 0;
         last_countdown = 0;        
     }
@@ -233,7 +270,7 @@ static bool processGVSNSGYRO(char* data, TGyroscopeData* pGyroscopeData)
 
 
 
-static bool processGVSNSVEHSP(char* data, TVehicleSpeedData* pVehicleSpeedData)
+static bool processGVSNSVEHSP(char* data)
 {
     //parse data like: 061074000,0$GVSNSVEHSP,061074000,0.51,0X01
     
@@ -247,7 +284,7 @@ static bool processGVSNSVEHSP(char* data, TVehicleSpeedData* pVehicleSpeedData)
     TVehicleSpeedData vehsp = { 0 };
     uint32_t n = 0;
 
-    if(!data || !pVehicleSpeedData)
+    if(!data)
     {
         LOG_ERROR_MSG(gContext,"wrong parameter!");
         return false;
@@ -260,8 +297,6 @@ static bool processGVSNSVEHSP(char* data, TVehicleSpeedData* pVehicleSpeedData)
         LOG_ERROR_MSG(gContext,"replayer: processGVSNSVEHSP failed!");
         return false;
     }
-
-    *pVehicleSpeedData = vehsp;
 
     //buffered data handling
     if (countdown < MAX_BUF_MSG) //enough space in buffer?
@@ -289,9 +324,9 @@ static bool processGVSNSVEHSP(char* data, TVehicleSpeedData* pVehicleSpeedData)
         last_countdown = 0;
     }
 
-    if((cbVehicleSpeed != 0) && (countdown == 0) && (buf_size >0) )
+    if((countdown == 0) && (buf_size >0) )
     {
-        cbVehicleSpeed(buf_vehsp,buf_size);
+        updateVehicleSpeedData(buf_vehsp,buf_size);
         buf_size = 0;
         last_countdown = 0;        
     }
@@ -334,45 +369,58 @@ void *listenForMessages( void *ptr )
 
     while(isRunning == true)
     {
-        readBytes = recvfrom(s, buf, BUFLEN, 0, (struct sockaddr *)&si_other, &slen);
+        //use select to introduce a timeout - alloy shutdown even when no data are received
+        fd_set readfs;    /* file descriptor set */
+        int    maxfd;     /* maximum file desciptor used */        
+        int res;
+        struct timeval Timeout;
+        /* set timeout value within input loop */
+        Timeout.tv_usec = 0;  /* milliseconds */
+        Timeout.tv_sec  = 1;  /* seconds */
+        FD_SET(s, &readfs);
+        maxfd = s+1;
+        /* block until input becomes available */
+        res = select(maxfd, &readfs, NULL, NULL, &Timeout);
 
-        if(readBytes < 0)
+        if (res > 0)
         {
-            LOG_ERROR_MSG(gContext,"recvfrom() failed!");
-            exit(EXIT_FAILURE);
+            
+            readBytes = recvfrom(s, buf, BUFLEN, 0, (struct sockaddr *)&si_other, &slen);
+
+            if(readBytes < 0)
+            {
+                LOG_ERROR_MSG(gContext,"recvfrom() failed!");
+                exit(EXIT_FAILURE);
+            }
+            
+            buf[readBytes] = '\0';
+
+            LOG_DEBUG_MSG(gContext,"------------------------------------------------");
+    
+            LOG_DEBUG(gContext,"Received Packet from %s:%d", 
+                      inet_ntoa(si_other.sin_addr), ntohs(si_other.sin_port));
+
+            sscanf(buf, "%*[^'$']$%[^',']", msgId);
+    
+            LOG_DEBUG(gContext,"MsgID:%s",msgId);
+            LOG_DEBUG(gContext,"Len:%d",(int)strlen(buf));
+            LOG_INFO(gContext,"Data:%s",buf);
+
+            LOG_DEBUG_MSG(gContext,"------------------------------------------------");
+
+            if(strcmp("GVSNSGYRO", msgId) == 0)
+            {
+                processGVSNSGYRO(buf);
+            }
+            else if(strcmp("GVSNSWHTK", msgId) == 0)
+            {
+                processGVSNSWHTK(buf);
+            }
+            else if(strcmp("GVSNSVEHSP", msgId) == 0)
+            {
+                processGVSNSVEHSP(buf);
+            }
         }
-        
-        buf[readBytes] = '\0';
-
-        LOG_DEBUG_MSG(gContext,"------------------------------------------------");
-
-        LOG_DEBUG(gContext,"Received Packet from %s:%d", 
-                  inet_ntoa(si_other.sin_addr), ntohs(si_other.sin_port));
-
-        sscanf(buf, "%*[^'$']$%[^',']", msgId);
-
-        LOG_DEBUG(gContext,"MsgID:%s",msgId);
-        LOG_DEBUG(gContext,"Len:%d",(int)strlen(buf));
-        LOG_INFO(gContext,"Data:%s",buf);
-
-        LOG_DEBUG_MSG(gContext,"------------------------------------------------");
-
-        pthread_mutex_lock(&mutexData);
-
-        if(strcmp("GVSNSGYRO", msgId) == 0)
-        {
-            processGVSNSGYRO(buf, &gGyroscopeData);
-        }
-        else if(strcmp("GVSNSWHTK", msgId) == 0)
-        {
-            processGVSNSWHTK(buf, &gWheelticks);
-        }
-        else if(strcmp("GVSNSVEHSP", msgId) == 0)
-        {
-            processGVSNSVEHSP(buf, &gVehicleSpeedData);
-        }
-
-        pthread_mutex_unlock(&mutexData);
     }
 
     close(s);

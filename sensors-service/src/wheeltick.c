@@ -19,10 +19,13 @@
 #include "globals.h"
 #include "wheel.h"
 
-WheeltickCallback cbWheelticks = 0;
-TWheelticks gWheelticks;
+static pthread_mutex_t mutexCb  = PTHREAD_MUTEX_INITIALIZER;   //protects the callbacks
+static pthread_mutex_t mutexData = PTHREAD_MUTEX_INITIALIZER;  //protects the data
 
-bool snsWheeltickInit()
+static volatile WheeltickCallback cbWheelticks = 0;
+static TWheelticks gWheelticks;
+
+bool iWheeltickInit()
 {
     int i;
 
@@ -41,7 +44,7 @@ bool snsWheeltickInit()
     return true;
 }
 
-bool snsWheeltickDestroy()
+bool iWheeltickDestroy()
 {
     pthread_mutex_lock(&mutexCb);
     cbWheelticks = 0;
@@ -52,53 +55,59 @@ bool snsWheeltickDestroy()
 
 bool snsWheeltickGetWheelticks(TWheelticks * ticks)
 {
-    if(!ticks)
+    bool retval = false;
+    if(ticks)
     {
-        return false;
+        pthread_mutex_lock(&mutexData);
+        *ticks = gWheelticks;
+        pthread_mutex_unlock(&mutexData);
+        retval = true;
     }
-
-    pthread_mutex_lock(&mutexData);
-    *ticks = gWheelticks;
-    pthread_mutex_unlock(&mutexData);
-
-    return true;
+    return retval;    
 }
 
 bool snsWheeltickRegisterCallback(WheeltickCallback callback)
 {
-    if(!callback)
-    {
-        return false;
-    }
+    bool retval = false;
 
-    //printf("snsWheeltickRegisterCallback\n");
-    pthread_mutex_lock(&mutexCb);
-    if(cbWheelticks != 0) 
+    //only if valid callback and not already registered
+    if(callback && !cbWheelticks)
     {
-        //already registered
+        pthread_mutex_lock(&mutexCb);
+        cbWheelticks = callback;
         pthread_mutex_unlock(&mutexCb);
-        return false; 
+        retval = true;
     }
-    cbWheelticks = callback;
-    pthread_mutex_unlock(&mutexCb);
-
-    return true;
+    return retval;
 }
 
 bool snsWheeltickDeregisterCallback(WheeltickCallback callback)
 {
-    if(!callback)
+    bool retval = false;
+
+    if((cbWheelticks == callback) && callback)
     {
-        return false;
+        pthread_mutex_lock(&mutexCb);
+        cbWheelticks = 0;
+        pthread_mutex_unlock(&mutexCb);
+        retval = true;
     }
 
-    //printf("snsWheeltickDeregisterCallback\n");
-    pthread_mutex_lock(&mutexCb);
-    if(cbWheelticks == callback)
-    { 
-        cbWheelticks = 0;      
-    }
-    pthread_mutex_unlock(&mutexCb);  
+    return retval;    
+}
 
-    return true;
+void updateWheelticks(const TWheelticks ticks[], uint16_t numElements)
+{
+    if (ticks != NULL && numElements > 0)
+    {
+        pthread_mutex_lock(&mutexData);
+        gWheelticks = ticks[numElements-1];
+        pthread_mutex_unlock(&mutexData);
+        pthread_mutex_lock(&mutexCb);
+        if (cbWheelticks)
+        {
+            cbWheelticks(ticks, numElements);
+        }
+        pthread_mutex_unlock(&mutexCb);
+    }
 }

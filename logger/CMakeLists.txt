@@ -2,43 +2,44 @@
 # @licence app begin@
 # SPDX-License-Identifier: MPL-2.0
 #
-# Component Name: SensorsService
+# Component Name: Logger
 #
-# Author: Marco Residori
+# Author: Helmut Schmidt
 #
-# Copyright (C) 2013, XS Embedded GmbH
-# 
 # License:
 # This Source Code Form is subject to the terms of the
 # Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed with
 # this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
-# Update (2014/12/02) : Philippe Colliot <philippe.colliot@mpsa.com>,
-#				PSA Peugeot Citroen
-#		- introduce debug flag to disable verbosity
+# Update (2015/07/10) : Helmut Schmidt <https://github.com/huirad>,
+#		       - first version derived from log-replayer CMakeLists.txt
 # @licence end@
 ###########################################################################
 
-project(sensors-service)
+project(logger)
 cmake_minimum_required(VERSION 2.6.0)
 
-SET(CMAKE_INSTALL_RPATH "")
-#SET(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE) 
-
 option(WITH_DLT
-    "Enable DLT logging" OFF)
-
-option(WITH_REPLAYER
-    "Use REPLAYER as source of sensors data" ON)
-
-option(WITH_IPHONE
-    "Use IPHONE as source of sensors data" OFF)
-
-option(WITH_MPU6050
-    "Use MPU6050 as source of gyro/acceleration data" OFF)
+    "Enable the build to enable DLT logging " OFF)
 
 option(WITH_TESTS
     "Compile test applications" OFF)
+
+option(WITH_GPSD
+    "Use GPSD as source of GPS data" OFF)
+
+option(WITH_NMEA
+    "Use NMEA as source of GPS data" OFF)
+    
+option(WITH_MPU6050
+    "Use MPU6050 as source of gyro/acceleration data" OFF) 
+    
+option(WITH_REPLAYER
+    "Use REPLAYER as source of GPS data" ON)
+    
+    
+    
+message(STATUS "---------------------------------------------------------")
 
 add_subdirectory(src)
 message(STATUS "---------------------------------------------------------")

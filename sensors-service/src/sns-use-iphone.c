@@ -49,8 +49,6 @@
 DLT_DECLARE_CONTEXT(gContext);
 
 pthread_t listenerThread;
-pthread_mutex_t mutexCb;
-pthread_mutex_t mutexData;
 bool isRunning = true;
 
 void *listenForMessages( void *ptr );
@@ -99,7 +97,18 @@ void snsGetVersion(int *major, int *minor, int *micro)
     }
 }
 
-static bool processGVGYRO(char* data, TGyroscopeData* pGyroscopeData)
+bool snsGyroscopeInit()
+{
+    return iGyroscopeInit();
+}
+
+bool snsGyroscopeDestroy()
+{
+    return iGyroscopeDestroy();
+}
+
+
+static bool processGVGYRO(char* data)
 {
     long unsigned int timestamp = 0;
     float yawRate;
@@ -122,28 +131,30 @@ static bool processGVGYRO(char* data, TGyroscopeData* pGyroscopeData)
         return false;
     }
 
-    pGyroscopeData->timestamp = timestamp;
+    TGyroscopeData gyroscopeData    
+    
+    gyroscopeData.timestamp = timestamp;
 
     //LOG_INFO(gContext,"timestamp:%lu",timestamp);
 
     //angleYaw
-    pGyroscopeData->yawRate = yawRate;
-    pGyroscopeData->validityBits |= GYROSCOPE_CONFIG_ANGLEYAW_VALID;
-    LOG_INFO(gContext,"yawRate: %lf", pGyroscopeData->yawRate);
+    gyroscopeData.yawRate = yawRate;
+    gyroscopeData.validityBits |= GYROSCOPE_CONFIG_ANGLEYAW_VALID;
+    LOG_INFO(gContext,"yawRate: %lf", gyroscopeData.yawRate);
      
     //anglePitch
-    pGyroscopeData->pitchRate = pitchRate;
-    pGyroscopeData->validityBits |= GYROSCOPE_CONFIG_ANGLEPITCH_VALID;
-    LOG_INFO(gContext,"pitchRate: %lf", pGyroscopeData->pitchRate);
+    gyroscopeData.pitchRate = pitchRate;
+    gyroscopeData.validityBits |= GYROSCOPE_CONFIG_ANGLEPITCH_VALID;
+    LOG_INFO(gContext,"pitchRate: %lf", gyroscopeData.pitchRate);
 
     //angleRoll
-    pGyroscopeData->rollRate = rollRate;
-    pGyroscopeData->validityBits |= GYROSCOPE_CONFIG_ANGLEROLL_VALID;
-    LOG_INFO(gContext,"rollRate: %f", pGyroscopeData->rollRate);
+    gyroscopeData.rollRate = rollRate;
+    gyroscopeData.validityBits |= GYROSCOPE_CONFIG_ANGLEROLL_VALID;
+    LOG_INFO(gContext,"rollRate: %f", gyroscopeData.rollRate);
 
     if(cbGyroscope != 0)
     {
-        cbGyroscope(pGyroscopeData,1);
+        cbGyroscope(&gyroscopeData,1);
     }
 
     return true;

@@ -24,6 +24,9 @@
 *
 * @licence end@
 **************************************************************************/
+//for integer format macros such as PRIu64
+#define __STDC_FORMAT_MACROS
+#include <inttypes.h>
 
 //provided interface
 #include "gnss-init.h"
@@ -46,6 +49,23 @@
 #include <time.h>
 //the NMEA parser
 #include "hnmea.h"
+
+/**
+ * CONFIGURATION PARAMETERS
+ *
+ * #required
+ * GNSS_DEVICE: device name at which GNSS receiver is attached, e.g. "dev/ttyACM0"
+ * GNSS_BAUDRATE: baud rate of GNSS receiver at device GNSS_DEVICE, e.g. B38400
+ *
+ * #optional
+ * GNSS_CHIPSET_XXX: Identification of GNSS chipset, e.g. GNSS_CHIPSET_UBLOX
+ * GNSS_DELAY: Delay in ms of terminating NMEA sentence with respect to time of fix
+ *
+ */
+#ifndef GNSS_DELAY
+#define GNSS_DELAY 0
+#endif
+
 
 DLT_DECLARE_CONTEXT(gContext);
 
@@ -143,8 +163,17 @@ bool extractPosition(const GPS_DATA& gps_data, uint64_t timestamp, TGNSSPosition
     }
     gnss_pos.trackedSatellites = 9999; //not available
     gnss_pos.visibleSatellites = 9999; //not available
-    gnss_pos.sigmaHPosition = 9999; //not available
-    gnss_pos.sigmaAltitude = 9999; //not available
+    if (gps_data.valid & GPS_DATA_HACC) 
+    {     
+        gnss_pos.sigmaHPosition = gps_data.hacc;
+        gnss_pos.validityBits |= GNSS_POSITION_SHPOS_VALID;
+    }
+    if (gps_data.valid & GPS_DATA_HACC) 
+    {     
+        gnss_pos.sigmaAltitude = gps_data.vacc;
+        gnss_pos.validityBits |= GNSS_POSITION_SALT_VALID;
+    }
+
     gnss_pos.sigmaHSpeed = 9999; //not available
     gnss_pos.sigmaVSpeed = 9999; //not available
     gnss_pos.sigmaHeading = 9999; //not available
@@ -211,7 +240,7 @@ bool extractTime(const GPS_DATA& gps_data, uint64_t timestamp, TGNSSTime& gnss_t
  * @ref http://tldp.org/HOWTO/Serial-Programming-HOWTO/x115.html
  * @param gps_device [IN] device, e.g. "/dev/ttyACM0"
  * @param baudrate [IN] baud rate (see definitions in <asm/termbits.h>
- * @return file descriptor of GNSS device
+ * @return file descriptor of GNSS device, negative values indicate an error
  */
 int open_GNSS_NMEA_device(const char* gps_device, unsigned int baudrate)
 {
@@ -225,7 +254,7 @@ int open_GNSS_NMEA_device(const char* gps_device, unsigned int baudrate)
     fd = open(gps_device, O_RDWR | O_NOCTTY ); 
     if (fd <0) 
     {
-        LOG_ERROR(gContext,"Cannot open: %s", gps_device);
+        //LOG_ERROR(gContext,"Cannot open: %s", gps_device);
         return fd; 
     }
 
@@ -293,7 +322,7 @@ int open_GNSS_NMEA_device(const char* gps_device, unsigned int baudrate)
 /* 
   Done
 */
-    LOG_DEBUG(gContext, "OPEN successful %d\n", fd);
+    //LOG_DEBUG(gContext, "OPEN successful %d\n", fd);
     return fd;
 }
 
@@ -309,13 +338,14 @@ void* loop_GNSS_NMEA_device(void* dev)
     int    maxfd;     /* maximum file desciptor used */
     int linecount=0;
     char buf[255];
+    NMEA_RESULT trigger = NMEA_GPRMC;
 
     //gps data as returned by NMEA parser
     GPS_DATA gps_data;
     HNMEA_Init_GPS_DATA(&gps_data);
 
     /* loop until we have a terminating condition */
-    LOG_DEBUG(gContext, "entering NMEA reading loop %d\n", fd);
+    //LOG_DEBUG(gContext, "entering NMEA reading loop %d\n", fd);
     while (g_GNSS_NMEA_loop) 
     {     
         int res;
@@ -330,11 +360,11 @@ void* loop_GNSS_NMEA_device(void* dev)
         res = select(maxfd, &readfs, NULL, NULL, &Timeout);
         if (res==-1)
         {
-            LOG_DEBUG_MSG(gContext, "select()\n");
+            //LOG_DEBUG_MSG(gContext, "select()\n");
         }
         else if (res==0)
         {
-            LOG_DEBUG_MSG(gContext, "TIMEOUT\n");
+            //LOG_DEBUG_MSG(gContext, "TIMEOUT\n");
         } 
         else if (FD_ISSET(fd, &readfs))
         {
@@ -342,10 +372,24 @@ void* loop_GNSS_NMEA_device(void* dev)
             buf[res]=0;             /* set end of string, so we can printf */
             linecount++;
             //LOG_DEBUG(gContext, "%d:%s", linecount, buf);
+            //printf("%"PRIu64":%s",gnss_get_timestamp(), buf);
             NMEA_RESULT nmea_res = HNMEA_Parse(buf, &gps_data);
-            if (nmea_res == NMEA_GPRMC)
+
+            //most receivers sent GPRMC as last, but u-blox send as first: use other trigger
+            //determine most suitable trigger on actually received messages
+            #ifdef GNSS_CHIPSET_UBLOX
+            if (nmea_res == NMEA_GPGST)  //highest precedence
             {
-                uint64_t timestamp = gnss_get_timestamp();
+                trigger = NMEA_GPGST;
+            }
+            if ((nmea_res == NMEA_GPGSA) && (trigger == NMEA_GPRMC)) //GSA better than RMC
+            {
+                trigger = NMEA_GPGSA;
+            }
+            #endif
+            if (nmea_res == trigger)
+            {
+                uint64_t timestamp = gnss_get_timestamp() - GNSS_DELAY;
                 TGNSSTime gnss_time = { 0 };
                 TGNSSPosition gnss_pos = { 0 };
                 if (extractTime(gps_data, timestamp, gnss_time))
@@ -378,6 +422,13 @@ int g_fd = -1;
 extern bool gnssInit()
 {
     g_fd = open_GNSS_NMEA_device(GNSS_DEVICE, GNSS_BAUDRATE);
+    //U-blox receivers: try to activate GPGST
+#ifdef GNSS_CHIPSET_UBLOX
+    char act_gst[] = "$PUBX,40,GST,0,0,0,1,0,0*5A\r\n";
+    //printf("GNSS_CHIPSET == UBLOX\n");
+    write(g_fd, act_gst, strlen(act_gst));
+#endif
+
     if (g_fd >=0) 
     {
         pthread_create (&g_thread, NULL, loop_GNSS_NMEA_device, &g_fd);
@@ -385,7 +436,7 @@ extern bool gnssInit()
     }
     else
     {
-        perror(GNSS_DEVICE); 
+        //perror(GNSS_DEVICE); 
         return false;     
     }
 }
@@ -394,7 +445,7 @@ extern bool gnssDestroy()
 {
     g_GNSS_NMEA_loop = 0;
     pthread_join (g_thread, NULL);
-    LOG_DEBUG_MSG(gContext, "gnssDestroy: NMEA reader thread terminated\n");
+    //LOG_DEBUG_MSG(gContext, "gnssDestroy: NMEA reader thread terminated\n");
     return true;
 }
 

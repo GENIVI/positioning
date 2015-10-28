@@ -19,18 +19,17 @@
 #include "globals.h"
 #include "gnss.h"
 
-pthread_mutex_t mutexCb  = PTHREAD_MUTEX_INITIALIZER;   //protects the callbacks
-pthread_mutex_t mutexData = PTHREAD_MUTEX_INITIALIZER;  //protects the data
+static pthread_mutex_t mutexCb  = PTHREAD_MUTEX_INITIALIZER;   //protects the callbacks
+static pthread_mutex_t mutexData = PTHREAD_MUTEX_INITIALIZER;  //protects the data
 
+static TGNSSSatelliteDetail gSatelliteDetail; //TODO: buffer full set of satellite details for one point in time
+static GNSSSatelliteDetailCallback cbSatelliteDetail = 0;
 
-TGNSSSatelliteDetail gSatelliteDetail; //TODO: buffer full set of satellite details for one point in time
-GNSSSatelliteDetailCallback cbSatelliteDetail = 0;
+static TGNSSPosition gPosition;
+static volatile GNSSPositionCallback cbPosition = 0;
 
-TGNSSPosition gPosition;
-volatile GNSSPositionCallback cbPosition = 0;
-
-TGNSSTime gTime;
-GNSSTimeCallback cbTime = 0;
+static TGNSSTime gTime;
+static volatile GNSSTimeCallback cbTime = 0;
 
 
 

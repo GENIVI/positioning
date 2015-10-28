@@ -1,0 +1,10 @@
+Positioning Logger
+==================================
+Author Helmut Schmidt <https://github.com/huirad>
+
+Overview
+--------
+The positioning logger may be used to write data provided GNSSService and SensorsService to DLT, a file or another sink.
+It is a tiny library without further dependencies which can be linked to each application.
+It is agnostic of the data written to the log.
+The positioning logger is not an official GENIVI component. 

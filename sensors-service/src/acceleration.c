@@ -20,11 +20,14 @@
 #include "acceleration.h"
 #include "sns-meta-data.h"
 
-AccelerationCallback cbAcceleration = 0;
-TAccelerationData gAccelerationData;
+static pthread_mutex_t mutexCb  = PTHREAD_MUTEX_INITIALIZER;   //protects the callbacks
+static pthread_mutex_t mutexData = PTHREAD_MUTEX_INITIALIZER;  //protects the data
+
+static volatile AccelerationCallback cbAcceleration = 0;
+static TAccelerationData gAccelerationData;
 TAccelerationConfiguration gAccelerationConfiguration;
 
-bool snsAccelerationInit()
+bool iAccelerationInit()
 {
     pthread_mutex_lock(&mutexCb);
     cbAcceleration = 0;
@@ -55,7 +58,7 @@ bool snsAccelerationInit()
     return true;
 }
 
-bool snsAccelerationDestroy()
+bool iAccelerationDestroy()
 {
     pthread_mutex_lock(&mutexCb);
     cbAcceleration = 0;
@@ -66,85 +69,90 @@ bool snsAccelerationDestroy()
 
 bool snsAccelerationGetAccelerationData(TAccelerationData * accelerationData)
 {
-    if(!accelerationData)
+    bool retval = false;
+    if(accelerationData)
     {
-    	return false;
+        pthread_mutex_lock(&mutexData);
+        *accelerationData = gAccelerationData;
+        pthread_mutex_unlock(&mutexData);
+        retval = true;
     }
-
-    pthread_mutex_lock(&mutexData);
-    *accelerationData = gAccelerationData;
-    pthread_mutex_unlock(&mutexData);
-
-    return true;
+    return retval;
 }
 
 bool snsAccelerationRegisterCallback(AccelerationCallback callback)
 {
-    if(!callback)
+    bool retval = false;
+
+    //only if valid callback and not already registered
+    if(callback && !cbAcceleration)
     {
-        return false;
-    }
-
-    //printf("snsAccelerationRegisterCallback\n");
-    pthread_mutex_lock(&mutexCb);
-    if(cbAcceleration != 0) 
-    {   
-        //already registered
+        pthread_mutex_lock(&mutexCb);
+        cbAcceleration = callback;
         pthread_mutex_unlock(&mutexCb);
-        return false;
+        retval = true;
     }
-    cbAcceleration = callback;
-    pthread_mutex_unlock(&mutexCb);
-
-    return true;
+    return retval;
 }
 
 bool snsAccelerationDeregisterCallback(AccelerationCallback callback)
 {
-    if(!callback)
-    {
-        return false;
-    }
+    bool retval = false;
 
-    //printf("snsAccelerationDeregisterCallback\n");
-    pthread_mutex_lock(&mutexCb);
-    if(cbAcceleration == callback)
+    if((cbAcceleration == callback) && callback)
     {
+        pthread_mutex_lock(&mutexCb);
         cbAcceleration = 0;
+        pthread_mutex_unlock(&mutexCb);
+        retval = true;
     }
-    pthread_mutex_unlock(&mutexCb);
 
-    return true;
+    return retval;
 }
 
 bool snsAccelerationGetMetaData(TSensorMetaData *data)
 {
-    if(!data) 
-    {
-        return false;
-    }
+    bool retval = false;    
     
-    pthread_mutex_lock(&mutexData);
-    *data = gSensorsMetaData[3];
-    pthread_mutex_unlock(&mutexData);
+    if(data) 
+    {
+        pthread_mutex_lock(&mutexData);
+        *data = gSensorsMetaData[3];
+        pthread_mutex_unlock(&mutexData);
+        retval = true;
+    }
 
-    return true;
+    return retval;
 }
 
 bool snsAccelerationGetAccelerationConfiguration(TAccelerationConfiguration* config)
 {
-    if(!config) 
+    bool retval = false; 
+    if(config) 
     {
-        return false;
+        pthread_mutex_lock(&mutexData);
+        *config = gAccelerationConfiguration;
+        pthread_mutex_unlock(&mutexData);
+        retval = true;
     }
 
-    pthread_mutex_lock(&mutexData);
-    *config = gAccelerationConfiguration;
-    pthread_mutex_unlock(&mutexData);
-
-    return true;
+    return retval;
 }
 
-
+void updateAccelerationData(const TAccelerationData accelerationData[], uint16_t numElements)
+{
+    if (accelerationData != NULL && numElements > 0)
+    {
+        pthread_mutex_lock(&mutexData);
+        gAccelerationData = accelerationData[numElements-1];
+        pthread_mutex_unlock(&mutexData);
+        pthread_mutex_lock(&mutexCb);
+        if (cbAcceleration)
+        {
+            cbAcceleration(accelerationData, numElements);
+        }
+        pthread_mutex_unlock(&mutexCb);
+    }
+}
 
 

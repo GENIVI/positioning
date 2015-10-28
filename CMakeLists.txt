@@ -18,6 +18,8 @@
 # Update (2015/08/19) : Marco Residori <marco_residori@mentor.com>
 #               - Added option WITH_FRANCA_SOMEIP_INTERFACE
 #               - Renamed WITH_FRANCA_INTERFACE to WITH_FRANCA_DBUS_INTERFACE
+# Update (2015/10/28) : Helmut Schmidt <Helmut.3.Schmidt@continental-corporation.com>
+#               - Add option for logger
 # @licence end@
 ###########################################################################
 cmake_minimum_required(VERSION 2.6.0)
@@ -28,6 +30,8 @@ option(WITH_GNSS_SERVICE
        "Build the GNSS Service" ON)
 option(WITH_LOG_REPLAYER
        "Build the Log Replayer" ON)
+option(WITH_LOGGER
+       "Build the Logger" ON)       
 option(WITH_SENSORS_SERVICE
        "Build the Sensors Service" ON)
 option(WITH_FRANCA_DBUS_INTERFACE
@@ -52,6 +56,10 @@ endif(WITH_GNSS_SERVICE)
 if(WITH_LOG_REPLAYER)
 	add_subdirectory(log-replayer)
 endif(WITH_LOG_REPLAYER)
+
+if(WITH_LOGGER)
+	add_subdirectory(logger)
+endif(WITH_LOGGER)
 
 if(WITH_SENSORS_SERVICE)
 	add_subdirectory(sensors-service)

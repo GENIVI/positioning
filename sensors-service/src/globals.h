@@ -25,20 +25,36 @@
 
 #include "sns-init.h"
 #include "wheel.h"
+#include "acceleration.h"
 #include "gyroscope.h"
 #include "vehicle-speed.h"
 #include "sns-meta-data.h"
 
-extern pthread_mutex_t mutexCb;
-extern pthread_mutex_t mutexData;
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-extern TGyroscopeData gGyroscopeData;
-extern TWheelticks gWheelticks;
-TVehicleSpeedData gVehicleSpeedData;
 extern const TSensorMetaData gSensorsMetaData[];
 
-extern WheeltickCallback cbWheelticks;
-extern GyroscopeCallback cbGyroscope;
-VehicleSpeedCallback cbVehicleSpeed;
+bool iAccelerationInit();
+bool iAccelerationDestroy();
+void updateAccelerationData(const TAccelerationData accelerationData[], uint16_t numElements);
+
+bool iGyroscopeInit();
+bool iGyroscopeDestroy();
+void updateGyroscopeData(const TGyroscopeData gyroData[], uint16_t numElements);
+
+
+bool iWheeltickInit();
+bool iWheeltickDestroy();
+void updateWheelticks(const TWheelticks ticks[], uint16_t numElements);
+
+bool iVehicleSpeedInit();
+bool iVehicleSpeedDestroy();
+void updateVehicleSpeedData(const TVehicleSpeedData vehicleSpeedData[], uint16_t numElements);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* GLOBALS_H */

@@ -20,11 +20,14 @@
 #include "gyroscope.h"
 #include "sns-meta-data.h"
 
-GyroscopeCallback cbGyroscope = 0;
-TGyroscopeData gGyroscopeData;
+static pthread_mutex_t mutexCb  = PTHREAD_MUTEX_INITIALIZER;   //protects the callbacks
+static pthread_mutex_t mutexData = PTHREAD_MUTEX_INITIALIZER;  //protects the data
+
+static volatile GyroscopeCallback cbGyroscope = 0;
+static TGyroscopeData gGyroscopeData;
 TGyroscopeConfiguration gGyroscopeConfiguration;
 
-bool snsGyroscopeInit()
+bool iGyroscopeInit()
 {
     pthread_mutex_lock(&mutexCb);
     cbGyroscope = 0;
@@ -51,7 +54,7 @@ bool snsGyroscopeInit()
     return true;
 }
 
-bool snsGyroscopeDestroy()
+bool iGyroscopeDestroy()
 {
     pthread_mutex_lock(&mutexCb);
     cbGyroscope = 0;
@@ -62,83 +65,90 @@ bool snsGyroscopeDestroy()
 
 bool snsGyroscopeGetGyroscopeData(TGyroscopeData * gyroData)
 {
-    if(!gyroData)
+    bool retval = false;
+    if(gyroData)
     {
-    	return false;
+        pthread_mutex_lock(&mutexData);
+        *gyroData = gGyroscopeData;
+        pthread_mutex_unlock(&mutexData);
+        retval = true;
     }
-
-    pthread_mutex_lock(&mutexData);
-    *gyroData = gGyroscopeData;
-    pthread_mutex_unlock(&mutexData);
-
-    return true;
+    return retval;    
 }
 
 bool snsGyroscopeRegisterCallback(GyroscopeCallback callback)
 {
-    if(!callback)
+    bool retval = false;
+
+    //only if valid callback and not already registered
+    if(callback && !cbGyroscope)
     {
-        return false;
-    }
-
-    //printf("snsGyroscopeRegisterCallback\n");
-    pthread_mutex_lock(&mutexCb);
-    if(cbGyroscope != 0) 
-    {   
-        //already registered
+        pthread_mutex_lock(&mutexCb);
+        cbGyroscope = callback;
         pthread_mutex_unlock(&mutexCb);
-        return false;
+        retval = true;
     }
-    cbGyroscope = callback;
-    pthread_mutex_unlock(&mutexCb);
-
-    return true;
+    return retval;
 }
 
 bool snsGyroscopeDeregisterCallback(GyroscopeCallback callback)
 {
-    if(!callback)
+    bool retval = false;
+
+    if((cbGyroscope == callback) && callback)
     {
-        return false;
-    }
-
-    //printf("snsGyroscopeDeregisterCallback\n");
-    pthread_mutex_lock(&mutexCb);
-    if(cbGyroscope == callback)
-    { 
+        pthread_mutex_lock(&mutexCb);
         cbGyroscope = 0;
+        pthread_mutex_unlock(&mutexCb);
+        retval = true;
     }
-    pthread_mutex_unlock(&mutexCb);
 
-    return true;
+    return retval;
 }
 
 bool snsGyroscopeGetMetaData(TSensorMetaData *data)
 {
-    if(!data) 
-    {
-        return false;
-    }
+    bool retval = false;    
     
-    pthread_mutex_lock(&mutexData);
-    *data = gSensorsMetaData[1];
-    pthread_mutex_unlock(&mutexData);
+    if(data) 
+    {
+        pthread_mutex_lock(&mutexData);
+        *data = gSensorsMetaData[1];
+        pthread_mutex_unlock(&mutexData);
+        retval = true;
+    }
 
-    return true;
+    return retval;
 }
 
 bool snsGyroscopeGetConfiguration(TGyroscopeConfiguration* gyroConfig)
 {
-    if(!gyroConfig) 
+    bool retval = false; 
+    if(gyroConfig) 
     {
-        return false;
+        pthread_mutex_lock(&mutexData);
+        *gyroConfig = gGyroscopeConfiguration;
+        pthread_mutex_unlock(&mutexData);
+        retval = true;
     }
 
-    pthread_mutex_lock(&mutexData);
-    *gyroConfig = gGyroscopeConfiguration;
-    pthread_mutex_unlock(&mutexData);
+    return retval;
+}
 
-    return true;
+void updateGyroscopeData(const TGyroscopeData gyroData[], uint16_t numElements)
+{
+    if (gyroData != NULL && numElements > 0)
+    {
+        pthread_mutex_lock(&mutexData);
+        gGyroscopeData = gyroData[numElements-1];
+        pthread_mutex_unlock(&mutexData);
+        pthread_mutex_lock(&mutexCb);
+        if (cbGyroscope)
+        {
+            cbGyroscope(gyroData, numElements);
+        }
+        pthread_mutex_unlock(&mutexCb);
+    }
 }
 
 

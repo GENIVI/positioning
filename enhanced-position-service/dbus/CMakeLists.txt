@@ -55,6 +55,8 @@ set(sensors-service_LIBRARY_DIRS "${PROJECT_BINARY_DIR}/../../sensors-service/sr
 
 if(WITH_IPHONE)
     set(sensors-service_LIBRARIES "sensors-service-use-iphone")
+elseif(WITH_MPU6050)
+    set(sensors-service_LIBRARIES "sensors-service-use-mpu6050")
 elseif(WITH_REPLAYER)
     set(sensors-service_LIBRARIES "sensors-service-use-replayer")
 else()
