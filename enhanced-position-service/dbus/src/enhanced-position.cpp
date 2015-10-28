@@ -50,6 +50,14 @@ static DBus::Variant variant_int32(int32_t i)
   return variant;
 }
 
+static DBus::Variant variant_uint32(uint32_t i)
+{
+  DBus::Variant variant;
+  DBus::MessageIter iter=variant.writer();
+  iter << i;
+  return variant;
+}
+
 static DBus::Variant variant_string(std::string s)
 {
   DBus::Variant variant;
@@ -148,6 +156,17 @@ void EnhancedPosition::GetPositionInfo(const uint64_t& valuesToReturn, uint64_t&
     }
   }
 
+  //always provide some status information
+  if (position.validityBits & GNSS_POSITION_STAT_VALID)
+  {
+    data[GENIVI_ENHANCEDPOSITIONSERVICE_GNSS_FIX_STATUS] = variant_uint16(position.fixStatus);
+  }
+  if (position.validityBits & GNSS_POSITION_USYS_VALID)
+  {
+    data[GENIVI_ENHANCEDPOSITIONSERVICE_USED_SATELLITESYSTEMS] = variant_uint32(position.usedSystems);
+  }
+
+
 }
 
 
@@ -176,6 +195,7 @@ void EnhancedPosition::sigPositionUpdate(const TGNSSPosition position[], uint16_
   bool usatChanged = false; //used satellites
   bool fixStatusChanged = false;
   bool fixTypeBitsChanged = false;
+  bool usedSystemsChanged = false;
 
   uint64_t changedValues = 0;
 
@@ -270,6 +290,10 @@ void EnhancedPosition::sigPositionUpdate(const TGNSSPosition position[], uint16_
       fixTypeBitsChanged = (position[i].validityBits & GNSS_POSITION_TYPE_VALID);
     }
 
+    if (usedSystemsChanged == false)
+    {
+        usedSystemsChanged = (position[i].validityBits & GNSS_POSITION_USYS_VALID);
+    }
   }
 
 
@@ -332,6 +356,11 @@ void EnhancedPosition::sigPositionUpdate(const TGNSSPosition position[], uint16_
     changedValues |= GENIVI_ENHANCEDPOSITIONSERVICE_GNSS_FIX_STATUS;
   }
 
+  if (usedSystemsChanged)
+  {
+    changedValues |= GENIVI_ENHANCEDPOSITIONSERVICE_USED_SATELLITESYSTEMS;
+  }
+
   if (!mpSelf)
   {
     LOG_ERROR_MSG(gCtx,"Null pointer!");    
@@ -379,36 +408,9 @@ void EnhancedPosition::cbSatelliteDetail(const TGNSSSatelliteDetail satelliteDet
   //mpSelf->SatelliteInfoUpdate(changedValues);
 }
 
-bool EnhancedPosition::checkMajorVersion(int expectedMajor)
-{
-  int major = -1;
-
-  gnssGetVersion(&major, 0, 0);
-
-  if (major != expectedMajor)
-  {
-    LOG_ERROR(gCtx,"Wrong API version: gnssGetVersion returned unexpected value %d != %d",
-              major, 
-              expectedMajor);
-
-    return false;
-  }
-
-  return true;
-}
 
 void EnhancedPosition::run()
 {
-  if(!checkMajorVersion(3))
-  {
-    exit(EXIT_FAILURE);
-  }
-
-  if(!gnssInit())
-  {
-    exit(EXIT_FAILURE);
-  }
-
   LOG_INFO_MSG(gCtx,"Starting EnhancedPosition dispatcher...");
 
   gnssRegisterPositionCallback(&cbPosition);
@@ -421,7 +423,6 @@ void EnhancedPosition::shutdown()
 
   gnssDeregisterPositionCallback(&cbPosition);
   gnssDeregisterSatelliteDetailCallback(&cbSatelliteDetail);
-  gnssDestroy();
 }
 
 

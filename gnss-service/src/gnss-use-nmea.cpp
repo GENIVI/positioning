@@ -166,9 +166,9 @@ bool extractPosition(const GPS_DATA& gps_data, uint64_t timestamp, TGNSSPosition
     //hardcoded values for standard GPS receiver
     gnss_pos.fixTypeBits = GNSS_FIX_TYPE_SINGLE_FREQUENCY;
     gnss_pos.validityBits |= GNSS_POSITION_TYPE_VALID;
-    gnss_pos.activated_systems = GNSS_SYSTEM_GPS;
+    gnss_pos.activatedSystems = GNSS_SYSTEM_GPS;
     gnss_pos.validityBits |= GNSS_POSITION_ASYS_VALID;
-    gnss_pos.used_systems = GNSS_SYSTEM_GPS;
+    gnss_pos.usedSystems = GNSS_SYSTEM_GPS;
     gnss_pos.validityBits |= GNSS_POSITION_USYS_VALID;
 
     return true;
@@ -419,4 +419,10 @@ void gnssGetVersion(int *major, int *minor, int *micro)
 bool gnssConfigGNSSSystems(uint32_t activate_systems)
 {
     return false; //satellite system configuration request not supported by NMEA protocol
+}
+
+bool gnssGetSupportedGNSSSystems(uint32_t *supportedSystems)
+{
+    *supportedSystems = GNSS_SYSTEM_GPS;
+    return true;
 }

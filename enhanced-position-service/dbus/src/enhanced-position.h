@@ -47,8 +47,6 @@ public:
 
 private:
 
-  bool checkMajorVersion(int expectedMajor);
-
   static void cbSatelliteDetail(const TGNSSSatelliteDetail satelliteDetail[], uint16_t numElements);
   static void cbPosition(const TGNSSPosition position[], uint16_t numElements);
 

@@ -90,8 +90,8 @@ static void cbPosition(const TGNSSPosition position[], uint16_t numElements)
                  position[i].sigmaHeading,
                  position[i].fixStatus,
                  position[i].fixTypeBits,
-                 position[i].activated_systems,
-                 position[i].used_systems);
+                 position[i].activatedSystems,
+                 position[i].usedSystems);
     }
 }
 

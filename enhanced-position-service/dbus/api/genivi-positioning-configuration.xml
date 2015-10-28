@@ -15,7 +15,7 @@
 <node name="/org/genivi/positioning/Configuration" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="introspect.xsd">
 
   <interface name="org.genivi.positioning.Configuration">
-    <version>3.0.0 (10-Dec-2014)</version>
+    <version>4.0.0alpha (28-Oct-2015)</version>
     <doc>
       <line>Configuration = This interface allows a client application to set and retrieve configuration options</line>
       <line>For each configuration option, a property is provided</line>
@@ -86,9 +86,9 @@
       </arg>
     </signal>
 
-    <property name="SatelliteSystem" type="q" access="readwrite">
+    <property name="SatelliteSystem" type="u" access="readwrite">
       <doc>
-        <line>SatelliteSystem = enum(GPS,GLONASS,GALILEO,COMPASS, ... )</line>
+        <line>SatelliteSystem = Bitmask obtained as result of a bitwise OR operation on the keys corresponding to the satellite systems (GPS,GLONASS,GALILEO,COMPASS, ... ) to be used</line>
       </doc>
     </property>
 

@@ -15,7 +15,7 @@
 <node name="/org/genivi/positioning/EnhancedPosition" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="introspect.xsd">
 
   <interface name="org.genivi.positioning.EnhancedPosition">
-    <version>3.0.0 (10-Dec-2014)</version>
+    <version>4.0.0alpha (28-Oct-2015)</version>
     <doc>
       <line>EnhancedPosition = This interface offers functionalities to retrieve the enhanced position of the vehicle</line>
     </doc>
@@ -50,7 +50,7 @@
           <line> USED_SATELLITES,TRACKED_SATELLITES,VISIBLE_SATELLITES,</line>
           <line> SIGMA_HPOSITION,SIGMA_ALTITUDE,</line>
           <line> SIGMA_HEADING,SIGMA_SPEED,SIGMA_CLIMB,</line>
-          <line> GNSS_FIX_STATUS,DR_STATUS</line>
+          <line> GNSS_FIX_STATUS,DR_STATUS,USED_SATELLITESYSTEMS</line>
         </doc>
       </arg>
 
@@ -67,7 +67,7 @@
           <line>dictionary = array of tuples (key,value)</line>
           <line>Invalid data is not be returned to the client application</line>
           <line>The vehicle axis system is defined by ISO 8855: In short, the X-axis pointing is forwards, the Y-axis is pointing left, the Z-axis is pointing upwards</line>
-          <line>key = enum(LATITUDE,LONGITUDE,ALTITUDE,HEADING,SPEED,CLIMB,ROLL_RATE,PITCH_RATE,YAW_RATE,PDOP,HDOP,VDOP,USED_SATELLITES,TRACKED_SATELLITES,VISIBLE_SATELLITES,SIGMA_HPOSITION,SIGMA_ALTITUDE,SIGMA_HEADING,SIGMA_SPEED,SIGMA_CLIMB,GNSS_FIX_STATUS,DR_STATUS)</line>
+          <line>key = enum(LATITUDE,LONGITUDE,ALTITUDE,HEADING,SPEED,CLIMB,ROLL_RATE,PITCH_RATE,YAW_RATE,PDOP,HDOP,VDOP,USED_SATELLITES,TRACKED_SATELLITES,VISIBLE_SATELLITES,SIGMA_HPOSITION,SIGMA_ALTITUDE,SIGMA_HEADING,SIGMA_SPEED,SIGMA_CLIMB,GNSS_FIX_STATUS,DR_STATUS,USED_SATELLITESYSTEMS)</line>
           <line>key = LATITUDE, value = value of type 'd', that expresses the WGS84 latitude of the current position in degrees. Range [-90:+90]. Example: 48.053250</line>
           <line>key = LONGITUDE, value = value of type 'd', that expresses the WGS84 longitude of the current position in degrees. Range [-180:+180]. Example: 8.324500</line>
           <line>key = ALTITUDE, value = value of type 'd', that expresses the altitude above the sea level of the current position in meters</line>
@@ -90,6 +90,7 @@
           <line>key = SIGMA_CLIMB, value = value of type 'd', that represents the standard error estimate of the climb in degrees</line>
           <line>key = GNSS_FIX_STATUS, value = value of type 'q', that represents an enum(NO_FIX(0x00),TIME_FIX(0x01),2D_FIX(0x02),3D_FIX(0x03), ... )</line>
           <line>key = DR_STATUS, value = value of type 'b', where TRUE means that a dead-reckoning algorithm has been used to calculate the current position</line>
+          <line>key = USED_SATELLITESYSTEMS, value = value of type 'u', that represents an Bitmask obtained as result of a bitwise OR operation on the keys corresponding to the satellite systems that are actually used for the position fix</line>
         </doc>
       </arg>
     </method>
@@ -126,7 +127,7 @@
       <arg name="satelliteInfo" type="a(qqqqqb)" direction="out">
         <doc>
           <line>satelliteInfo = array(struct(system,satelliteId,azimuth,elevation,snr,inUse))</line> 
-          <line> system = enum(GPS, GLONASS, GALILEO, COMPASS, ... )</line> 
+          <line> system = enum(GPS, GLONASS, GALILEO, BEIDOU, ... )</line> 
           <line> satelliteId = satellite ID. This ID is unique within one satellite system</line> 
           <line> azimuth = satellite azimuth in degrees. Value range 0..359</line> 
           <line> elevation = satellite elevation in degrees. Value range 0..90</line> 

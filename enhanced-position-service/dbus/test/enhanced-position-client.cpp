@@ -74,6 +74,16 @@ void EnhancedPositionClient::PositionUpdate(const uint64_t& changedValues)
     LOG_INFO(gCtx,"HEADING=%lf", posData[GENIVI_ENHANCEDPOSITIONSERVICE_HEADING].reader().get_double());
   }
 
+  if (changedValues & GENIVI_ENHANCEDPOSITIONSERVICE_GNSS_FIX_STATUS)
+  {
+    LOG_INFO(gCtx,"FIX STATUS=%d", posData[GENIVI_ENHANCEDPOSITIONSERVICE_GNSS_FIX_STATUS].reader().get_uint16());
+  }
+
+  if (changedValues & GENIVI_ENHANCEDPOSITIONSERVICE_USED_SATELLITESYSTEMS)
+  {
+    LOG_INFO(gCtx,"USED SYSTEMS=0X%08X", posData[GENIVI_ENHANCEDPOSITIONSERVICE_USED_SATELLITESYSTEMS].reader().get_uint32());
+  }
+
 
 }
 

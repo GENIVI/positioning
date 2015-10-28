@@ -102,6 +102,11 @@ bool gnssConfigGNSSSystems(uint32_t activate_systems)
     return false; //satellite system configuration request not supported for replay
 }
 
+bool gnssGetSupportedGNSSSystems(uint32_t *supportedSystems)
+{
+    *supportedSystems = GNSS_SYSTEM_GPS;
+    return true;
+}
 
 //backward compatible processing of GVGNSAC to the new TGNSSPosition
 bool processGVGNSAC(char* data)

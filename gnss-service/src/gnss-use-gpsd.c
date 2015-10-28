@@ -89,6 +89,11 @@ bool gnssConfigGNSSSystems(uint32_t activate_systems)
     return false; //satellite system configuration request not supported by gpsd
 }
 
+bool gnssGetSupportedGNSSSystems(uint32_t *supportedSystems)
+{
+    *supportedSystems = GNSS_SYSTEM_GPS;
+    return true;
+}
 
 static EGNSSFixStatus convertToFixStatus(int fixMode)
 {

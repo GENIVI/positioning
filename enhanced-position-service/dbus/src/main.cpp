@@ -23,6 +23,7 @@
 #include "position-feedback.h"
 #include "configuration.h"
 #include "log.h"
+#include "gnss.h"
 
 const char* ENHANCED_POSITION_SERVICE_NAME = "org.genivi.positioning.EnhancedPosition";
 const char* ENHANCED_POSITION_OBJECT_PATH = "/org/genivi/positioning/EnhancedPosition";
@@ -40,6 +41,24 @@ void sighandler(int sig)
   LOG_INFO_MSG(gCtx,"Signal received");
 
   dispatcher.leave();
+}
+
+bool checkGNSSMajorVersion(int expectedMajor)
+{
+  int major = -1;
+
+  gnssGetVersion(&major, 0, 0);
+
+  if (major != expectedMajor)
+  {
+    LOG_ERROR(gCtx,"Wrong API version: gnssGetVersion returned unexpected value %d != %d",
+              major, 
+              expectedMajor);
+
+    return false;
+  }
+
+  return true;
 }
 
 int main()
@@ -60,6 +79,18 @@ int main()
     LOG_ERROR_MSG(gCtx,"Null pointer!");
   }
 
+  if(!checkGNSSMajorVersion(4))
+  {
+    LOG_ERROR_MSG(gCtx,"Wrong GNSS version - exiting!");
+    exit(EXIT_FAILURE);
+  }
+
+  if(!gnssInit())
+  {
+    LOG_ERROR_MSG(gCtx,"gnssInit failure - exiting!");    
+    exit(EXIT_FAILURE);
+  }
+
   conn->setup(&dispatcher);
   conn->request_name(ENHANCED_POSITION_SERVICE_NAME);
 
@@ -76,6 +107,8 @@ int main()
   ConfigurationServer.shutdown();
   PositionFeedbackServer.shutdown();
   EnhancedPositionServer.shutdown();
+
+  gnssDestroy();
   
   return 0;
 }

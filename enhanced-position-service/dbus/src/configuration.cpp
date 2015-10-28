@@ -19,6 +19,7 @@
 #include "configuration.h"
 #include "positioning-constants.h"
 #include "log.h"
+#include "gnss.h"
 
 DLT_IMPORT_CONTEXT(gCtx);
 
@@ -38,20 +39,36 @@ static DBus::Variant variant_int32(int32_t i)
   return variant;
 }
 
+static DBus::Variant variant_uint32(uint32_t i)
+{
+  DBus::Variant variant;
+  DBus::MessageIter iter=variant.writer();
+  iter << i;
+  return variant;
+}
+
 static DBus::Variant variant_array_uint16(std::vector< uint16_t > i)
 {
-	DBus::Variant variant;
-	DBus::MessageIter iter=variant.writer();
-	iter << i;
-	return variant;
+  DBus::Variant variant;
+  DBus::MessageIter iter=variant.writer();
+  iter << i;
+  return variant;
 }
 
 static DBus::Variant variant_array_int32(std::vector< int32_t > i)
 {
-	DBus::Variant variant;
-	DBus::MessageIter iter=variant.writer();
-	iter << i;
-	return variant;
+  DBus::Variant variant;
+  DBus::MessageIter iter=variant.writer();
+  iter << i;
+  return variant;
+}
+
+static DBus::Variant variant_array_uint32(std::vector< uint32_t > i)
+{
+  DBus::Variant variant;
+  DBus::MessageIter iter=variant.writer();
+  iter << i;
+  return variant;
 }
 
 Configuration::Configuration(DBus::Connection &connection, const char * path)
@@ -67,10 +84,10 @@ Configuration::~Configuration()
 {
   ::DBus::Struct< uint16_t, uint16_t, uint16_t, std::string > Version;
 
-  Version._1 = 3;
+  Version._1 = 4;
   Version._2 = 0;
   Version._3 = 0;
-  Version._4 = std::string("05-08-2014");
+  Version._4 = std::string("28-10-2015alpha");
 
   return Version;
 }
@@ -80,7 +97,7 @@ std::map< std::string, ::DBus::Variant > Configuration::GetProperties()
   std::map< std::string, ::DBus::Variant > Properties;
 
   Properties["UpdateInterval"] = variant_int32(1000);
-  Properties["SatelliteSystem"] = variant_uint16(GENIVI_ENHANCEDPOSITIONSERVICE_GPS);
+  Properties["SatelliteSystem"] = variant_uint32(GENIVI_ENHANCEDPOSITIONSERVICE_GPS|GENIVI_ENHANCEDPOSITIONSERVICE_GLONASS);
 
   return Properties;
 }
@@ -97,14 +114,33 @@ std::map< std::string, ::DBus::Variant > Configuration::GetSupportedProperties()
   std::vector< int32_t > updateIntervals;
   updateIntervals.push_back(1000);
 
-  std::vector< uint16_t > satelliteSystems;
-  satelliteSystems.push_back(GENIVI_ENHANCEDPOSITIONSERVICE_GPS);
-  satelliteSystems.push_back(GENIVI_ENHANCEDPOSITIONSERVICE_GLONASS);
-  satelliteSystems.push_back(GENIVI_ENHANCEDPOSITIONSERVICE_GALILEO);
-  satelliteSystems.push_back(GENIVI_ENHANCEDPOSITIONSERVICE_COMPASS);
+  uint32_t supportedSystems; 
+
+  if (!gnssGetSupportedGNSSSystems(&supportedSystems))
+  { //assume GPS at least
+    supportedSystems = GNSS_SYSTEM_GPS;
+  }
+
+  std::vector< uint32_t > satelliteSystems;
+  if (supportedSystems & GNSS_SYSTEM_GPS)
+  {
+    satelliteSystems.push_back(GENIVI_ENHANCEDPOSITIONSERVICE_GPS);
+  }
+  if (supportedSystems & GNSS_SYSTEM_GLONASS)
+  {
+    satelliteSystems.push_back(GENIVI_ENHANCEDPOSITIONSERVICE_GLONASS);
+  }
+  if (supportedSystems & GNSS_SYSTEM_GALILEO)
+  {
+    satelliteSystems.push_back(GENIVI_ENHANCEDPOSITIONSERVICE_GALILEO);
+  }
+  if (supportedSystems & GNSS_SYSTEM_BEIDOU)
+  {
+    satelliteSystems.push_back(GENIVI_ENHANCEDPOSITIONSERVICE_COMPASS);
+  }
 
   SupportedProperties["UpdateInterval"] = variant_array_int32(updateIntervals);
-  SupportedProperties["SatelliteSystem"] =  variant_array_uint16(satelliteSystems);
+  SupportedProperties["SatelliteSystem"] =  variant_array_uint32(satelliteSystems);
 
   return SupportedProperties;
 }
@@ -118,13 +154,3 @@ void Configuration::shutdown()
 {
   LOG_INFO_MSG(gCtx,"Shutting down Configuration dispatcher...");
 }
-
-
-
-
-
-
-
-
-
-
