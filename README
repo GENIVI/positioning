@@ -2,24 +2,27 @@
 Positioning Git Repository
 ============================
 
-The Positioning repository is a collection of proofs of concept:
+The Positioning repository is a collection of APIs and corresponding proofs of concept:
 * GNSSService
 * SensorsService
 * EnhancedPositionService
+* Logger
 * LogReplayer
 * PositionWebService
+
 
 ===============================
 Directory Structure
 ===============================
 
 enhanced-position-service   //three enhanced-position-service PoCs: 
-                              1) with dbus interfaces, 
+                              1) with dbus interfaces, (official API)
                               2) with commonapi-dbus interfaces, 
                               3) with commonapi-someip interfaces.
-gnss-service                //gnss-service PoC
-log-replayer                //log-replayer-PoC
-sensors-service             //sensors-service PoC
+gnss-service                //gnss-service API + PoC
+logger                      //logger PoC
+log-replayer                //log-replayer PoC
+sensors-service             //sensors-service API + PoC 
 position-web-servce         //position-web-service PoC
 architecture.png            //architecture overview
 build-all.sh                //script to build the PoCs (usage: build-all.sh help) 
@@ -77,6 +80,8 @@ option(WITH_GNSS_SERVICE
        "Build the GNSS Service" ON)
 option(WITH_LOG_REPLAYER
        "Build the Log Replayer" ON)
+option(WITH_LOGGER
+       "Build the Logger" OFF)
 option(WITH_SENSORS_SERVICE
        "Build the Sensors Service" ON)
 option(WITH_FRANCA_DBUS_INTERFACE
@@ -99,6 +104,8 @@ option(WITH_TESTS
     "Compile test applications" OFF)
 option(WITH_IPHONE
     "Use IPHONE as source of sensors data" OFF)
+option(WITH_MPU6050
+    "Use MPU6050 via I2C as source of sensors data" OFF)    
 
 Just set the option to ON or OFF on the command line.
 

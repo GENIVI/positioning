@@ -403,7 +403,7 @@ void* loop_GNSS_NMEA_device(void* dev)
             }
         }
     }
-    LOG_DEBUG_MSG(gContext, "END NMEA reading loop\n");
+    //LOG_DEBUG_MSG(gContext, "END NMEA reading loop\n");
     return NULL;
 }
 

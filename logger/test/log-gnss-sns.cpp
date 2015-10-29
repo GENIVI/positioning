@@ -3,7 +3,7 @@
 *
 * SPDX-License-Identifier: MPL-2.0
 *
-* \brief Test program for GNSS logging
+* \brief Test program for GNSS+SNS logging
 *
 *
 * \author Helmut Schmidt <https://github.com/huirad>
@@ -47,7 +47,6 @@ static void sigHandler (int sig, siginfo_t *siginfo, void *context)
     if (sig == SIGINT) 
     {
         sigint = true;
-        printf("SIGINT\n");
     }
     else 
     if (sig == SIGTERM) 
