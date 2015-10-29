@@ -1,0 +1,202 @@
+/*  SPDX-License-Identifier: MPL-2.0
+    Component Name: EnhancedPositionService
+    Compliance Level: Abstract Component
+    Copyright (C) 2012, BMW Car IT GmbH, Continental Automotive GmbH, PCA Peugeot Citroën, XS Embedded GmbH
+    License:
+    This Source Code Form is subject to the terms of the
+    Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed with
+    this file, You can obtain one at http://mozilla.org/MPL/2.0/.
+*/
+
+package org.genivi.EnhancedPositionService
+
+typeCollection EnhancedPositionServiceTypes {
+
+    <** @description: timestamp **>
+    typedef Timestamp is UInt64
+    
+    <** @description: bitmask obtained as a result of an OR operation on enum values **>        
+    typedef Bitmask is UInt64 
+    
+    <** @description: version **>            
+    struct Version {
+        <** @description : when the major changes, then backward compatibility with previous releases is not granted **>
+        UInt16 maj
+        <** @description : when the minor changes, then backward compatibility with previous releases is granted, but something changed in the implementation of the API (e.g. new methods may have been added) **>
+        UInt16 min
+        <** @description : when the micro changes, then backward compatibility with previous releases is granted (bug fixes or documentation modifications) **>
+        UInt16 mic
+        <** @description : release date (e.g. 21-06-2011) **>
+        String date
+    }
+    
+    enumeration PositionInfoFields {
+        LATITUDE           = 1
+        LONGITUDE          = 2
+        ALTITUDE           = 4
+        HEADING            = 8
+        SPEED              = 16
+        CLIMB              = 32
+        ROLL_RATE          = 64
+        PITCH_RATE         = 128
+        YAW_RATE           = 256
+        PDOP               = 512
+        HDOP               = 1024
+        VDOP               = 2048
+        USED_SATELLITES    = 4096
+        TRACKED_SATELLITES = 8192
+        VISIBLE_SATELLITES = 16384
+        SIGMA_HPOSITION    = 32768
+        SIGMA_ALTITUDE     = 65536
+        SIGMA_HEADING      = 131072
+        SIGMA_SPEED        = 262144
+        SIGMA_CLIMB        = 524288
+        GNSS_FIX_STATUS    = 1048576
+        DR_STATUS          = 2097152
+        RELIABILTY_INDEX   = 4194304
+    } 
+    
+    enumeration SatelliteSystem {
+        GPS     = 1
+        GLONASS = 2
+        GALILEO = 3
+        COMPASS = 4 
+    }    
+    
+    <** @description : satellite information **>
+    struct SatelliteInfo { 
+    	<** @description : satellite system **>
+        SatelliteSystem system 
+        <** @description  : satellite ID. This ID is unique within one satellite system **>
+        UInt32 satellitId
+        <** @description : satellite azimuth in degrees. Value range 0..359 **> 
+        UInt32 azimuth   
+        <** @description : satellite elevation in degrees. Value range 0..90 **>      
+        UInt32 elevation 
+        <** @description : SNR (C/No) in dBHz. Range 0 to 99, null when not tracking **>     
+        UInt32 snr    
+        <** @description : flag indicating if the satellite is used for the fix (inUse=true) **>         
+        Boolean inUse          
+    }
+    
+    <** @description : fix status **>
+    enumeration FixStatus {
+        NO_FIX =  0
+        FIX_TIME = 1
+        FIX_2D = 2
+        FIX_3D = 3
+    }
+       
+    <** @description : position information **>
+    struct PositionInfo {
+    	Timestamp timestamp
+    	<** @description : bitmap indicating which fields contain valid data **>
+    	Bitmask validityField
+    	<** @description : latitude of the current position in format %3.6f. [-90,+90]. Example: 48.053250 **>
+        Double latitude
+        <** @description : longitude of the current position. Range [-180:+180]. Example: 8.324500 **>
+        Double longitude
+        <** @description : altitude above the sea level of the current position in meters **>
+        Double altitude
+        <** @description : course angle in degree. Range [0:360]. 0 = north, 90 = east, 180 = south, 270 = west **>
+        Double heading
+        <** @description : speed measured in m/s. A negative value indicates that the vehicle is moving backwards **>
+        Double speed
+        <** @description : road gradient in degrees **>
+        Double climb
+        <** @description : rotation rate around the X-axis in degrees/s. Range [-100:+100] **>
+        Double rollRate
+        <** @description : rotation rate around the X-axis in degrees/s. Range [-100:+100] **>
+        Double pitchRate
+        <** @description : rotation rate around the Z-axis in degrees/s. Range [-100:+100] **>
+        Double yawRate
+        <** @description : positional (3D) dilution of precision **>
+        Double pDop
+        <** @description : horizontal (2D) dilution of precision **>
+        Double hDop
+        <** @description : vertical (altitude) dilution of precision **>
+        Double vDop
+        <** @description : number of used satellites **>
+        UInt8 usedSatellites
+        <** @description : number of tracked satellites **>
+        UInt8 trackedSatellites
+        <** @description : number of visible satellites **>
+        UInt8 visibleSatellites
+        <** @description : satellite information **>
+        SatelliteInfo[] satelliteInfo
+        <** @description : standard deviation for the horizontal position in m **>
+        Double sigmaHPosition
+        <** @description : standard deviation for altitude in m **>
+        Double sigmaAltitude
+        <** @description : standard error estimate of the heading in degrees **>
+        Double sigmaHeading
+        <** @description : standard error estimate of the speed in m/s **>
+        Double sigmaSpeed
+        <** @description : standard error estimate of the climb in degrees **>
+        Double sigmaClimb
+        <** @description : GNSS fix status **>
+        FixStatus fixStatus
+        <** @description : TRUE means that a dead-reckoning algorithm has been used to calculate the current position  **>
+        Double deadReckoningStatus
+    }
+    
+    <** @description : time information **>
+    struct TimeInfo
+    {
+    	<** @description : 4 digits number that indicates the year. Example: 2012 **>
+    	UInt16 year
+    	<** @description : 2 digits number that indicates the month. Example: 03 means March **>
+    	UInt8 month
+    	<** @description : 2 digits number that indicates the day. Range [0:31]. Example: 07 **>
+    	UInt8 day
+    	<** @description : 2 digits number that indicates the hour. Range [0:23].  Example: 01 **>
+    	UInt8 hour
+    	<** @description : 2 digits number that represents the minutes. Range [0:59]. Example: 01  **>
+    	UInt8 minute
+    	<** @description : 2 digits number that represents the seconds. Range [0:59]. Example: 01 **>
+    	UInt8 second
+    	<** @description : 3 digits number that represents the milliseconds. Range [0:999]. Example: 007 **>
+    	UInt16 ms
+    }
+    
+    enumeration PositionFeedbackFields {
+        LATITUDE         = 1
+        LONGITUDE        = 2
+        ALTITUDE         = 4
+        HEADING          = 8
+        SPEED            = 16
+        CLIMB            = 32
+        RELIABILTY_INDEX = 64
+    }
+    
+    enumeration PositionFeedbackType {
+        MAP_MATCHED_FEEDBACK = 1
+        TEST_FEEDBACK        = 2
+    }
+    
+    <** @description : position feedback **>
+    struct PositionFeedback
+    {
+    	<** @description : position feedback type **>
+    	PositionFeedbackType type
+    	<** @description : bitmask **>
+    	Bitmask validFields
+        <** @description : latitude of the current position in format %3.6f. [-90,+90]. Example: 48.053250 **>
+        Double latitude
+        <** @description : longitude of the current position. Range [-180:+180]. Example: 8.324500 **>
+        Double longitude
+        <** @description : altitude above the sea level of the current position in meters **>
+        Double altitude
+        <** @description : course angle in degree. Range [0:360]. 0 = north, 90 = east, 180 = south, 270 = west **>
+        Double heading
+        <** @description : speed measured in m/s. A negative value indicates that the vehicle is moving backwards **>
+        Double speed
+        <** @description : road gradient in degrees **>
+        Double climb
+        <** @description : position feedabck reliabilty. It can assume values from 0 to 100 **>
+    	UInt8 reliabilityIndex
+    }
+
+}
+
+
