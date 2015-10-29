@@ -81,7 +81,7 @@ else
 		usage
 	elif [ $1 = prepmake ]; then
 		if [ ! -d "$SRC_DIR/firebreath-dev" ]; then
-			git clone git://github.com/firebreath/FireBreath.git -b firebreath-$FB_VER $SRC_DIR/firebreath-dev
+			git clone https://github.com/firebreath/FireBreath.git -b firebreath-$FB_VER $SRC_DIR/firebreath-dev
 		fi
 		$SRC_DIR/firebreath-dev/prepmake.sh $SRC_DIR/fbprojects $SRC_DIR/fbbuild
 	elif [ $1 = make ]; then
