@@ -24,7 +24,7 @@ static pthread_mutex_t mutexCb  = PTHREAD_MUTEX_INITIALIZER;   //protects the ca
 static pthread_mutex_t mutexData = PTHREAD_MUTEX_INITIALIZER;  //protects the data
 
 static volatile GyroscopeCallback cbGyroscope = 0;
-static TGyroscopeData gGyroscopeData;
+static TGyroscopeData gGyroscopeData = {0};
 TGyroscopeConfiguration gGyroscopeConfiguration;
 
 bool iGyroscopeInit()
@@ -34,6 +34,7 @@ bool iGyroscopeInit()
     pthread_mutex_unlock(&mutexCb);
 
     pthread_mutex_lock(&mutexData);
+    gGyroscopeData.validityBits = 0;
     //example gyroscope configuration for a 3-axis gyro
     gGyroscopeConfiguration.angleYaw = 0;
     gGyroscopeConfiguration.anglePitch = 0;
@@ -73,21 +74,22 @@ bool snsGyroscopeGetGyroscopeData(TGyroscopeData * gyroData)
         pthread_mutex_unlock(&mutexData);
         retval = true;
     }
-    return retval;    
+    return retval;
 }
 
 bool snsGyroscopeRegisterCallback(GyroscopeCallback callback)
 {
     bool retval = false;
 
+    pthread_mutex_lock(&mutexCb);
     //only if valid callback and not already registered
     if(callback && !cbGyroscope)
     {
-        pthread_mutex_lock(&mutexCb);
         cbGyroscope = callback;
-        pthread_mutex_unlock(&mutexCb);
         retval = true;
     }
+    pthread_mutex_unlock(&mutexCb);
+
     return retval;
 }
 
@@ -95,13 +97,13 @@ bool snsGyroscopeDeregisterCallback(GyroscopeCallback callback)
 {
     bool retval = false;
 
+    pthread_mutex_lock(&mutexCb);
     if((cbGyroscope == callback) && callback)
     {
-        pthread_mutex_lock(&mutexCb);
         cbGyroscope = 0;
-        pthread_mutex_unlock(&mutexCb);
         retval = true;
     }
+    pthread_mutex_unlock(&mutexCb);
 
     return retval;
 }

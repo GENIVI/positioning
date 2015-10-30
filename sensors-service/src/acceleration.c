@@ -24,7 +24,7 @@ static pthread_mutex_t mutexCb  = PTHREAD_MUTEX_INITIALIZER;   //protects the ca
 static pthread_mutex_t mutexData = PTHREAD_MUTEX_INITIALIZER;  //protects the data
 
 static volatile AccelerationCallback cbAcceleration = 0;
-static TAccelerationData gAccelerationData;
+static TAccelerationData gAccelerationData = {0};
 TAccelerationConfiguration gAccelerationConfiguration;
 
 bool iAccelerationInit()
@@ -34,10 +34,11 @@ bool iAccelerationInit()
     pthread_mutex_unlock(&mutexCb);
     
     pthread_mutex_lock(&mutexData);
+    gAccelerationData.validityBits = 0;
     //example accelerometer configuration for a 3-axis accelerometer
     gAccelerationConfiguration.dist2RefPointX = 0;
     gAccelerationConfiguration.dist2RefPointY = 0;
-    gAccelerationConfiguration.dist2RefPointZ = 0;    
+    gAccelerationConfiguration.dist2RefPointZ = 0;
     gAccelerationConfiguration.angleYaw = 0;
     gAccelerationConfiguration.anglePitch = 0;
     gAccelerationConfiguration.angleRoll = 0;
@@ -84,14 +85,15 @@ bool snsAccelerationRegisterCallback(AccelerationCallback callback)
 {
     bool retval = false;
 
+    pthread_mutex_lock(&mutexCb);
     //only if valid callback and not already registered
     if(callback && !cbAcceleration)
     {
-        pthread_mutex_lock(&mutexCb);
         cbAcceleration = callback;
-        pthread_mutex_unlock(&mutexCb);
         retval = true;
     }
+    pthread_mutex_unlock(&mutexCb);
+
     return retval;
 }
 
@@ -99,13 +101,13 @@ bool snsAccelerationDeregisterCallback(AccelerationCallback callback)
 {
     bool retval = false;
 
+    pthread_mutex_lock(&mutexCb);
     if((cbAcceleration == callback) && callback)
     {
-        pthread_mutex_lock(&mutexCb);
         cbAcceleration = 0;
-        pthread_mutex_unlock(&mutexCb);
         retval = true;
     }
+    pthread_mutex_unlock(&mutexCb);
 
     return retval;
 }

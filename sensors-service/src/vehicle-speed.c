@@ -19,13 +19,17 @@ static pthread_mutex_t mutexCb  = PTHREAD_MUTEX_INITIALIZER;   //protects the ca
 static pthread_mutex_t mutexData = PTHREAD_MUTEX_INITIALIZER;  //protects the data
 
 static volatile VehicleSpeedCallback cbVehicleSpeed = 0;
-static TVehicleSpeedData gVehicleSpeedData;
+static TVehicleSpeedData gVehicleSpeedData = {0};
 
 bool iVehicleSpeedInit()
 {
     pthread_mutex_lock(&mutexCb);
     cbVehicleSpeed = 0;
     pthread_mutex_unlock(&mutexCb);
+
+    pthread_mutex_lock(&mutexData);
+    gVehicleSpeedData.validityBits = 0;
+    pthread_mutex_unlock(&mutexData);
 
     return true;
 }
@@ -41,44 +45,44 @@ bool iVehicleSpeedDestroy()
 
 bool snsVehicleSpeedGetVehicleSpeedData(TVehicleSpeedData* vehicleSpeed)
 {
-    if(!vehicleSpeed)
+    bool retval = false;
+    if(vehicleSpeed)
     {
-    	return false;
+        pthread_mutex_lock(&mutexData);
+        *vehicleSpeed = gVehicleSpeedData;
+        pthread_mutex_unlock(&mutexData);
+        retval = true;
     }
-
-    pthread_mutex_lock(&mutexData);
-    *vehicleSpeed = gVehicleSpeedData;
-    pthread_mutex_unlock(&mutexData);
-
-    return true;
+    return retval;
 }
 
 bool snsVehicleSpeedRegisterCallback(VehicleSpeedCallback callback)
 {
     bool retval = false;
 
+    pthread_mutex_lock(&mutexCb);
     //only if valid callback and not already registered
     if(callback && !cbVehicleSpeed)
     {
-        pthread_mutex_lock(&mutexCb);
         cbVehicleSpeed = callback;
-        pthread_mutex_unlock(&mutexCb);
         retval = true;
     }
-    return retval;    
+    pthread_mutex_unlock(&mutexCb);
+
+    return retval;
 }
 
 bool snsVehicleSpeedDeregisterCallback(VehicleSpeedCallback callback)
 {
     bool retval = false;
 
+    pthread_mutex_lock(&mutexCb);
     if((cbVehicleSpeed == callback) && callback)
     {
-        pthread_mutex_lock(&mutexCb);
         cbVehicleSpeed = 0;
-        pthread_mutex_unlock(&mutexCb);
         retval = true;
     }
+    pthread_mutex_unlock(&mutexCb);
 
     return retval;
 }

@@ -22,13 +22,13 @@
 static pthread_mutex_t mutexCb  = PTHREAD_MUTEX_INITIALIZER;   //protects the callbacks
 static pthread_mutex_t mutexData = PTHREAD_MUTEX_INITIALIZER;  //protects the data
 
-static TGNSSSatelliteDetail gSatelliteDetail; //TODO: buffer full set of satellite details for one point in time
+static TGNSSSatelliteDetail gSatelliteDetail = {0}; //TODO: buffer full set of satellite details for one point in time
 static GNSSSatelliteDetailCallback cbSatelliteDetail = 0;
 
-static TGNSSPosition gPosition;
+static TGNSSPosition gPosition = {0};
 static volatile GNSSPositionCallback cbPosition = 0;
 
-static TGNSSTime gTime;
+static TGNSSTime gTime = {0};
 static volatile GNSSTimeCallback cbTime = 0;
 
 
@@ -36,131 +36,140 @@ static volatile GNSSTimeCallback cbTime = 0;
 
 bool gnssRegisterSatelliteDetailCallback(GNSSSatelliteDetailCallback callback)
 {
-    if(cbSatelliteDetail != 0) 
-    {
-        return false; //if already registered
-    }
+    bool retval = false;
 
     pthread_mutex_lock(&mutexCb);
-    cbSatelliteDetail = callback;
+    //only if valid callback and not already registered
+    if(callback && !cbSatelliteDetail)
+    {
+        cbSatelliteDetail = callback;
+        retval = true;
+    }
     pthread_mutex_unlock(&mutexCb);
 
-    return true;
+    return retval;
 }
 
 bool gnssDeregisterSatelliteDetailCallback(GNSSSatelliteDetailCallback callback)
 {
-    if(cbSatelliteDetail == callback && callback != 0)
+    bool retval = false;
+
+    pthread_mutex_lock(&mutexCb);
+    if((cbSatelliteDetail == callback) && callback)
     {
-        pthread_mutex_lock(&mutexCb);
         cbSatelliteDetail = 0;
-        pthread_mutex_unlock(&mutexCb);
-
-        return true;
+        retval = true;
     }
+    pthread_mutex_unlock(&mutexCb);
 
-    return false;
+    return retval;
 }
 
 bool gnssGetSatelliteDetails(TGNSSSatelliteDetail* satelliteDetails, uint16_t count, uint16_t* numSatelliteDetails)
 {
-    if(!satelliteDetails || !count)
+    bool retval = false;
+
+    if(satelliteDetails && count)
     {
-        return false;
+//TODO: return full set of satellite details for one point in time
+        pthread_mutex_lock(&mutexData);
+        *satelliteDetails = gSatelliteDetail;
+        *numSatelliteDetails = 1;
+        pthread_mutex_unlock(&mutexData);
+        retval = true;
     }
 
-//TODO: return full set of satellite details for one point in time
-    pthread_mutex_lock(&mutexData);
-    *satelliteDetails = gSatelliteDetail;
-    *numSatelliteDetails = 1; 
-    pthread_mutex_unlock(&mutexData);
-
-    return true;
+    return retval;
 }
 
 bool gnssRegisterPositionCallback(GNSSPositionCallback callback)
 {
-    if(cbPosition != 0) 
-    {
-        return false; //if already registered
-    }
+    bool retval = false;
 
     pthread_mutex_lock(&mutexCb);
-    cbPosition = callback;
+    //only if valid callback and not already registered
+    if(callback && !cbPosition)
+    {
+        cbPosition = callback;
+        retval = true;
+    }
     pthread_mutex_unlock(&mutexCb);
 
-    return true;
+    return retval;
 }
 
 bool gnssDeregisterPositionCallback(GNSSPositionCallback callback)
 {
-    if(cbPosition == callback && callback != 0)
+    bool retval = false;
+
+    pthread_mutex_lock(&mutexCb);
+    if((cbPosition == callback) && callback)
     {
-        pthread_mutex_lock(&mutexCb);
         cbPosition = 0;
-        pthread_mutex_unlock(&mutexCb);
-
-        return true;
+        retval = true;
     }
+    pthread_mutex_unlock(&mutexCb);
 
-    return false;
+    return retval;
 }
 
 bool gnssGetPosition(TGNSSPosition* position)
 {
-    if(!position)
+    bool retval = false;
+    if(position)
     {
-        return false;
+        pthread_mutex_lock(&mutexData);
+        *position = gPosition;
+        pthread_mutex_unlock(&mutexData);
+        retval = true;
     }
-
-    pthread_mutex_lock(&mutexData);
-    *position = gPosition;
-    pthread_mutex_unlock(&mutexData);
-
-    return true;
+    return retval;
 }
 
 
 bool gnssRegisterTimeCallback(GNSSTimeCallback callback)
 {
-    if(cbTime != 0) 
-    {
-        return false; //if already registered
-    }
+    bool retval = false;
 
     pthread_mutex_lock(&mutexCb);
-    cbTime = callback;
+    //only if valid callback and not already registered
+    if(callback && !cbTime)
+    {
+        cbTime = callback;
+        retval = true;
+    }
     pthread_mutex_unlock(&mutexCb);
 
-    return true;
+    return retval;
 }
+
 
 bool gnssDeregisterTimeCallback(GNSSTimeCallback callback)
 {
-    if(cbTime == callback && callback != 0)
+    bool retval = false;
+
+    pthread_mutex_lock(&mutexCb);
+    if((cbTime == callback) && callback)
     {
-        pthread_mutex_lock(&mutexCb);
         cbTime = 0;
-        pthread_mutex_unlock(&mutexCb);
-
-        return true;
+        retval = true;
     }
+    pthread_mutex_unlock(&mutexCb);
 
-    return false;
+    return retval;
 }
 
 bool gnssGetTime(TGNSSTime* time)
 {
-    if(!time)
+    bool retval = false;
+    if(time)
     {
-        return false;
+        pthread_mutex_lock(&mutexData);
+        *time = gTime;
+        pthread_mutex_unlock(&mutexData);
+        retval = true;
     }
-
-    pthread_mutex_lock(&mutexData);
-    *time = gTime;
-    pthread_mutex_unlock(&mutexData);
-
-    return true;
+    return retval;
 }
 
 

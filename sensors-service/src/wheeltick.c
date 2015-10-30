@@ -23,7 +23,7 @@ static pthread_mutex_t mutexCb  = PTHREAD_MUTEX_INITIALIZER;   //protects the ca
 static pthread_mutex_t mutexData = PTHREAD_MUTEX_INITIALIZER;  //protects the data
 
 static volatile WheeltickCallback cbWheelticks = 0;
-static TWheelticks gWheelticks;
+static TWheelticks gWheelticks = {0};
 
 bool iWheeltickInit()
 {
@@ -63,21 +63,22 @@ bool snsWheeltickGetWheelticks(TWheelticks * ticks)
         pthread_mutex_unlock(&mutexData);
         retval = true;
     }
-    return retval;    
+    return retval;
 }
 
 bool snsWheeltickRegisterCallback(WheeltickCallback callback)
 {
     bool retval = false;
 
+    pthread_mutex_lock(&mutexCb);
     //only if valid callback and not already registered
     if(callback && !cbWheelticks)
     {
-        pthread_mutex_lock(&mutexCb);
         cbWheelticks = callback;
-        pthread_mutex_unlock(&mutexCb);
         retval = true;
     }
+    pthread_mutex_unlock(&mutexCb);
+
     return retval;
 }
 
@@ -85,15 +86,15 @@ bool snsWheeltickDeregisterCallback(WheeltickCallback callback)
 {
     bool retval = false;
 
+    pthread_mutex_lock(&mutexCb);
     if((cbWheelticks == callback) && callback)
     {
-        pthread_mutex_lock(&mutexCb);
         cbWheelticks = 0;
-        pthread_mutex_unlock(&mutexCb);
         retval = true;
     }
+    pthread_mutex_unlock(&mutexCb);
 
-    return retval;    
+    return retval;
 }
 
 void updateWheelticks(const TWheelticks ticks[], uint16_t numElements)
