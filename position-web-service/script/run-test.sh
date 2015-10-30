@@ -18,9 +18,9 @@
 # @licence end@
 ###########################################################################
 
-killall enhanced-position-client 
-killall enhanced-position-service
-killall log-replayer
+killall enhanced-position-client > /dev/null  2>&1
+killall enhanced-position-service > /dev/null  2>&1 
+killall log-replayer > /dev/null  2>&1  
 
 cd ../..
 

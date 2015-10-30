@@ -17,18 +17,13 @@
 # @licence end@
 ###########################################################################
 
-TOP_DIR=../../..
+TOP_DIR=../../../..
 
-BIN_DIR=$TOP_DIR/build/log-replayer/src
-LOGS_DIR=$TOP_DIR/log-replayer/logs
-BIN=log-replayer
-LOG=geneve-cologny.log
-
-CMD="$BIN_DIR/$BIN $LOGS_DIR/$LOG > /dev/null 2>&1"
+LOG=$TOP_DIR/log-replayer/logs/geneve-cologny.log
 
 usage() {
     echo "Usage: "
-    echo "  run-logreplayer.sh [option]"
+    echo "  run-enhanced-position-service.sh [option]"
     echo "  -d           daemonize"
     echo "  -k           kill"
     echo "  -h           help"
@@ -38,16 +33,19 @@ usage() {
 if [ $# -ge 1 ]; then
     if [ $1 = "-d" ]; then
         echo "Starting log-replayer..."
-        eval "$CMD" &
+        eval "$TOP_DIR/build/log-replayer/src/log-replayer $LOG > /dev/null 2>&1" &
+        echo "Starting enhanced-position-service..."
+        eval "$TOP_DIR/build/enhanced-position-service/dbus/src/enhanced-position-service > /dev/null 2>&1" &
     elif [ $1 = "-k" ]; then
         killall log-replayer  
+        killall enhanced-position-service 
     elif [ $1 = "-h" ]; then
         usage  
     fi 
 else
-    echo "Starting log-replayer..."
-    eval "$CMD"
+    usage
 fi
+
 
 
 
