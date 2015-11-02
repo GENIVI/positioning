@@ -241,10 +241,10 @@ typedef struct {
     uint64_t timestamp;             /**< Timestamp of the acquisition of the GNSS data [ms].
                                          All sensor/GNSS timestamps must be based on the same time source. */
     //position
-    double latitude;                /**< Latitude in WGS84 in degrees. */ 
-    double longitude;               /**< Longitude in WGS84 in degrees. */ 
-    float altitudeMSL;              /**< Altitude above mean sea level (geoid) */ 
-    float altitudeEll;              /**< Altitude above WGS84 ellipsoid */ 
+    double latitude;                /**< Latitude in WGS84 in [degree]. */ 
+    double longitude;               /**< Longitude in WGS84 in [degree]. */ 
+    float altitudeMSL;              /**< Altitude above mean sea level (geoid) in [m]. */ 
+    float altitudeEll;              /**< Altitude above WGS84 ellipsoid in [m]. */ 
     //velocity
     float hSpeed;                   /**< Horizontal speed [m/s]. */ 
     float vSpeed;                   /**< Vertical speed [m/s]. */ 
@@ -255,7 +255,7 @@ typedef struct {
     float vdop;                     /**< The vertical (altitude) dilution of precision. */ 
     uint16_t usedSatellites;        /**< Number of satellites used for the GNSS fix. */ 
     uint16_t trackedSatellites;     /**< Number of satellites from which a signal is received. */ 
-    uint16_t visibleSatellites;     /**< Number of satellites expected to be receiveable, i.e. above horizon or elevation mask. */ 
+    uint16_t visibleSatellites;     /**< Number of satellites expected to be receivable, i.e. above horizon or elevation mask. */ 
     //quality parameters: error estimates
     float sigmaHPosition;           /**< Standard error estimate of the horizontal position in [m]. */ 
     float sigmaAltitude;            /**< Standard error estimate of altitude in [m]. */ 
