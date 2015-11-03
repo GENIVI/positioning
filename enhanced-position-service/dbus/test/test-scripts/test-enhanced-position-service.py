@@ -53,7 +53,7 @@ def catchall_positioning_signals_handler(changedValues):
     print 'PositonUpdate'
     position = enhanced_position_interface.GetPositionInfo(changedValues)
     timestamp = position[0]
-    print 'TIMESTAMP:' +str(timestamp)
+    print 'TIMESTAMP:' + str(timestamp)
     data = position[1]
     #print(data)
     for key in data:

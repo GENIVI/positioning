@@ -44,6 +44,10 @@ public:
 
   void shutdown();
 
+private:
+
+  int32_t mUpdateInterval;
+  uint32_t mSatelliteSystem;
 };
 
 #endif//__CONFIGURATION_H

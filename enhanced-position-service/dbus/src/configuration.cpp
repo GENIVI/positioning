@@ -72,7 +72,9 @@ static DBus::Variant variant_array_uint32(std::vector< uint32_t > i)
 }
 
 Configuration::Configuration(DBus::Connection &connection, const char * path)
-  : DBus::ObjectAdaptor(connection, path)
+: DBus::ObjectAdaptor(connection, path)
+, mUpdateInterval(0)
+, mSatelliteSystem(0)
 {
 }
 
@@ -96,15 +98,32 @@ std::map< std::string, ::DBus::Variant > Configuration::GetProperties()
 {
   std::map< std::string, ::DBus::Variant > Properties;
 
-  Properties["UpdateInterval"] = variant_int32(1000);
-  Properties["SatelliteSystem"] = variant_uint32(GENIVI_ENHANCEDPOSITIONSERVICE_GPS|GENIVI_ENHANCEDPOSITIONSERVICE_GLONASS);
+  Properties["UpdateInterval"] = variant_int32(mUpdateInterval);
+  Properties["SatelliteSystem"] = variant_uint32(mSatelliteSystem);
 
   return Properties;
 }
 
 void Configuration::SetProperty(const std::string& name, const ::DBus::Variant& value)
 {
-  throw DBus::ErrorNotSupported("Method not supported yet");
+  if(name == "UpdateInterval")
+  {
+    mUpdateInterval = value;
+
+    LOG_INFO(gCtx,"UpdateInterval = %d", mUpdateInterval);
+
+    PropertyChanged("UpdateInterval", value);
+  }
+
+  if(name == "SatelliteSystem")
+  {
+    mSatelliteSystem = value;
+
+    LOG_INFO(gCtx,"SatelliteSystem = %d", mSatelliteSystem);
+
+    PropertyChanged("SatelliteSystem", value);
+  }
+
 }
 
 std::map< std::string, ::DBus::Variant > Configuration::GetSupportedProperties()

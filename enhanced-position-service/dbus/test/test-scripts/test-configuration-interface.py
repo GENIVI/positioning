@@ -5,14 +5,14 @@
 * @licence app begin@
 * SPDX-License-Identifier: MPL-2.0
 *
-* \copyright Copyright (C) 2014, XS Embedded GmbH
+* \copyright Copyright (C) 2015, Mentor Graphics
 *
-* \file test-enhanced-position-service.py
+* \file test-configuration-interface.py
 *
-* \brief This simple test shows how the enhanced-position-service 
-*        can be easily tested using a python script
+* \brief This simple test shows how the configuration interface of the 
+*        enhanced-position-service can be easily tested using a python script
 *
-* \author Marco Residori <marco.residori@xse.de>
+* \author Marco Residori <marco_residori@mentor.com>
 *
 * \version 1.0
 *
@@ -30,16 +30,12 @@ import dbus
 import gobject
 import dbus.mainloop.glib
 
-#constants as defined in the Positioning API
-LATITUDE  = 0x00000001
-LONGITUDE = 0x00000002
-ALTITUDE  = 0x00000004
-CLIMB     = 0x00000020
-SPEED     = 0x00000010
-HEADING   = 0x00000008
+#test constants 
+UPDATE_INTERVAL = 1500
+SATELLITE_SYSTEM = 2
 
 print '\n--------------------------'
-print 'Positioning Test'
+print 'Configuration Interface Test'
 print '--------------------------\n'
 
 if __name__ == '__main__':
@@ -49,11 +45,22 @@ if __name__ == '__main__':
 bus = dbus.SessionBus()
 
 #signal receiver
-def catchall_positioning_signals_handler(changedValues):
-    print 'PropertyChanged'
-    satSystem = enhanced_position_interface.GetProperty(dbus.String("SatelliteSystem"))
+def catchall_positioning_signals_handler(changedProperty, propertyValue):
 
-    print 'SatelliteSystem:' +str(satSystem)
+    print 'PropertyChanged'
+    
+    if changedProperty == 'SatelliteSystem':
+        print 'SatelliteSystem:' + str(propertyValue)
+        if propertyValue != SATELLITE_SYSTEM:
+             print '\nTest Failed:' + str(propertyValue) + '!=' + str(SATELLITE_SYSTEM)  + '\n'
+             loop.quit()
+
+
+    if changedProperty == 'UpdateInterval':
+        print 'UpdateInterval:' + str(propertyValue)
+        if propertyValue != UPDATE_INTERVAL:
+             print '\nTest Failed:' + str(propertyValue) + '!=' + str(UPDATE_INTERVAL)  + '\n'
+             loop.quit()
 
 
 #add signal receiver
@@ -72,15 +79,12 @@ enhanced_position = bus.get_object('org.genivi.positioning.EnhancedPosition','/o
 #get interface
 enhanced_position_interface = dbus.Interface(enhanced_position, dbus_interface='org.genivi.positioning.Configuration')
 
-#enhanced_position_interface.SetProperty(dbus.String('SatelliteSystem'),dbus.UInt32(2, variant_level=1))
-enhanced_position_interface.SetProperty(dbus.String('UpdateInterval'),dbus.UInt32(2, variant_level=1))
+enhanced_position_interface.SetProperty(dbus.String('SatelliteSystem'),dbus.UInt32(SATELLITE_SYSTEM, variant_level=1))
 
-#satSystem = enhanced_position_interface.GetProperty(dbus.String('SatelliteSystem'))
-#print 'SatelliteSystem:' + str(satSystem)
+enhanced_position_interface.SetProperty('UpdateInterval', dbus.Int32(UPDATE_INTERVAL, variant_level=1))
 
 #main loop 
-
-gobject.timeout_add(10000, timeout)
+gobject.timeout_add(3000, timeout)
 loop = gobject.MainLoop()
 loop.run()
 

@@ -35,7 +35,7 @@ if [ $# -ge 1 ]; then
         echo "Starting log-replayer..."
         eval "$TOP_DIR/build/log-replayer/src/log-replayer $LOG > /dev/null 2>&1" &
         echo "Starting enhanced-position-service..."
-        eval "$TOP_DIR/build/enhanced-position-service/dbus/src/enhanced-position-service > /dev/null 2>&1" &
+        eval "$TOP_DIR/build/enhanced-position-service/dbus/src/enhanced-position-service" &
     elif [ $1 = "-k" ]; then
         killall log-replayer  
         killall enhanced-position-service 
