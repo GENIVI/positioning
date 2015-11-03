@@ -36,10 +36,6 @@ option(WITH_MPU6050
     
 option(WITH_REPLAYER
     "Use REPLAYER as source of GPS data" ON)
-    
-    
-    
-message(STATUS "---------------------------------------------------------")
 
 add_subdirectory(src)
 message(STATUS "---------------------------------------------------------")

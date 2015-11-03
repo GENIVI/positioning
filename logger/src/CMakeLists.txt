@@ -41,7 +41,6 @@ set(LIB_SRC_LOGGER ${CMAKE_CURRENT_SOURCE_DIR}/poslog.cpp)
 add_library(poslog SHARED ${LIB_SRC_LOGGER})
 install(TARGETS poslog DESTINATION lib)
 
-message(STATUS "/logger------------------------------------------------")
 
 
 

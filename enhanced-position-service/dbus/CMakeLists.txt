@@ -78,5 +78,4 @@ if(WITH_TESTS)
     message(STATUS "---------------------------------------------------------")
 endif()
 
-message(STATUS)
 
