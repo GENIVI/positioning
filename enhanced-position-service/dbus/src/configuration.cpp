@@ -73,8 +73,8 @@ static DBus::Variant variant_array_uint32(std::vector< uint32_t > i)
 
 Configuration::Configuration(DBus::Connection &connection, const char * path)
 : DBus::ObjectAdaptor(connection, path)
-, mUpdateInterval(0)
-, mSatelliteSystem(0)
+, mUpdateInterval(1000)
+, mSatelliteSystem(GENIVI_ENHANCEDPOSITIONSERVICE_GPS)
 {
 }
 
@@ -132,6 +132,7 @@ std::map< std::string, ::DBus::Variant > Configuration::GetSupportedProperties()
 
   std::vector< int32_t > updateIntervals;
   updateIntervals.push_back(1000);
+  updateIntervals.push_back(1500);
 
   uint32_t supportedSystems; 
 
@@ -139,6 +140,9 @@ std::map< std::string, ::DBus::Variant > Configuration::GetSupportedProperties()
   { //assume GPS at least
     supportedSystems = GNSS_SYSTEM_GPS;
   }
+  
+  //test hack: add GLONASS to have 2 systems
+  supportedSystems = supportedSystems|GNSS_SYSTEM_GLONASS;
 
   std::vector< uint32_t > satelliteSystems;
   if (supportedSystems & GNSS_SYSTEM_GPS)

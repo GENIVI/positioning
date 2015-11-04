@@ -79,8 +79,29 @@ enhanced_position = bus.get_object('org.genivi.positioning.EnhancedPosition','/o
 #get interface
 enhanced_position_interface = dbus.Interface(enhanced_position, dbus_interface='org.genivi.positioning.Configuration')
 
-enhanced_position_interface.SetProperty(dbus.String('SatelliteSystem'),dbus.UInt32(SATELLITE_SYSTEM, variant_level=1))
+#test GetVersion()
+version = enhanced_position_interface.GetVersion()
+print('Version: {0}.{1}.{2} [{3}]'.format(version[0], version[1], version[2], version[3]))
+print('')
 
+#test GetSupportedProperties()
+supported_properties = enhanced_position_interface.GetSupportedProperties()
+print('GetSupportedProperties()')
+for key in supported_properties:
+    print('{0}:'.format(key))
+    for item in supported_properties[key]:
+        print('  {0}'.format(item))
+print('')
+
+#test GetProperties()
+properties = enhanced_position_interface.GetProperties()
+print('GetProperties()')
+print('UpdateInterval: {0}'.format(properties.get('UpdateInterval', 'N/A')))
+print('SatelliteSystem: {0}'.format(properties['SatelliteSystem']))
+print('')
+
+#test SetProperty()
+enhanced_position_interface.SetProperty(dbus.String('SatelliteSystem'),dbus.UInt32(SATELLITE_SYSTEM, variant_level=1))
 enhanced_position_interface.SetProperty('UpdateInterval', dbus.Int32(UPDATE_INTERVAL, variant_level=1))
 
 #main loop 
