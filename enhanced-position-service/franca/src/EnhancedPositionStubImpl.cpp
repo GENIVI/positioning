@@ -173,57 +173,57 @@ void EnhancedPositionStubImpl::sigPositionUpdate(const TGNSSPosition position[],
 
   if (latChanged)
   {
-     changedValues |= static_cast<EnhancedPositionServiceTypes::Bitmask>(EnhancedPositionServiceTypes::PositionInfoKey::LATITUDE);
+     changedValues |= static_cast<EnhancedPositionServiceTypes::Bitmask>(EnhancedPositionServiceTypes::PositionInfoFields::LATITUDE);
   }
 
   if (lonChanged)
   {
-     changedValues |= static_cast<EnhancedPositionServiceTypes::Bitmask>(EnhancedPositionServiceTypes::PositionInfoKey::LONGITUDE);
+     changedValues |= static_cast<EnhancedPositionServiceTypes::Bitmask>(EnhancedPositionServiceTypes::PositionInfoFields::LONGITUDE);
   }
 
   if (altChanged)
   {
-     changedValues |= static_cast<EnhancedPositionServiceTypes::Bitmask>(EnhancedPositionServiceTypes::PositionInfoKey::ALTITUDE);
+     changedValues |= static_cast<EnhancedPositionServiceTypes::Bitmask>(EnhancedPositionServiceTypes::PositionInfoFields::ALTITUDE);
   }
 
   if (speedChanged)
   {
-     changedValues |= static_cast<EnhancedPositionServiceTypes::Bitmask>(EnhancedPositionServiceTypes::PositionInfoKey::SPEED);
+     changedValues |= static_cast<EnhancedPositionServiceTypes::Bitmask>(EnhancedPositionServiceTypes::PositionInfoFields::SPEED);
   }
 
   if (headingChanged)
   {
-     changedValues |= static_cast<EnhancedPositionServiceTypes::Bitmask>(EnhancedPositionServiceTypes::PositionInfoKey::HEADING);
+     changedValues |= static_cast<EnhancedPositionServiceTypes::Bitmask>(EnhancedPositionServiceTypes::PositionInfoFields::HEADING);
   }
 
   if (climbChanged)
   {
-     changedValues |= static_cast<EnhancedPositionServiceTypes::Bitmask>(EnhancedPositionServiceTypes::PositionInfoKey::CLIMB);
+     changedValues |= static_cast<EnhancedPositionServiceTypes::Bitmask>(EnhancedPositionServiceTypes::PositionInfoFields::CLIMB);
   }
 
   if (pdopChanged)
   {
-    changedValues |= static_cast<EnhancedPositionServiceTypes::Bitmask>(EnhancedPositionServiceTypes::PositionInfoKey::PDOP);
+    changedValues |= static_cast<EnhancedPositionServiceTypes::Bitmask>(EnhancedPositionServiceTypes::PositionInfoFields::PDOP);
   }
 
   if (hdopChanged)
   {
-    changedValues |= static_cast<EnhancedPositionServiceTypes::Bitmask>(EnhancedPositionServiceTypes::PositionInfoKey::HDOP);
+    changedValues |= static_cast<EnhancedPositionServiceTypes::Bitmask>(EnhancedPositionServiceTypes::PositionInfoFields::HDOP);
   }
   
   if (vdopChanged)
   {
-    changedValues |= static_cast<EnhancedPositionServiceTypes::Bitmask>(EnhancedPositionServiceTypes::PositionInfoKey::VDOP);
+    changedValues |= static_cast<EnhancedPositionServiceTypes::Bitmask>(EnhancedPositionServiceTypes::PositionInfoFields::VDOP);
   }  
 
   if (usatChanged)
   {
-    changedValues |= static_cast<EnhancedPositionServiceTypes::Bitmask>(EnhancedPositionServiceTypes::PositionInfoKey::USED_SATELLITES);
+    changedValues |= static_cast<EnhancedPositionServiceTypes::Bitmask>(EnhancedPositionServiceTypes::PositionInfoFields::USED_SATELLITES);
   }
 
   if (fixStatusChanged)
   {
-    changedValues |= static_cast<EnhancedPositionServiceTypes::Bitmask>(EnhancedPositionServiceTypes::PositionInfoKey::GNSS_FIX_STATUS);
+    changedValues |= static_cast<EnhancedPositionServiceTypes::Bitmask>(EnhancedPositionServiceTypes::PositionInfoFields::GNSS_FIX_STATUS);
   }
 
   if (!mpSelf)
@@ -293,7 +293,7 @@ bool EnhancedPositionStubImpl::checkMajorVersion(int expectedMajor)
 
 void EnhancedPositionStubImpl::run()
 {
-    if(!checkMajorVersion(3))
+    if(!checkMajorVersion(4))
     {
         exit(EXIT_FAILURE);
     }
@@ -326,16 +326,16 @@ void EnhancedPositionStubImpl::GetPositionInfo(const std::shared_ptr<CommonAPI::
     bool isPosRequested = false;
     bool isCourseRequested = false;
 
-    if ((_valuesToReturn & static_cast<EnhancedPositionServiceTypes::Bitmask>(EnhancedPositionServiceTypes::PositionInfoKey::LATITUDE)) ||
-        (_valuesToReturn & static_cast<EnhancedPositionServiceTypes::Bitmask>(EnhancedPositionServiceTypes::PositionInfoKey::LONGITUDE)) ||
-        (_valuesToReturn & static_cast<EnhancedPositionServiceTypes::Bitmask>(EnhancedPositionServiceTypes::PositionInfoKey::ALTITUDE)))
+    if ((_valuesToReturn & static_cast<EnhancedPositionServiceTypes::Bitmask>(EnhancedPositionServiceTypes::PositionInfoFields::LATITUDE)) ||
+        (_valuesToReturn & static_cast<EnhancedPositionServiceTypes::Bitmask>(EnhancedPositionServiceTypes::PositionInfoFields::LONGITUDE)) ||
+        (_valuesToReturn & static_cast<EnhancedPositionServiceTypes::Bitmask>(EnhancedPositionServiceTypes::PositionInfoFields::ALTITUDE)))
     {
         isPosRequested = true;
     }
 
-    if ((_valuesToReturn & static_cast<EnhancedPositionServiceTypes::Bitmask>(EnhancedPositionServiceTypes::PositionInfoKey::HEADING)) ||
-        (_valuesToReturn & static_cast<EnhancedPositionServiceTypes::Bitmask>(EnhancedPositionServiceTypes::PositionInfoKey::SPEED)) ||
-        (_valuesToReturn & static_cast<EnhancedPositionServiceTypes::Bitmask>(EnhancedPositionServiceTypes::PositionInfoKey::CLIMB)))
+    if ((_valuesToReturn & static_cast<EnhancedPositionServiceTypes::Bitmask>(EnhancedPositionServiceTypes::PositionInfoFields::HEADING)) ||
+        (_valuesToReturn & static_cast<EnhancedPositionServiceTypes::Bitmask>(EnhancedPositionServiceTypes::PositionInfoFields::SPEED)) ||
+        (_valuesToReturn & static_cast<EnhancedPositionServiceTypes::Bitmask>(EnhancedPositionServiceTypes::PositionInfoFields::CLIMB)))
     {
         isCourseRequested = true;
     }
@@ -346,17 +346,17 @@ void EnhancedPositionStubImpl::GetPositionInfo(const std::shared_ptr<CommonAPI::
         {
             if (position.validityBits & GNSS_POSITION_LATITUDE_VALID)
             {
-                data[EnhancedPositionServiceTypes::PositionInfoKey::LATITUDE] = position.latitude;
+                data.setLatitude(position.latitude);
             }
 
             if (position.validityBits & GNSS_POSITION_LONGITUDE_VALID)
             {
-                data[EnhancedPositionServiceTypes::PositionInfoKey::LONGITUDE] = position.longitude;
+                data.setLongitude(position.longitude);
             }
 
             if (position.validityBits & GNSS_POSITION_ALTITUDEMSL_VALID)
             {
-                data[EnhancedPositionServiceTypes::PositionInfoKey::ALTITUDE] = position.altitudeMSL;
+                data.setAltitude(position.altitudeMSL);
             }
         }
 
@@ -364,17 +364,17 @@ void EnhancedPositionStubImpl::GetPositionInfo(const std::shared_ptr<CommonAPI::
         {
             if (position.validityBits & GNSS_POSITION_HEADING_VALID)
             {
-                data[EnhancedPositionServiceTypes::PositionInfoKey::HEADING] = position.heading;
+                data.setHeading(position.heading);
             }
 
             if (position.validityBits & GNSS_POSITION_HSPEED_VALID)
             {
-                data[EnhancedPositionServiceTypes::PositionInfoKey::SPEED] = position.hSpeed;
+                data.setSpeed(position.hSpeed);
             }
 
             if (position.validityBits & GNSS_POSITION_VSPEED_VALID)
             {
-                data[EnhancedPositionServiceTypes::PositionInfoKey::CLIMB] = position.vSpeed;
+                data.setClimb(position.vSpeed);
             }
         }
     }

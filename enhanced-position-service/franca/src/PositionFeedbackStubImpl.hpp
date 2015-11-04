@@ -31,7 +31,7 @@ public:
     virtual ~PositionFeedbackStubImpl();
 
     void GetVersion(const std::shared_ptr<CommonAPI::ClientId> _client, GetVersionReply_t _reply);
-    void SetPositionFeedback(const std::shared_ptr<CommonAPI::ClientId> _client, ::org::genivi::EnhancedPositionService::EnhancedPositionServiceTypes::PositionFeedbackInfo _feedback, uint64_t _timestamp, ::org::genivi::EnhancedPositionService::EnhancedPositionServiceTypes::PositionFeedbackType _feedbackType, SetPositionFeedbackReply_t _reply);
+    void SetPositionFeedback(const std::shared_ptr<CommonAPI::ClientId> _client, ::org::genivi::EnhancedPositionService::EnhancedPositionServiceTypes::PositionFeedback _feedback, uint64_t _timestamp, ::org::genivi::EnhancedPositionService::EnhancedPositionServiceTypes::PositionFeedbackType _feedbackType, SetPositionFeedbackReply_t _reply);
 
     void run();
     void shutdown();

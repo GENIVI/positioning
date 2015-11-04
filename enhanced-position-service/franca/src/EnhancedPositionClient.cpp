@@ -20,32 +20,17 @@ void getPositionInfoAsyncCallback(const CommonAPI::CallStatus& callStatus, const
         return;
     }
 
-    for ( auto it = posInfo.begin(); it != posInfo.end(); ++it ) {
-        if (it->first == EnhancedPositionServiceTypes::PositionInfoKey::LATITUDE)
-        {
-            LOG_INFO(gCtx,"LAT=%lf", it->second.get<double>());
-        }
-        if (it->first == EnhancedPositionServiceTypes::PositionInfoKey::LONGITUDE)
-        {
-    	    LOG_INFO(gCtx,"LON=%lf", it->second.get<double>());
-        }
-        if (it->first == EnhancedPositionServiceTypes::PositionInfoKey::ALTITUDE)
-        {
-            LOG_INFO(gCtx,"ALT=%lf", it->second.get<float>());
-        }
-        if (it->first == EnhancedPositionServiceTypes::PositionInfoKey::SPEED)
-        {
-            LOG_INFO(gCtx,"SPEED=%lf", it->second.get<float>());
-        }
-        if (it->first == EnhancedPositionServiceTypes::PositionInfoKey::CLIMB)
-        {
-            LOG_INFO(gCtx,"CLIMB=%lf", it->second.get<float>());
-        }
-        if (it->first == EnhancedPositionServiceTypes::PositionInfoKey::HEADING)
-        {
-            LOG_INFO(gCtx,"HEADING=%lf", it->second.get<float>());
-        }
-    }
+    LOG_INFO(gCtx,"LAT=%lf", posInfo.getLatitude());
+
+    LOG_INFO(gCtx,"LON=%lf", posInfo.getLongitude());
+
+    LOG_INFO(gCtx,"ALT=%lf", posInfo.getAltitude());
+       
+    LOG_INFO(gCtx,"SPEED=%lf", posInfo.getSpeed());
+      
+    LOG_INFO(gCtx,"CLIMB=%lf", posInfo.getClimb());
+       
+    LOG_INFO(gCtx,"HEADING=%lf", posInfo.getHeading());
 }
 
 void positionUpdate(std::shared_ptr<EnhancedPositionProxyDefault> proxy, const EnhancedPositionServiceTypes::Bitmask& changedValues)

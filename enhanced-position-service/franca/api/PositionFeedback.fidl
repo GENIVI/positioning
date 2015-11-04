@@ -36,7 +36,7 @@ interface PositionFeedback {
     **>
     method SetPositionFeedback {
         in {
-            PositionFeedbackInfo feedback
+            PositionFeedback feedback
 
             <**
                 @description : timestamp = timestamp in ms

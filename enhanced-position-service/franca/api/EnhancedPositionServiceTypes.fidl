@@ -12,9 +12,10 @@ package org.genivi.EnhancedPositionService
 
 typeCollection EnhancedPositionServiceTypes {
 
+    <** @description: timestamp **>
     typedef Timestamp is UInt64
     
-    <** @description: bitmask obtained as a result of an OR operation on enum values of type PositionInfoKey **>        
+    <** @description: bitmask obtained as a result of an OR operation on enum values **>        
     typedef Bitmask is UInt64 
     
     <** @description: version **>            
@@ -29,15 +30,7 @@ typeCollection EnhancedPositionServiceTypes {
         String date
     }
     
-    <** @description : Value = generic value (mapped to a dbus variant ('v') data type)**>
-    union Value {
-        UInt64 uInt64Value
-        Double doubleValue
-        Float  floatValue
-        String stringValue
-    }
-
-    enumeration PositionInfoKey {
+    enumeration PositionInfoFields {
         LATITUDE           = 1
         LONGITUDE          = 2
         ALTITUDE           = 4
@@ -63,87 +56,110 @@ typeCollection EnhancedPositionServiceTypes {
         RELIABILTY_INDEX   = 4194304
     } 
     
-    <** @description : PositionInfo = array of tuples (key,value)
-        key = enumeration PositionInfoKey
-        key = LATITUDE, value = value of type 'Double', that expresses the latitude of the current position. Range [-90:+90]. Example: 48.053250
-        key = LONGITUDE, value = value of type 'Double', that expresses the longitude of the current position. Range [-180:+180]. Example: 8.324500
-        key = ALTITUDE, value = value of type 'Double', that expresses the altitude above the sea level of the current position in meters
-        key = HEADING, value = value of type 'Double', that expresses the course angle in degree. Range [0:360]. 0 = north, 90 = east, 180 = south, 270 = west
-        key = SPEED, value = value of type 'Double', that expresses speed measured in m/s. A negative value indicates that the vehicle is moving backwards
-        key = CLIMB, value = value of type 'Double', that expresses the road gradient in degrees
-        key = ROLL_RATE, value = value of type 'Double', rotation rate around the X-axis in degrees/s. Range [-100:+100]
-        key = PITCH_RATE, value = value of type 'Double', rotation rate around the Y-axis in degrees/s. Range [-100:+100]
-        key = YAW_RATE, value = value of type 'Double', rotation rate around the Z-axis in degrees/s. Range [-100:+100]
-        key = PDOP, value = value of type 'Double', that represents the positional (3D) dilution of precision
-        key = HDOP, value = value of type 'Double', that represents the horizontal (2D) dilution of precision
-        key = VDOP, value = value of type 'Double', that represents vertical (altitude) dilution of precision
-        key = USED_SATELLITES, value = value of type 'UInt8', that represents the number of used satellites
-        key = TRACKED_SATELLITES, value = value of type 'UInt8', that represents the number of tracked satellites 
-        key = VISIBLE_SATELLITES, value = value of type 'UInt8', that represents the number of visible satellites
-        key = SIGMA_HPOSITION, value = value of type 'Double', that represents the standard deviation for the horizontal position in m
-        key = SIGMA_ALTITUDE, value = value of type 'Double', that represents the standard deviation for altitude in m
-        key = SIGMA_HEADING, value = value of type 'Double', that represents the standard deviation for altitude in degrees
-        key = SIGMA_SPEED, value = value of type 'Double', that represents the standard error estimate of the speed in m/s</line>
-        key = SIGMA_CLIMB, value = value of type 'Double', that represents the standard error estimate of the climb in degrees</line>
-        key = GNSS_FIX_STATUS, value = value of type 'UInt16', that represents an enum(NO_FIX(0x01),TIME_FIX(0x01),2D_FIX(0x02),3D_FIX(0x03), ... )
-        key = DR_STATUS, value = value of type 'Boolean', where TRUE means that a dead-reckoning algorithm has been used to calculate the current position
-    **>
-    map PositionInfo {
-        PositionInfoKey to Value
-    }
-
     enumeration SatelliteSystem {
         GPS     = 1
         GLONASS = 2
         GALILEO = 3
         COMPASS = 4 
-    }
+    }    
     
-    <** @description : SatelliteInfo = array(struct(system,satelliteId,azimuth,elevation,snr,inUse))
-            system = enum(GPS, GLONASS, GALILEO, COMPASS, ... )
-            satelliteId = satellite ID. This ID is unique within one satellite system
-            azimuth = satellite azimuth in degrees. Value range 0..359
-            elevation = satellite elevation in degrees. Value range 0..90
-            snr = SNR (C/No) in dBHz. Range 0 to 99, null when not tracking
-            inUse = flag indicating if the satellite is used for the fix (inUse=true)
-        **>
-    struct SatelliteInfo {
-        SatelliteSystem system
+    <** @description : satellite information **>
+    struct SatelliteInfo { 
+    	<** @description : satellite system **>
+        SatelliteSystem system 
+        <** @description  : satellite ID. This ID is unique within one satellite system **>
         UInt32 satellitId
-        UInt32 azimuth
-        UInt32 elevation
-        UInt32 snr
-        Boolean inUse
+        <** @description : satellite azimuth in degrees. Value range 0..359 **> 
+        UInt32 azimuth   
+        <** @description : satellite elevation in degrees. Value range 0..90 **>      
+        UInt32 elevation 
+        <** @description : SNR (C/No) in dBHz. Range 0 to 99, null when not tracking **>     
+        UInt32 snr    
+        <** @description : flag indicating if the satellite is used for the fix (inUse=true) **>         
+        Boolean inUse          
     }
     
-    <** @description: since the hexadecimal format is not supported by Franca yet
-           the bitmask below is expressed using numbers in decimal format.
-           Example: 0x01000000 = 16777216 **> 
-    enumeration TimeInfoKey  {
-        YEAR   = 16777216   
-        MONTH  = 33554432  
-        DAY    = 67108864   
-        HOUR   = 134217728  
-        MINUTE = 268435456  
-        SECOND = 536870912  
-        MS     = 1073741824 
+    <** @description : fix status **>
+    enumeration FixStatus {
+        NO_FIX =  0
+        FIX_TIME = 1
+        FIX_2D = 2
+        FIX_3D = 3
     }
-
-    <** @description : TimeInfo = array of tuples (key,value)
-        key = enumeration TimeInfoKey
-        key = YEAR, value = value of type 'UInt16', 4 digits number that indicates the year. Example: 2012
-        key = MONTH, value = value of type 'UInt8', 2 digits number that indicates the month. Example: 03 means March
-        key = DAY, value = value of type 'UInt8', 2 digits number that indicates the day. Range [0:31]. Example: 07
-        key = HOUR, value = value of type 'UInt8', 2 digits number that indicates the hour. Range [0:23].  Example: 01
-        key = MINUTE, value = value of type 'UInt8', 2 digits number that represents the minutes. Range [0:59]. Example: 01
-        key = SECOND, value = value of type 'UInt8', 2 digits number that represents the seconds. Range [0:59]. Example: 01
-        key = MS, value = value of type 'UInt16', 3 digits number that represents the milliseconds. Range [0:999]. Example: 007
-    **>
-    map TimeInfo {
-        TimeInfoKey to Value
+       
+    <** @description : position information **>
+    struct PositionInfo {
+    	Timestamp timestamp
+    	<** @description : bitmap indicating which fields contain valid data **>
+    	Bitmask validityField
+    	<** @description : latitude of the current position in format %3.6f. [-90,+90]. Example: 48.053250 **>
+        Double latitude
+        <** @description : longitude of the current position. Range [-180:+180]. Example: 8.324500 **>
+        Double longitude
+        <** @description : altitude above the sea level of the current position in meters **>
+        Double altitude
+        <** @description : course angle in degree. Range [0:360]. 0 = north, 90 = east, 180 = south, 270 = west **>
+        Double heading
+        <** @description : speed measured in m/s. A negative value indicates that the vehicle is moving backwards **>
+        Double speed
+        <** @description : road gradient in degrees **>
+        Double climb
+        <** @description : rotation rate around the X-axis in degrees/s. Range [-100:+100] **>
+        Double rollRate
+        <** @description : rotation rate around the X-axis in degrees/s. Range [-100:+100] **>
+        Double pitchRate
+        <** @description : rotation rate around the Z-axis in degrees/s. Range [-100:+100] **>
+        Double yawRate
+        <** @description : positional (3D) dilution of precision **>
+        Double pDop
+        <** @description : horizontal (2D) dilution of precision **>
+        Double hDop
+        <** @description : vertical (altitude) dilution of precision **>
+        Double vDop
+        <** @description : number of used satellites **>
+        UInt8 usedSatellites
+        <** @description : number of tracked satellites **>
+        UInt8 trackedSatellites
+        <** @description : number of visible satellites **>
+        UInt8 visibleSatellites
+        <** @description : satellite information **>
+        SatelliteInfo[] satelliteInfo
+        <** @description : standard deviation for the horizontal position in m **>
+        Double sigmaHPosition
+        <** @description : standard deviation for altitude in m **>
+        Double sigmaAltitude
+        <** @description : standard error estimate of the heading in degrees **>
+        Double sigmaHeading
+        <** @description : standard error estimate of the speed in m/s **>
+        Double sigmaSpeed
+        <** @description : standard error estimate of the climb in degrees **>
+        Double sigmaClimb
+        <** @description : GNSS fix status **>
+        FixStatus fixStatus
+        <** @description : TRUE means that a dead-reckoning algorithm has been used to calculate the current position  **>
+        Double deadReckoningStatus
     }
     
-    enumeration PositionFeedbackKey {
+    <** @description : time information **>
+    struct TimeInfo
+    {
+    	<** @description : 4 digits number that indicates the year. Example: 2012 **>
+    	UInt16 year
+    	<** @description : 2 digits number that indicates the month. Example: 03 means March **>
+    	UInt8 month
+    	<** @description : 2 digits number that indicates the day. Range [0:31]. Example: 07 **>
+    	UInt8 day
+    	<** @description : 2 digits number that indicates the hour. Range [0:23].  Example: 01 **>
+    	UInt8 hour
+    	<** @description : 2 digits number that represents the minutes. Range [0:59]. Example: 01  **>
+    	UInt8 minute
+    	<** @description : 2 digits number that represents the seconds. Range [0:59]. Example: 01 **>
+    	UInt8 second
+    	<** @description : 3 digits number that represents the milliseconds. Range [0:999]. Example: 007 **>
+    	UInt16 ms
+    }
+    
+    enumeration PositionFeedbackFields {
         LATITUDE         = 1
         LONGITUDE        = 2
         ALTITUDE         = 4
@@ -157,22 +173,30 @@ typeCollection EnhancedPositionServiceTypes {
         MAP_MATCHED_FEEDBACK = 1
         TEST_FEEDBACK        = 2
     }
-
-    <**
-        @description : PositionFeedback = array of tuples (key,value)</line>
-          key = enum(LATITUDE,LONGITUDE,ALTITUDE,HEADING,SPEED,CLIMB,RELIABILTY_INDEX, ... )</line>
-          key = LATITUDE, value = value of type Â´dÂ´, that expresses the latitude of the current position in format %3.6f. [-90,+90]. Example: 48.053250
-          key = LONGITUDE, value = value of type Â´dÂ´, that expresses the longitude of the current position in format %3.6f. [-180,+180]. Example: 8.324500 
-          key = ALTITUDE, value = value of type Â´iÂ´, that expresses the altitude above the sea level of the current position in meters
-          key = HEADING, value = value of type Â´iÂ´, that expresses the course angle in degree. [0,360]. Example: 0 => north, 90 => east, 180 => south, 270 => west
-          key = SPEED, value = value of type Â´dÂ´, that expresses speed measured in m/s
-          key = CLIMB, value = value of type Â´iÂ´, that expresses the inclination measured in degrees
-          key = RELIABILTY_INDEX, value = value of type Â´yÂ´, that indicates the position feedabck reliabilty. It can assume values from 0 to 100
-    **>
-    map PositionFeedbackInfo {
-        PositionFeedbackType to Value
-    }
     
+    <** @description : position feedback **>
+    struct PositionFeedback
+    {
+    	<** @description : position feedback type **>
+    	PositionFeedbackType type
+    	<** @description : bitmask **>
+    	Bitmask validFields
+        <** @description : latitude of the current position in format %3.6f. [-90,+90]. Example: 48.053250 **>
+        Double latitude
+        <** @description : longitude of the current position. Range [-180:+180]. Example: 8.324500 **>
+        Double longitude
+        <** @description : altitude above the sea level of the current position in meters **>
+        Double altitude
+        <** @description : course angle in degree. Range [0:360]. 0 = north, 90 = east, 180 = south, 270 = west **>
+        Double heading
+        <** @description : speed measured in m/s. A negative value indicates that the vehicle is moving backwards **>
+        Double speed
+        <** @description : road gradient in degrees **>
+        Double climb
+        <** @description : position feedabck reliabilty. It can assume values from 0 to 100 **>
+    	UInt8 reliabilityIndex
+    }
+
 }
 
 

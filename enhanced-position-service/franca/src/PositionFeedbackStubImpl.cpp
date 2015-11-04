@@ -41,7 +41,7 @@ void PositionFeedbackStubImpl::GetVersion(const std::shared_ptr<CommonAPI::Clien
     _reply(PositionFeedbackVersion);
 }
 
-void PositionFeedbackStubImpl::SetPositionFeedback(const std::shared_ptr<CommonAPI::ClientId> _client, ::org::genivi::EnhancedPositionService::EnhancedPositionServiceTypes::PositionFeedbackInfo _feedback, uint64_t _timestamp, ::org::genivi::EnhancedPositionService::EnhancedPositionServiceTypes::PositionFeedbackType _feedbackType, SetPositionFeedbackReply_t _reply) 
+void PositionFeedbackStubImpl::SetPositionFeedback(const std::shared_ptr<CommonAPI::ClientId> _client, ::org::genivi::EnhancedPositionService::EnhancedPositionServiceTypes::PositionFeedback _feedback, uint64_t _timestamp, ::org::genivi::EnhancedPositionService::EnhancedPositionServiceTypes::PositionFeedbackType _feedbackType, SetPositionFeedbackReply_t _reply) 
 {
     LOG_WARNING_MSG(gCtx,"Method not supported yet");
     _reply(); 
