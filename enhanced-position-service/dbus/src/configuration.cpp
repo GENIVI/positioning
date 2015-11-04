@@ -117,10 +117,34 @@ void Configuration::SetProperty(const std::string& name, const ::DBus::Variant& 
 
   if(name == "SatelliteSystem")
   {
+    uint32_t requestedSystems = value;  //magic conversion variant -> uint32_t
+    uint32_t activateSystems = 0;
+    if (requestedSystems & GENIVI_ENHANCEDPOSITIONSERVICE_GPS)
+    {
+        activateSystems |= GNSS_SYSTEM_GPS;
+    }
+    if (requestedSystems & GENIVI_ENHANCEDPOSITIONSERVICE_GLONASS)
+    {
+        activateSystems |= GNSS_SYSTEM_GLONASS;
+    }
+    if (requestedSystems & GENIVI_ENHANCEDPOSITIONSERVICE_GALILEO)
+    {
+        activateSystems |= GNSS_SYSTEM_GALILEO;
+    }
+    if (requestedSystems & GENIVI_ENHANCEDPOSITIONSERVICE_GPS)
+    {
+        activateSystems |= GNSS_SYSTEM_BEIDOU;
+    }
+    gnssConfigGNSSSystems(activateSystems);
+
+    //For a real implementation the property should only be changed 
+    //when the the configuration request has become effective as reported
+    //by the TGNSSPosition.activatedSystems from the GNSSPositionCallback.
+    //As currently the GNSS PoC has only dummy implementations of 
+    //gnssConfigGNSSSystems(), the property change is triggered immediately
+    //for demonstration purposes.
     mSatelliteSystem = value;
-
     LOG_INFO(gCtx,"SatelliteSystem = %d", mSatelliteSystem);
-
     PropertyChanged("SatelliteSystem", value);
   }
 

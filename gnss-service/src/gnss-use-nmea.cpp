@@ -131,45 +131,45 @@ bool extractPosition(const GPS_DATA& gps_data, uint64_t timestamp, TGNSSPosition
         }
     }
     if (gps_data.valid & GPS_DATA_SPEED) 
-    {    
+    {
         gnss_pos.hSpeed = gps_data.speed;
         gnss_pos.validityBits |= GNSS_POSITION_HSPEED_VALID;
     }
     gnss_pos.vSpeed = 9999; //not available
     if (gps_data.valid & GPS_DATA_SPEED) 
-    {  
+    {
         gnss_pos.heading = gps_data.course;
         gnss_pos.validityBits |= GPS_DATA_COURSE;
     }
     if (gps_data.valid & GPS_DATA_PDOP) 
-    {          
+    {
         gnss_pos.pdop = gps_data.pdop;
         gnss_pos.validityBits |= GNSS_POSITION_PDOP_VALID;
     }
     if (gps_data.valid & GPS_DATA_HDOP) 
-    {  
+    {
         gnss_pos.hdop = gps_data.hdop;
         gnss_pos.validityBits |= GNSS_POSITION_HDOP_VALID;
     }
     if (gps_data.valid & GPS_DATA_VDOP) 
-    {      
+    {
         gnss_pos.vdop = gps_data.vdop;
         gnss_pos.validityBits |= GNSS_POSITION_VDOP_VALID;
     }
     if (gps_data.valid & GPS_DATA_USAT) 
-    {  
+    {
         gnss_pos.usedSatellites = gps_data.usat;
         gnss_pos.validityBits |= GNSS_POSITION_USAT_VALID;
     }
     gnss_pos.trackedSatellites = 9999; //not available
     gnss_pos.visibleSatellites = 9999; //not available
     if (gps_data.valid & GPS_DATA_HACC) 
-    {     
+    {
         gnss_pos.sigmaHPosition = gps_data.hacc;
         gnss_pos.validityBits |= GNSS_POSITION_SHPOS_VALID;
     }
     if (gps_data.valid & GPS_DATA_HACC) 
-    {     
+    {
         gnss_pos.sigmaAltitude = gps_data.vacc;
         gnss_pos.validityBits |= GNSS_POSITION_SALT_VALID;
     }
@@ -177,11 +177,11 @@ bool extractPosition(const GPS_DATA& gps_data, uint64_t timestamp, TGNSSPosition
     gnss_pos.sigmaHSpeed = 9999; //not available
     gnss_pos.sigmaVSpeed = 9999; //not available
     gnss_pos.sigmaHeading = 9999; //not available
-    
+
+    gnss_pos.validityBits |= GNSS_POSITION_STAT_VALID; //always valid
     gnss_pos.fixStatus = GNSS_FIX_STATUS_NO;
     if (gps_data.valid & GPS_DATA_FIX2D)
     {
-        gnss_pos.validityBits |= GNSS_POSITION_STAT_VALID;
         if (gps_data.fix2d)
         {
             gnss_pos.fixStatus = GNSS_FIX_STATUS_2D;
