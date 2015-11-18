@@ -55,34 +55,21 @@ static void cbGyroscope(const TGyroscopeData gyroData[], uint16_t numElements)
     LOG_INFO(gCtx,"rollRate=%f", gyroData[0].rollRate);
 }
 
-static void cbWheelticks(const TWheelticks ticks[], uint16_t numElements)
+static void cbWheel(const TWheelData wheelData[], uint16_t numElements)
 {
-    char* wheelIDs[] = 
-    {"WHEEL_INVALID"
-    ,"WHEEL_UNKNOWN"
-    ,"WHEEL_AXLE_NONDRIVEN"
-    ,"WHEEL_AXLE_FRONT"
-    ,"WHEEL_AXLE_REAR"
-    ,"WHEEL_LEFT_FRONT"
-    ,"WHEEL_RIGHT_FRONT"
-    ,"WHEEL_LEFT_REAR"
-    ,"WHEEL_RIGHT_REAR"};
-    int i=0;
-    
-    if(ticks == NULL || numElements < 1)
+
+    if(wheelData == NULL || numElements < 1)
     {
-        LOG_ERROR_MSG(gCtx,"error: cbWheelticks failed!");
+        LOG_ERROR_MSG(gCtx,"error: cbWheel failed!");
         return;
     }
 
-    LOG_INFO_MSG(gCtx,"Wheelticks Update");
+    LOG_INFO_MSG(gCtx,"Wheel Update");
+    LOG_INFO(gCtx,"wheel1=%f", wheelData[0].wheel1);
+    LOG_INFO(gCtx,"wheel2=%f", wheelData[0].wheel2);
+    LOG_INFO(gCtx,"wheel3=%f", wheelData[0].wheel3);
+    LOG_INFO(gCtx,"wheel4=%f", wheelData[0].wheel4);
 
-    for (i=0; i<WHEEL_NUM_ELEMENTS; i++)
-    {
-        LOG_INFO(gCtx,"ticks[0].elements[%d]: %s = %d", i,
-                    wheelIDs[ticks[0].elements[i].wheeltickIdentifier],
-                    ticks[0].elements[i].wheeltickCounter);
-    }
 
 }
 
@@ -124,7 +111,7 @@ void init()
 
     assert( snsInit() );
     assert( snsGyroscopeInit() );
-    assert( snsWheeltickInit() );
+    assert( snsWheelInit() );
     assert( snsVehicleSpeedInit() );
 }
 
@@ -138,7 +125,7 @@ int main()
     LOG_INFO_MSG(gCtx,"Starting sensors-service-client...");
 
     //register
-    snsWheeltickRegisterCallback(&cbWheelticks);
+    snsWheelRegisterCallback(&cbWheel);
     snsGyroscopeRegisterCallback(&cbGyroscope);
     snsVehicleSpeedRegisterCallback(&cbVehicleSpeed);
 
@@ -149,12 +136,12 @@ int main()
     }
 
     //deregister
-    snsWheeltickDeregisterCallback(&cbWheelticks);
+    snsWheelDeregisterCallback(&cbWheel);
     snsGyroscopeDeregisterCallback(&cbGyroscope);
     snsVehicleSpeedDeregisterCallback(&cbVehicleSpeed);
 
     snsGyroscopeDestroy();
-    snsWheeltickDestroy();
+    snsWheelDestroy();
     snsVehicleSpeedDestroy();
     snsDestroy();
 

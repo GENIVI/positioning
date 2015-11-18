@@ -15,8 +15,8 @@
  * @licence end@
  **************************************************************************/
 
-#ifndef INCLUDE_GENIVI_WHEELTICK
-#define INCLUDE_GENIVI_WHEELTICK
+#ifndef INCLUDE_GENIVI_WHEEL
+#define INCLUDE_GENIVI_WHEEL
 
 #include "sns-meta-data.h"
 #include <stdbool.h>
@@ -26,77 +26,213 @@ extern "C" {
 #endif
 
 /**
- * Defines the type for which the wheel tick information is provided.
- * Usually wheel ticks are either provided for the non-driven axle or for each wheel individually.
+ * This header file defines the interface for wheel rotation data.
+ * Wheel rotation data may be provided as wheel ticks, as wheel speed 
+ * or as angular wheel speed.
+ *
+ * It is vehicle specific which kind of wheel rotation data is available
+ * and for which wheels the data is provided.
+ * The vehicle specific configuration can be queried using the 
+ * snsWheelGetConfiguration() function.
+ *
+ * Note: The driving direction (forward/backward) shall always be coded as
+ * sign of the wheel rotation data.
+ * This will reduce synchronization effort with separate reverse gear info 
+ * by the client application which is in particular useful with buffered data.
+ * How the driving direction can be derived is vehicle specific.
+ */
+
+/**
+ * Defines the wheel or axle for which the wheel rotation information is provided.
+ * Usually wheel rotation data are either provided for the non-driven axle or for each wheel individually.
  */
 typedef enum {
-    WHEEL_INVALID       = 0,       /**< Wheel tick data is invalid / the field is unused. */
-    WHEEL_UNKNOWN       = 1,       /**< No information available where the wheel tick data is from. */
-    WHEEL_AXLE_NONDRIVEN = 2,      /**< Wheel tick data is an average from the non driven axle. Can be front or rear depending on the type of drivetrain. */
-    WHEEL_AXLE_FRONT    = 3,       /**< Wheel tick data is an average from the front axle. */
-    WHEEL_AXLE_REAR     = 4,       /**< Wheel tick data is an average from the rear axle. */
-    WHEEL_LEFT_FRONT    = 5,       /**< Wheel tick data is from the left front wheel. */
-    WHEEL_RIGHT_FRONT   = 6,       /**< Wheel tick data is from the right front wheel. */
-    WHEEL_LEFT_REAR     = 7,       /**< Wheel tick data is from the left rear wheel. */
-    WHEEL_RIGHT_REAR    = 8        /**< Wheel tick data is from the right rear wheel. */
+    WHEEL_INVALID       = 0,       /**< Wheel data is invalid / the field is unused. */
+    WHEEL_UNKNOWN       = 1,       /**< No information available where the wheel rotation data is from. */
+    WHEEL_AXLE_NONDRIVEN = 2,      /**< Wheel rotation data is an average from the non driven axle. 
+                                        Can be front or rear depending on the type of drivetrain. */
+    WHEEL_AXLE_FRONT    = 3,       /**< Wheel rotation data is an average from the front axle. */
+    WHEEL_AXLE_REAR     = 4,       /**< Wheel rotation data is an average from the rear axle. */
+    WHEEL_LEFT_FRONT    = 5,       /**< Wheel rotation data is from the left front wheel. */
+    WHEEL_RIGHT_FRONT   = 6,       /**< Wheel rotation data is from the right front wheel. */
+    WHEEL_LEFT_REAR     = 7,       /**< Wheel rotation data is from the left rear wheel. */
+    WHEEL_RIGHT_REAR    = 8        /**< Wheel rotation data is from the right rear wheel. */
 } EWheelId;
 
 /**
- * Maximum number of wheel elements per structure.
- * A fix value is used because a flat data structure has advantages like simple copying, indexed access.
+ * Additional status information for wheel data, in particular when provided as wheel ticks.
+ * This may help the client application to estimate the reliability of the wheel data.
+ * TWheelData::statusBits is a or'ed bitmask of the EWheelStatusBits values.
+ * 
+ * Background information
+ * ----------------------
+ * Wheel ticks are typically provided by the ABS/ESC ECU as rolling counters
+ * on the vehicle bus.
+ * To calculate the wheel ticks per time interval as provided by this API in the 
+ * TWheelData structure, the difference between the two _valid_ rolling 
+ * counter values at end and start of the time interval has to be calculated 
+ * (taking into account potential rollover).
+ * If any of the rolling counter values is invalid or if there has been a reset 
+ * of the rolling counter in the time interval, then no valid difference can be 
+ * calculated. Therefore an appropriate error/exception handling has to be 
+ * implemented in the library translating the rolling counters from the vehicle bus
+ * to the wheel ticks per time interval provided by this API.
+ *
+ * Besides to the validity indication provided with each wheel rotation update,
+ * the client (typically the EnhancedPositionService) using the wheel rotation API 
+ * may be interested to know whether wheel rotation information may have been lost. 
+ * In such a case it could adapt its error estimation related to 
+ * wheel ticks or even make an internal reset of its corresponding states.
+ * The status bits in enum EWheelStatusBits are defined to provide such information.
+ *
+ * Further Background
+ * ------------------
+ * This section gives an additional overview about the possible signal path 
+ * of wheel tick data and the resulting possible exceptional situations:
+ * There may be a gateway between the ABS/ESC ECU and the IVI system to separate
+ * vehicle networks. This gateway may reduce the update rate of the CAN messages, 
+ * e.g. from 20ms cycle time sent by the ABS ECU to 100ms provided for the IVI system.
+ * When the update rate is reduced, the rolling counters may have to be resampled e.g.
+ * from 8 bit to 13 bit to avoid rollover within the update period.
+ * The rolling counters typically start from 0 when either the ABS ECU or the gateway is 
+ * started/restarted, e.g. at an ignition cycle.
+ * The rolling counters are often accompanied with additional status information to indicate 
+ * validity, reset conditions or to allow to detect loss of wheel tick data during transmission
+ * on vehicle bus (such as sequence numbers).
+ * This status information has to be evaluated to determine whether the difference calculation 
+ * between subsequent rolling counters yields a valid result or not.
+ * The kind of status information provided alongside with the wheel ticks is very OEM specific 
+ * - sometimes even additional context information such as ignition status has to considered.
+ * Nearly all above mentioned parameters are OEM or vehicle specific: update rate, 
+ * size of rolling counters, status indications, lifecycle of ECU, gateway, vehicle bus, ...
+ * The status bits in enum EWheelStatusBits attempt to provide an appropriate abstraction for the
+ * relevant vehicle specific status information.
+ * 
  */
-#define WHEEL_NUM_ELEMENTS 4
+typedef enum {
+    WHEEL_STATUS_GAP             = 0x00000001,  /**< There has been a gap in data collection, 
+                                                      i.e. an unknown number of wheel revolutions has been lost. 
+                                                      The reason for such a gap can be for example
+                                                      - wheel tick data on the vehicle bus explicitly tagged as invalid 
+                                                      - interrupted reception of vehicle bus messages */
+    WHEEL_STATUS_INIT            = 0x00000002   /**< This is the first wheel data of a bus or ignition lifecycle, 
+                                                      i.e. the wheel tick difference calculation may be less reliable. */
+} EWheelStatusBits;
 
 /**
- * A single wheel tick information.
- * No valid flags are provided for the wheel ticks as this information is transferred as an array.
- * If data is not valid the data is simply omitted from transfer.
+ * TWheelData::validityBits provides information which fields in TWheelData contain valid measurement data. 
+ * It is a or'ed bitmask of the EWheelValidityBits values.
+ * Note: The assignment of the fields  to the wheels of the vehicle is provided by the function snsWheelGetConfiguration().
+ */
+typedef enum {
+    WHEEL1_VALID                = 0x00000001,    /**< Validity bit for field TWheelData::wheel1. */
+    WHEEL2_VALID                = 0x00000002,    /**< Validity bit for field TWheelData::wheel2. */
+    WHEEL3_VALID                = 0x00000004,    /**< Validity bit for field TWheelData::wheel3. */
+    WHEEL4_VALID                = 0x00000008     /**< Validity bit for field TWheelData::wheel4. */
+} EWheelValidityBits;
+
+/**
+ * Defines the measurement unit in which the wheel rotation data is provided.
+ *
+ * The wheel rotation direction is given by the sign of the wheel rotation value:
+ * Positive values indicate forward driving.
+ * Negative values indicate backward driving.
+
+ */
+typedef enum {
+    WHEEL_UNIT_TICKS            = 0x00000001,     /**< Wheel rotation data is provided as number of wheel ticks accumulated within measurement interval. 
+                                                       Note 1: Therefore, if the wheel ticks on the vehicle bus are represented as rolling counters, 
+                                                       this is the difference between two subsequent rolling counter values 
+                                                       taking the vehicle specific roll-over boundary into account. 
+                                                       Note 2: It is safe to store integer values such as for wheel ticks 
+                                                       without precision loss in float variables for values up to 2^23. */
+    WHEEL_UNIT_SPEED            = 0x00000002,     /**< Wheel rotation data is provided as speed in [m/s]. */
+    WHEEL_UNIT_ANGULAR_SPEED    = 0x00000003,     /**< Wheel rotation data is provided as angular speed in [1/s] rotation per seconds. */
+} EWheelUnit;
+
+
+/**
+ * TWheelConfiguration::validityBits provides information about the currently valid signals of the wheel configuration data.
+ * It is a or'ed bitmask of the EWheelConfigValidityBits values.
+ */
+typedef enum {
+    WHEEL_CONFIG_TICKS_PER_REV      = 0x00000001,    /**< Validity bit for field TWheelConfiguration::wheelticksPerRevolution. */
+    WHEEL_CONFIG_TIRE_CIRC          = 0x00000002     /**< Validity bit for field TWheelConfiguration::tireRollingCircumference. */
+
+} EWheelConfigValidityBits;
+
+/**
+ * Static configuration data for the wheel sensor service.
  */
 typedef struct {
-    EWheelId wheeltickIdentifier;        /**< Type for which this tick information is provided. */
-    uint32_t wheeltickCounter;           /**< The actual wheel tick counter which provides the ticks for the type
-                                             specified in wheeltickIdentifier. 
-                                             This is a running counter which overflows only at a vehicle specific threshold. 
-                                             This must be tracked by the client.
-                                             The threshold value can be determined by calling snsWheeltickGetWheelticksCountMax() */
-} TWheeltickDetail;
+    EWheelUnit wheelUnit;       /**< Measurement unit in which the wheel rotation data is provided. Valid for all wheels. */
+    EWheelId wheel1;            /**< Identifies the wheel of the vehicle assigned to @ref TWheelData::wheel1 */      
+    EWheelId wheel2;            /**< Identifies the wheel of the vehicle assigned to @ref TWheelData::wheel2 */
+    EWheelId wheel3;            /**< Identifies the wheel of the vehicle assigned to @ref TWheelData::wheel3 */
+    EWheelId wheel4;            /**< Identifies the wheel of the vehicle assigned to @ref TWheelData::wheel4 */
+    uint16_t wheelticksPerRevolution;   /**< Number of ticks for a single revolution of one wheel */
+    float tireRollingCircumference;     /**< Distance travelled on the ground per a single revolution of one wheel. Unit: [m]. */
+    uint32_t validityBits;      /**< Bit mask indicating the validity of each corresponding value.
+                                     [bitwise or'ed @ref EWheelConfigValidityBits values].
+                                     Must be checked before usage. 
+                                     Note: wheelUnit and wheel1 .. wheel4 are always valid. Therefore no dedicated validityBits are requried.*/
+} TWheelConfiguration;
+
 
 /**
- * Wheel tick information for multiple wheels.
+ * Wheel rotation data information for multiple wheels.
  * Container with timestamp as used by callback and get function.
+ *
+ * Wheel rotation data is provided for up to 4 wheels.
+ * The assignment of the fields wheel1, wheel2, wheel3, wheel4 
+ * to the wheels of the vehicle and the measurement unit
+ * is provided as static configuration by the function snsWheelGetConfiguration().
+ *
  */
 typedef struct {
-    uint64_t timestamp;                             /**< Timestamp of the acquisition of this wheel tick signal [ms].
-                                                         All sensor/GNSS timestamps must be based on the same time source. */
-    TWheeltickDetail elements[WHEEL_NUM_ELEMENTS];   /**< The array of wheeltick elements. */
-} TWheelticks;
+    uint64_t timestamp;     /**< Timestamp of the acquisition of this wheel tick signal [ms].
+                                 All sensor/GNSS timestamps must be based on the same time source. */
+                                                         
+    float wheel1;           /**< TWheelConfiguration:: */
+    float wheel2;           /**< Number of wheel ticks accumulated within measurement interval for wheel2 */
+    float wheel3;           /**< Number of wheel ticks accumulated within measurement interval for wheel1 */
+    float wheel4;           /**< Number of wheel ticks accumulated within measurement interval for wheel1 */
+    
+    uint32_t statusBits;    /**< Bit mask providing additional status information.
+                                 [bitwise or'ed @ref EWheelStatusBits values]. */
+
+    uint32_t validityBits;  /**< Bit mask indicating the validity of each corresponding value.
+                                 [bitwise or'ed @ref EWheelValidityBits values].
+                                  Must be checked before usage. */                                                         
+} TWheelData;
 
 /**
- * Callback type for wheel tick sensor service.
- * Use this type of callback if you want to register for wheel tick data.
- * Wheel tick data can be provided for multiple WheelIds. E.g. data can be provided for all 4 wheels.
+ * Callback type for wheel sensor service.
+ * Use this type of callback if you want to register for wheel rotation data.
  * This callback may return buffered data (numElements >1) for different reasons
  *   for (large) portions of data buffered at startup
  *   for data buffered during regular operation e.g. for performance optimization (reduction of callback invocation frequency)
  * If the array contains (numElements >1), the elements will be ordered with rising timestamps
- * @param ticks pointer to an array of TWheelticks with size numElements
+ * All wheel data belonging to the same timestamp will be provided in the same structure,
+ * i.e. there will be never two callbacks or array elements with the same timestamp.
+ * @param wheelData pointer to an array of TWheelData with size numElements
  * @param numElements: allowed range: >=1. If numElements >1, buffered data are provided. 
  */
-typedef void (*WheeltickCallback)(const TWheelticks ticks[], uint16_t numElements);
+typedef void (*WheelCallback)(const TWheelData wheelData[], uint16_t numElements);
 
 /**
- * Initialization of the wheel tick sensor service.
- * Must be called before using the wheel tick sensor service to set up the service.
+ * Initialization of the wheel sensor service.
+ * Must be called before using the wheel sensor service to set up the service.
  * @return True if initialization has been successfull.
  */
-bool snsWheeltickInit();
+bool snsWheelInit();
 
 /**
- * Destroy the wheel tick sensor service.
- * Must be called after using the wheel tick sensor service to shut down the service.
+ * Destroy the wheel sensor service.
+ * Must be called after using the wheel sensor service to shut down the service.
  * @return True if shutdown has been successfull.
  */
-bool snsWheeltickDestroy();
+bool snsWheelDestroy();
 
 /**
  * Provide meta information about sensor service.
@@ -104,219 +240,42 @@ bool snsWheeltickDestroy();
  * @param data Meta data content about the sensor service.
  * @return True if meta data is available.
  */
-bool snsWheelTickGetMetaData(TSensorMetaData *data);
+bool snsWheelGetMetaData(TSensorMetaData *data);
 
-/**
- * Wheel ticks per revolution
- * Static configuration value that specifies how many wheel ticks there are per a single revolution of one wheel.
- * @param ticks The number of ticks for a single revolution of one wheel
- * @return True if configuration data is available.
- */
-bool snsWheeltickGetWheelticksPerRevolution(uint16_t* ticks);
-
-/**
- * Maximum value of vehicle specific wheel tick rolling counters
- * Static configuration value that specifies _after_ which value the wheel tick counter will roll over.
- * Some examples
- *   if full 15bit are used for the vehicle specifc rolling wheel counters, the maximum value would be 0x7FFF = 32767
- *   if 15bit are used but the last value 0x7FFF is reserved as SNA then the maximum value would be 0x7FFE = 32766
- * @param max_count The maximum value of wheel tick rolling counters
- * @return True if configuration data is available. If false no value could be provided and an overflow only at the uint32 size shall be assumed.
- */
-bool snsWheeltickGetWheelticksCountMax(uint32_t* max_count);
-
-/**
- * Method to get the wheel tick data at a specific point in time.
- * @param ticks After calling the method the currently available wheel tick data is written into the array.
+ /**
+ * Accessing static configuration information about the wheel sensor.
+ * @param config After calling the method the currently available acceleration wheel data is written into this parameter.
  * @return Is true if data can be provided and false otherwise, e.g. missing initialization
  */
-bool snsWheeltickGetWheelticks(TWheelticks *ticks);
+bool snsWheelGetConfiguration(TWheelConfiguration* config);
 
 /**
- * Register callback for multiple wheel tick information.
- * This is the recommended method for continuously accessing the wheel tick data.
- * The callback will be invoked when new wheel tick data is available.
+ * Method to get the wheel rotation data at a specific point in time.
+ * @param wheelData After calling the method the currently available wheel rotation data is written into the array.
+ * @return Is true if data can be provided and false otherwise, e.g. missing initialization
+ */
+bool snsWheelGetWheelData(TWheelData *wheelData);
+
+/**
+ * Register callback for multiple wheel rotation data information.
+ * This is the recommended method for continuously accessing the wheel data.
+ * The callback will be invoked when new rotation data data is available.
  * @param callback The callback which should be registered.
  * @return True if callback has been registered successfully.
  */
-bool snsWheeltickRegisterCallback(WheeltickCallback callback);
+bool snsWheelRegisterCallback(WheelCallback callback);
 
 /**
- * Deregister multiple wheel tick callback.
- * After calling this method no new wheel tick data will be delivered to the client.
+ * Deregister multiple wheel rotation data callback.
+ * After calling this method no new rotation data data will be delivered to the client.
  * @param callback The callback which should be deregistered.
  * @return True if callback has been deregistered successfully.
  */
-bool snsWheeltickDeregisterCallback(WheeltickCallback callback);
+bool snsWheelDeregisterCallback(WheelCallback callback);
 
-/**
- * A single angular wheel speed information.
- * No valid flags are provided for the angular wheel speeds as this information is transferred as an array.
- * If data is not valid the data is simply omitted from transfer.
- */
-typedef struct {
-    EWheelId id;
-    float rotations; /**< unit is [1/s] rotation per seconds */
-} TWheelspeedAngularDetail;
-
-/**
- * Angular wheel speed information for multiple wheels.
- * Container with timestamp as used by callback and get function.
- */
-typedef struct {
-    uint64_t timestamp;                             /**< Timestamp of the acquisition of this angular wheel speed signal [ms].
-                                                         All sensor/GNSS timestamps must be based on the same time source. */
-    TWheelspeedAngularDetail elements[WHEEL_NUM_ELEMENTS];   /**< The array of angular wheel speed elements. */
-} TWheelspeedAngular;
-
-/**
- * Callback type for angular wheel speed sensor service.
- * Use this type of callback if you want to register for angular wheel speed data.
- * Wheel tick data can be provided for multiple WheelIds. E.g. data can be provided for all 4 wheels.
- * This callback may return buffered data (numElements >1) for different reasons
- *   for (large) portions of data buffered at startup
- *   for data buffered during regular operation e.g. for performance optimization (reduction of callback invocation frequency)
- * If the array contains (numElements >1), the elements will be ordered with rising timestamps
- * @param ticks pointer to an array of TWheelspeedAngular with size numElements
- * @param numElements: allowed range: >=1. If numElements >1, buffered data are provided. 
- */
-typedef void (*WheelspeedAngularCallback)(const TWheelspeedAngular rotations[], uint16_t numElements);
-
-/**
- * Initialization of the angular wheel speed sensor service.
- * Must be called before using the angular wheel speed sensor service to set up the service.
- * @return True if initialization has been successfull.
- */
-bool snsWheelspeedAngularInit();
-
-/**
- * Destroy the angular wheel speed sensor service.
- * Must be called after using the angular wheel speed sensor service to shut down the service.
- * @return True if shutdown has been successfull.
- */
-bool snsWheelspeedAngularDestroy();
-
-/**
- * Provide meta information about sensor service.
- * The meta data of a sensor service provides information about it's name, version, type, subtype, sampling frequency etc.
- * @param data Meta data content about the sensor service.
- * @return True if meta data is available.
- */
-bool snsWheelspeedAngularGetMetaData(TSensorMetaData *data);
-
-/**
- * Method to get the angular wheel speed data at a specific point in time.
- * @param wsa After calling the method the currently available angular wheel speed data is written into the array.
- * @return Is true if data can be provided and false otherwise, e.g. missing initialization
- */
-bool snsWheelspeedAngularGet(TWheelspeedAngular* wsa);
-
-/**
- * Register callback for multiple angular wheel speed information.
- * This is the recommended method for continuously accessing the angular wheel speed data.
- * The callback will be invoked when new angular wheel speed data is available.
- * @param callback The callback which should be registered.
- * @return True if callback has been registered successfully.
- */
-bool snsWheelspeedAngularRegisterCallback(WheelspeedAngularCallback callback);
-
-/**
- * Deregister multiple angular wheel speed callback.
- * After calling this method no new angular wheel speed will be delivered to the client.
- * @param callback The callback which should be deregistered.
- * @return True if callback has been deregistered successfully.
- */
-bool snsWheelspeedAngularDeregisterCallback(WheelspeedAngularCallback callback);
-
-/**
- * A single wheel speed information.
- * No valid flags are provided for the wheel speeds as this information is transferred as an array.
- * If data is not valid the data is simply omitted from transfer.
- */
-typedef struct {
-    EWheelId id;
-    float speedOfWheel; /**< [m/s] */
-} TWheelspeedDetail;
-/**
- * Wheel speed information for multiple wheels.
- * Container with timestamp as used by callback and get function.
- */
-typedef struct {
-    uint64_t timestamp;                             /**< Timestamp of the acquisition of this wheel speed signal [ms].
-                                                         All sensor/GNSS timestamps must be based on the same time source. */
-    TWheelspeedDetail elements[WHEEL_NUM_ELEMENTS];   /**< The array of  wheel speed elements. */
-} TWheelspeed;
-
-/**
- * Callback type for wheel speed sensor service.
- * Use this type of callback if you want to register for wheel speed data.
- * Wheel tick data can be provided for multiple WheelIds. E.g. data can be provided for all 4 wheels.
- * This callback may return buffered data (numElements >1) for different reasons
- *   for (large) portions of data buffered at startup
- *   for data buffered during regular operation e.g. for performance optimization (reduction of callback invocation frequency)
- * If the array contains (numElements >1), the elements will be ordered with rising timestamps
- * @param wheelspeed pointer to an array of TWheelspeed with size numElements
- * @param numElements: allowed range: >=1. If numElements >1, buffered data are provided. 
- */
-typedef void (*WheelspeedCallback)(const TWheelspeed wheelspeed[], uint16_t numElements);
-
-/**
- * Initialization of the wheel speed sensor service.
- * Must be called before using the wheel tick sensor service to set up the service.
- * @return True if initialization has been successfull.
- */
-bool snsWheelspeedInit();
-
-/**
- * Destroy the wheel tick sensor service.
- * Must be called after using the wheel speed sensor service to shut down the service.
- * @return True if shutdown has been successfull.
- */
-bool snsWheelspeedDestroy();
-
-/**
- * Provide meta information about sensor service.
- * The meta data of a sensor service provides information about it's name, version, type, subtype, sampling frequency etc.
- * @param data Meta data content about the sensor service.
- * @return True if meta data is available.
- */
-bool snsWheelspeedGetMetaData(TSensorMetaData *data);
-
-/**
- * Method to get the wheel speed data at a specific point in time.
- * @param wheelspeed After calling the method the currently available wheel speed data is written into the array.
- * @return Is true if data can be provided and false otherwise, e.g. missing initialization
- */
-bool snsWheelspeedGet(TWheelspeed* wheelspeed);
-
-/**
- * Register callback for multiple wheel speed information.
- * This is the recommended method for continuously accessing the wheel speed data.
- * The callback will be invoked when new angular wheel speed data is available.
- * @param callback The callback which should be registered.
- * @return True if callback has been registered successfully.
- */
-bool snsWheelspeedRegisterCallback(WheelspeedCallback callback);
-
-/**
- * Deregister multiple wheel speed callback.
- * After calling this method no new wheel speed will be delivered to the client.
- * @param callback The callback which should be deregistered.
- * @return True if callback has been deregistered successfully.
- */
-bool snsWheelspeedDeregisterCallback(WheelspeedCallback callback);
-
-/**
- * Tire rolling circumference as provided in the official documents. This is a static configuration. Unit: [m].
- * Static configuration value that specifies the distance travelled on the ground per a single revolution of one wheel.
- * This may be useful for calculations based on wheel ticks or angular wheel speeds
- * @param circumference The tire rolling circumference in m is written to this parameter as a result.
- * @return True if configuration data is available. If false no value could be provided.
- */
-bool snsWheelGetTireRollingCircumference(float* circumference);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* INCLUDE_GENIVI_WHEELTICK */
+#endif /* INCLUDE_GENIVI_WHEEL */

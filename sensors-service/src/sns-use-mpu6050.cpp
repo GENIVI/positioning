@@ -184,12 +184,12 @@ bool snsVehicleSpeedDestroy()
     return iVehicleSpeedDestroy();
 }
 
-bool snsWheeltickInit()
+bool snsWheelInit()
 {
-    return iWheeltickInit();
+    return iWheelInit();
 }
 
-bool snsWheeltickDestroy()
+bool snsWheelDestroy()
 {
-    return iWheeltickDestroy();
+    return iWheelDestroy();
 }

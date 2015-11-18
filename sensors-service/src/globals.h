@@ -45,9 +45,9 @@ bool iGyroscopeDestroy();
 void updateGyroscopeData(const TGyroscopeData gyroData[], uint16_t numElements);
 
 
-bool iWheeltickInit();
-bool iWheeltickDestroy();
-void updateWheelticks(const TWheelticks ticks[], uint16_t numElements);
+bool iWheelInit();
+bool iWheelDestroy();
+void updateWheelData(const TWheelData wheelData[], uint16_t numElements);
 
 bool iVehicleSpeedInit();
 bool iVehicleSpeedDestroy();
