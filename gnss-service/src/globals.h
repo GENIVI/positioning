@@ -26,6 +26,7 @@
 #include "gnss-init.h"
 #include "gnss.h"
 #include "gnss-meta-data.h"
+#include "gnss-status.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -36,6 +37,7 @@ extern const TGnssMetaData gMetaData;
 void updateGNSSTime(const TGNSSTime time[], uint16_t numElements);
 void updateGNSSPosition(const TGNSSPosition position[], uint16_t numElements);
 void updateGNSSSatelliteDetail(const TGNSSSatelliteDetail satelliteDetail[], uint16_t numElements);
+void updateGNSSStatus(const TGNSSStatus* status);
 
 #ifdef __cplusplus
 }

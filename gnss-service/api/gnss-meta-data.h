@@ -16,8 +16,8 @@
  **************************************************************************/
 
 
-#ifndef INCLUDE_GNSS_METADATA
-#define INCLUDE_GNSS_METADATA
+#ifndef INCLUDE_GENIVI_GNSS_METADATA
+#define INCLUDE_GENIVI_GNSS_METADATA
 
 #include <stdint.h>
 
@@ -73,4 +73,4 @@ bool gnssGetMetaData(TGnssMetaData *data);
 }
 #endif
 
-#endif /* INCLUDE_GNSS_METADATA */
+#endif /* INCLUDE_GENIVI_GNSS_METADATA */

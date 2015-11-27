@@ -34,13 +34,15 @@
 
 #include "gnss-init.h"
 #include "gnss.h"
+#include "gnss-status.h"
 #include "sns-init.h"
 
 #define GNSS_INIT_MAX_RETRIES 30
 
-//global variable to control the main loop - will be set by signal handlers
+//global variable to control the main loop - will be set by signal handlers or status callback
 static volatile bool sigint = false;
 static volatile bool sigterm = false;
+static volatile bool gnss_failure = false;
 
 static void sigHandler (int sig, siginfo_t *siginfo, void *context)
 {
@@ -85,6 +87,20 @@ static void cbTime(const TGNSSTime time[], uint16_t numElements)
 static void cbPosition(const TGNSSPosition position[], uint16_t numElements)
 {
     gnssPositionLog(gnsslogGetTimestamp(), position, numElements);
+}
+
+static void cbGNSSStatus(const TGNSSStatus *status)
+{
+    if (status && (status->validityBits & GNSSSTATUS_STATUS_VALID))
+    {
+        char status_string[64];
+        sprintf(status_string, "#GNSS Status: %d", status->status);
+        poslogAddString(status_string);
+        if (status->status == GNSS_STATUS_FAILURE)
+        {
+            gnss_failure = true;
+        }
+    }
 }
 
 static void cbAccel(const TAccelerationData accelerationData[], uint16_t numElements)
@@ -169,11 +185,12 @@ int main()
             poslogAddString("#INF gnssInit() success");
             gnssRegisterTimeCallback(&cbTime);
             gnssRegisterPositionCallback(&cbPosition);
+            gnssRegisterStatusCallback(&cbGNSSStatus);
         }
 
         if (is_sns_init_ok || is_gnss_init_ok)
         {
-            while(!sigint && !sigterm)
+            while(!sigint && !sigterm && !gnss_failure)
             {
                 sleep(1);
             }
@@ -189,6 +206,10 @@ int main()
             if (sigint)
             {
                 poslogAddString("#SIGINT");
+            }
+            if (gnss_failure)
+            {
+                poslogAddString("#GNSS_STATUS_FAILURE");
             }
             if (is_sns_init_ok)
             {
@@ -206,6 +227,7 @@ int main()
             }
             if (is_gnss_init_ok)
             {
+                gnssDeregisterStatusCallback(&cbGNSSStatus);
                 gnssDeregisterPositionCallback(&cbPosition);
                 gnssDeregisterTimeCallback(&cbTime);
                 gnssDestroy();
