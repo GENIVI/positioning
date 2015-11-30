@@ -91,7 +91,7 @@ static void cbPosition(const TGNSSPosition position[], uint16_t numElements)
 
 static void cbGNSSStatus(const TGNSSStatus *status)
 {
-    if (status && (status->validityBits & GNSSSTATUS_STATUS_VALID))
+    if (status && (status->validityBits & GNSS_STATUS_STATUS_VALID))
     {
         char status_string[64];
         sprintf(status_string, "#GNSS Status: %d", status->status);

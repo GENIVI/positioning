@@ -19,6 +19,7 @@
 #define INCLUDE_GENIVI_WHEEL
 
 #include "sns-meta-data.h"
+#include "sns-status.h"
 #include <stdbool.h>
 
 #ifdef __cplusplus
@@ -221,6 +222,13 @@ typedef struct {
 typedef void (*WheelCallback)(const TWheelData wheelData[], uint16_t numElements);
 
 /**
+ * Callback type for wheel sensor status.
+ * Use this type of callback if you want to register for wheel sensor status updates data.
+ * @param status the wheel sensor status
+ */
+typedef void (*WheelStatusCallback)(const TSensorStatus *status);
+
+/**
  * Initialization of the wheel sensor service.
  * Must be called before using the wheel sensor service to set up the service.
  * @return True if initialization has been successfull.
@@ -273,6 +281,29 @@ bool snsWheelRegisterCallback(WheelCallback callback);
  */
 bool snsWheelDeregisterCallback(WheelCallback callback);
 
+/**
+ * Method to get the wheel sensor status at a specific point in time.
+ * @param status After calling the method the current wheel sensor status is written into status
+ * @return Is true if data can be provided and false otherwise, e.g. missing initialization
+ */
+bool snsWheelGetStatus(TSensorStatus* status);
+
+/**
+ * Register wheel sensor status callback.
+ * This is the recommended method for continuously monitoring the wheel sensor status.
+ * The callback will be invoked when new wheel sensor status data is available.
+ * @param callback The callback which should be registered.
+ * @return True if callback has been registered successfully.
+ */
+bool snsWheelRegisterStatusCallback(WheelStatusCallback callback);
+
+/**
+ * Deregister wheel sensor status callback.
+ * After calling this method no new wheel sensor status updates will be delivered to the client.
+ * @param callback The callback which should be deregistered.
+ * @return True if callback has been deregistered successfully.
+ */
+bool snsWheelDeregisterStatusCallback(WheelStatusCallback callback);
 
 #ifdef __cplusplus
 }

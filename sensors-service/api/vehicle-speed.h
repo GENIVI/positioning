@@ -19,6 +19,7 @@
 #define INCLUDED_GENIVI_VEHICLESPEED
 
 #include "sns-meta-data.h"
+#include "sns-status.h"
 #include <stdbool.h>
 
 #ifdef __cplusplus
@@ -56,6 +57,14 @@ typedef struct {
  * @param numElements: allowed range: >=1. If numElements >1, buffered data are provided. 
  */
 typedef void (*VehicleSpeedCallback)(const TVehicleSpeedData vehicleSpeedData[], uint16_t numElements);
+
+
+/**
+ * Callback type for vehicle speed sensor status.
+ * Use this type of callback if you want to register for vehicle speed sensor status updates data.
+ * @param status the vehicle speed sensor status
+ */
+typedef void (*VehicleSpeedStatusCallback)(const TSensorStatus *status);
 
 /**
  * Initialization of the vehicle speed sensor service.
@@ -101,6 +110,30 @@ bool snsVehicleSpeedRegisterCallback(VehicleSpeedCallback callback);
  * @return True if callback has been deregistered successfully.
  */
 bool snsVehicleSpeedDeregisterCallback(VehicleSpeedCallback callback);
+
+/**
+ * Method to get the vehicle speed sensor status at a specific point in time.
+ * @param status After calling the method the current vehicle speed sensor status is written into status
+ * @return Is true if data can be provided and false otherwise, e.g. missing initialization
+ */
+bool snsVehicleSpeedGetStatus(TSensorStatus* status);
+
+/**
+ * Register vehicle speed sensor status callback.
+ * This is the recommended method for continuously monitoring the vehicle speed sensor status.
+ * The callback will be invoked when new vehicle speed sensor status data is available.
+ * @param callback The callback which should be registered.
+ * @return True if callback has been registered successfully.
+ */
+bool snsVehicleSpeedRegisterStatusCallback(VehicleSpeedStatusCallback callback);
+
+/**
+ * Deregister vehicle speed sensor status callback.
+ * After calling this method no new vehicle speed sensor status updates will be delivered to the client.
+ * @param callback The callback which should be deregistered.
+ * @return True if callback has been deregistered successfully.
+ */
+bool snsVehicleSpeedDeregisterStatusCallback(VehicleSpeedStatusCallback callback);
 
 #ifdef __cplusplus
 }

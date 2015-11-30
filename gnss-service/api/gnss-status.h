@@ -31,15 +31,15 @@ typedef enum {
     GNSS_STATUS_AVAILABLE     = 2,    /**< GNSS is available and running as expected. */
     GNSS_STATUS_RESTARTING    = 3,    /**< GNSS is restarted, i.e. due to communication loss. */
     GNSS_STATUS_FAILURE       = 4,    /**< GNSS is not operating properly. Restarting did not help. */
-    GNSS_STATUS_OUTOFSERVICE  = 5     /**< GNSS is temporarily not available, due to some known external condition, e.g. switch off for antenna supervision. */
+    GNSS_STATUS_OUTOFSERVICE  = 5     /**< GNSS is temporarily not available, due to some known external condition, e.g. firmware update or switch off for antenna supervision. */
 } EGNSSStatus;
 
 /**
- * TGNSSStatus::validityBits provides information about the currently valid signals of the GNSS status struct.
+ * TGNSSStatus::validityBits provides information about the currently valid signals of the TGNSSStatus struct.
  * It is a or'ed bitmask of the EGNSSStatusValidityBits values.
  */
 typedef enum {
-    GNSSSTATUS_STATUS_VALID         = 0x00000001    /**< Validity bit for field TGNSSStatus::status. */
+    GNSS_STATUS_STATUS_VALID         = 0x00000001    /**< Validity bit for field TGNSSStatus::status. */
 } EGNSSStatusValidityBits;
 
 /**

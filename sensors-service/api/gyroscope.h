@@ -19,6 +19,7 @@
 #define INCLUDE_GENIVI_GYROSCOPE
 
 #include "sns-meta-data.h"
+#include "sns-status.h"
 #include <stdbool.h>
 
 #ifdef __cplusplus
@@ -163,6 +164,13 @@ typedef struct {
 typedef void (*GyroscopeCallback)(const TGyroscopeData gyroData[], uint16_t numElements);
 
 /**
+ * Callback type for gyroscope status.
+ * Use this type of callback if you want to register for gyroscope status updates data.
+ * @param status the gyroscope status
+ */
+typedef void (*GyroscopeStatusCallback)(const TSensorStatus *status);
+
+/**
  * Initialization of the gyroscope sensor service.
  * Must be called before using the gyroscope sensor service to set up the service.
  * @return True if initialization has been successfull.
@@ -219,6 +227,30 @@ bool snsGyroscopeRegisterCallback(GyroscopeCallback callback);
  * @return True if callback has been deregistered successfully.
  */
 bool snsGyroscopeDeregisterCallback(GyroscopeCallback callback);
+
+/**
+ * Method to get the gyroscope status at a specific point in time.
+ * @param status After calling the method the current gyroscope status is written into status
+ * @return Is true if data can be provided and false otherwise, e.g. missing initialization
+ */
+bool snsGyroscopeGetStatus(TSensorStatus* status);
+
+/**
+ * Register gyroscope status callback.
+ * This is the recommended method for continuously monitoring the gyroscope status.
+ * The callback will be invoked when new gyroscope status data is available.
+ * @param callback The callback which should be registered.
+ * @return True if callback has been registered successfully.
+ */
+bool snsGyroscopeRegisterStatusCallback(GyroscopeStatusCallback callback);
+
+/**
+ * Deregister gyroscope status callback.
+ * After calling this method no new gyroscope status updates will be delivered to the client.
+ * @param callback The callback which should be deregistered.
+ * @return True if callback has been deregistered successfully.
+ */
+bool snsGyroscopeDeregisterStatusCallback(GyroscopeStatusCallback callback);
 
 #ifdef __cplusplus
 }

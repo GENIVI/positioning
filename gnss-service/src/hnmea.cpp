@@ -48,6 +48,7 @@ void HNMEA_Init_GPS_DATA(GPS_DATA* gps_data)
     gps_data->time_hh       = -1;
     gps_data->time_mm       = -1;
     gps_data->time_ss       = -1;
+    gps_data->time_ms       = -1;
     gps_data->course        = -999.99;
     gps_data->speed         = -999.99;
     gps_data->hdop          = -999.99;
@@ -154,6 +155,7 @@ void HNMEA_Parse_GPRMC(char* line, GPS_DATA* gps_data)
                 if (strlen (field) >=6)
                 {
                     gps_data->time_ss = atoi(field+4);
+                    gps_data->time_ms = (atof(field+4)-gps_data->time_ss)*1000;
                     field[4] = '\0';
                     gps_data->time_mm = atoi(field+2);
                     field[2] = '\0';
@@ -347,6 +349,7 @@ void HNMEA_Parse_GPGGA(char* line, GPS_DATA* gps_data)
                 if (strlen (field) >=6)
                 {
                     gps_data->time_ss = atoi(field+4);
+                    gps_data->time_ms = (atof(field+4)-gps_data->time_ss)*1000;
                     field[4] = '\0';
                     gps_data->time_mm = atoi(field+2);
                     field[2] = '\0';
@@ -732,6 +735,7 @@ void HNMEA_Parse_GPGST(char* line, GPS_DATA* gps_data)
                 if (strlen (field) >=6)
                 {
                     gps_data->time_ss = atoi(field+4);
+                    gps_data->time_ms = (atof(field+4)-gps_data->time_ss)*1000;
                     field[4] = '\0';
                     gps_data->time_mm = atoi(field+2);
                     field[2] = '\0';
@@ -875,3 +879,4 @@ NMEA_RESULT HNMEA_Parse(char* line, GPS_DATA* gps_data)
     }
     return ret;
 }
+

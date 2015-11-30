@@ -49,8 +49,13 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+#include <sys/timeb.h>
 //the NMEA parser
 #include "hnmea.h"
+
+
+//activate this #define to print raw NMEA
+//#define NMEA_PRINT_RAW
 
 /**
  * CONFIGURATION PARAMETERS
@@ -113,7 +118,7 @@ void setGNSSStatus(EGNSSStatus newStatus)
         TGNSSStatus status = {0};
         status.timestamp = gnss_get_timestamp();
         status.status = newStatus;
-        status.validityBits = GNSSSTATUS_STATUS_VALID;
+        status.validityBits = GNSS_STATUS_STATUS_VALID;
         updateGNSSStatus(&status);
     }
 }   
@@ -145,7 +150,13 @@ bool extractPosition(const GPS_DATA& gps_data, uint64_t timestamp, TGNSSPosition
         gnss_pos.altitudeMSL = gps_data.alt;
         gnss_pos.validityBits |= GNSS_POSITION_ALTITUDEMSL_VALID;
         if (gps_data.valid & GPS_DATA_GEOID)
-        {   //http://earth-info.nga.mil/GandG/wgs84/gravitymod/wgs84_180/intptWhel.html
+        {
+            //Geoid separation terminology might be difficult to understand
+            //You can cross check your NMEA output and calculation results
+            //with an online geoid calculator such as:
+            //  http://www.unavco.org/software/geodetic-utilities/geoid-height-calculator/geoid-height-calculator.html
+            //  http://earth-info.nga.mil/GandG/wgs84/gravitymod/wgs84_180/intptWhel.html
+            //  http://geographiclib.sourceforge.net/cgi-bin/GeoidEval
             gnss_pos.altitudeEll = gps_data.alt+gps_data.geoid;
             gnss_pos.validityBits |= GNSS_POSITION_ALTITUDEELL_VALID;
         }
@@ -241,7 +252,7 @@ bool extractTime(const GPS_DATA& gps_data, uint64_t timestamp, TGNSSTime& gnss_t
         gnss_time.hour = gps_data.time_hh;
         gnss_time.minute = gps_data.time_mm;
         gnss_time.second = gps_data.time_ss;
-        gnss_time.ms = 0;
+        gnss_time.ms = gps_data.time_ms;
         gnss_time.validityBits |= GNSS_TIME_TIME_VALID; 
     }
     if (gps_data.valid & GPS_DATA_DATE) 
@@ -398,7 +409,10 @@ void* loop_GNSS_NMEA_device(void* dev)
             buf[res]=0;             /* set end of string, so we can printf */
             linecount++;
             //LOG_DEBUG(gContext, "%d:%s", linecount, buf);
-            //printf("%"PRIu64":%s",gnss_get_timestamp(), buf);
+            #ifdef NMEA_PRINT_RAW
+            printf("%"PRIu64",0,%s",gnss_get_timestamp(), buf);
+            fflush(stdout);
+            #endif
             NMEA_RESULT nmea_res = HNMEA_Parse(buf, &gps_data);
 
             //most receivers sent GPRMC as last, but u-blox send as first: use other trigger
@@ -422,6 +436,22 @@ void* loop_GNSS_NMEA_device(void* dev)
                 if (extractTime(gps_data, timestamp, gnss_time))
                 {
                     updateGNSSTime(&gnss_time, 1);
+
+                    #ifdef NMEA_PRINT_RAW
+                    /* try to determine GNSS_DELAY assumming a well NTP-synched clock */
+                    /* http://www.ntp.org/ntpfaq/NTP-s-sw-clocks-quality.htm */
+                    struct timeb curtime;
+                    struct tm *gmttime;
+                    /* Get the current time. */
+                    ftime (&curtime);
+                    /* Convert it to local time representation. */
+                    gmttime = gmtime (&(curtime.time));
+                    printf("%"PRIu64",0,$HOSTTIME,%04d,%02d,%02d,%02d,%02d,%02d,%03d\n",
+                           gnss_get_timestamp(),
+                           gmttime->tm_year+1900, gmttime->tm_mon, gmttime->tm_mday,
+                           gmttime->tm_hour, gmttime->tm_min, gmttime->tm_sec, curtime.millitm);
+                    fflush(stdout);
+                    #endif
                 }
                 if (extractPosition(gps_data, timestamp, gnss_pos))
                 {
@@ -479,9 +509,11 @@ extern bool gnssInit()
     {
         //U-blox receivers: try to activate GPGST
 #ifdef GNSS_CHIPSET_UBLOX
-        char act_gst[] = "$PUBX,40,GST,0,0,0,1,0,0*5A\r\n";
-        //printf("GNSS_CHIPSET == UBLOX\n");
-        write(g_fd, act_gst, strlen(act_gst));
+    char act_gst[] = "$PUBX,40,GST,0,0,0,1,0,0*5A\r\n";
+    char act_grs[] = "$PUBX,40,GRS,0,0,0,1,0,0*5C\r\n";
+    //printf("GNSS_CHIPSET == UBLOX\n");
+    write(g_fd, act_gst, strlen(act_gst));
+    write(g_fd, act_grs, strlen(act_grs));
 #endif
         pthread_create(&g_thread, NULL, loop_GNSS_NMEA_device, &g_fd);
         return true;

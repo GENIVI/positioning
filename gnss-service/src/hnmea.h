@@ -69,6 +69,7 @@ typedef struct {
     int time_hh;    //time::hour
     int time_mm;    //time::minute
     int time_ss;    //time::second
+    int time_ms;    //time::millisecond
     double course;  //course (heading) in degrees compass-like
     double speed;   //speed im m/s
     float hdop;     //hdop
@@ -86,3 +87,4 @@ void HNMEA_Init_GPS_DATA(GPS_DATA* gps_data);
 NMEA_RESULT HNMEA_Parse(char* line, GPS_DATA* gps_data);
 
 #endif //_HNMEA_H
+
