@@ -35,11 +35,25 @@ typedef enum {
 } EGNSSStatus;
 
 /**
+ * Enumeration to describe the status of the GNSS antenna
+ */
+typedef enum {
+    GNSS_ANT_STATUS_NORMAL          = 0,    /**< GNSS antenna is working in normal operation. */
+    GNSS_ANT_STATUS_OVERCURRENT     = 1,    /**< GNSS antenna is working but the antenna current is higher than expected. */
+    GNSS_ANT_STATUS_OPEN            = 2,    /**< GNSS antenna is not working because not connected (antenna current too low). */
+    GNSS_ANT_STATUS_SHORT_GND       = 3,    /**< GNSS antenna is not working due to short-curcuit to ground. */
+    GNSS_ANT_STATUS_SHORT_BATT      = 4,    /**< GNSS antenna is not working due to short-curcuit to battery. */
+    GNSS_ANT_STATUS_OUTOFSERVICE    = 5     /**< GNSS antenna is temporarily not available, due to some known external condition. */
+} EGNSSAntennaStatus;
+
+
+/**
  * TGNSSStatus::validityBits provides information about the currently valid signals of the TGNSSStatus struct.
  * It is a or'ed bitmask of the EGNSSStatusValidityBits values.
  */
 typedef enum {
-    GNSS_STATUS_STATUS_VALID         = 0x00000001    /**< Validity bit for field TGNSSStatus::status. */
+    GNSS_STATUS_STATUS_VALID         = 0x00000001,   /**< Validity bit for field TGNSSStatus::status. */
+    GNSS_STATUS_ANT_STATUS_VALID     = 0x00000002    /**< Validity bit for field TGNSSStatus::antStatus. */
 } EGNSSStatusValidityBits;
 
 /**
@@ -49,6 +63,7 @@ typedef struct {
     uint64_t timestamp;             /**< Timestamp of the GNSS status transition [ms].
                                          All sensor/GNSS timestamps must be based on the same time source. */
     EGNSSStatus status;             /**< Status of the GNSS receiver */
+    EGNSSAntennaStatus antStatus;   /**< Status of the GNSS antenna */
     uint32_t validityBits;          /**< Bit mask indicating the validity of each corresponding value.
                                         [bitwise or'ed @ref EGNSSStatusValidityBits values].
                                         Must be checked before usage. */
