@@ -53,6 +53,8 @@
   <id name="MINUTE"                 value="0x10000000" />
   <id name="SECOND"                 value="0x20000000" />
   <id name="MS"                     value="0x40000000" />
+  <id name="TIME_SCALE"             value="0x80000000" />
+  <id name="LEAP_SECONDS"          value="0x100000000" />
 
   <!-- Generic "Enum" values -->
   <id name="INVALID"                value="0x00000000" />
@@ -78,6 +80,10 @@
   <!-- PositionFeedback "Enum" -->
   <id name="MAP_MATCHED_FEEDBACK"   value="0x00000001" />
   <id name="TEST_FEEDBACK"          value="0x00000002" />
+  
+  <!-- TimeScale "Enum" -->
+  <id name="TIME_SCALE_UTC"         value="0" />
+  <id name="TIME_SCALE_GPS"         value="1" />
 
   <!-- ... --> 
 </constants>

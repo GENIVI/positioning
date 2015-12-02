@@ -165,13 +165,6 @@ typedef struct {
 typedef void (*AccelerationCallback)(const TAccelerationData accelerationData[], uint16_t numElements);
 
 /**
- * Callback type for acceleration sensor status.
- * Use this type of callback if you want to register for acceleration sensor status updates data.
- * @param status the acceleration sensor status
- */
-typedef void (*AccelerationStatusCallback)(const TSensorStatus *status);
-
-/**
  * Initialization of the acceleration sensor service.
  * Must be called before using the acceleration sensor service to set up the service.
  * @return True if initialization has been successfull.
@@ -240,7 +233,7 @@ bool snsAccelerationGetStatus(TSensorStatus* status);
  * @param callback The callback which should be registered.
  * @return True if callback has been registered successfully.
  */
-bool snsAccelerationRegisterStatusCallback(AccelerationStatusCallback callback);
+bool snsAccelerationRegisterStatusCallback(SensorStatusCallback callback);
 
 /**
  * Deregister acceleration sensor status callback.
@@ -248,7 +241,7 @@ bool snsAccelerationRegisterStatusCallback(AccelerationStatusCallback callback);
  * @param callback The callback which should be deregistered.
  * @return True if callback has been deregistered successfully.
  */
-bool snsAccelerationDeregisterStatusCallback(AccelerationStatusCallback callback);
+bool snsAccelerationDeregisterStatusCallback(SensorStatusCallback callback);
 
 #ifdef __cplusplus
 }

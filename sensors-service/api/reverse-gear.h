@@ -19,6 +19,7 @@
 #define INCLUDED_GENIVI_REVERSEGEAR
 
 #include "sns-meta-data.h"
+#include "sns-status.h"
 #include <stdbool.h>
 
 #ifdef __cplusplus
@@ -105,6 +106,31 @@ bool snsReverseGearRegisterCallback(ReverseGearCallback callback);
  * @return True if callback has been deregistered successfully.
  */
 bool snsReverseGearDeregisterCallback(ReverseGearCallback callback);
+
+/**
+ * Method to get the reverse gear sensor status at a specific point in time.
+ * @param status After calling the method the current reverse gear sensor status is written into status
+ * @return Is true if data can be provided and false otherwise, e.g. missing initialization
+ */
+bool snsReverseGearGetStatus(TSensorStatus* status);
+
+/**
+ * Register reverse gear sensor status callback.
+ * This is the recommended method for continuously monitoring the reverse gear sensor status.
+ * The callback will be invoked when new reverse gear sensor status data is available.
+ * @param callback The callback which should be registered.
+ * @return True if callback has been registered successfully.
+ */
+bool snsReverseGearRegisterStatusCallback(SensorStatusCallback callback);
+
+/**
+ * Deregister reverse gear sensor status callback.
+ * After calling this method no new reverse gear sensor status updates will be delivered to the client.
+ * @param callback The callback which should be deregistered.
+ * @return True if callback has been deregistered successfully.
+ */
+bool snsReverseGearDeregisterStatusCallback(SensorStatusCallback callback);
+
 
 #ifdef __cplusplus
 }

@@ -139,11 +139,11 @@
 
     <method name="GetTime">
       <doc>
-        <line>GetTime = This method returns UTC time and date</line>
+        <line>GetTime = This method returns time and date, typically according UTC time scale</line>
       </doc>
       <arg name="timestamp" type="t" direction="out">
         <doc>
-          <line>timestamp = Timestamp of the acquisition of the UTC date/time [ms]</line>
+          <line>timestamp = Timestamp of the acquisition of the date/time [ms]</line>
           <line> Note: All timestamps must be based on the same time source.</line>
         </doc>
       </arg>        
@@ -152,7 +152,7 @@
           <line>time = dictionary[key,value]</line>
           <line>dictionary = array of tuples (key,value)</line>
           <line>If you request for a specific value which is invalid, it's not returned in the dictionary.</line>
-          <line>key = enum(YEAR,MONTH,DAY,HOUR,MINUTE,SECOND,MS, ... )</line>
+          <line>key = enum(YEAR,MONTH,DAY,HOUR,MINUTE,SECOND,MS,TIME_SCALE,LEAP_SECONDS ... )</line>
           <line>key = YEAR, value = value of type 'q', 4 digits number that indicates the year. Example: 2012</line>
           <line>key = MONTH, value = value of type 'y', 2 digits number that indicates the month. Example: 03 means March</line>
           <line>key = DAY, value = value of type 'y', 2 digits number that indicates the day. Range [0:31]. Example: 07</line>
@@ -160,6 +160,8 @@
           <line>key = MINUTE, value = value of type 'y', 2 digits number that represents the minutes. Range [0:59]. Example: 01</line>
           <line>key = SECOND, value = value of type 'y', 2 digits number that represents the seconds. Range [0:59], for leap seconds, also 60 is allowed. Example: 01</line>
           <line>key = MS, value = value of type 'q', 3 digits number that represents the milliseconds. Range [0:999]. Example: 007</line>
+          <line>key = TIME_SCALE, value = = enum(TIME_SCALE_UTC,TIME_SCALE_GPS). Time scale on which the date/time data are based. Example: TIME_SCALE_UTC (0)</line>
+          <line>key = LEAP_SECONDS, value = value of type 'n', Number of leap seconds, i.e. difference between GPS time and UTC. Example: 17</line>
         </doc>
       </arg>
     </method>

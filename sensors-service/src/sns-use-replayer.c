@@ -19,6 +19,15 @@
 #include "sns-init.h"
 #include "acceleration.h"
 #include "gyroscope.h"
+#include "inclination.h"
+#include "odometer.h"
+#include "reverse-gear.h"
+#include "slip-angle.h"
+#include "steering-angle.h"
+#include "vehicle-data.h"
+#include "vehicle-speed.h"
+#include "vehicle-state.h"
+#include "wheel.h"
 
 #include <stdio.h>
 #include <stdlib.h>

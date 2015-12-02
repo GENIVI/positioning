@@ -58,14 +58,6 @@ typedef struct {
  */
 typedef void (*VehicleSpeedCallback)(const TVehicleSpeedData vehicleSpeedData[], uint16_t numElements);
 
-
-/**
- * Callback type for vehicle speed sensor status.
- * Use this type of callback if you want to register for vehicle speed sensor status updates data.
- * @param status the vehicle speed sensor status
- */
-typedef void (*VehicleSpeedStatusCallback)(const TSensorStatus *status);
-
 /**
  * Initialization of the vehicle speed sensor service.
  * Must be called before using the vehicle speed sensor service to set up the service.
@@ -125,7 +117,7 @@ bool snsVehicleSpeedGetStatus(TSensorStatus* status);
  * @param callback The callback which should be registered.
  * @return True if callback has been registered successfully.
  */
-bool snsVehicleSpeedRegisterStatusCallback(VehicleSpeedStatusCallback callback);
+bool snsVehicleSpeedRegisterStatusCallback(SensorStatusCallback callback);
 
 /**
  * Deregister vehicle speed sensor status callback.
@@ -133,7 +125,7 @@ bool snsVehicleSpeedRegisterStatusCallback(VehicleSpeedStatusCallback callback);
  * @param callback The callback which should be deregistered.
  * @return True if callback has been deregistered successfully.
  */
-bool snsVehicleSpeedDeregisterStatusCallback(VehicleSpeedStatusCallback callback);
+bool snsVehicleSpeedDeregisterStatusCallback(SensorStatusCallback callback);
 
 #ifdef __cplusplus
 }

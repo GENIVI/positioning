@@ -23,7 +23,7 @@ extern "C" {
 #endif
 
 /**
- * Enumeration to describe the status of the GNSS receiver
+ * Enumeration to describe the status of the sensor
  */
 typedef enum {
     SENSOR_STATUS_NOTAVAILABLE  = 0,    /**< Sensor is not available at all, based on configuration data. */
@@ -35,24 +35,31 @@ typedef enum {
 } ESensorStatus;
 
 /**
- * TGNSSStatus::validityBits provides information about the currently valid signals of the TSensorStatus struct.
- * It is a or'ed bitmask of the EGNSSStatusValidityBits values.
+ * TSensorStatus::validityBits provides information about the currently valid signals of the TSensorStatus struct.
+ * It is a or'ed bitmask of the ESensorStatusValidityBits values.
  */
 typedef enum {
     SENSOR_STATUS_STATUS_VALID          = 0x00000001    /**< Validity bit for field TSensorStatus::status. */
 } ESensorStatusValidityBits;
 
 /**
- * Container for GNSS status information
+ * Container for sensor status information
  */
 typedef struct {
-    uint64_t timestamp;             /**< Timestamp of the GNSS status transition [ms].
+    uint64_t timestamp;             /**< Timestamp of the sensor status transition [ms].
                                          All sensor/GNSS timestamps must be based on the same time source. */
-    ESensorStatus status;           /**< Status of the sensor receiver */
+    ESensorStatus status;           /**< Status of the sensor */
     uint32_t validityBits;          /**< Bit mask indicating the validity of each corresponding value.
                                         [bitwise or'ed @ref ESensorStatusValidityBits values].
                                         Must be checked before usage. */
 } TSensorStatus;
+
+/**
+ * Callback type for sensor status.
+ * Use this type of callback if you want to register for sensor status updates data.
+ * @param status the  sensor status
+ */
+typedef void (*SensorStatusCallback)(const TSensorStatus *status);
 
 #ifdef __cplusplus
 }

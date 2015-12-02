@@ -141,14 +141,14 @@ typedef enum {
 
  */
 typedef enum {
-    WHEEL_UNIT_TICKS            = 0x00000001,     /**< Wheel rotation data is provided as number of wheel ticks accumulated within measurement interval. 
-                                                       Note 1: Therefore, if the wheel ticks on the vehicle bus are represented as rolling counters, 
-                                                       this is the difference between two subsequent rolling counter values 
-                                                       taking the vehicle specific roll-over boundary into account. 
-                                                       Note 2: It is safe to store integer values such as for wheel ticks 
-                                                       without precision loss in float variables for values up to 2^23. */
-    WHEEL_UNIT_SPEED            = 0x00000002,     /**< Wheel rotation data is provided as speed in [m/s]. */
-    WHEEL_UNIT_ANGULAR_SPEED    = 0x00000003,     /**< Wheel rotation data is provided as angular speed in [1/s] rotation per seconds. */
+    WHEEL_UNIT_TICKS            = 1,    /**< Wheel rotation data is provided as number of wheel ticks accumulated within measurement interval. 
+                                             Note 1: Therefore, if the wheel ticks on the vehicle bus are represented as rolling counters, 
+                                             this is the difference between two subsequent rolling counter values 
+                                             taking the vehicle specific roll-over boundary into account. 
+                                             Note 2: It is safe to store integer values such as for wheel ticks 
+                                             without precision loss in float variables for values up to 2^23. */
+    WHEEL_UNIT_SPEED            = 2,    /**< Wheel rotation data is provided as speed in [m/s]. */
+    WHEEL_UNIT_ANGULAR_SPEED    = 3,    /**< Wheel rotation data is provided as angular speed in [1/s] rotation per seconds. */
 } EWheelUnit;
 
 
@@ -167,10 +167,10 @@ typedef enum {
  */
 typedef struct {
     EWheelUnit wheelUnit;       /**< Measurement unit in which the wheel rotation data is provided. Valid for all wheels. */
-    EWheelId wheel1;            /**< Identifies the wheel of the vehicle assigned to @ref TWheelData::wheel1 */      
-    EWheelId wheel2;            /**< Identifies the wheel of the vehicle assigned to @ref TWheelData::wheel2 */
-    EWheelId wheel3;            /**< Identifies the wheel of the vehicle assigned to @ref TWheelData::wheel3 */
-    EWheelId wheel4;            /**< Identifies the wheel of the vehicle assigned to @ref TWheelData::wheel4 */
+    EWheelId wheel1Id;          /**< Identifies the wheel of the vehicle assigned to @ref TWheelData::wheel1 */      
+    EWheelId wheel2Id;          /**< Identifies the wheel of the vehicle assigned to @ref TWheelData::wheel2 */
+    EWheelId wheel3Id;          /**< Identifies the wheel of the vehicle assigned to @ref TWheelData::wheel3 */
+    EWheelId wheel4Id;          /**< Identifies the wheel of the vehicle assigned to @ref TWheelData::wheel4 */
     uint16_t wheelticksPerRevolution;   /**< Number of ticks for a single revolution of one wheel */
     float tireRollingCircumference;     /**< Distance travelled on the ground per a single revolution of one wheel. Unit: [m]. */
     uint32_t validityBits;      /**< Bit mask indicating the validity of each corresponding value.
@@ -194,10 +194,10 @@ typedef struct {
     uint64_t timestamp;     /**< Timestamp of the acquisition of this wheel tick signal [ms].
                                  All sensor/GNSS timestamps must be based on the same time source. */
                                                          
-    float wheel1;           /**< TWheelConfiguration:: */
-    float wheel2;           /**< Number of wheel ticks accumulated within measurement interval for wheel2 */
-    float wheel3;           /**< Number of wheel ticks accumulated within measurement interval for wheel1 */
-    float wheel4;           /**< Number of wheel ticks accumulated within measurement interval for wheel1 */
+    float wheel1;           /**< Wheel rotation data for the wheel identified by TWheelConfiguration::wheel1 in measurement unit identified by TWheelConfiguration::wheelUnit. */
+    float wheel2;           /**< Wheel rotation data for the wheel identified by TWheelConfiguration::wheel2 in measurement unit identified by TWheelConfiguration::wheelUnit. */
+    float wheel3;           /**< Wheel rotation data for the wheel identified by TWheelConfiguration::wheel3 in measurement unit identified by TWheelConfiguration::wheelUnit. */
+    float wheel4;           /**< Wheel rotation data for the wheel identified by TWheelConfiguration::wheel4 in measurement unit identified by TWheelConfiguration::wheelUnit. */
     
     uint32_t statusBits;    /**< Bit mask providing additional status information.
                                  [bitwise or'ed @ref EWheelStatusBits values]. */
@@ -295,7 +295,7 @@ bool snsWheelGetStatus(TSensorStatus* status);
  * @param callback The callback which should be registered.
  * @return True if callback has been registered successfully.
  */
-bool snsWheelRegisterStatusCallback(WheelStatusCallback callback);
+bool snsWheelRegisterStatusCallback(SensorStatusCallback callback);
 
 /**
  * Deregister wheel sensor status callback.
@@ -303,7 +303,7 @@ bool snsWheelRegisterStatusCallback(WheelStatusCallback callback);
  * @param callback The callback which should be deregistered.
  * @return True if callback has been deregistered successfully.
  */
-bool snsWheelDeregisterStatusCallback(WheelStatusCallback callback);
+bool snsWheelDeregisterStatusCallback(SensorStatusCallback callback);
 
 #ifdef __cplusplus
 }

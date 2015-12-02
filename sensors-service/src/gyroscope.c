@@ -27,6 +27,10 @@ static volatile GyroscopeCallback cbGyroscope = 0;
 static TGyroscopeData gGyroscopeData = {0};
 TGyroscopeConfiguration gGyroscopeConfiguration;
 
+static TSensorStatus gStatus = {0};
+static volatile SensorStatusCallback cbStatus = 0;
+
+
 bool iGyroscopeInit()
 {
     pthread_mutex_lock(&mutexCb);
@@ -153,6 +157,61 @@ void updateGyroscopeData(const TGyroscopeData gyroData[], uint16_t numElements)
     }
 }
 
+bool snsGyroscopeGetStatus(TSensorStatus* status){
+    bool retval = false;
+    if(status)
+    {
+        pthread_mutex_lock(&mutexData);
+        *status = gStatus;
+        pthread_mutex_unlock(&mutexData);
+        retval = true;
+    }
+    return retval;
+}
 
+bool snsGyroscopeRegisterStatusCallback(SensorStatusCallback callback)
+{
+    bool retval = false;
 
+    pthread_mutex_lock(&mutexCb);
+    //only if valid callback and not already registered
+    if(callback && !cbStatus)
+    {
+        cbStatus = callback;
+        retval = true;
+    }
+    pthread_mutex_unlock(&mutexCb);
 
+    return retval;
+}
+
+bool snsGyroscopeDeregisterStatusCallback(SensorStatusCallback callback)
+{
+    bool retval = false;
+
+    pthread_mutex_lock(&mutexCb);
+    if((cbStatus == callback) && callback)
+    {
+        cbStatus = 0;
+        retval = true;
+    }
+    pthread_mutex_unlock(&mutexCb);
+
+    return retval;
+}
+
+void updateGyroscopeStatus(const TSensorStatus* status)
+{
+    if (status)
+    {
+        pthread_mutex_lock(&mutexData);
+        gStatus = *status;
+        pthread_mutex_unlock(&mutexData);
+        pthread_mutex_lock(&mutexCb);
+        if (cbStatus)
+        {
+            cbStatus(status);
+        }
+        pthread_mutex_unlock(&mutexCb);
+    }
+}

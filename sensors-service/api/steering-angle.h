@@ -19,6 +19,7 @@
 #define INCLUDE_GENIVI_STEERINGANGLE
 
 #include "sns-meta-data.h"
+#include "sns-status.h"
 #include <stdbool.h>
 
 #ifdef __cplusplus
@@ -133,6 +134,31 @@ bool snsSteeringAngleRegisterCallback(SteeringAngleCallback callback);
  * @return True if callback has been deregistered successfully.
  */
 bool snsSteeringAngleDeregisterCallback(SteeringAngleCallback callback);
+
+/**
+ * Method to get the steering angle sensor status at a specific point in time.
+ * @param status After calling the method the current steering angle sensor status is written into status
+ * @return Is true if data can be provided and false otherwise, e.g. missing initialization
+ */
+bool snsSteeringAngleGetStatus(TSensorStatus* status);
+
+/**
+ * Register steering angle sensor status callback.
+ * This is the recommended method for continuously monitoring the steering angle sensor status.
+ * The callback will be invoked when new steering angle sensor status data is available.
+ * @param callback The callback which should be registered.
+ * @return True if callback has been registered successfully.
+ */
+bool snsSteeringAngleRegisterStatusCallback(SensorStatusCallback callback);
+
+/**
+ * Deregister steering angle sensor status callback.
+ * After calling this method no new steering angle sensor status updates will be delivered to the client.
+ * @param callback The callback which should be deregistered.
+ * @return True if callback has been deregistered successfully.
+ */
+bool snsSteeringAngleDeregisterStatusCallback(SensorStatusCallback callback);
+
 
 #ifdef __cplusplus
 }

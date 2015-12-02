@@ -135,7 +135,7 @@ void Configuration::SetProperty(const std::string& name, const ::DBus::Variant& 
     {
         activateSystems |= GNSS_SYSTEM_BEIDOU;
     }
-    gnssConfigGNSSSystems(activateSystems);
+    gnssSetGNSSSystems(activateSystems);
 
     //For a real implementation the property should only be changed 
     //when the the configuration request has become effective as reported

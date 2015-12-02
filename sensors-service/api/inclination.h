@@ -19,6 +19,7 @@
 #define INCLUDED_GENIVI_INCLINATION
 
 #include "sns-meta-data.h"
+#include "sns-status.h"
 #include <stdbool.h>
 
 #ifdef __cplusplus
@@ -119,6 +120,31 @@ bool snsInclinationRegisterCallback(InclinationCallback callback);
  * @return True if callback has been deregistered successfully.
  */
 bool snsInclinationDeregisterCallback(InclinationCallback callback);
+
+/**
+ * Method to get the inclination sensor status at a specific point in time.
+ * @param status After calling the method the current inclination sensor status is written into status
+ * @return Is true if data can be provided and false otherwise, e.g. missing initialization
+ */
+bool snsInclinationGetStatus(TSensorStatus* status);
+
+/**
+ * Register inclination sensor status callback.
+ * This is the recommended method for continuously monitoring the inclination sensor status.
+ * The callback will be invoked when new inclination sensor status data is available.
+ * @param callback The callback which should be registered.
+ * @return True if callback has been registered successfully.
+ */
+bool snsInclinationRegisterStatusCallback(SensorStatusCallback callback);
+
+/**
+ * Deregister inclination sensor status callback.
+ * After calling this method no new inclination sensor status updates will be delivered to the client.
+ * @param callback The callback which should be deregistered.
+ * @return True if callback has been deregistered successfully.
+ */
+bool snsInclinationDeregisterStatusCallback(SensorStatusCallback callback);
+
 
 #ifdef __cplusplus
 }

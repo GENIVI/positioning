@@ -19,6 +19,7 @@
 #define INCLUDE_GENIVI_ODOMETER
 
 #include "sns-meta-data.h"
+#include "sns-status.h"
 #include <stdbool.h>
 
 #ifdef __cplusplus
@@ -113,6 +114,31 @@ bool snsOdometerRegisterCallback(OdometerCallback callback);
  * @return True if callback has been deregistered successfully.
  */
 bool snsOdometerDeregisterCallback(OdometerCallback callback);
+
+/**
+ * Method to get the odometer sensor status at a specific point in time.
+ * @param status After calling the method the current odometer sensor status is written into status
+ * @return Is true if data can be provided and false otherwise, e.g. missing initialization
+ */
+bool snsOdometerGetStatus(TSensorStatus* status);
+
+/**
+ * Register odometer sensor status callback.
+ * This is the recommended method for continuously monitoring the odometer sensor status.
+ * The callback will be invoked when new odometer sensor status data is available.
+ * @param callback The callback which should be registered.
+ * @return True if callback has been registered successfully.
+ */
+bool snsOdometerRegisterStatusCallback(SensorStatusCallback callback);
+
+/**
+ * Deregister odometer sensor status callback.
+ * After calling this method no new odometer sensor status updates will be delivered to the client.
+ * @param callback The callback which should be deregistered.
+ * @return True if callback has been deregistered successfully.
+ */
+bool snsOdometerDeregisterStatusCallback(SensorStatusCallback callback);
+
 
 #ifdef __cplusplus
 }

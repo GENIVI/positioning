@@ -154,7 +154,7 @@ int main()
     DLT_REGISTER_APP("GNSS", "GNSS-SERVICE-CLIENT");
     DLT_REGISTER_CONTEXT(gCtx,"GCLT", "Global Context");
 
-    if (!gnssConfigGNSSSystems(GNSS_SYSTEM_GPS|GNSS_SYSTEM_GLONASS))
+    if (!gnssSetGNSSSystems(GNSS_SYSTEM_GPS|GNSS_SYSTEM_GLONASS))
     {
         LOG_INFO_MSG(gCtx,"gnssConfigGNSSSystems not supported!");
     }

@@ -91,12 +91,12 @@ typedef enum {
 } EGNSSFixType;
 
 /**
- * Description of the fix status of the GNSS reveiver.
+ * Description of the time scale used.
  */
 typedef enum {
-    GNSS_TIME_TYPE_UTC,         /**< GNSS time is provided according UTC time scale (with leap seconds) */
-    GNSS_TIME_TYPE_GPS          /**< GNSS time is provided according GPS time scale (no leap seconds since 06-Jan-1980) */
-} EGNSSTimeType;
+    GNSS_TIME_SCALE_UTC = 0,        /**< GNSS time is provided according UTC time scale (with leap seconds). This is the preferred time scale. */
+    GNSS_TIME_SCALE_GPS = 1         /**< GNSS time is provided according GPS time scale (no leap seconds since 06-Jan-1980). This time scale will only be used if UTC is not available. */
+} EGNSSTimeScale;
 
 /**
  * TGNSSTime::validityBits provides information about the currently valid parts of UTC date/time.
@@ -106,7 +106,7 @@ typedef enum {
 typedef enum {
     GNSS_TIME_TIME_VALID             = 0x00000001,    /**< Validity bit for field TGNSSTime fields hour, minute, second, ms. */
     GNSS_TIME_DATE_VALID             = 0x00000002,    /**< Validity bit for field TGNSSTime fields year, month, day. */
-    GNSS_TIME_TYPE_VALID             = 0x00000004,    /**< Validity bit for field TGNSSTime field type. */
+    GNSS_TIME_SCALE_VALID            = 0x00000004,    /**< Validity bit for field TGNSSTime field scale. */
     GNSS_TIME_LEAPSEC_VALID          = 0x00000008,    /**< Validity bit for field TGNSSTime field leapSeconds. */
 } EGNSSTimeValidityBits;
 
@@ -125,7 +125,7 @@ typedef struct {
     uint8_t second;                 /**< Second fraction of the UTC time. Unit: [seconds] Number between 0 and 59.
                                          In case of a leap second this value is 60. */
     uint16_t ms;                    /**< Millisecond fraction of the UTC time. Unit: [milliseconds] Number between 0 and 999 */
-    EGNSSTimeType type;             /**< Time scale used: UTC or GPS.*/
+    EGNSSTimeScale scale;           /**< Time scale used: UTC or GPS.*/
     int8_t leapSeconds;             /**< Number of leap seconds, i.e. difference between GPS time and UTC. Unit: [seconds].
                                          Note: value before 01-July-2015: 16; from 01-July-2015: 17; further changes possible. */
     uint32_t validityBits;          /**< Bit mask indicating the validity of each corresponding value.
@@ -449,7 +449,7 @@ bool gnssGetPrecisionTimingOffset(int32_t *delta);
  * @return False if the configuration request has not been accepted or is not supported at all.
  *
 */
-bool gnssConfigGNSSSystems(uint32_t activateSystems);
+bool gnssSetGNSSSystems(uint32_t activateSystems);
 
 /**
  * Provide the satellite systems which are supported by the GNSS hardware.

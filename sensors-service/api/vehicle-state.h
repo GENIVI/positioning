@@ -19,6 +19,7 @@
 #define INCLUDED_GENIVI_VEHICLESTATE
 
 #include "sns-meta-data.h"
+#include "sns-status.h"
 #include <stdbool.h>
 
 #ifdef __cplusplus
@@ -111,6 +112,31 @@ bool snsVehicleStateRegisterCallback(VehicleStateCallback callback);
  * @return True if callback has been deregistered successfully.
  */
 bool snsVehicleStateDeregisterCallback(VehicleStateCallback callback);
+
+/**
+ * Method to get the vehicle state sensor status at a specific point in time.
+ * @param status After calling the method the current vehicle state sensor status is written into status
+ * @return Is true if data can be provided and false otherwise, e.g. missing initialization
+ */
+bool snsVehicleStateGetStatus(TSensorStatus* status);
+
+/**
+ * Register vehicle state sensor status callback.
+ * This is the recommended method for continuously monitoring the vehicle state sensor status.
+ * The callback will be invoked when new vehicle state sensor status data is available.
+ * @param callback The callback which should be registered.
+ * @return True if callback has been registered successfully.
+ */
+bool snsVehicleStateRegisterStatusCallback(SensorStatusCallback callback);
+
+/**
+ * Deregister vehicle state sensor status callback.
+ * After calling this method no new vehicle state sensor status updates will be delivered to the client.
+ * @param callback The callback which should be deregistered.
+ * @return True if callback has been deregistered successfully.
+ */
+bool snsVehicleStateDeregisterStatusCallback(SensorStatusCallback callback);
+
 
 #ifdef __cplusplus
 }

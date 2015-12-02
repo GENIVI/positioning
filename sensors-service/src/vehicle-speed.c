@@ -21,6 +21,9 @@ static pthread_mutex_t mutexData = PTHREAD_MUTEX_INITIALIZER;  //protects the da
 static volatile VehicleSpeedCallback cbVehicleSpeed = 0;
 static TVehicleSpeedData gVehicleSpeedData = {0};
 
+static TSensorStatus gStatus = {0};
+static volatile SensorStatusCallback cbStatus = 0;
+
 bool iVehicleSpeedInit()
 {
     pthread_mutex_lock(&mutexCb);
@@ -113,6 +116,65 @@ void updateVehicleSpeedData(const TVehicleSpeedData vehicleSpeedData[], uint16_t
         if (cbVehicleSpeed)
         {
             cbVehicleSpeed(vehicleSpeedData, numElements);
+        }
+        pthread_mutex_unlock(&mutexCb);
+    }
+}
+
+bool snsVehicleSpeedGetStatus(TSensorStatus* status){
+    bool retval = false;
+    if(status)
+    {
+        pthread_mutex_lock(&mutexData);
+        *status = gStatus;
+        pthread_mutex_unlock(&mutexData);
+        retval = true;
+    }
+    return retval;
+}
+
+bool snsVehicleSpeedRegisterStatusCallback(SensorStatusCallback callback)
+{
+    bool retval = false;
+
+    pthread_mutex_lock(&mutexCb);
+    //only if valid callback and not already registered
+    if(callback && !cbStatus)
+    {
+        cbStatus = callback;
+        retval = true;
+    }
+    pthread_mutex_unlock(&mutexCb);
+
+    return retval;
+}
+
+bool snsVehicleSpeedDeregisterStatusCallback(SensorStatusCallback callback)
+{
+    bool retval = false;
+
+    pthread_mutex_lock(&mutexCb);
+    if((cbStatus == callback) && callback)
+    {
+        cbStatus = 0;
+        retval = true;
+    }
+    pthread_mutex_unlock(&mutexCb);
+
+    return retval;
+}
+
+void updateVehicleSpeedStatus(const TSensorStatus* status)
+{
+    if (status)
+    {
+        pthread_mutex_lock(&mutexData);
+        gStatus = *status;
+        pthread_mutex_unlock(&mutexData);
+        pthread_mutex_lock(&mutexCb);
+        if (cbStatus)
+        {
+            cbStatus(status);
         }
         pthread_mutex_unlock(&mutexCb);
     }

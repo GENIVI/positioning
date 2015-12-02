@@ -164,13 +164,6 @@ typedef struct {
 typedef void (*GyroscopeCallback)(const TGyroscopeData gyroData[], uint16_t numElements);
 
 /**
- * Callback type for gyroscope status.
- * Use this type of callback if you want to register for gyroscope status updates data.
- * @param status the gyroscope status
- */
-typedef void (*GyroscopeStatusCallback)(const TSensorStatus *status);
-
-/**
  * Initialization of the gyroscope sensor service.
  * Must be called before using the gyroscope sensor service to set up the service.
  * @return True if initialization has been successfull.
@@ -242,7 +235,7 @@ bool snsGyroscopeGetStatus(TSensorStatus* status);
  * @param callback The callback which should be registered.
  * @return True if callback has been registered successfully.
  */
-bool snsGyroscopeRegisterStatusCallback(GyroscopeStatusCallback callback);
+bool snsGyroscopeRegisterStatusCallback(SensorStatusCallback callback);
 
 /**
  * Deregister gyroscope status callback.
@@ -250,7 +243,7 @@ bool snsGyroscopeRegisterStatusCallback(GyroscopeStatusCallback callback);
  * @param callback The callback which should be deregistered.
  * @return True if callback has been deregistered successfully.
  */
-bool snsGyroscopeDeregisterStatusCallback(GyroscopeStatusCallback callback);
+bool snsGyroscopeDeregisterStatusCallback(SensorStatusCallback callback);
 
 #ifdef __cplusplus
 }

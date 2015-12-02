@@ -27,6 +27,9 @@ static volatile AccelerationCallback cbAcceleration = 0;
 static TAccelerationData gAccelerationData = {0};
 TAccelerationConfiguration gAccelerationConfiguration;
 
+static TSensorStatus gStatus = {0};
+static volatile SensorStatusCallback cbStatus = 0;
+
 bool iAccelerationInit()
 {
     pthread_mutex_lock(&mutexCb);
@@ -157,4 +160,61 @@ void updateAccelerationData(const TAccelerationData accelerationData[], uint16_t
     }
 }
 
+bool snsAccelerationGetStatus(TSensorStatus* status){
+    bool retval = false;
+    if(status)
+    {
+        pthread_mutex_lock(&mutexData);
+        *status = gStatus;
+        pthread_mutex_unlock(&mutexData);
+        retval = true;
+    }
+    return retval;
+}
 
+bool snsAccelerationRegisterStatusCallback(SensorStatusCallback callback)
+{
+    bool retval = false;
+
+    pthread_mutex_lock(&mutexCb);
+    //only if valid callback and not already registered
+    if(callback && !cbStatus)
+    {
+        cbStatus = callback;
+        retval = true;
+    }
+    pthread_mutex_unlock(&mutexCb);
+
+    return retval;
+}
+
+bool snsAccelerationDeregisterStatusCallback(SensorStatusCallback callback)
+{
+    bool retval = false;
+
+    pthread_mutex_lock(&mutexCb);
+    if((cbStatus == callback) && callback)
+    {
+        cbStatus = 0;
+        retval = true;
+    }
+    pthread_mutex_unlock(&mutexCb);
+
+    return retval;
+}
+
+void updateAccelerationStatus(const TSensorStatus* status)
+{
+    if (status)
+    {
+        pthread_mutex_lock(&mutexData);
+        gStatus = *status;
+        pthread_mutex_unlock(&mutexData);
+        pthread_mutex_lock(&mutexCb);
+        if (cbStatus)
+        {
+            cbStatus(status);
+        }
+        pthread_mutex_unlock(&mutexCb);
+    }
+}

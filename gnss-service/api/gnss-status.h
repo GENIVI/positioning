@@ -41,8 +41,8 @@ typedef enum {
     GNSS_ANT_STATUS_NORMAL          = 0,    /**< GNSS antenna is working in normal operation. */
     GNSS_ANT_STATUS_OVERCURRENT     = 1,    /**< GNSS antenna is working but the antenna current is higher than expected. */
     GNSS_ANT_STATUS_OPEN            = 2,    /**< GNSS antenna is not working because not connected (antenna current too low). */
-    GNSS_ANT_STATUS_SHORT_GND       = 3,    /**< GNSS antenna is not working due to short-curcuit to ground. */
-    GNSS_ANT_STATUS_SHORT_BATT      = 4,    /**< GNSS antenna is not working due to short-curcuit to battery. */
+    GNSS_ANT_STATUS_SHORT_GND       = 3,    /**< GNSS antenna is not working due to short-circuit to ground. */
+    GNSS_ANT_STATUS_SHORT_BATT      = 4,    /**< GNSS antenna is not working due to short-circuit to battery. */
     GNSS_ANT_STATUS_OUTOFSERVICE    = 5     /**< GNSS antenna is temporarily not available, due to some known external condition. */
 } EGNSSAntennaStatus;
 

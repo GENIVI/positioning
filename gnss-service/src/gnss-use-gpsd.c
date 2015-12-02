@@ -84,7 +84,7 @@ void gnssGetVersion(int *major, int *minor, int *micro)
     }
 }
 
-bool gnssConfigGNSSSystems(uint32_t activate_systems)
+bool gnssSetGNSSSystems(uint32_t activate_systems)
 {
     return false; //satellite system configuration request not supported by gpsd
 }
