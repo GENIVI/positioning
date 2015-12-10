@@ -503,6 +503,8 @@ int g_fd = -1;
 
 extern bool gnssInit()
 {
+    iGnssInit();
+    
     setGNSSStatus(GNSS_STATUS_INITIALIZING);
     g_fd = open_GNSS_NMEA_device(GNSS_DEVICE, GNSS_BAUDRATE);
     if (g_fd >=0)
@@ -530,6 +532,9 @@ extern bool gnssDestroy()
     g_GNSS_NMEA_loop = 0;
     pthread_join(g_thread, NULL);
     //LOG_DEBUG_MSG(gContext, "gnssDestroy: NMEA reader thread terminated\n");
+    
+    iGnssDestroy();
+    
     return true;
 }
 
@@ -554,10 +559,4 @@ void gnssGetVersion(int *major, int *minor, int *micro)
 bool gnssSetGNSSSystems(uint32_t activate_systems)
 {
     return false; //satellite system configuration request not supported by NMEA protocol
-}
-
-bool gnssGetSupportedGNSSSystems(uint32_t *supportedSystems)
-{
-    *supportedSystems = GNSS_SYSTEM_GPS;
-    return true;
 }

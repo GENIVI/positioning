@@ -24,6 +24,8 @@
 static pthread_mutex_t mutexCb  = PTHREAD_MUTEX_INITIALIZER;   //protects the callbacks
 static pthread_mutex_t mutexData = PTHREAD_MUTEX_INITIALIZER;  //protects the data
 
+TGNSSConfiguration gGNSSConfiguration = {0};
+
 static TGNSSSatelliteDetail gSatelliteDetail = {0}; //TODO: buffer full set of satellite details for one point in time
 static GNSSSatelliteDetailCallback cbSatelliteDetail = 0;
 
@@ -36,6 +38,41 @@ static volatile GNSSTimeCallback cbTime = 0;
 static TGNSSStatus gStatus = {0};
 static volatile GNSSStatusCallback cbStatus = 0;
 
+bool iGnssInit()
+{
+    pthread_mutex_lock(&mutexData);
+    //example GNSS configuration
+    gGNSSConfiguration.antennaPosition.x = 0.3;
+    gGNSSConfiguration.antennaPosition.y = 0.0;
+    gGNSSConfiguration.antennaPosition.z = 1.2;
+    gGNSSConfiguration.supportedSystems = GNSS_SYSTEM_GPS | GNSS_SYSTEM_GLONASS;    
+    gGNSSConfiguration.validityBits = 
+      GNSS_CONFIG_ANTPOS_VALID | 
+      GNSS_CONFIG_SATSYS_VALID;
+    pthread_mutex_unlock(&mutexData);
+
+    return true;
+}
+
+bool iGnssDestroy()
+{
+    return true;
+}
+
+bool gnssGetConfiguration(TGNSSConfiguration* gnssConfig)
+{
+    bool retval = false; 
+    
+    if(gnssConfig) 
+    {
+        pthread_mutex_lock(&mutexData);
+        *gnssConfig = gGNSSConfiguration;
+        pthread_mutex_unlock(&mutexData);
+        retval = true;
+    }
+
+    return retval;
+}
 
 bool gnssRegisterSatelliteDetailCallback(GNSSSatelliteDetailCallback callback)
 {

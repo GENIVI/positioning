@@ -53,6 +53,8 @@ DLT_DECLARE_CONTEXT(gContext);
 
 bool gnssInit()
 {
+    iGnssInit();
+    
     isRunning = true;
     
     if(pthread_create(&listenerThread, NULL, listenForMessages, NULL) != 0)
@@ -75,6 +77,8 @@ bool gnssDestroy()
     {
         pthread_join(listenerThread, NULL);
     }
+
+    iGnssDestroy();
 
     return true;
 }
@@ -100,12 +104,6 @@ void gnssGetVersion(int *major, int *minor, int *micro)
 bool gnssSetGNSSSystems(uint32_t activate_systems)
 {
     return false; //satellite system configuration request not supported for replay
-}
-
-bool gnssGetSupportedGNSSSystems(uint32_t *supportedSystems)
-{
-    *supportedSystems = GNSS_SYSTEM_GPS;
-    return true;
 }
 
 //backward compatible processing of GVGNSAC to the new TGNSSPosition

@@ -125,7 +125,7 @@ static void poslogAddString_nolock(const char* logstring)
     if (g_active_sinks & POSLOG_SINK_SYSLOG)
     {
         //syslog(LOG_INFO, logstring);
-        syslog(LOG_EMERG, logstring);
+        syslog(LOG_EMERG, "%s", logstring);
     }
     if (g_active_sinks & POSLOG_SINK_FD)
     {

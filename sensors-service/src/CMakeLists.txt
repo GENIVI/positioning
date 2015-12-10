@@ -50,6 +50,7 @@ if(WITH_IPHONE)
     set(LIB_SRC_USE_IPHONE ${CMAKE_CURRENT_SOURCE_DIR}/sns-use-iphone.c 
              ${CMAKE_CURRENT_SOURCE_DIR}/wheeltick.c 
              ${CMAKE_CURRENT_SOURCE_DIR}/gyroscope.c
+             ${CMAKE_CURRENT_SOURCE_DIR}/vehicle-data.c
              ${CMAKE_CURRENT_SOURCE_DIR}/vehicle-speed.c
              ${CMAKE_CURRENT_SOURCE_DIR}/sns-meta-data.c)
 
@@ -62,6 +63,7 @@ elseif(WITH_MPU6050)
              ${CMAKE_CURRENT_SOURCE_DIR}/mpu6050.cpp
              ${CMAKE_CURRENT_SOURCE_DIR}/gyroscope.c
              ${CMAKE_CURRENT_SOURCE_DIR}/acceleration.c
+             ${CMAKE_CURRENT_SOURCE_DIR}/vehicle-data.c
              ${CMAKE_CURRENT_SOURCE_DIR}/vehicle-speed.c
              ${CMAKE_CURRENT_SOURCE_DIR}/wheeltick.c
              ${CMAKE_CURRENT_SOURCE_DIR}/sns-meta-data.c)
@@ -77,6 +79,7 @@ elseif(WITH_REPLAYER)
              ${CMAKE_CURRENT_SOURCE_DIR}/wheeltick.c 
              ${CMAKE_CURRENT_SOURCE_DIR}/gyroscope.c 
              ${CMAKE_CURRENT_SOURCE_DIR}/acceleration.c
+             ${CMAKE_CURRENT_SOURCE_DIR}/vehicle-data.c
              ${CMAKE_CURRENT_SOURCE_DIR}/vehicle-speed.c
              ${CMAKE_CURRENT_SOURCE_DIR}/sns-meta-data.c)
 

@@ -28,6 +28,15 @@ extern "C" {
 
 /**
  * 3 dimensional distance used for description of geometric descriptions within the vehicle reference system.
+ *
+ * The vehicle axis system as defined in ISO 8855:2011(E).
+ * In this system, the axes (Xv, Yv, Zv) are oriented as follows
+ * - Xv is in the horizontal plane, pointing forwards
+ * - Yv is in the horizontal plane, pointing to the left
+ * - Zv is perpendicular to the horizontal plane, pointing upwards
+ * For an illustration, see https://collab.genivi.org/wiki/display/genivi/LBSSensorServiceRequirementsBorg#LBSSensorServiceRequirementsBorg-ReferenceSystem
+ *
+ * The reference point of the vehicle lies underneath the center of the rear axle on the surface of the road. 
  */
 typedef struct {
     float x;        /**< Distance in x direction in [m] according to the reference coordinate system. */
@@ -46,6 +55,27 @@ typedef enum {
     GNSS_FIX_STATUS_3D          /**< GNSS has a 3D fix, i.e. position can be determined including the altitude.
                                      This implies that also velocity and time are available. */
 } EGNSSFixStatus;
+
+/**
+ * TGNSSConfiguration::validityBits provides information about the currently valid signals of the GNSS configuration data.
+ * It is a or'ed bitmask of the EGNSSConfigValidityBits values.
+ */
+typedef enum {
+    GNSS_CONFIG_ANTPOS_VALID         = 0x00000001,    /**< Validity bit for field TGNSSConfiguration::antennaPosition. */
+    GNSS_CONFIG_SATSYS_VALID         = 0x00000002     /**< Validity bit for field TGNSSConfiguration::supportedSystems. */
+} EGNSSConfigValidityBits;
+
+/**
+ * Static configuration data related to the GNSS service.
+ */
+typedef struct {
+    TGNSSDistance3D antennaPosition;        /**< GNSS antenna position relative to the vehicle reference point. */
+    uint32_t        supportedSystems;       /**< Bit mask indicating the satellite systems which are supported by the GNSS hardware
+                                                 [bitwise or'ed @ref EGNSSSystem values]. */
+    uint32_t        validityBits;           /**< Bit mask indicating the validity of each corresponding value.
+                                                 [bitwise or'ed @ref EGNSSConfigValidityBits values].
+                                                 Must be checked before usage. */
+} TGNSSConfiguration;
 
 /**
  * TGNSSAccuracy::fixTypeBits provides GNSS Fix Type indication. 
@@ -329,16 +359,11 @@ typedef void (*GNSSSatelliteDetailCallback)(const TGNSSSatelliteDetail satellite
 typedef void (*GNSSPositionCallback)(const TGNSSPosition position[], uint16_t numElements);
 
 /**
- * Accessing static configuration information about the antenna position.
- * @param distance After calling the method the currently available antenna configuration data is written into this parameter.
+ * Accessing static configurationdata related to the GNSS service.
+ * @param gnssConfig After calling the method the currently available GNSS configuration data is written into gnssConfig.
  * @return Is true if data can be provided and false otherwise, e.g. missing initialization
- *
- * Static configuration data for the GNSS service.
- * The reference point mentioned in the vehicle configuration lies underneath the center of the rear axle on the surface of the road.
- * The reference coordinate system is the car reference system as provided in the documentation.
- * See https://collab.genivi.org/wiki/display/genivi/LBSSensorServiceRequirementsBorg#LBSSensorServiceRequirementsBorg-ReferenceSystem
  */
-bool gnssGetAntennaPosition(TGNSSDistance3D *distance);
+bool gnssGetConfiguration(TGNSSConfiguration* gnssConfig);
 
 /**
  * Method to get the UTC date / time data of the GNSS receiver at a specific point in time.
@@ -450,17 +475,6 @@ bool gnssGetPrecisionTimingOffset(int32_t *delta);
  *
 */
 bool gnssSetGNSSSystems(uint32_t activateSystems);
-
-/**
- * Provide the satellite systems which are supported by the GNSS hardware.
- *
- * @param supportedSystems  Bit mask indicating the satellite systems which are supported by the GNSS hardware
- *                          [bitwise or'ed @ref EGNSSSystem values].
- *
- * @return True if the supported satellite systems are provided in supportedSystems.
- *
-*/
-bool gnssGetSupportedGNSSSystems(uint32_t *supportedSystems);
 
 #ifdef __cplusplus
 }

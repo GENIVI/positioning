@@ -144,6 +144,16 @@ bool snsWheelDestroy()
     return iWheelDestroy();
 }
 
+bool snsVehicleDataInit()
+{
+    return iVehicleDataInit();
+}
+
+bool snsVehicleDataDestroy()
+{
+    return iVehicleDataDestroy();
+}
+
 bool processGVSNSWHTK(char* data)
 {
     //parse data like: 061076000,0$GVSNSWHTK,061076000,7,266,8,185,0,0,0,0

@@ -57,6 +57,9 @@ bool iVehicleSpeedDestroy();
 void updateVehicleSpeedData(const TVehicleSpeedData vehicleSpeedData[], uint16_t numElements);
 void updateVehicleSpeedStatus(const TSensorStatus* status);
 
+bool iVehicleDataInit();
+bool iVehicleDataDestroy();
+
 #ifdef __cplusplus
 }
 #endif

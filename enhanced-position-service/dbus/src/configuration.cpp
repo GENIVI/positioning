@@ -158,9 +158,14 @@ std::map< std::string, ::DBus::Variant > Configuration::GetSupportedProperties()
   updateIntervals.push_back(1000);
   updateIntervals.push_back(1500);
 
-  uint32_t supportedSystems; 
+  uint32_t supportedSystems;
+  TGNSSConfiguration gnssConfig = {0}; 
 
-  if (!gnssGetSupportedGNSSSystems(&supportedSystems))
+  if (gnssGetConfiguration(&gnssConfig) && (gnssConfig.validityBits & GNSS_CONFIG_SATSYS_VALID))
+  { //assume GPS at least
+    supportedSystems = gnssConfig.supportedSystems;
+  }
+  else    
   { //assume GPS at least
     supportedSystems = GNSS_SYSTEM_GPS;
   }

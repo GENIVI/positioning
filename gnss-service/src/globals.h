@@ -34,6 +34,9 @@ extern "C" {
 
 extern const TGnssMetaData gMetaData;
 
+bool iGnssInit();
+bool iGnssDestroy();
+
 void updateGNSSTime(const TGNSSTime time[], uint16_t numElements);
 void updateGNSSPosition(const TGNSSPosition position[], uint16_t numElements);
 void updateGNSSSatelliteDetail(const TGNSSSatelliteDetail satelliteDetail[], uint16_t numElements);

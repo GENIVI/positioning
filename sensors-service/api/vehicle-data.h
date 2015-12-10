@@ -48,6 +48,15 @@ typedef enum {
 
 /**
  * 3 dimensional distance used for description of geometric descriptions within the vehicle reference system.
+ *
+ * The vehicle axis system as defined in ISO 8855:2011(E).
+ * In this system, the axes (Xv, Yv, Zv) are oriented as follows
+ * - Xv is in the horizontal plane, pointing forwards
+ * - Yv is in the horizontal plane, pointing to the left
+ * - Zv is perpendicular to the horizontal plane, pointing upwards
+ * For an illustration, see https://collab.genivi.org/wiki/display/genivi/LBSSensorServiceRequirementsBorg#LBSSensorServiceRequirementsBorg-ReferenceSystem
+ *
+ * The reference point of the vehicle lies underneath the center of the rear axle on the surface of the road.
  */
 typedef struct {
     float x;        /**< Distance in x direction in [m] according to the reference coordinate system. */
@@ -57,84 +66,69 @@ typedef struct {
 
 
 /**
- * Type of the vehicle. This is a static configuration.
- * @param type The vehicle type is written to this parameter as a result as defined in the enumeration.
- * @return True if the configuration value is available. If false no value could be provided.
+ * TVehicleData::validityBits provides information about the valid fields of the vehicle data.
+ * It is a or'ed bitmask of the EVehicleDataConfigurationValidityBits values.
  */
-bool vehicleDataGetVehicleType(EVehicleType* type);
+typedef enum {
+    VEHICLESTATUS_VEHICLETYPE_VALID             = 0x00000001,    /**< Validity bit for field TVehicleDataConfiguration::vehicleType. */
+    VEHICLESTATUS_DRIVENAXLES_VALID             = 0x00000002,    /**< Validity bit for field TVehicleDataConfiguration::drivenAxles. */
+    VEHICLESTATUS_SEATCOUNT_VALID               = 0x00000004,    /**< Validity bit for field TVehicleDataConfiguration::seatCount. */
+    VEHICLESTATUS_TRACKWIDTH_VALID              = 0x00000008,    /**< Validity bit for field TVehicleDataConfiguration::trackWidth. */
+    VEHICLESTATUS_FRONTAXLETRACKWIDTH_VALID     = 0x00000010,    /**< Validity bit for field TVehicleDataConfiguration::frontAxleTrackWidth. */
+    VEHICLESTATUS_WHELLBASE_VALID               = 0x00000020,    /**< Validity bit for field TVehicleDataConfiguration::wheelBase. */
+    VEHICLESTATUS_VEHICLEMASS_VALID             = 0x00000040,    /**< Validity bit for field TVehicleDataConfiguration::vehicleMass. */
+    VEHICLESTATUS_VEHICLEWIDTH_VALID            = 0x00000080,    /**< Validity bit for field TVehicleDataConfiguration::vehicleWidth. */
+    VEHICLESTATUS_DISTCOG2REFPOINT_VALID        = 0x00000100,    /**< Validity bit for field TVehicleDataConfiguration::distCoG2RefPoint. */
+    VEHICLESTATUS_DISTFRONTAXLE2REFPOINT_VALID  = 0x00000200,    /**< Validity bit for field TVehicleDataConfiguration::distFrontAxle2RefPoint. */
+    VEHICLESTATUS_DISTREARAXLE2REFPOINT_VALID   = 0x00000400     /**< Validity bit for field TVehicleDataConfiguration::vehicleType. */
+} EVehicleDataConfigurationValidityBits;
+
 
 /**
- * Type of the driven axles of the vehicle as provided in the official documents. This is a static configuration.
- * @param axles The driven axles type is written to this parameter as a result as defined in the enumeration.
- * @return True if the configuration value is available. If false no value could be provided.
+ * Static configuration data of the vehicle which are relevant for positioning.
  */
-bool vehicleDataGetDrivenAxles(EAxleType* axles);
+typedef struct {
+    EVehicleType    vehicleType;            /**< Type of the vehicle. */
+    EAxleType       drivenAxles;            /**< Type of the driven axles of the vehicle. */
+    uint8_t         seatCount;              /**< Number of seats of the vehicle. */
+    float           trackWidth;             /**< Track width of the vehicle. Unit: [m]. 
+                                                 If the vehicle has different track widths at the front and rear axles, the rear axle track is referred to. */
+    float           frontAxleTrackWidth;    /**< Front axle track width of the vehicle. Unit: [m]. */
+    float           wheelBase;              /**< Wheel base of the vehicle. Unit: [m].
+                                                 The wheel base is basically the distance between the front axle and the rear axle.
+                                                 For an exact definition, see ISO 8855. */
+    float           vehicleMass;            /**< Mass of the vehicle not including the current load. Unit: [kg].*/
+    float           vehicleWidth;           /**< Width of the vehicle. Unit: [m]. */
+    TDistance3D     distCoG2RefPoint;       /**< Distance of the center of gravity to the reference point in 3 dimensions. Unit: [m]. */
+    TDistance3D     distFrontAxle2RefPoint; /**< Distance of front axle to the reference point in 3 dimensions. Unit: [m]. */
+    TDistance3D     distRearAxle2RefPoint;  /**< Distance of rear axle to the reference point in 3 dimensions. Unit: [m]. */
+    uint32_t        validityBits;           /**< Bit mask indicating the validity of each corresponding value.
+                                                 [bitwise or'ed @ref EVehicleDataConfigurationValidityBits values].
+                                                 Must be checked before usage. */
+} TVehicleDataConfiguration;
+
 
 /**
- * Number of seats of the vehicle as provided in the official documents. This is a static configuration.
- * @param seatCount The number of seats is written to this parameter as a result.
- * @return True if the configuration value is available. If false no value could be provided.
+ * Initialization of the vehicle data sensor service.
+ * Must be called before using the vehicle data sensor service to set up the service.
+ * @return True if initialization has been successfull.
  */
-bool vehicleDataGetSeatCount(uint8_t* seatCount);
+bool snsVehicleDataInit();
 
 /**
- * Track width of the vehicle as provided in the official documents. This is a static configuration. Unit: [m].
- * If the vehicle has different track widths at the front and rear axles, the rear axle track is referred to.
- * @param width The vehicle track width in m is written to this parameter as a result.
- * @return True if the configuration value is available. If false no value could be provided.
+ * Destroy the vehicle data sensor service.
+ * Must be called after using the vehicle data sensor service to shut down the service.
+ * @return True if shutdown has been successfull.
  */
-bool vehicleDataGetTrackWidth(float* width);
+bool snsVehicleDataDestroy();
 
 /**
- * Front axle track width of the vehicle as provided in the official documents. This is a static configuration. Unit: [m].
- * @param width The vehicle track width of the front axle in m is written to this parameter as a result.
- * @return True if the configuration value is available. If false no value could be provided.
+ * Accessing static configuration information about the vehicle.
+ * @param vehicleData After calling the method the available vehicle configuration data is written into vehicleData.
+ * @return Is true if data can be provided and false otherwise, e.g. missing initialization
  */
-bool vehicleDataGetFrontAxleTrackWidth(float* width);
+bool snsVehicleDataGetConfiguration(TVehicleDataConfiguration* vehicleDataConfiguration);
 
-/**
- * Wheel base of the vehicle as provided in the official documents. This is a static configuration. Unit: [m].
- * The wheel base is basically the distance between the front axle and the rear axle. 
- * For an exact definition, see ISO 8855.
- * @param width The wheel base in m is written to this parameter as a result.
- * @return True if the configuration value is available. If false no value could be provided.
- */
-bool vehicleDataGetWheelBase(float* wheelbase);
-
-/**
- * Mass of the vehicle as provided in the official documents. This is a static configuration value and does not include the current load. Unit: [kg].
- * @param mass The vehicle mass in kg is written to this parameter as a result.
- * @return True if the configuration value is available. If false no value could be provided.
- */
-bool vehicleDataGetVehicleMass(float* mass);
-
-/**
- * Width of the vehicle as provided in the official documents. This is a static configuration. Unit: [m].
- * @param width The vehicle width in m is written to this parameter as a result.
- * @return True if the configuration value is available. If false no value could be provided.
- */
-bool vehicleDataGetVehicleWidth(float* width);
-
-/**
- * Distance of the center of gravity to the reference point in 3 dimensions. Unit: [m].
- * @param dist The distance result in 3 dimensions is written to this parameter.
- * @return True if the configuration value is available. If false no value could be provided.
- */
-bool vehicleDataGetDistCoG2RefPoint(TDistance3D *dist);
-
-/**
- * Distance of front axle to the reference point in 3 dimensions. Unit: [m].
- * @param dist The distance result in 3 dimensions is written to this parameter.
- * @return True if the configuration value is available. If false no value could be provided.
- */
-bool vehicleDataGetDistFrontAxle2RefPoint(TDistance3D *dist);
-
-/**
- * Distance of rear axle to the reference point in 3 dimensions. Unit: [m].
- * @param dist The distance result in 3 dimensions is written to this parameter.
- * @return True if the configuration value is available. If false no value could be provided.
- */
-bool vehicleDataGetDistRearAxle2RefPoint(TDistance3D *dist);
 
 #ifdef __cplusplus
 }
