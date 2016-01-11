@@ -5,7 +5,7 @@
  *
  * \ingroup SensorsService
  * \brief Compliance Level: Abstract Component
- * \copyright Copyright (C) 2012, BMW Car IT GmbH, Continental Automotive GmbH, PCA Peugeot Citroën, XS Embedded GmbH
+ * \copyright Copyright (C) 2012, BMW Car IT GmbH, Continental Automotive GmbH, PCA Peugeot Citroën, XS Embedded GmbH, TomTom International B.V.
  * 
  * \license
  * This Source Code Form is subject to the terms of the
@@ -43,22 +43,12 @@ extern "C" {
  * How the driving direction can be derived is vehicle specific.
  */
 
+
 /**
- * Defines the wheel or axle for which the wheel rotation information is provided.
- * Usually wheel rotation data are either provided for the non-driven axle or for each wheel individually.
+ * Maximum number of wheel elements per structure.
+ * A fix value is used because a flat data structure has advantages like simple copying, indexed access.
  */
-typedef enum {
-    WHEEL_INVALID       = 0,       /**< Wheel data is invalid / the field is unused. */
-    WHEEL_UNKNOWN       = 1,       /**< No information available where the wheel rotation data is from. */
-    WHEEL_AXLE_NONDRIVEN = 2,      /**< Wheel rotation data is an average from the non driven axle. 
-                                        Can be front or rear depending on the type of drivetrain. */
-    WHEEL_AXLE_FRONT    = 3,       /**< Wheel rotation data is an average from the front axle. */
-    WHEEL_AXLE_REAR     = 4,       /**< Wheel rotation data is an average from the rear axle. */
-    WHEEL_LEFT_FRONT    = 5,       /**< Wheel rotation data is from the left front wheel. */
-    WHEEL_RIGHT_FRONT   = 6,       /**< Wheel rotation data is from the right front wheel. */
-    WHEEL_LEFT_REAR     = 7,       /**< Wheel rotation data is from the left rear wheel. */
-    WHEEL_RIGHT_REAR    = 8        /**< Wheel rotation data is from the right rear wheel. */
-} EWheelId;
+#define WHEEL_MAX 8
 
 /**
  * Additional status information for wheel data, in particular when provided as wheel ticks.
@@ -115,7 +105,8 @@ typedef enum {
                                                       i.e. an unknown number of wheel revolutions has been lost. 
                                                       The reason for such a gap can be for example
                                                       - wheel tick data on the vehicle bus explicitly tagged as invalid 
-                                                      - interrupted reception of vehicle bus messages */
+                                                      - interrupted reception of vehicle bus messages.
+                                                      This flag will only be set if the detected gap may affect the application. */
     WHEEL_STATUS_INIT            = 0x00000002   /**< This is the first wheel data of a bus or ignition lifecycle, 
                                                       i.e. the wheel tick difference calculation may be less reliable. */
 } EWheelStatusBits;
@@ -123,13 +114,17 @@ typedef enum {
 /**
  * TWheelData::validityBits provides information which fields in TWheelData contain valid measurement data. 
  * It is a or'ed bitmask of the EWheelValidityBits values.
- * Note: The assignment of the fields  to the wheels of the vehicle is provided by the function snsWheelGetConfiguration().
+ * Note: The assignment of the fields to the wheels of the vehicle is provided by the function snsWheelGetConfiguration().
  */
 typedef enum {
-    WHEEL1_VALID                = 0x00000001,    /**< Validity bit for field TWheelData::wheel1. */
-    WHEEL2_VALID                = 0x00000002,    /**< Validity bit for field TWheelData::wheel2. */
-    WHEEL3_VALID                = 0x00000004,    /**< Validity bit for field TWheelData::wheel3. */
-    WHEEL4_VALID                = 0x00000008     /**< Validity bit for field TWheelData::wheel4. */
+    WHEEL0_VALID                = 0x00000001,    /**< Validity bit for field TWheelData::data[0]. */
+    WHEEL1_VALID                = 0x00000002,    /**< Validity bit for field TWheelData::data[1]. */
+    WHEEL2_VALID                = 0x00000004,    /**< Validity bit for field TWheelData::data[2]. */
+    WHEEL3_VALID                = 0x00000008,    /**< Validity bit for field TWheelData::data[3]. */
+    WHEEL4_VALID                = 0x00000010,    /**< Validity bit for field TWheelData::data[4]. */
+    WHEEL5_VALID                = 0x00000020,    /**< Validity bit for field TWheelData::data[5]. */
+    WHEEL6_VALID                = 0x00000040,    /**< Validity bit for field TWheelData::data[6]. */
+    WHEEL7_VALID                = 0x00000080     /**< Validity bit for field TWheelData::data[7]. */
 } EWheelValidityBits;
 
 /**
@@ -141,6 +136,7 @@ typedef enum {
 
  */
 typedef enum {
+    WHEEL_UNIT_NONE             = 0,    /**< Wheel does not provide any data. */
     WHEEL_UNIT_TICKS            = 1,    /**< Wheel rotation data is provided as number of wheel ticks accumulated within measurement interval. 
                                              Note 1: Therefore, if the wheel ticks on the vehicle bus are represented as rolling counters, 
                                              this is the difference between two subsequent rolling counter values 
@@ -151,53 +147,104 @@ typedef enum {
     WHEEL_UNIT_ANGULAR_SPEED    = 3,    /**< Wheel rotation data is provided as angular speed in [1/s] rotation per seconds. */
 } EWheelUnit;
 
+/**
+ * Wheel configuration status bits
+ */
+typedef enum {
+    WHEEL_CONFIG_DRIVEN         = 0x00000001,  /**< The wheel is driven by the powertrain.
+                                                    It may thus be affected by additional wheel slip. */
+    WHEEL_CONFIG_STEERED        = 0x00000002   /**< The wheel may be turned by the steering. 
+                                                    This is typically the case only for wheels on the front axle.
+                                                    But for some vehicles also wheels on other axles are permanently or temporarily steered. */
+    WHEEL_CONFIG_DIFF_LOCK      = 0x00000004   /**< The differential lock for this wheel is activated. */
+                                                    
+} EWheelConfigStatusBits;
 
 /**
  * TWheelConfiguration::validityBits provides information about the currently valid signals of the wheel configuration data.
  * It is a or'ed bitmask of the EWheelConfigValidityBits values.
  */
 typedef enum {
-    WHEEL_CONFIG_TICKS_PER_REV      = 0x00000001,    /**< Validity bit for field TWheelConfiguration::wheelticksPerRevolution. */
-    WHEEL_CONFIG_TIRE_CIRC          = 0x00000002     /**< Validity bit for field TWheelConfiguration::tireRollingCircumference. */
+    WHEEL_CONFIG_TICKS_PER_REV_VALID    = 0x00000001,    /**< Validity bit for field TWheelConfiguration::wheelticksPerRevolution. */
+    WHEEL_CONFIG_TIRE_CIRC_VALID        = 0x00000002,    /**< Validity bit for field TWheelConfiguration::tireRollingCircumference. */
+    WHEEL_CONFIG_DISTX_VALID            = 0x00000004,    /**< Validity bit for field TWheelConfiguration::dist2RefPointX. */
+    WHEEL_CONFIG_DISTY_VALID            = 0x00000008,    /**< Validity bit for field TWheelConfiguration::dist2RefPointY. */
+    WHEEL_CONFIG_DISTZ_VALID            = 0x00000010,    /**< Validity bit for field TWheelConfiguration::dist2RefPointZ. */
+    WHEEL_CONFIG_DRIVEN_VALID           = 0x00000020,    /**< Validity bit for field TWheelConfiguration::EWheelConfigStatusBits::WHEEL_CONFIG_DRIVEN. */
+    WHEEL_CONFIG_STEERED_VALID          = 0x00000040,    /**< Validity bit for field TWheelConfiguration::EWheelConfigStatusBits::WHEEL_CONFIG_STEERED. */
+    WHEEL_CONFIG_DIFF_LOCK_VALID        = 0x00000080,    /**< Validity bit for field TWheelConfiguration::EWheelConfigStatusBits::WHEEL_CONFIG_DIFF_LOCK. */
 
 } EWheelConfigValidityBits;
 
 /**
- * Static configuration data for the wheel sensor service.
+ * Configuration data for an individual wheel.
+ * Most configuration parameters are static for a given wheel.
+ * The status bits WHEEL_CONFIG_DRIVEN, WHEEL_CONFIG_STEERED, WHEEL_CONFIG_DIFF_LOCK
+ * are considered as dynamic configuration data.
+ * I.e. those status bits may change dynamically during runtime.
+ *
+ * The vehicle axis system as defined in ISO 8855:2011(E).
+ * In this system, the axes (Xv, Yv, Zv) are oriented as follows
+ * - Xv is in the horizontal plane, pointing forwards
+ * - Yv is in the horizontal plane, pointing to the left
+ * - Zv is perpendicular to the horizontal plane, pointing upwards
+ * For an illustration, see https://collab.genivi.org/wiki/display/genivi/LBSSensorServiceRequirementsBorg#LBSSensorServiceRequirementsBorg-ReferenceSystem
+ *
  */
 typedef struct {
-    EWheelUnit wheelUnit;       /**< Measurement unit in which the wheel rotation data is provided. Valid for all wheels. */
-    EWheelId wheel1Id;          /**< Identifies the wheel of the vehicle assigned to @ref TWheelData::wheel1 */      
-    EWheelId wheel2Id;          /**< Identifies the wheel of the vehicle assigned to @ref TWheelData::wheel2 */
-    EWheelId wheel3Id;          /**< Identifies the wheel of the vehicle assigned to @ref TWheelData::wheel3 */
-    EWheelId wheel4Id;          /**< Identifies the wheel of the vehicle assigned to @ref TWheelData::wheel4 */
-    uint16_t wheelticksPerRevolution;   /**< Number of ticks for a single revolution of one wheel */
-    float tireRollingCircumference;     /**< Distance travelled on the ground per a single revolution of one wheel. Unit: [m]. */
-    uint32_t validityBits;      /**< Bit mask indicating the validity of each corresponding value.
-                                     [bitwise or'ed @ref EWheelConfigValidityBits values].
-                                     Must be checked before usage. 
-                                     Note: wheelUnit and wheel1 .. wheel4 are always valid. Therefore no dedicated validityBits are requried.*/
+    EWheelUnit wheelUnit;               /**< [Static] Measurement unit in which the wheel rotation data is provided. 
+                                             WHEEL_UNIT_NONE, if no wheel rotation data is provided (and thus the rest of the structure can be ignored. */
+    uint8_t axleIndex;                  /**< [Static] Identification of the axle on which the wheel is mounted
+                                             Axles are numbered consecutively from front to rear.
+                                             0: unknown/unspecified
+                                             1: front axle
+                                             2: rear axle #1 (rear axle on a typical 2-axle vehicle)
+                                             3: rear axle #2
+                                             ... */
+    uint8_t wheelIndex;                 /**< [Static] Identification of the location of the wheel on the axle
+                                             Wheels are numbered consecutively from left to right
+                                             0: unknown/unspecified
+                                             1: left-most wheel (also used when there is only one wheel per axle, e.g. for a trike)
+                                             2: right wheel #1 (right wheel on a typical passenger car with 2 wheels per axle)
+                                             3: right wheel #2
+                                             ... */
+    uint16_t wheelticksPerRevolution;   /**< [Static] Number of ticks for a single revolution of one wheel.
+                                             Typically only available when wheelUnit is WHEEL_UNIT_TICKS. */
+    float tireRollingCircumference;     /**< [Static] Distance travelled on the ground per a single revolution of the wheel. Unit: [m]. */
+    float dist2RefPointX;               /**< [Static] Distance of the wheel center from the vehicle reference point (x-coordinate) [m]. */
+    float dist2RefPointY;               /**< [Static] Distance of the wheel center from the vehicle reference point (y-coordinate) [m]. */
+    float dist2RefPointZ;               /**< [Static] Distance of the wheel center from the vehicle reference point (z-coordinate) [m]. */    
+    uint32_t statusBits;                /**< Bit mask providing additional status information.
+                                            [bitwise or'ed @ref EWheelConfigStatusBits values]. */
+
+    uint32_t validityBits;              /**< Bit mask indicating the validity of each corresponding value.
+                                            [bitwise or'ed @ref EWheelConfigValidityBits values].
+                                            Must be checked before usage. 
+                                            Note: wheelUnit, axleIndex and wheelIndex must always be valid. Therefore no dedicated validityBits are required.*/
 } TWheelConfiguration;
 
+/**
+ * Set of configuration data for all wheels of the vehicle.
+ * The index of configuration data for an individual wheel in the array is fixed during the runtime of the system.
+ * Unused fields, i.e. those for which  wheelUnit is WHEEL_UNIT_NONE will be at the tail of the array.
+ */
+typedef TWheelConfiguration[WHEEL_MAX] TWheelConfigurationArray;
 
 /**
  * Wheel rotation data information for multiple wheels.
  * Container with timestamp as used by callback and get function.
  *
- * Wheel rotation data is provided for up to 4 wheels.
- * The assignment of the fields wheel1, wheel2, wheel3, wheel4 
- * to the wheels of the vehicle and the measurement unit
+ * Wheel rotation data is provided for up to 8 wheels.
+ * The assignment of the fields data[0] ... data[7]
+ * to the wheels of the vehicle, the measurement unit and additional configuration parameters
  * is provided as static configuration by the function snsWheelGetConfiguration().
- *
+ * The index used for an individual wheel in the data[] array is the same as in the TWheelConfigurationArray.
  */
 typedef struct {
     uint64_t timestamp;     /**< Timestamp of the acquisition of this wheel tick signal [ms].
                                  All sensor/GNSS timestamps must be based on the same time source. */
-                                                         
-    float wheel1;           /**< Wheel rotation data for the wheel identified by TWheelConfiguration::wheel1 in measurement unit identified by TWheelConfiguration::wheelUnit. */
-    float wheel2;           /**< Wheel rotation data for the wheel identified by TWheelConfiguration::wheel2 in measurement unit identified by TWheelConfiguration::wheelUnit. */
-    float wheel3;           /**< Wheel rotation data for the wheel identified by TWheelConfiguration::wheel3 in measurement unit identified by TWheelConfiguration::wheelUnit. */
-    float wheel4;           /**< Wheel rotation data for the wheel identified by TWheelConfiguration::wheel4 in measurement unit identified by TWheelConfiguration::wheelUnit. */
+
+    float data[WHEEL_MAX];  /**< Wheel rotation data for the wheel identified by TWheelConfiguration::wheel1 in measurement unit identified by TWheelConfiguration::wheelUnit. */
     
     uint32_t statusBits;    /**< Bit mask providing additional status information.
                                  [bitwise or'ed @ref EWheelStatusBits values]. */
@@ -222,23 +269,26 @@ typedef struct {
 typedef void (*WheelCallback)(const TWheelData wheelData[], uint16_t numElements);
 
 /**
- * Callback type for wheel sensor status.
- * Use this type of callback if you want to register for wheel sensor status updates data.
- * @param status the wheel sensor status
+ * Callback type for wheel configuration data.
+ * Use this type of callback if you want to register for wheel configuration updates.
+ * @param config the updated wheel configuration
  */
-typedef void (*WheelStatusCallback)(const TSensorStatus *status);
+typedef void (*WheelConfigurationCallback)(const TWheelConfigurationArray* config);
 
 /**
  * Initialization of the wheel sensor service.
  * Must be called before using the wheel sensor service to set up the service.
- * @return True if initialization has been successfull.
+ * @return True if initialization has been successful.
+ * Note: In case the initialization has not been successful during system startup, a later retry may be successful.
  */
 bool snsWheelInit();
 
 /**
  * Destroy the wheel sensor service.
  * Must be called after using the wheel sensor service to shut down the service.
- * @return True if shutdown has been successfull.
+ * @return True if shutdown has been successful.
+  * Note: In case the shutdown has not been successful, a retry does not make sense. 
+  * The return value is intended primarily for diagnostics.
  */
 bool snsWheelDestroy();
 
@@ -252,32 +302,57 @@ bool snsWheelGetMetaData(TSensorMetaData *data);
 
  /**
  * Accessing static configuration information about the wheel sensor.
- * @param config After calling the method the currently available acceleration wheel data is written into this parameter.
+ * @param config After calling the method the current wheel configuration is written into this parameter.
+ * Note: as some parts of the wheel configuration may change during runtime it is recommended to register for configuration updates.
  * @return Is true if data can be provided and false otherwise, e.g. missing initialization
  */
-bool snsWheelGetConfiguration(TWheelConfiguration* config);
+bool snsWheelGetConfiguration(TWheelConfigurationArray* config);
+
+/**
+ * Register wheel configuration callback.
+ * This is the recommended method for continuously monitoring the wheel configuration.
+ * The callback will be invoked when updated wheel configuration is available.
+ * @param callback The callback which should be registered.
+ * @return True if callback has been registered successfully.
+ * Note: The function will only return false if either snsWheelInit() has not been called before 
+ * or if the number of concurrently supported callbacks is exceeded. 
+ */
+bool snsWheelRegisterConfigurationCallback(WheelConfigurationCallback callback);
+
+/**
+ * Deregister wheel configuration callback.
+ * After returning from this method no new wheel configuration updates will be delivered to the client.
+ * @param callback The callback which should be deregistered.
+ * @return True if callback has been deregistered successfully.
+ */
+bool snsWheelDeregisterConfigurationCallback(WheelConfigurationCallback callback);
 
 /**
  * Method to get the wheel rotation data at a specific point in time.
  * @param wheelData After calling the method the currently available wheel rotation data is written into the array.
  * @return Is true if data can be provided and false otherwise, e.g. missing initialization
+ * Note: Wheel rotation data typically changes while the vehicle is moving. 
+ * Therefore for most applications it is better to register for wheel rotation data updates.
  */
 bool snsWheelGetWheelData(TWheelData *wheelData);
 
 /**
  * Register callback for multiple wheel rotation data information.
  * This is the recommended method for continuously accessing the wheel data.
- * The callback will be invoked when new rotation data data is available.
+ * The callback will be invoked when new rotation data is available.
  * @param callback The callback which should be registered.
  * @return True if callback has been registered successfully.
+ * Note: The function will only return false if either snsWheelInit() has not been called before 
+ * or if the number of concurrently supported callbacks is exceeded.
  */
 bool snsWheelRegisterCallback(WheelCallback callback);
 
 /**
  * Deregister multiple wheel rotation data callback.
- * After calling this method no new rotation data data will be delivered to the client.
+ * After returning from this method no new rotation data data will be delivered to the client.
  * @param callback The callback which should be deregistered.
  * @return True if callback has been deregistered successfully.
+ * Note: This function will only return false is the callback was not registered.
  */
 bool snsWheelDeregisterCallback(WheelCallback callback);
 
@@ -291,15 +366,17 @@ bool snsWheelGetStatus(TSensorStatus* status);
 /**
  * Register wheel sensor status callback.
  * This is the recommended method for continuously monitoring the wheel sensor status.
- * The callback will be invoked when new wheel sensor status data is available.
+ * The callback will be invoked when the wheel sensor status has changed.
  * @param callback The callback which should be registered.
  * @return True if callback has been registered successfully.
+ * Note: The function will only return false if either snsWheelInit() has not been called before 
+ * or if the number of concurrently supported callbacks is exceeded.
  */
 bool snsWheelRegisterStatusCallback(SensorStatusCallback callback);
 
 /**
  * Deregister wheel sensor status callback.
- * After calling this method no new wheel sensor status updates will be delivered to the client.
+ * After returning from this method no new wheel sensor status updates will be delivered to the client.
  * @param callback The callback which should be deregistered.
  * @return True if callback has been deregistered successfully.
  */
