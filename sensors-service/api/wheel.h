@@ -153,7 +153,7 @@ typedef enum {
 typedef enum {
     WHEEL_CONFIG_DRIVEN         = 0x00000001,  /**< The wheel is driven by the powertrain.
                                                     It may thus be affected by additional wheel slip. */
-    WHEEL_CONFIG_STEERED        = 0x00000002   /**< The wheel may be turned by the steering. 
+    WHEEL_CONFIG_STEERED        = 0x00000002,  /**< The wheel may be turned by the steering. 
                                                     This is typically the case only for wheels on the front axle.
                                                     But for some vehicles also wheels on other axles are permanently or temporarily steered. */
     WHEEL_CONFIG_DIFF_LOCK      = 0x00000004   /**< The differential lock for this wheel is activated. */
@@ -228,7 +228,7 @@ typedef struct {
  * The index of configuration data for an individual wheel in the array is fixed during the runtime of the system.
  * Unused fields, i.e. those for which  wheelUnit is WHEEL_UNIT_NONE will be at the tail of the array.
  */
-typedef TWheelConfiguration[WHEEL_MAX] TWheelConfigurationArray;
+typedef TWheelConfiguration TWheelConfigurationArray[WHEEL_MAX];
 
 /**
  * Wheel rotation data information for multiple wheels.

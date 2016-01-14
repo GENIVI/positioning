@@ -88,7 +88,7 @@ void gnssGetVersion(int *major, int *minor, int *micro)
     }
 }
 
-bool gnssSetGNSSSystems(uint32_t activate_systems)
+bool gnssSetGNSSSystems(uint32_t activateSystems)
 {
     return false; //satellite system configuration request not supported by gpsd
 }
@@ -264,9 +264,9 @@ bool extractPosition(struct gps_data_t* pGpsData, TGNSSPosition* pPosition)
     //hardcoded values for standard GPS receiver
     pPosition->fixTypeBits = GNSS_FIX_TYPE_SINGLE_FREQUENCY;
     pPosition->validityBits |= GNSS_POSITION_TYPE_VALID;
-    pPosition->activated_systems = GNSS_SYSTEM_GPS;
+    pPosition->activatedSystems = GNSS_SYSTEM_GPS;
     pPosition->validityBits |= GNSS_POSITION_ASYS_VALID;
-    pPosition->used_systems = GNSS_SYSTEM_GPS;
+    pPosition->usedSystems = GNSS_SYSTEM_GPS;
     pPosition->validityBits |= GNSS_POSITION_USYS_VALID;
    
     if (positionAvailable || velocityAvailable || fixStatusChanged || satellitesChanged)
@@ -358,7 +358,7 @@ void *listen( void *ptr )
         {
             if(gps_read(&gpsdata))
             {
-                TGNSSPosition position = = { 0 };
+                TGNSSPosition position = { 0 };
                 if(!extractPosition(&gpsdata,&position))
                 {
                     LOG_ERROR_MSG(gContext,"error extracting position data");

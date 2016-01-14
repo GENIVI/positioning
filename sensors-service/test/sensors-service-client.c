@@ -65,10 +65,10 @@ static void cbWheel(const TWheelData wheelData[], uint16_t numElements)
     }
 
     LOG_INFO_MSG(gCtx,"Wheel Update");
-    LOG_INFO(gCtx,"wheel1=%f", wheelData[0].wheel1);
-    LOG_INFO(gCtx,"wheel2=%f", wheelData[0].wheel2);
-    LOG_INFO(gCtx,"wheel3=%f", wheelData[0].wheel3);
-    LOG_INFO(gCtx,"wheel4=%f", wheelData[0].wheel4);
+    LOG_INFO(gCtx,"data[0]=%.1f", wheelData[0].data[0]);
+    LOG_INFO(gCtx,"data[1]=%.1f", wheelData[0].data[1]);
+    LOG_INFO(gCtx,"data[2]=%.1f", wheelData[0].data[2]);
+    LOG_INFO(gCtx,"data[3]=%.1f", wheelData[0].data[3]);
 
 
 }

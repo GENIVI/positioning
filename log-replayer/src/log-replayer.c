@@ -198,8 +198,9 @@ int main(int argc, char* argv[])
         sscanf(buf, "%*[^'$']$%[^',']", msgId);
 
         //GNSS: list of supported message IDs
-        char* gnssstr = "GVGNSP,GVGNSC,GVGNSAC,GVGNSSAT";
-        if(strstr(gnssstr, msgId) != NULL)
+        //char* gnssstr = "GVGNSP,GVGNSC,GVGNSAC,GVGNSSAT";
+        char* gnssprefix = "GVGNS";
+        if(strncmp (gnssprefix, msgId, strlen(gnssprefix)) == 0)
         {
             LOG_DEBUG(gContext,"Sending Packet to %s:%d",ipaddr,PORT1);
             LOG_DEBUG(gContext,"MsgID:%s", msgId);
@@ -216,8 +217,9 @@ int main(int argc, char* argv[])
 
         //SNS: list of supported message IDs
         //char* snsstr = "GVVEHSP,GVGYRO,GVGYROCONF,GVDRVDIR,GVODO,GVWHTK,GVWHTKCONF";
-        char* snsstr = "GVSNSVEHSP,GVSNSGYRO,GVSNSWHTK"; //subset currently supported for new log format
-        if(strstr(snsstr, msgId) != NULL)
+        //char* snsstr = "GVSNSVEHSP,GVSNSGYRO,GVSNSWHTK"; //subset currently supported for new log format
+        char* snsprefix = "GVSNS";
+        if(strncmp (snsprefix, msgId, strlen(snsprefix)) == 0)
         {
             LOG_DEBUG(gContext,"Sending Packet to %s:%d",ipaddr,PORT2);
             LOG_DEBUG(gContext,"MsgID:%s", msgId);
@@ -232,8 +234,9 @@ int main(int argc, char* argv[])
             }
         }
         //VHL: list of supported message IDs
-        char* vhlstr = "GVVEHVER,GVVEHENGSPEED,GVVEHFUELLEVEL,GVVEHFUELCONS,GVVEHTOTALODO";
-        if(strstr(vhlstr, msgId) != NULL)
+        //char* vhlstr = "GVVEHVER,GVVEHENGSPEED,GVVEHFUELLEVEL,GVVEHFUELCONS,GVVEHTOTALODO";
+        char* vehprefix = "GVVEH";
+        if(strncmp (vehprefix, msgId, strlen(vehprefix)) == 0)
         {
             LOG_DEBUG(gContext,"Sending Packet to %s:%d",ipaddr,PORT3);
             LOG_DEBUG(gContext,"MsgID:%s", msgId);

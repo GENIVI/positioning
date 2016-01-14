@@ -154,7 +154,7 @@ bool snsVehicleDataDestroy()
     return iVehicleDataDestroy();
 }
 
-bool processGVSNSWHTK(char* data)
+bool processGVSNSWHE(char* data)
 {
     //parse data like: 061076000,0$GVSNSWHTK,061076000,7,266,8,185,0,0,0,0
     
@@ -174,17 +174,19 @@ bool processGVSNSWHTK(char* data)
         return false;
     }
 
-/* TODO adapt to new TWheelData
-    n = sscanf(data, "%llu,%hu$GVSNSWHTK,%llu,%u,%u,%u,%u,%u,%u,%u,%u", &timestamp, &countdown, &whtk.timestamp
-      ,&whtk.elements[0].wheeltickIdentifier, &whtk.elements[0].wheeltickCounter
-      ,&whtk.elements[1].wheeltickIdentifier, &whtk.elements[1].wheeltickCounter
-      ,&whtk.elements[2].wheeltickIdentifier, &whtk.elements[2].wheeltickCounter
-      ,&whtk.elements[3].wheeltickIdentifier, &whtk.elements[3].wheeltickCounter
+    n = sscanf(data, "%llu,%hu$GVSNSWHE,%llu,%f,%f,%f,%f,%f,%f,%f,%f,%x,%x", 
+      &timestamp, &countdown, &whtk.timestamp
+      ,&whtk.data[0], &whtk.data[1]
+      ,&whtk.data[2], &whtk.data[3]
+      ,&whtk.data[4], &whtk.data[5]
+      ,&whtk.data[6], &whtk.data[7]
+      ,&whtk.statusBits
+      ,&whtk.validityBits
       );
-*/
+
     if (n <= 0)
     {
-        LOG_ERROR_MSG(gContext,"replayer: processGVSNSWHTK failed!");
+        LOG_ERROR_MSG(gContext,"replayer: processGVSNSWHE failed!");
         return false;
     }
 
@@ -224,9 +226,9 @@ bool processGVSNSWHTK(char* data)
     return true;
 }
 
-static bool processGVSNSGYRO(char* data)
+static bool processGVSNSGYR(char* data)
 {
-    //parse data like: 061074000,0$GVSNSGYRO,061074000,-38.75,0,0,0,0X01
+    //parse data like: 061074000,0$GVSNSGYR,061074000,-38.75,0,0,0,0X01
     
     //storage for buffered data
     static TGyroscopeData buf_gyro[MAX_BUF_MSG];
@@ -244,11 +246,11 @@ static bool processGVSNSGYRO(char* data)
         return false;
     }
 
-    n = sscanf(data, "%llu,%hu$GVSNSGYRO,%llu,%f,%f,%f,%f,%x", &timestamp, &countdown, &gyro.timestamp, &gyro.yawRate, &gyro.pitchRate, &gyro.rollRate, &gyro.temperature, &gyro.validityBits);    
+    n = sscanf(data, "%llu,%hu$GVSNSGYR,%llu,%f,%f,%f,%f,%x", &timestamp, &countdown, &gyro.timestamp, &gyro.yawRate, &gyro.pitchRate, &gyro.rollRate, &gyro.temperature, &gyro.validityBits);    
 
     if (n <= 0)
     {
-        LOG_ERROR_MSG(gContext,"replayer: processGVSNSGYRO failed!");
+        LOG_ERROR_MSG(gContext,"replayer: processGVSNSGYR failed!");
         return false;
     }
 
@@ -290,9 +292,9 @@ static bool processGVSNSGYRO(char* data)
 
 
 
-static bool processGVSNSVEHSP(char* data)
+static bool processGVSNSVSP(char* data)
 {
-    //parse data like: 061074000,0$GVSNSVEHSP,061074000,0.51,0X01
+    //parse data like: 061074000,0$GVSNSVSP,061074000,0.51,0X01
     
     //storage for buffered data
     static TVehicleSpeedData buf_vehsp[MAX_BUF_MSG];
@@ -310,11 +312,11 @@ static bool processGVSNSVEHSP(char* data)
         return false;
     }
 
-    n = sscanf(data, "%llu,%hu$GVSNSVEHSP,%llu,%f,%x", &timestamp, &countdown, &vehsp.timestamp, &vehsp.vehicleSpeed, &vehsp.validityBits);    
+    n = sscanf(data, "%llu,%hu$GVSNSVSP,%llu,%f,%x", &timestamp, &countdown, &vehsp.timestamp, &vehsp.vehicleSpeed, &vehsp.validityBits);    
 
     if (n <= 0)
     {
-        LOG_ERROR_MSG(gContext,"replayer: processGVSNSVEHSP failed!");
+        LOG_ERROR_MSG(gContext,"replayer: processGVSNSVSP failed!");
         return false;
     }
 
@@ -428,17 +430,17 @@ void *listenForMessages( void *ptr )
 
             LOG_DEBUG_MSG(gContext,"------------------------------------------------");
 
-            if(strcmp("GVSNSGYRO", msgId) == 0)
+            if(strcmp("GVSNSGYR", msgId) == 0)
             {
-                processGVSNSGYRO(buf);
+                processGVSNSGYR(buf);
             }
-            else if(strcmp("GVSNSWHTK", msgId) == 0)
+            else if(strcmp("GVSNSWHE", msgId) == 0)
             {
-                processGVSNSWHTK(buf);
+                processGVSNSWHE(buf);
             }
-            else if(strcmp("GVSNSVEHSP", msgId) == 0)
+            else if(strcmp("GVSNSVSP", msgId) == 0)
             {
-                processGVSNSVEHSP(buf);
+                processGVSNSVSP(buf);
             }
         }
     }

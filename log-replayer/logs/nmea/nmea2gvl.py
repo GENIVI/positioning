@@ -759,10 +759,10 @@ def writeGVGNSSAT (file, gsv_arr, timestamp):
 # Function definitions to write GENIVI Positioning Log - SNS part
 ##################################################################
 
-#write GVSNSVEHSP: Vehicle Speed
-def writeGVSNSVEHSP (file, rmc, timestamp):
+#write GVSNSVSP: Vehicle Speed
+def writeGVSNSVSP (file, rmc, timestamp):
   valid = 0
-  file.write("{0:09d},0$GVSNSVEHSP,{0:09d},".format(timestamp))
+  file.write("{0:09d},0$GVSNSVSP,{0:09d},".format(timestamp))
   if rmc["speed"] is not None:
     valid |= 0x01
     file.write("{0:.2f},".format(rmc["speed"]))
@@ -771,10 +771,10 @@ def writeGVSNSVEHSP (file, rmc, timestamp):
   file.write("0X{0:02X}".format(valid))
   file.write("\n")
 
-#write GVSNSGYRO: Gyroscope Data
-def writeGVSNSGYRO (file, rmc, prev_rmc, timestamp, prev_timestamp):
+#write GVSNSGYR: Gyroscope Data
+def writeGVSNSGYR (file, rmc, prev_rmc, timestamp, prev_timestamp):
   valid = 0
-  file.write("{0:09d},0$GVSNSGYRO,{0:09d},".format(timestamp))
+  file.write("{0:09d},0$GVSNSGYR,{0:09d},".format(timestamp))
   #yaw rate is delta_heading / delta_time
   if (rmc["course"] is not None) and (prev_rmc["course"] is not None) and (timestamp > prev_timestamp):
     valid |= 0x01
@@ -796,10 +796,10 @@ def writeGVSNSGYRO (file, rmc, prev_rmc, timestamp, prev_timestamp):
   file.write("0X{0:02X}".format(valid))
   file.write("\n")
 
-#write GVSNSWHTK: Wheel tick data Data (omly rear right and left wheels)
-def writeGVSNSWHTK (file, rmc, prev_rmc, timestamp, prev_timestamp):
+#write GVSNSWHE: Wheel tick data Data (only rear right and left wheels)
+def writeGVSNSWHE (file, rmc, prev_rmc, timestamp, prev_timestamp):
   #this is the only sentence without valid bits
-  file.write("{0:09d},0$GVSNSWHTK,{0:09d},".format(timestamp))
+  file.write("{0:09d},0$GVSNSWHE,{0:09d},".format(timestamp))
   #yaw rate is delta_heading / delta_time
   if (rmc["speed"] is not None) and (rmc["course"] is not None) and (prev_rmc["course"] is not None) and (timestamp > prev_timestamp):
     delta_heading = - (rmc["course"] - prev_rmc["course"]) #course is clockwise, yaw rate is counter clock wise
@@ -820,7 +820,7 @@ def writeGVSNSWHTK (file, rmc, prev_rmc, timestamp, prev_timestamp):
     ticks_left_int  = int(ticks_left)
     ticks_right_int = int(ticks_right)
     #TODO: store the non-integer fractions for the next update
-    file.write("7,{0:03d},8,{1:03d},".format(ticks_left_int, ticks_right_int))
+    file.write("{0:03d},{1:03d},0,0,0,0,0,0,0X0001,0X03".format(ticks_left_int, ticks_right_int))
   else:
     file.write("0,")
   #front left wheel is not available
@@ -830,7 +830,7 @@ def writeGVSNSWHTK (file, rmc, prev_rmc, timestamp, prev_timestamp):
   file.write("\n")
   #debug
   if c_debug and (rmc["speed"] is not None) and (rmc["course"] is not None) and (prev_rmc["course"] is not None) and (timestamp > prev_timestamp):
-    file.write("#writeGVSNSWHTK: delta_time:{0:f} delta_heading:{1:f} delta_heading_rad:{2:f} DPP:{3:f} avg_ticks:{4:f} delta_ticks:{5:f}\n".format(delta_time, delta_heading, delta_heading_rad, DPP, avg_ticks, delta_ticks))
+    file.write("#writeGVSNSWHE: delta_time:{0:f} delta_heading:{1:f} delta_heading_rad:{2:f} DPP:{3:f} avg_ticks:{4:f} delta_ticks:{5:f}\n".format(delta_time, delta_heading, delta_heading_rad, DPP, avg_ticks, delta_ticks))
 
 
 
@@ -974,9 +974,9 @@ for line in fi:
       #write SNS data if requested
       if c_SNS:
         fo.write("#SNS 'derived' from GPS\n")
-        writeGVSNSVEHSP (fo, g_rmc, g_timestamp)
-        writeGVSNSGYRO (fo, g_rmc, g_prev_rmc, g_timestamp, g_prev_timestamp)
-        writeGVSNSWHTK (fo, g_rmc, g_prev_rmc, g_timestamp, g_prev_timestamp)
+        writeGVSNSVSP (fo, g_rmc, g_timestamp)
+        writeGVSNSGYR (fo, g_rmc, g_prev_rmc, g_timestamp, g_prev_timestamp)
+        writeGVSNSWHE (fo, g_rmc, g_prev_rmc, g_timestamp, g_prev_timestamp)
 
       #clear buffers, but not g_timestamp
       g_prev_rmc = g_rmc.copy()
