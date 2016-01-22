@@ -198,8 +198,8 @@ typedef struct {
                                              Axles are numbered consecutively from front to rear.
                                              0: unknown/unspecified
                                              1: front axle
-                                             2: rear axle #1 (rear axle on a typical 2-axle vehicle)
-                                             3: rear axle #2
+                                             2: 2nd axle (rear axle on a typical 2-axle vehicle)
+                                             3: 3rd axle
                                              ... */
     uint8_t wheelIndex;                 /**< [Static] Identification of the location of the wheel on the axle
                                              Wheels are numbered consecutively from left to right
