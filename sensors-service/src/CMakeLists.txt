@@ -72,9 +72,9 @@ elseif(WITH_SENSORS)
             /usr/include/linux/
     )
     if (I2CDEV_H)
-        message(STATUS "I2CDEV found: ${I2CDEV_H}")
+        message(STATUS "OK: i2c-dev.h found: ${I2CDEV_H}")
     else (I2CDEV_H)
-        message(STATUS "I2CDEV not found")
+        message(STATUS "WARNING: i2c-dev.h not found. To enable I2C communication, install the respective package, e.g. libi2c-dev or i2c-tools")
         add_definitions(-DI2C_NOT_AVAILABLE)
     endif (I2CDEV_H)
     set(LIB_SRC_USE_SENSORS ${CMAKE_CURRENT_SOURCE_DIR}/sns-use-sensors.cpp

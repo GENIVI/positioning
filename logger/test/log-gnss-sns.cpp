@@ -492,7 +492,7 @@ int main (int argc, char *argv[])
         {
             pthread_join(g_logthread, NULL);
             fclose(g_logfile);
-            printf("#Write Failures: %"PRIu64"\n", g_write_failures);
+            printf("#Write Failures: %"PRIu32"\n", g_write_failures);
         }
         poslogDestroy();
     }
