@@ -73,11 +73,6 @@ elseif(WITH_SENSORS)
     )
     if (I2CDEV_H)
         message(STATUS "I2CDEV found: ${I2CDEV_H}")
-        
-        #TODO remove the following line
-        # - when i2c-dev.h detection really works (there seem to be 2 variants of i2c-dev.h and only 1 is OK)
-        # - in case you really have the correct version of i2c-dev.h
-        add_definitions(-DI2C_NOT_AVAILABLE)
     else (I2CDEV_H)
         message(STATUS "I2CDEV not found")
         add_definitions(-DI2C_NOT_AVAILABLE)

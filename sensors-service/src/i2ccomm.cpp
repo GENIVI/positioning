@@ -21,8 +21,20 @@
 #include "i2ccomm.h"
 
 //linux i2c access
+#ifndef I2C_NOT_AVAILABLE
 #include <linux/i2c-dev.h> //RPi: located in /usr/include/linux/i2c-dev.h - all functions inline
-
+//Unfortunately, there are two files named "i2c-dev.h" out there 
+//Only the one provided by packages libi2c-dev or i2c-tools provides all necessary definitions
+//  http://lxr.free-electrons.com/source/Documentation/i2c/dev-interface?v=3.7
+//  http://raspberrypi.stackexchange.com/questions/37689/how-do-i-use-the-i2c-bus
+//So we have to test explicitly and set #define I2C_NOT_AVAILABLE if the wrong header is available
+#ifndef I2C_M_RD
+//seems that the wrong i2c-dev.h version has been included
+#define I2C_NOT_AVAILABLE
+#warning "i2c-dev.h wrong version - disabling I2C functionality during runtime"
+#warning "Please install correct version, typically available in packages libi2c-dev or i2c-tools"
+#endif
+#endif
 //standard c library functions
 #include <unistd.h>
 #include <fcntl.h>
