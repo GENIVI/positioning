@@ -8,14 +8,14 @@
 *        e.g. to DLT and to a file or a socket
 *        Additionally a custom callback can be registered as log sink
 *        Log data can be provided from different threads running parallel
-*        Logging is done synchronously, so it may block temporarily 
+*        Logging is done synchronously, so it may block temporarily
 *        depending on the type of sinks which are active
 *        However using the callback sink, an asynchronous logging
 *        can be implemented without impact to the threads providing log data
-*        Log data must be provided as ASCII strings 
-*        The clients are responsible for string formatting 
+*        Log data must be provided as ASCII strings
+*        The clients are responsible for string formatting
 *        according the positioning log format specification
-*        
+*
 *
 * \author Helmut Schmidt <https://github.com/huirad>
 *
@@ -46,7 +46,27 @@ static PoslogCallback g_callback = NULL;
 #if (DLT_ENABLED)
 DLT_DECLARE_CONTEXT(poslogContext);
 #endif
-  
+
+/*
+ * Provide a system timestamp in milliseconds.
+ * @return system timestamp in milliseconds
+ */
+/*
+static uint64_t log_get_timestamp()
+{
+  struct timespec time_value;
+  if (clock_gettime(CLOCK_MONOTONIC, &time_value) != -1)
+  {
+    return (time_value.tv_sec*1000 + time_value.tv_nsec/1000000);
+  }
+  else
+  {
+    return 0xFFFFFFFFFFFFFFFF;
+  }
+}
+*/
+
+
 bool poslogInit()
 {
     pthread_mutex_lock(&mutexLog);

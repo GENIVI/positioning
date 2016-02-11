@@ -23,7 +23,7 @@ message(STATUS "LIB-SENSORS-SERVICE")
 message(STATUS "WITH_DLT = ${WITH_DLT}")
 message(STATUS "WITH_IPHONE = ${WITH_IPHONE}")
 message(STATUS "WITH_REPLAYER = ${WITH_REPLAYER}")
-message(STATUS "WITH_MPU6050 = ${WITH_MPU6050}")
+message(STATUS "WITH_SENSORS = ${WITH_SENSORS}")
 message(STATUS "WITH_TESTS = ${WITH_TESTS}")
 message(STATUS "WITH_DEBUG = ${WITH_DEBUG}")
 
@@ -57,19 +57,44 @@ if(WITH_IPHONE)
     add_library(sensors-service-use-iphone SHARED ${LIB_SRC_USE_IPHONE})
     target_link_libraries(sensors-service-use-iphone ${LIBRARIES})
     install(TARGETS sensors-service-use-iphone DESTINATION lib)
-elseif(WITH_MPU6050)
-    #generate library using replayer as input
-    set(LIB_SRC_USE_MPU6050 ${CMAKE_CURRENT_SOURCE_DIR}/sns-use-mpu6050.cpp
+elseif(WITH_SENSORS)
+    #generate library using real sensors as input
+    if(IMU_TYPE)
+        #supported IMU types: MPU6050, LSM9DS1, ...
+        add_definitions(-DIMU_TYPE_${IMU_TYPE})
+    elseif(IMU_TYPE)
+        add_definitions(-DIMU_TYPE_MPU6050)
+    endif(IMU_TYPE)
+    #TODO: move FindI2CDEV stuff to a separate file?
+    find_file(I2CDEV_H
+        i2c-dev.h
+        PATHS
+            /usr/include/linux/
+    )
+    if (I2CDEV_H)
+        message(STATUS "I2CDEV found: ${I2CDEV_H}")
+        
+        #TODO remove the following line
+        # - when i2c-dev.h detection really works (there seem to be 2 variants of i2c-dev.h and only 1 is OK)
+        # - in case you really have the correct version of i2c-dev.h
+        add_definitions(-DI2C_NOT_AVAILABLE)
+    else (I2CDEV_H)
+        message(STATUS "I2CDEV not found")
+        add_definitions(-DI2C_NOT_AVAILABLE)
+    endif (I2CDEV_H)
+    set(LIB_SRC_USE_SENSORS ${CMAKE_CURRENT_SOURCE_DIR}/sns-use-sensors.cpp
+             ${CMAKE_CURRENT_SOURCE_DIR}/i2ccomm.cpp
              ${CMAKE_CURRENT_SOURCE_DIR}/mpu6050.cpp
+             ${CMAKE_CURRENT_SOURCE_DIR}/lsm9ds1.cpp
              ${CMAKE_CURRENT_SOURCE_DIR}/gyroscope.c
              ${CMAKE_CURRENT_SOURCE_DIR}/acceleration.c
              ${CMAKE_CURRENT_SOURCE_DIR}/vehicle-data.c
              ${CMAKE_CURRENT_SOURCE_DIR}/vehicle-speed.c
              ${CMAKE_CURRENT_SOURCE_DIR}/wheeltick.c
              ${CMAKE_CURRENT_SOURCE_DIR}/sns-meta-data.c)
-    add_library(sensors-service-use-mpu6050 SHARED ${LIB_SRC_USE_MPU6050})
-    target_link_libraries(sensors-service-use-mpu6050 ${LIBRARIES})
-    install(TARGETS sensors-service-use-mpu6050 DESTINATION lib)
+    add_library(sensors-service-use-sensors SHARED ${LIB_SRC_USE_SENSORS})
+    target_link_libraries(sensors-service-use-sensors ${LIBRARIES})
+    install(TARGETS sensors-service-use-sensors DESTINATION lib)
     #for glibc <2.17, clock_gettime is in librt: http://linux.die.net/man/2/clo$
     #TODO: is there a nice way to detect glibc version in CMake?
     set(LIBRARIES ${LIBRARIES} rt)

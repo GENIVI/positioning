@@ -62,11 +62,13 @@ To build with tests and reading GPS NMEA data from a GPS receiver attached to /d
 cmake -DWITH_NMEA=ON -DWITH_TESTS=ON -DWITH_DEBUG=ON -DGNSS_DEVICE=\"/dev/ttyACM0\" -DGNSS_BAUDRATE=B38400 ../
 make
 
-To build with tests and with the logger  but without the EnhancedPositionService:
-and reading GPS NMEA data from a GPS receiver attached to /dev/ttyACM0 at 38400 baud
-with a u-blox chipset and 400ms transmission delay
-and with MPU6050 as source for gyro and accelerometer data
-cmake -DWITH_ENHANCED_POSITION_SERVICE=OFF -DWITH_NMEA=ON -DWITH_MPU6050=ON -DWITH_LOGGER=ON -DWITH_TESTS=ON -DWITH_DEBUG=ON -DGNSS_DEVICE=\"/dev/ttyACM0\" -DGNSS_BAUDRATE=B38400 -DGNSS_CHIPSET=UBLOX -DGNSS_DELAY=400 ../
+To build
+- with tests
+- with the logger
+- without the EnhancedPositionService:
+- using as GNSS source a GPS receiver with a u-blox chipset and 50ms transmission delay providing NMEA data to /dev/ttyACM0 at 38400 baud
+- using as source for gyro and accelerometer data a LSM9DS1 sensor attached via I2C (e.g. from a Sense Hat module)
+cmake -DWITH_ENHANCED_POSITION_SERVICE=OFF -DWITH_NMEA=ON -DWITH_SENSORS=ON -DIMU_TYPE=LSM9DS1 -DWITH_LOGGER=ON -DWITH_TESTS=ON -DWITH_DEBUG=ON -DGNSS_DEVICE=\"/dev/ttyACM0\" -DGNSS_BAUDRATE=B38400 -DGNSS_CHIPSET=UBLOX -DGNSS_DELAY=50 ../
 make
 
 ===============================
@@ -104,8 +106,8 @@ option(WITH_TESTS
     "Compile test applications" OFF)
 option(WITH_IPHONE
     "Use IPHONE as source of sensors data" OFF)
-option(WITH_MPU6050
-    "Use MPU6050 via I2C as source of sensors data" OFF)    
+option(WITH_SENSORS
+    "Use real sensors connected to the target device" OFF)
 
 Just set the option to ON or OFF on the command line.
 
@@ -176,7 +178,11 @@ DWITH_IPHONE=ON requires that the iPhone app 'SensorLogger' is
 installed on a iPhone and that the option to broadcast the
 sensor data is activated (port=5555).
 
-DWITH_MPU6050=ON requires that the header file for I2C access 
-(i2c-dev.h) is available on your system. 
-This header file is typically part of the i2c-tools package.
+DWITH_SENSORS=ON requires that the header file for I2C access
+via the I2C user space driver (i2c-dev.h) is available on your system.
+This header file is typically part of the libi2c-dev package.
+If you do not find it there, try the i2c-tools package.
+See also https://www.kernel.org/doc/Documentation/i2c/dev-interface
+The concrete sensor types are specified by further defines, e.g
+DIMU_TYPE for gyro/accelerometer
 

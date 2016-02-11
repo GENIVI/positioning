@@ -24,7 +24,7 @@
 #include "mpu6050.h"
 
 //linux i2c access
-#include <linux/i2c-dev.h> //RPi: located in /usr/include/linux/i2c-dev.h - all functions inline
+#include "i2ccomm.h"
 
 //standard c library functions
 #include <stdlib.h>
@@ -82,252 +82,34 @@
 
 /** ===================================================================
  * 3.) PRIVATE VARIABLES AND FUNCTIONS
- * Functions starting with i2c_ encapsulate the I2C bus access
- * See
- *   https://www.kernel.org/doc/Documentation/i2c/dev-interface
- *   https://www.kernel.org/doc/Documentation/i2c/smbus-protocol
  * Functions starting with conv_ convert the raw data to common measurement units
  */
 
-/** Global file descriptor - must be initialized by calling i2c_mpu6050_init()
- */
-static int _i2c_fd = -1;
-/** Global device address - must be initialized by calling i2c_mpu6050_init()
- */
-static uint8_t _i2c_addr = 0;
-
 /** MPU6050 reader thread control
  */
-volatile int _mpu6050_reader_loop = 0;
-pthread_t _reader_thread;
-uint64_t _sample_interval;
-uint16_t _num_samples;
-bool _average;
+static volatile int _mpu6050_reader_loop = 0;
+static pthread_t _reader_thread;
+static uint64_t _sample_interval;
+static uint16_t _num_samples;
+static bool _average;
 
 /** Callback function and associated mutex
  */
-pthread_mutex_t _mutex_cb  = PTHREAD_MUTEX_INITIALIZER;
-volatile MPU6050Callback _cb = 0;
+static pthread_mutex_t _mutex_cb  = PTHREAD_MUTEX_INITIALIZER;
+static volatile MPU6050Callback _cb = 0;
 
-/** Write a 8 bit unsigned integer to a register
- */
-static bool i2c_write_uint8(uint8_t reg, uint8_t data)
-{
-    bool result = false;
-    __s32 i2c_result;
-
-    if (_i2c_fd < 0)
-    {
-        /* Invalid file descriptor */
-    }
-    else
-    {
-        i2c_result = i2c_smbus_write_byte_data(_i2c_fd, reg, data);
-        if (i2c_result < 0)
-        {
-        /* ERROR HANDLING: i2c transaction failed */
-        }
-        else
-        {
-        result = true;
-        }
-    }
-    return result;
-}
-
-/** Read a 8 bit unsigned integer from a register
- */
-static bool i2c_read_uint8(uint8_t reg, uint8_t* data)
-{
-    bool result = false;
-    __s32 i2c_result;
-
-    if (_i2c_fd < 0)
-    {
-        /* Invalid file descriptor */
-    }
-    else
-    {
-        /* Using SMBus commands */
-        i2c_result = i2c_smbus_read_byte_data(_i2c_fd, reg);
-        if (i2c_result < 0)
-        {
-            /* ERROR HANDLING: i2c transaction failed */
-        }
-        else
-        {
-            *data = (uint8_t) i2c_result;
-            //printf("Register 0x%02X: %08X = %d\n", reg, i2c_result, *data);
-            result = true;
-        }
-    }
-    return result;
-}
-
-
-/** Read a 16 bit signed integer from two consecutive registers
- */
-static bool i2c_read_int16(uint8_t reg, int16_t* data)
-{
-    bool result = false;
-    __s32 i2c_result;
-    char buf[10];
-
-    if (_i2c_fd < 0)
-    {
-        /* Invalid file descriptor */
-    }
-    else
-    {
-        /* Using SMBus commands */
-        i2c_result = i2c_smbus_read_word_data(_i2c_fd, reg);
-        if (i2c_result < 0)
-        {
-            /* ERROR HANDLING: i2c transaction failed */
-        }
-        else
-        {
-            /* i2c_result contains the read word */
-            //swap bytes as i2c_smbus_read_word_data() expects low by first!
-            uint16_t tmp = ( ((i2c_result&0xFF)<<8) | ((i2c_result&0xFF00)>>8));
-            *data = (int16_t) tmp;
-            //printf("Register 0x%02X: %08X = %d\n", reg, i2c_result, *data);
-            result = true;
-        }
-    }
-    return result;
-}
-
-/** Read a block of 8 bit unsigned integers from two consecutive registers
- */
-static bool i2c_read_block_1(uint8_t reg, uint8_t* data, uint8_t size)
-{
-    bool result = false;
-
-    if (_i2c_fd < 0)
-    {
-        /* Invalid file descriptor */
-    }
-    else
-    {
-        if (write(_i2c_fd, &reg, 1) == 1)
-        {
-            int8_t count = 0;
-            count = read(_i2c_fd, data, size);
-            if (count == size)
-            {
-                result = true;
-            }
-        }
-    }
-    return result;
-}
-
-/** Read a block of 8 bit unsigned integers from two consecutive registers
- *  Variant using 1 single ioctl() call instead of 1 read() followed by 1 write()
- *  See https://www.kernel.org/doc/Documentation/i2c/dev-interface
- *  on ioctl(file, I2C_RDWR, struct i2c_rdwr_ioctl_data *msgset).
- *  See also
- *    [i2c_rdwr_ioctl_data] (http://lxr.free-electrons.com/source/include/uapi/linux/i2c-dev.h#L64)
- *    [i2c_msg] (http://lxr.free-electrons.com/source/include/uapi/linux/i2c.h#L68)
- * Seems to be marginally faster than i2c_read_block_1(): Ca 1% when reading 8 bytes
- */
-static bool i2c_read_block_2(uint8_t reg, uint8_t* data, uint8_t size)
-{
-    bool result = false;
-    struct i2c_rdwr_ioctl_data i2c_data;
-    struct i2c_msg msg[2];
-    int i2c_result;
-
-    if (_i2c_fd < 0)
-    {
-        /* Invalid file descriptor */
-    }
-    else
-    {
-        i2c_data.msgs = msg;
-        i2c_data.nmsgs = 2;     // two i2c_msg
-
-        i2c_data.msgs[0].addr = _i2c_addr;
-        i2c_data.msgs[0].flags = 0;         // write
-        i2c_data.msgs[0].len = 1;           // only one byte
-        i2c_data.msgs[0].buf = (char*)&reg; // typecast to char*: see i2c-dev.h
-
-        i2c_data.msgs[1].addr = _i2c_addr;
-        i2c_data.msgs[1].flags = I2C_M_RD;  // read command
-        i2c_data.msgs[1].len = size;
-        i2c_data.msgs[1].buf = (char*)data; // typecast to char*: see i2c-dev.h
-
-        i2c_result = ioctl(_i2c_fd, I2C_RDWR, &i2c_data);
-
-        if (i2c_result < 0)
-        {
-            /* ERROR HANDLING: i2c transaction failed */
-        }
-        else
-        {
-            result = true;
-        }
-    }
-    return result;
-}
-
-static bool i2c_read_block(uint8_t reg, uint8_t* data, uint8_t size)
-{
-    return i2c_read_block_2(reg, data, size);
-}
-
-static bool i2c_mpu6050_init(const char* i2c_device, uint8_t i2c_addr)
-{
-    bool result = true;
-    _i2c_fd = open(i2c_device, O_RDWR);
-    if (_i2c_fd < 0)
-    {
-        /* ERROR HANDLING; you can check errno to see what went wrong */
-        result = false;
-    }
-    else
-    {
-        if (ioctl(_i2c_fd, I2C_SLAVE, i2c_addr) < 0)
-        {
-            /* ERROR HANDLING; you can check errno to see what went wrong */
-            result = false;
-        }
-        else
-        {
-            _i2c_addr = i2c_addr;
-        }
-    }
-    return result;
-}
-
-static bool i2c_mpu6050_deinit()
-{
-    bool result = false;
-    if (_i2c_fd < 0)
-    {
-        /* Invalid file descriptor */
-    }
-    else
-    {
-        close(_i2c_fd);
-        _i2c_fd = -1;
-        _i2c_addr = 0;
-        result = true;
-    }
-    return result;
-}
+static i2ccomm _i2ccomm;
 
 static bool mpu6050_wakeup()
 {
     uint8_t whoami;
     bool result = true;
     //Wake up the MPU6050 as it starts in sleep mode
-    result = i2c_write_uint8(MPU6050_REG_PWR_MGMT_1, MPU6050_PWR_MGMT_1__WAKEUP);
+    result = _i2ccomm.write_uint8(MPU6050_REG_PWR_MGMT_1, MPU6050_PWR_MGMT_1__WAKEUP);
     //Test the WHO_AM_I register
     if (result)
     {
-        result = i2c_read_uint8(MPU6050_REG_WHO_AM_I, &whoami);
+        result = _i2ccomm.read_uint8(MPU6050_REG_WHO_AM_I, &whoami);
         result = result && (MPU6050_WHO_AM_I == whoami) ;
     }
     //wait 10ms to guarantee that sensor data is available at next read attempt
@@ -338,7 +120,7 @@ static bool mpu6050_wakeup()
 static bool mpu6050_setDLPF(EMPU6050LowPassFilterBandwidth bandwidth)
 {
     bool result = true;
-    result = i2c_write_uint8(MPU6050_REG_CONFIG, bandwidth);
+    result = _i2ccomm.write_uint8(MPU6050_REG_CONFIG, bandwidth);
     return result;
 }
 
@@ -431,13 +213,21 @@ static void* mpu6050_reader_thread(void* param)
 
     while (_mpu6050_reader_loop)
     {
-        mpu6050_read_accel_gyro(&acceleration[sample_idx], &gyro_angular_rate[sample_idx], &temperature[sample_idx], &timestamp[sample_idx]);
-
-        sample_idx++;
-        //fire callback when either the requested number of samples has been acquired or the corresponding time is over
-        if ((sample_idx == _num_samples) || (mpu6050_get_timestamp() > mpu6050_get_timestamp()))
+        if (mpu6050_read_accel_gyro(&acceleration[sample_idx], &gyro_angular_rate[sample_idx], &temperature[sample_idx], &timestamp[sample_idx]))
         {
-            fire_callback(acceleration, gyro_angular_rate, temperature, timestamp, _num_samples, _average);
+            sample_idx++;
+        }
+        else
+        {
+            sample_idx = 0; // ???
+            //TODO fire error callback!!!!! TODO
+        }
+
+
+        //fire callback when either the requested number of samples has been acquired or the corresponding time is over
+        if ((sample_idx == _num_samples) || (mpu6050_get_timestamp() > next_cb))
+        {
+            fire_callback(acceleration, gyro_angular_rate, temperature, timestamp, sample_idx, _average);
             sample_idx = 0;
             next_cb += _sample_interval*_num_samples;
         }
@@ -457,7 +247,7 @@ static void* mpu6050_reader_thread(void* param)
 bool mpu6050_init(const char* i2c_device, uint8_t i2c_addr, EMPU6050LowPassFilterBandwidth bandwidth)
 {
     bool result = false;
-    result = i2c_mpu6050_init(i2c_device, i2c_addr);
+    result = _i2ccomm.init(i2c_device, i2c_addr);
     if (result)
     {
         result = mpu6050_setDLPF(bandwidth);
@@ -472,7 +262,7 @@ bool mpu6050_init(const char* i2c_device, uint8_t i2c_addr, EMPU6050LowPassFilte
 bool mpu6050_deinit()
 {
     bool result = false;
-    result = i2c_mpu6050_deinit();
+    result = _i2ccomm.deinit();
     return result;
 }
 
@@ -507,7 +297,7 @@ bool mpu6050_read_accel_gyro(TMPU6050Vector3D* acceleration, TMPU6050Vector3D* g
         *timestamp = mpu6050_get_timestamp();
     }
 
-    if (i2c_read_block(start_reg, block+start, num_bytes))
+    if (_i2ccomm.read_block(start_reg, block+start, num_bytes))
     {
         if (acceleration != NULL)
         {
