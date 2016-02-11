@@ -12,7 +12,7 @@
 -->
 
 <constants  name="EnhancedPositionService">
-  <version>4.0.0alpha (28-Oct-2015)</version>
+  <version>4.0.0 (11-Feb-2016)</version>
   <doc>
     <line>This document defines the constants that are used in the EnhancedPositionService APIs</line>
     <line>Constants for "Keys" are always individual bits within a 64 bit unsigned integer and are unique within the EnhancedPositionService</line>

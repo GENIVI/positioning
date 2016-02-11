@@ -15,7 +15,7 @@
 <node name="/org/genivi/positioning/Configuration" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="introspect.xsd">
 
   <interface name="org.genivi.positioning.Configuration">
-    <version>4.0.0alpha (28-Oct-2015)</version>
+    <version>4.0.0 (11-Feb-2016)</version>
     <doc>
       <line>Configuration = This interface allows a client application to set and retrieve configuration options</line>
       <line>For each configuration option, a property is provided</line>
