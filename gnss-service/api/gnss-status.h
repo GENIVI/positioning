@@ -70,28 +70,28 @@ typedef struct {
 } TGNSSStatus;    
 
 /**
-* Callback type for gnss status.
-* Use this type of callback if you want to register for gnss status updates data.
-* @param status the gnss status
+* Callback type for GNSS status.
+* Use this type of callback if you want to register for GNSS status updates data.
+* @param status the GNSS status
 */
 typedef void (*GNSSStatusCallback)(const TGNSSStatus *status);
 /**
-* Method to get the gyroscope status at a specific point in time.
-* @param status After calling the method the current gyroscope status is written into status
+* Method to get the GNSS status at a specific point in time.
+* @param status After calling the method the current GNSS status is written into status
 * @return Is true if data can be provided and false otherwise, e.g. missing initialization
 */
 bool gnssGetStatus(TGNSSStatus* status);
 /**
-* Register gnss status callback.
-* This is the recommended method for continuously monitoring the gyroscope status.
-* The callback will be invoked when new gyroscope status data is available.
+* Register GNSS status callback.
+* This is the recommended method for continuously monitoring the GNSS status.
+* The callback will be invoked when new GNSS status data is available.
 * @param callback The callback which should be registered.
 * @return True if callback has been registered successfully.
 */
 bool gnssRegisterStatusCallback(GNSSStatusCallback callback);
 /**
-* Deregister gnss status callback.
-* After calling this method no new gnss status updates will be delivered to the client.
+* Deregister GNSS status callback.
+* After calling this method no new GNSS status updates will be delivered to the client.
 * @param callback The callback which should be deregistered.
 * @return True if callback has been deregistered successfully.
 */
