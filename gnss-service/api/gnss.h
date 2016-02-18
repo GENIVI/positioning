@@ -78,7 +78,7 @@ typedef struct {
 } TGNSSConfiguration;
 
 /**
- * TGNSSAccuracy::fixTypeBits provides GNSS Fix Type indication. 
+ * TGNSSPosition::fixTypeBits provides GNSS Fix Type indication. 
  * I.e. it identifies the sources actually used for the GNSS calculation
  * It is a or'ed bitmask of the EGNSSFixType values. 
  * The bit values have been grouped logically with gaps where future extensions can be foreseen
