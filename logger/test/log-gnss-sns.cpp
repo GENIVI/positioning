@@ -57,7 +57,7 @@ class DBuf {
 
     struct SBuf {
     public:
-        char strings [DBUF_STRING_SIZE] [DBUF_NUM_LINES];
+        char strings [DBUF_NUM_LINES] [DBUF_STRING_SIZE];
         uint16_t rnext;
         uint16_t wnext;
         SBuf(): rnext(0), wnext(0) {};
@@ -212,7 +212,7 @@ void* loop_log_writer(void*)
 
 static void sigHandler (int sig, siginfo_t *siginfo, void *context)
 {
-    if (sig == SIGINT) 
+    if (sig == SIGINT)
     {
         g_exit = eExitSigInt;
         if (g_logfile)
@@ -221,8 +221,8 @@ static void sigHandler (int sig, siginfo_t *siginfo, void *context)
             //pthread_kill(g_logthread, sig);  //seems not to work somehow
         }
     }
-    else 
-    if (sig == SIGTERM) 
+    else
+    if (sig == SIGTERM)
     {
         g_sigterm = true;
     }
@@ -231,7 +231,7 @@ static void sigHandler (int sig, siginfo_t *siginfo, void *context)
 static bool registerSigHandlers()
 {
     bool is_success = true;
-    
+
     struct sigaction action;
     memset (&action, '\0', sizeof(action));
     action.sa_sigaction = &sigHandler;
@@ -362,7 +362,7 @@ int main (int argc, char *argv[])
     char version_string[64];
 
     bool is_poslog_init_ok = false;
-    bool is_sns_init_ok = false;    
+    bool is_sns_init_ok = false;
     bool is_sns_gyro_init_ok = false;
     bool is_sns_accel_init_ok = false;
     bool is_gnss_init_ok = false;
@@ -454,7 +454,7 @@ int main (int argc, char *argv[])
         {
             poslogAddString("#ERR snsInit() or gnssInit() failure - terminating");
         }
-        
+
         //if not interrupted by SIGTERM then we have time to cleanup
         if (!g_sigterm)
         {
@@ -501,3 +501,4 @@ int main (int argc, char *argv[])
     DLT_UNREGISTER_APP();
 #endif
 }
+
