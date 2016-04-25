@@ -2,7 +2,6 @@
 Positioning Git Repository
 ===========================
 
-
 The Positioning repository is a collection of APIs and corresponding proofs of concept:
 * GNSSService
 * SensorsService
@@ -89,7 +88,7 @@ make
 ```
 
 ===============================
-Compiler options and default setting
+Compiler Pptions and Default Settings
 ===============================
 
 * option(WITH_ENHANCED_POSITION_SERVICE
@@ -115,7 +114,7 @@ Compiler options and default setting
 * option(WITH_GPSD
     "Use GPSD as source of GPS data" OFF)
 * option(WITH_NMEA
-    "Use NMEA as source of GPS data" OFF)   
+    "Use NMEA as source of GPS data" OFF)
 * option(WITH_REPLAYER
     "Use REPLAYER as source of GPS data" ON)
 * option(WITH_TESTS
@@ -150,8 +149,7 @@ service:
 Dependencies
 ===============================
 
-You might have to install additional packages to Compile and run the
-Positioning PoC.
+You might have to install additional packages to compile and run the Positioning PoC.
 This section tries to summarize those dependencies.
 Also necessary commands to install those packages are provided for Debian
 based systems (Ubuntu, Raspbian, ...) with the apt package manager.
@@ -186,14 +184,13 @@ DWITH_DLT=ON requires that the DLT-daemon is installed.
 To download the DLT-daemon, just execute the following command:
 git clone git://git.projects.genivi.org/dlt-daemon.git
 To install the DLT-daemon, etxract the tarball and follow the 
-instructions in the file install.txt.
-Note: You may have to call 
+instructions in the file install.txt.  
 
+Note: You may have to call 
   ```
   export PKG_CONFIG_PATH=/usr/lib/pkgconfig
   ```
 before 
-
   ```
   sudo ldconfig
   ```
