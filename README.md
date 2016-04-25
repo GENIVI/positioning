@@ -1,6 +1,7 @@
 ============================
 Positioning Git Repository
-============================
+===========================
+
 
 The Positioning repository is a collection of APIs and corresponding proofs of concept:
 * GNSSService
@@ -15,19 +16,19 @@ The Positioning repository is a collection of APIs and corresponding proofs of c
 Directory Structure
 ===============================
 
-enhanced-position-service   //three enhanced-position-service PoCs: 
-                              1) with dbus interfaces, (official API)
-                              2) with commonapi-dbus interfaces, 
-                              3) with commonapi-someip interfaces.
-gnss-service                //gnss-service API + PoC
-logger                      //logger PoC
-log-replayer                //log-replayer PoC
-sensors-service             //sensors-service API + PoC 
-position-web-servce         //position-web-service PoC
-architecture.png            //architecture overview
-build-all.sh                //script to build the PoCs (usage: build-all.sh help) 
-run-test.sh                 //script to run a quick test for each PoC (usage: run-test.sh help) 
-positioning_x.y.bb          //version x.y of a Yocto recipe for the positioning PoCs
+* enhanced-position-service   //three enhanced-position-service PoCs:  
+                              1) with dbus interfaces, (official API)  
+                              2) with commonapi-dbus interfaces,   
+                              3) with commonapi-someip interfaces.  
+* gnss-service                //gnss-service API + PoC
+* logger                      //logger PoC
+* log-replayer                //log-replayer PoC
+* sensors-service             //sensors-service API + PoC 
+* position-web-servce         //position-web-service PoC
+* architecture.png            //architecture overview
+* build-all.sh                //script to build the PoCs (usage: build-all.sh help) 
+* run-test.sh                 //script to run a quick test for each PoC (usage: run-test.sh help) 
+* positioning_x.y.bb          //version x.y of a Yocto recipe for the positioning PoCs
 
 ===============================
 How To Build
@@ -35,58 +36,79 @@ How To Build
 
 To build the positioning proofs of concept please follow the following steps:
 First create and enter the build folder
+
+```
 mkdir ./build
 cd build
+```
 
 To build:
+
+```
 cmake ../
 make
+````
 
 To build with tests:
+
+```
 cmake -DWITH_TESTS=ON -DWITH_DEBUG=ON ../
 make
+```
 
 To build with dbus interfaces:
+
+```
 cmake -DWITH_DBUS_INTERFACE=ON -DWITH_FRANCA_DBUS_INTERFACE=OFF -DWITH_FRANCA_SOMEIP_INTERFACE=OFF -DWITH_TESTS=ON -DWITH_DEBUG=ON -DWITH_DLT=OFF -DCMAKE_BUILD_TYPE=Debug ../
 make
+```
 
 To build with interfaces based on Franca and CommonAPI (see below how to configure CommonAPI):
+
+```
 cmake -DWITH_DBUS_INTERFACE=OFF -DWITH_FRANCA_DBUS_INTERFACE=ON -DWITH_FRANCA_SOMEIP_INTERFACE=ON 
 -DWITH_TESTS=ON -DWITH_DEBUG=ON -DWITH_DLT=OFF -DCMAKE_BUILD_TYPE=Debug 
 -DCOMMONAPI_TOOL_GENERATOR=<path to generator> 
 -DCOMMONAPI_DBUS_TOOL_GENERATOR=<path to generator> 
 -DCOMMONAPI_SOMEIP_TOOL_GENERATOR=<path to generator> ../
 make
+```
 
 To build with tests and reading GPS NMEA data from a GPS receiver attached to /dev/ttyACM0 at 38400
+
+```
 cmake -DWITH_NMEA=ON -DWITH_TESTS=ON -DWITH_DEBUG=ON -DGNSS_DEVICE=\"/dev/ttyACM0\" -DGNSS_BAUDRATE=B38400 ../
 make
+```
 
-To build
-- with tests
-- with the logger
-- without the EnhancedPositionService:
-- using as GNSS source a GPS receiver with a u-blox chipset and 50ms transmission delay providing NMEA data to /dev/ttyACM0 at 38400 baud
-- using as source for gyro and accelerometer data a LSM9DS1 sensor attached via I2C (e.g. from a Sense Hat module)
+To build:
+* with tests
+* with the logger
+* without the EnhancedPositionService:
+* using as GNSS source a GPS receiver with a u-blox chipset and 50ms transmission delay providing NMEA data to /dev/ttyACM0 at 38400 baud
+* using as source for gyro and accelerometer data a LSM9DS1 sensor attached via I2C (e.g. from a Sense Hat module)
+
+```
 cmake -DWITH_ENHANCED_POSITION_SERVICE=OFF -DWITH_NMEA=ON -DWITH_SENSORS=ON -DIMU_TYPE=LSM9DS1 -DWITH_LOGGER=ON -DWITH_TESTS=ON -DWITH_DEBUG=ON -DGNSS_DEVICE=\"/dev/ttyACM0\" -DGNSS_BAUDRATE=B38400 -DGNSS_CHIPSET=UBLOX -DGNSS_DELAY=50 ../
 make
+```
 
 ===============================
 Compiler Options and default setting
 (see dependencies below)
 ===============================
 
-option(WITH_ENHANCED_POSITION_SERVICE
+* option(WITH_ENHANCED_POSITION_SERVICE
        "Build the Enhanced Positioning Service" ON)
-option(WITH_GNSS_SERVICE
+* option(WITH_GNSS_SERVICE
        "Build the GNSS Service" ON)
-option(WITH_LOG_REPLAYER
+* option(WITH_LOG_REPLAYER
        "Build the Log Replayer" ON)
-option(WITH_LOGGER
+* option(WITH_LOGGER
        "Build the Logger" OFF)
-option(WITH_SENSORS_SERVICE
+* option(WITH_SENSORS_SERVICE
        "Build the Sensors Service" ON)
-option(WITH_FRANCA_DBUS_INTERFACE
+* option(WITH_FRANCA_DBUS_INTERFACE
        "Build using the Franca DBus interfaces" OFF)
 option(WITH_FRANCA_SOMEIP_INTERFACE
        "Build using the Franca SomeIP interfaces" OFF)
