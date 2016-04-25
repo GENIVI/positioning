@@ -35,35 +35,30 @@ How To Build
 
 To build the positioning proofs of concept please follow the following steps:
 First create and enter the build folder
-
 ```
 mkdir ./build
 cd build
 ```
 
 To build:
-
 ```
 cmake ../
 make
 ````
 
 To build with tests:
-
 ```
 cmake -DWITH_TESTS=ON -DWITH_DEBUG=ON ../
 make
 ```
 
 To build with dbus interfaces:
-
 ```
 cmake -DWITH_DBUS_INTERFACE=ON -DWITH_FRANCA_DBUS_INTERFACE=OFF -DWITH_FRANCA_SOMEIP_INTERFACE=OFF -DWITH_TESTS=ON -DWITH_DEBUG=ON -DWITH_DLT=OFF -DCMAKE_BUILD_TYPE=Debug ../
 make
 ```
 
 To build with interfaces based on Franca and CommonAPI (see below how to configure CommonAPI):
-
 ```
 cmake -DWITH_DBUS_INTERFACE=OFF -DWITH_FRANCA_DBUS_INTERFACE=ON -DWITH_FRANCA_SOMEIP_INTERFACE=ON 
 -DWITH_TESTS=ON -DWITH_DEBUG=ON -DWITH_DLT=OFF -DCMAKE_BUILD_TYPE=Debug 
@@ -74,21 +69,19 @@ make
 ```
 
 To build with tests and reading GPS NMEA data from a GPS receiver attached to /dev/ttyACM0 at 38400
-
 ```
 cmake -DWITH_NMEA=ON -DWITH_TESTS=ON -DWITH_DEBUG=ON -DGNSS_DEVICE=\"/dev/ttyACM0\" -DGNSS_BAUDRATE=B38400 ../
 make
 ```
 
 To build with tests, with the logger, without the EnhancedPositionService, using as GNSS source a GPS receiver with a u-blox chipset and 50ms transmission delay providing NMEA data to /dev/ttyACM0 at 38400 baud, using as source for gyro and accelerometer data a LSM9DS1 sensor attached via I2C (e.g. from a Sense Hat module)
-
 ```
 cmake -DWITH_ENHANCED_POSITION_SERVICE=OFF -DWITH_NMEA=ON -DWITH_SENSORS=ON -DIMU_TYPE=LSM9DS1 -DWITH_LOGGER=ON -DWITH_TESTS=ON -DWITH_DEBUG=ON -DGNSS_DEVICE=\"/dev/ttyACM0\" -DGNSS_BAUDRATE=B38400 -DGNSS_CHIPSET=UBLOX -DGNSS_DELAY=50 ../
 make
 ```
 
 ===============================
-Compiler Pptions and Default Settings
+Compiler Options and Default Settings
 ===============================
 
 * option(WITH_ENHANCED_POSITION_SERVICE
@@ -108,7 +101,7 @@ Compiler Pptions and Default Settings
 * option(WITH_DBUS_INTERFACE
        "Build using the D-Bus interfaces" ON)
 * option(WITH_DEBUG
-        "Enable the debug messages" OFF)
+       "Enable the debug messages" OFF)
 * option(WITH_DLT
     "Enable DLT logging" OFF)
 * option(WITH_GPSD
@@ -157,16 +150,20 @@ Other Linux distributions (e.g. openSuSE) may require some adaptation as
 the package names and even the package manager may be different.
 
 CMake is used to create the make files
+```
 sudo apt-get install cmake
+```
 
 DWITH_GPSD=ON requires that the package 'gpsd' is installed.
 To install 'gpsd', please execute the following command:
 sudo apt-get install gpsd libgps-dev
 
 To test the enhanced-position-service (dbus-service) the packages 'libdbus-1-dev', libdbus-c++-dev' and 'xsltproc' must be installed.
-To install these packages, please execute the following command:
+to install these packages, please execute the following command:
+```
 sudo apt-get install libdbus-1-dev libdbus-c++-dev xsltproc
 sudo ldconfig 
+```
 
 To test the enhanced-position-service (commonapi-service) the package CommonAPI and CommonAPI code generators must be installed.
 Please see: 
