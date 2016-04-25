@@ -16,6 +16,9 @@
 * @licence end@
 **************************************************************************/
 
+#define __STDC_FORMAT_MACROS
+#include <inttypes.h>
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
@@ -24,6 +27,7 @@
 #include <errno.h>
 #include <pthread.h>
 #include <assert.h>
+#include <math.h>
 
 #include <arpa/inet.h>
 #include <netinet/in.h>
@@ -36,18 +40,27 @@
 #include "gnss-init.h"
 #include "log.h"
 
+#define STRINGIFY2( x) #x
+#define STRINGIFY(x) STRINGIFY2(x)
+
 #define BUFLEN 256
 #define MSGIDLEN 20
 #define PORT 9930
 
 #define MAX_BUF_MSG 16
 
-pthread_t listenerThread;
+//Listener thread
+static pthread_t listenerThread;
+//Listener thread loop control variale
+static volatile bool isRunning = false;
+//Socket file descriptor used by listener thread. 
+//Global so we can shutdown() it to release listener thread immediately from waiting 
+static int s = 0;
+//Note: we do not mutex-protect the above globals because for this proof-of-concept 
+//implementation we expect that the client does not ake overlapping calls.
+//For a real-world fool-proof implementation you would have to add more checks. 
 
-bool isRunning = false;
-int s = 0;
-
-void *listenForMessages( void *ptr );
+static void *listenForMessages( void *ptr );
 
 DLT_DECLARE_CONTEXT(gContext);
 
@@ -106,10 +119,184 @@ bool gnssSetGNSSSystems(uint32_t activate_systems)
     return false; //satellite system configuration request not supported for replay
 }
 
-//backward compatible processing of GVGNSAC to the new TGNSSPosition
-bool processGVGNSAC(char* data)
+
+static bool processGVGNSPOS(const char* data)
 {
-    //parse data like: 061064000,0$GVGNSP,061064000,49.02657,12.06527,336.70000,0X07
+    //parse data like: 555854,0,$GVGNSPOS,555804,49.0437988,12.1011773, 337.8, 383.8,13.3,9999.0,195.85,2.3,1.4,1.9,06,9999,9999, 2.6, 2.5,9999.0,9999.0,9999.0,3,0X00000001,0X00000001,0X00000001,0X003C67DF
+
+    //storage for buffered data
+    static TGNSSPosition buf_pos[MAX_BUF_MSG];
+    static uint16_t buf_size = 0;
+    static uint16_t last_countdown = 0;
+
+    uint64_t timestamp;
+    uint16_t countdown;
+    TGNSSPosition pos = { 0 };
+    int n = 0;
+
+    if(!data)
+    {
+        LOG_ERROR_MSG(gContext,"wrong parameter!");
+        return false;
+    }
+
+    n = sscanf(data, 
+        "%"SCNu64",%"SCNu16",$GVGNSPOS,%"SCNu64",%lf,%lf,%f,%f,%f,%f,%f,%f,%f,%f,%"SCNu16",%"SCNu16",%"SCNu16",%f,%f,%f,%f,%f,%u,%x,%x,%x,%x",
+        &timestamp,
+        &countdown,
+        &pos.timestamp,
+        &pos.latitude,
+        &pos.longitude,
+        &pos.altitudeMSL,
+        &pos.altitudeEll,
+        &pos.hSpeed,
+        &pos.vSpeed,
+        &pos.heading,
+        &pos.pdop,
+        &pos.hdop,
+        &pos.vdop,
+        &pos.usedSatellites,
+        &pos.trackedSatellites,
+        &pos.visibleSatellites,
+        &pos.sigmaHPosition,
+        &pos.sigmaAltitude,
+        &pos.sigmaHSpeed,
+        &pos.sigmaVSpeed,
+        &pos.sigmaHeading,
+        &pos.fixStatus,
+        &pos.fixTypeBits,
+        &pos.activatedSystems,
+        &pos.usedSystems,
+        &pos.validityBits
+        );
+
+    if (n != 26) //26 fields to parse
+    {
+        LOG_ERROR_MSG(gContext,"replayer: processGVGNSPOS failed!");
+        return false;
+    }
+
+    //buffered data handling
+    if (countdown < MAX_BUF_MSG) //enough space in buffer?
+    {
+        if (buf_size == 0) //a new sequence starts
+        {
+            buf_size = countdown+1;
+            last_countdown = countdown;
+            buf_pos[buf_size-countdown-1] = pos;
+        }
+        else if ((last_countdown-countdown) == 1) //sequence continued
+        {
+            last_countdown = countdown;
+            buf_pos[buf_size-countdown-1] = pos;
+        }
+        else //sequence interrupted: clear buffer
+        {
+            buf_size = 0;
+            last_countdown = 0;
+        }
+    }
+    else //clear buffer
+    {
+        buf_size = 0;
+        last_countdown = 0;
+    }
+
+    if((countdown == 0) && (buf_size >0) )
+    {
+        updateGNSSPosition(buf_pos,buf_size);
+        buf_size = 0;
+        last_countdown = 0;
+    }
+
+    return true;
+}
+
+static bool processGVGNSTIM(const char* data)
+{
+    //parse data like: 555854,0,$GVGNSTIM,555804,2016,01,23,20,49,00,000,00,0,0X00000003
+
+    //storage for buffered data
+    static TGNSSTime buf_tim[MAX_BUF_MSG];
+    static uint16_t buf_size = 0;
+    static uint16_t last_countdown = 0;
+
+    uint64_t timestamp;
+    uint16_t countdown;
+    TGNSSTime tim = { 0 };
+    int n = 0;
+
+    if(!data)
+    {
+        LOG_ERROR_MSG(gContext,"wrong parameter!");
+        return false;
+    }
+
+    n = sscanf(data, 
+        "%"SCNu64",%"SCNu16",$GVGNSTIM,%"SCNu64",%04"SCNu16",%02"SCNu8",%02"SCNu8",%02"SCNu8",%02"SCNu8",%02"SCNu8",%03"SCNu16",%u,%02"SCNi8",0X%08X",
+        &timestamp,
+        &countdown,
+        &tim.timestamp,
+        &tim.year,
+        &tim.month,
+        &tim.day,
+        &tim.hour,
+        &tim.minute,
+        &tim.second,
+        &tim.ms,
+        &tim.scale,
+        &tim.leapSeconds,
+        &tim.validityBits
+        );
+
+    if (n != 13) //13 fields to parse
+    {
+        LOG_ERROR_MSG(gContext,"replayer: processGVGNSPOS failed!");
+        return false;
+    }
+
+    //buffered data handling
+    if (countdown < MAX_BUF_MSG) //enough space in buffer?
+    {
+        if (buf_size == 0) //a new sequence starts
+        {
+            buf_size = countdown+1;
+            last_countdown = countdown;
+            buf_tim[buf_size-countdown-1] = tim;
+        }
+        else if ((last_countdown-countdown) == 1) //sequence continued
+        {
+            last_countdown = countdown;
+            buf_tim[buf_size-countdown-1] = tim;
+        }
+        else //sequence interrupted: clear buffer
+        {
+            buf_size = 0;
+            last_countdown = 0;
+        }
+    }
+    else //clear buffer
+    {
+        buf_size = 0;
+        last_countdown = 0;
+    }
+
+    if((countdown == 0) && (buf_size >0) )
+    {
+        updateGNSSTime(buf_tim, buf_size);
+        buf_size = 0;
+        last_countdown = 0;
+    }
+
+    return true;
+}
+
+
+
+//backward compatible processing of GVGNSAC to the new TGNSSPosition
+static bool processGVGNSAC(const char* data)
+{
+    //parse data like: 047434000,0$GVGNSAC,047434000,0,1.0,0,07,0,0,0,0,0,2,0X00000001,0X60A
 
     //storage for buffered data
     static TGNSSPosition buf_acc[MAX_BUF_MSG];
@@ -120,8 +307,10 @@ bool processGVGNSAC(char* data)
     uint16_t countdown;
     TGNSSPosition pos = { 0 };
     uint16_t fixStatus;
+    float sigmaLatitude;
+    float sigmaLongitude;
     uint32_t GVGNSAC_validityBits;
-    uint32_t n = 0;
+    int n = 0;
 
     if(!data)
     {
@@ -133,13 +322,22 @@ bool processGVGNSAC(char* data)
          &timestamp, &countdown, &pos.timestamp,
          &pos.pdop, &pos.hdop, &pos.vdop,
          &pos.usedSatellites, &pos.trackedSatellites, &pos.visibleSatellites,
-         &pos.sigmaHPosition, &pos.sigmaHPosition, &pos.sigmaAltitude,
+         &sigmaLatitude, &sigmaLongitude, &pos.sigmaAltitude,
          &fixStatus, &pos.fixTypeBits, &GVGNSAC_validityBits);
+
+    if (n != 15) //15 fields to parse
+    {
+        LOG_ERROR_MSG(gContext,"replayer: processGVGNSAC failed!");
+        return false;
+    }
+
     //fix status: order in enum has changed
     if (fixStatus == 0) { pos.fixStatus = GNSS_FIX_STATUS_NO; }
     if (fixStatus == 1) { pos.fixStatus = GNSS_FIX_STATUS_2D; }
     if (fixStatus == 2) { pos.fixStatus = GNSS_FIX_STATUS_3D; }
     if (fixStatus == 3) { pos.fixStatus = GNSS_FIX_STATUS_TIME; }
+    //calculate sigmaHPosition from sigmaLatitude, sigmaLongitude*sigmaLongitude);
+    pos.sigmaHPosition = sqrt(sigmaLatitude*sigmaLatitude);
     //map the old validity bits to the new validity bits
     pos.validityBits = 0;
     if (GVGNSAC_validityBits&0x00000001) { pos.validityBits |= GNSS_POSITION_PDOP_VALID; }
@@ -153,11 +351,6 @@ bool processGVGNSAC(char* data)
     if (GVGNSAC_validityBits&0x00000200) { pos.validityBits |= GNSS_POSITION_STAT_VALID; }
     if (GVGNSAC_validityBits&0x00000400) { pos.validityBits |= GNSS_POSITION_TYPE_VALID; }
 
-    if (n <= 0)
-    {
-        LOG_ERROR_MSG(gContext,"replayer: processGVGNSAC failed!");
-        return false;
-    }
 
     //global Position: update the changed fields, retain the existing fields from other callbacks
     TGNSSPosition upd_pos;
@@ -215,7 +408,7 @@ bool processGVGNSAC(char* data)
 }
 
 //backward compatible processing of GVGNSP to the new TGNSSPosition
-static bool processGVGNSP(char* data)
+static bool processGVGNSP(const char* data)
 {
     //parse data like: 061064000,0$GVGNSP,061064000,49.02657,12.06527,336.70000,0X07
 
@@ -228,7 +421,7 @@ static bool processGVGNSP(char* data)
     uint16_t countdown;
     TGNSSPosition pos = { 0 };
     uint32_t GVGNSP_validityBits;
-    uint32_t n = 0;
+    int n = 0;
 
     if(!data)
     {
@@ -238,17 +431,17 @@ static bool processGVGNSP(char* data)
 
     n = sscanf(data, "%llu,%hu$GVGNSP,%llu,%lf,%lf,%f,%x", &timestamp, &countdown, &pos.timestamp, &pos.latitude, &pos.longitude, &pos.altitudeMSL, &GVGNSP_validityBits);
 
+    if (n != 7) //7 fields to parse
+    {
+        LOG_ERROR_MSG(gContext,"replayer: processGVGNSP failed!");
+        return false;
+    }
+
     //map the old validity bits to the new validity bits
     pos.validityBits = 0;
     if (GVGNSP_validityBits&0x00000001) { pos.validityBits |= GNSS_POSITION_LATITUDE_VALID; }
     if (GVGNSP_validityBits&0x00000002) { pos.validityBits |= GNSS_POSITION_LONGITUDE_VALID; }
     if (GVGNSP_validityBits&0x00000004) { pos.validityBits |= GNSS_POSITION_ALTITUDEMSL_VALID; }
-
-    if (n <= 0)
-    {
-        LOG_ERROR_MSG(gContext,"replayer: processGVGNSP failed!");
-        return false;
-    }
 
     //buffered data handling
     if (countdown < MAX_BUF_MSG) //enough space in buffer?
@@ -287,7 +480,7 @@ static bool processGVGNSP(char* data)
 }
 
 //backward compatible processing of GVGNSC to the new TGNSSPosition
-static bool processGVGNSC(char* data)
+static bool processGVGNSC(const char* data)
 {
     //parse data like: 061064000,0$GVGNSC,061064000,0.00,0,131.90000,0X05
 
@@ -300,7 +493,7 @@ static bool processGVGNSC(char* data)
     uint16_t countdown;
     TGNSSPosition pos = { 0 };
     uint32_t GVGNSC_validityBits;
-    uint32_t n = 0;
+    int n = 0;
 
     if(!data)
     {
@@ -310,17 +503,18 @@ static bool processGVGNSC(char* data)
 
     n = sscanf(data, "%llu,%hu$GVGNSC,%llu,%f,%f,%f,%x", &timestamp, &countdown, &pos.timestamp, &pos.hSpeed, &pos.vSpeed, &pos.heading, &GVGNSC_validityBits);
 
+    if (n != 7) //7 fields to parse
+    {
+        LOG_ERROR_MSG(gContext,"replayer: processGVGNSC failed!");
+        return false;
+    }
+
     //map the old validity bits to the new validity bits
     pos.validityBits = 0;
     if (GVGNSC_validityBits&0x00000001) { pos.validityBits |= GNSS_POSITION_HSPEED_VALID; }
     if (GVGNSC_validityBits&0x00000002) { pos.validityBits |= GNSS_POSITION_VSPEED_VALID; }
     if (GVGNSC_validityBits&0x00000004) { pos.validityBits |= GNSS_POSITION_HEADING_VALID; }
 
-    if (n <= 0)
-    {
-        LOG_ERROR_MSG(gContext,"replayer: processGVGNSC failed!");
-        return false;
-    }
 
     //global Position: update the changed fields, retain the existing fields from other callbacks
     TGNSSPosition upd_pos;
@@ -370,7 +564,7 @@ static bool processGVGNSC(char* data)
     return true;
 }
 
-static bool processGVGNSSAT(char* data)
+static bool processGVGNSSAT(const char* data)
 {
     //parse data like: 061064000,05$GVGNSSAT,061064000,1,18,314.0,22.0,39,0X00,0X1F
 
@@ -383,7 +577,7 @@ static bool processGVGNSSAT(char* data)
     uint16_t countdown;
     TGNSSSatelliteDetail sat = { 0 };
     uint16_t system = 0;
-    uint32_t n = 0;
+    int n = 0;
 
     if(!data)
     {
@@ -391,15 +585,29 @@ static bool processGVGNSSAT(char* data)
         return false;
     }
 
-    n = sscanf(data, "%llu,%hu$GVGNSSAT,%llu,%hu,%hu,%hu,%hu,%hu,%x,%x", &timestamp, &countdown, &sat.timestamp,&system,&sat.satelliteId,&sat.azimuth,&sat.elevation,&sat.SNR,&sat.statusBits,&sat.validityBits);
+    n = sscanf(data, "%llu,%hu,$GVGNSSAT,%llu,%hu,%hu,%hu,%hu,%hu,%x,%hu,%x",
+        &timestamp, &countdown,
+        &sat.timestamp, &system, &sat.satelliteId,
+        &sat.azimuth, &sat.elevation, &sat.SNR,
+        &sat.statusBits, &sat.posResidual, &sat.validityBits);
+
+    if (n != 11) //11 fields to parse
+    {
+        //try old version without posResidual and without comma befroe $
+        n = sscanf(data, "%llu,%hu$GVGNSSAT,%llu,%hu,%hu,%hu,%hu,%hu,%x,%x", &timestamp, &countdown, &sat.timestamp,&system,&sat.satelliteId,&sat.azimuth,&sat.elevation,&sat.SNR,&sat.statusBits,&sat.validityBits);
+        sat.validityBits &= ~GNSS_SATELLITE_RESIDUAL_VALID; //just to be safe
+        
+        if (n != 10) //10 fields to parse
+        {
+            LOG_ERROR_MSG(gContext,"replayer: processGVGNSSAT failed!");
+            return false;
+        }
+    }
+
+    //map integer to enum
     sat.system = system;
     //LOG_DEBUG(gContext,"Decoded: %llu,%hu$GVGNSSAT,%llu,%d,%hu,%hu,%hu,%hu,0X%X,0X%X ", timestamp, countdown, sat.timestamp, sat.system, sat.satelliteId, sat.azimuth, sat.elevation, sat.SNR, sat.statusBits, sat.validityBits);
 
-    if (n <= 0)
-    {
-        LOG_ERROR_MSG(gContext,"replayer: processGVGNSSAT failed!");
-        return false;
-    }
 
     //buffered data handling
     if (countdown < MAX_BUF_MSG) //enough space in buffer?
@@ -437,14 +645,14 @@ static bool processGVGNSSAT(char* data)
     return true;
 }
 
-void *listenForMessages( void *ptr )
+static void *listenForMessages( void *ptr )
 {  
     struct sockaddr_in si_me;
     struct sockaddr_in si_other;
     socklen_t slen = sizeof(si_other);
     ssize_t readBytes = 0;
-    char buf[BUFLEN];
-    char msgId[MSGIDLEN];
+    char buf[BUFLEN+1]; //add space fer terminating \0
+    char msgId[MSGIDLEN+1]; //add space fer terminating \0
     int port = PORT;
 
     DLT_REGISTER_APP("GNSS", "GNSS-SERVICE");
@@ -501,15 +709,28 @@ void *listenForMessages( void *ptr )
             LOG_DEBUG(gContext,"Received Packet from %s:%d", 
                       inet_ntoa(si_other.sin_addr), ntohs(si_other.sin_port));
 
-            sscanf(buf, "%*[^'$']$%[^',']", msgId);
-    
-            LOG_DEBUG(gContext,"MsgID:%s",msgId);
-            LOG_DEBUG(gContext,"Len:%d",strlen(buf));
-            LOG_DEBUG(gContext,"Data:%s",buf);
+            sscanf(buf, "%*[^'$']$%" STRINGIFY(MSGIDLEN) "[^',']", msgId);
+
+            LOG_DEBUG(gContext,"MsgID:%s", msgId);
+            LOG_DEBUG(gContext,"Len:%u", (unsigned int)strlen(buf));
+            LOG_DEBUG(gContext,"Data:%s", buf);
 
             LOG_DEBUG_MSG(gContext,"------------------------------------------------");
 
-            if(strcmp("GVGNSP", msgId) == 0)
+            if(strcmp("GVGNSPOS", msgId) == 0)
+            {
+                 processGVGNSPOS(buf);
+            }
+            else if(strcmp("GVGNSTIM", msgId) == 0)
+            {
+                 processGVGNSTIM(buf);
+            }
+            else if(strcmp("GVGNSSAT", msgId) == 0)
+            {
+                 processGVGNSSAT(buf);
+            }
+            //handling of old logs for backward compatibility 
+            else if(strcmp("GVGNSP", msgId) == 0)
             {
                  processGVGNSP(buf);
             }
@@ -520,11 +741,7 @@ void *listenForMessages( void *ptr )
             else if(strcmp("GVGNSAC", msgId) == 0)
             {
                  processGVGNSAC(buf);
-            }
-            else if(strcmp("GVGNSSAT", msgId) == 0)
-            {
-                 processGVGNSSAT(buf);
-            }
+            }            
         }
 
     }

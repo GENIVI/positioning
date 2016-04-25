@@ -48,6 +48,9 @@
 #include "globals.h"
 #include "log.h"
 
+#define STRINGIFY2( x) #x
+#define STRINGIFY(x) STRINGIFY2(x)
+
 #define BUFLEN 256
 #define MSGIDLEN 20
 #define PORT 9931
@@ -56,10 +59,19 @@
 
 DLT_DECLARE_CONTEXT(gContext);
 
-pthread_t listenerThread;
-bool isRunning = false;
+//Listener thread
+static pthread_t listenerThread;
+//Listener thread loop control variale
+static volatile bool isRunning = false;
+//Socket file descriptor used by listener thread. 
+//Global so we can shutdown() it to release listener thread immediately from waiting 
+static int s = 0;
+//Note: we do not mutex-protect the above globals because for this proof-of-concept 
+//implementation we expect that the client does not ake overlapping calls.
+//For a real-world fool-proof implementation you would have to add more checks.
 
-void *listenForMessages( void *ptr );
+
+static void *listenForMessages( void *ptr );
 
 bool snsInit()
 {
@@ -77,6 +89,9 @@ bool snsInit()
 bool snsDestroy()
 {
     isRunning = false;
+
+    //shut down the socket
+    shutdown(s,2);
 
     if(listenerThread)
     {
@@ -154,7 +169,7 @@ bool snsVehicleDataDestroy()
     return iVehicleDataDestroy();
 }
 
-bool processGVSNSWHE(char* data)
+bool processGVSNSWHE(const char* data)
 {
     //parse data like: 061076000,0$GVSNSWHTK,061076000,7,266,8,185,0,0,0,0
     
@@ -166,7 +181,7 @@ bool processGVSNSWHE(char* data)
     uint64_t timestamp;
     uint16_t countdown;
     TWheelData whtk = { 0 };
-    uint32_t n = 0;
+    int n = 0;
 
     if(!data)
     {
@@ -174,7 +189,7 @@ bool processGVSNSWHE(char* data)
         return false;
     }
 
-    n = sscanf(data, "%llu,%hu$GVSNSWHE,%llu,%f,%f,%f,%f,%f,%f,%f,%f,%x,%x", 
+    n = sscanf(data, "%llu,%hu,$GVSNSWHE,%llu,%f,%f,%f,%f,%f,%f,%f,%f,%x,%x", 
       &timestamp, &countdown, &whtk.timestamp
       ,&whtk.data[0], &whtk.data[1]
       ,&whtk.data[2], &whtk.data[3]
@@ -184,7 +199,7 @@ bool processGVSNSWHE(char* data)
       ,&whtk.validityBits
       );
 
-    if (n <= 0)
+    if (n != 13) //13 fields to parse
     {
         LOG_ERROR_MSG(gContext,"replayer: processGVSNSWHE failed!");
         return false;
@@ -226,7 +241,7 @@ bool processGVSNSWHE(char* data)
     return true;
 }
 
-static bool processGVSNSGYR(char* data)
+static bool processGVSNSGYR(const char* data)
 {
     //parse data like: 061074000,0$GVSNSGYR,061074000,-38.75,0,0,0,0X01
     
@@ -238,7 +253,7 @@ static bool processGVSNSGYR(char* data)
     uint64_t timestamp;
     uint16_t countdown;
     TGyroscopeData gyro = { 0 };
-    uint32_t n = 0;
+    int n = 0;
 
     if(!data )
     {
@@ -246,12 +261,12 @@ static bool processGVSNSGYR(char* data)
         return false;
     }
 
-    n = sscanf(data, "%llu,%hu$GVSNSGYR,%llu,%f,%f,%f,%f,%x", &timestamp, &countdown, &gyro.timestamp, &gyro.yawRate, &gyro.pitchRate, &gyro.rollRate, &gyro.temperature, &gyro.validityBits);    
+    n = sscanf(data, "%llu,%hu,$GVSNSGYR,%llu,%f,%f,%f,%f,%x", &timestamp, &countdown, &gyro.timestamp, &gyro.yawRate, &gyro.pitchRate, &gyro.rollRate, &gyro.temperature, &gyro.validityBits);    
 
-    if (n <= 0)
+    if (n != 8) //8 fields to parse
     {
-        LOG_ERROR_MSG(gContext,"replayer: processGVSNSGYR failed!");
-        return false;
+            LOG_ERROR_MSG(gContext,"replayer: processGVSNSGYR failed!");
+            return false;
     }
 
     //buffered data handling
@@ -292,7 +307,7 @@ static bool processGVSNSGYR(char* data)
 
 
 
-static bool processGVSNSVSP(char* data)
+static bool processGVSNSVSP(const char* data)
 {
     //parse data like: 061074000,0$GVSNSVSP,061074000,0.51,0X01
     
@@ -304,7 +319,7 @@ static bool processGVSNSVSP(char* data)
     uint64_t timestamp;
     uint16_t countdown;
     TVehicleSpeedData vehsp = { 0 };
-    uint32_t n = 0;
+    int n = 0;
 
     if(!data)
     {
@@ -312,9 +327,9 @@ static bool processGVSNSVSP(char* data)
         return false;
     }
 
-    n = sscanf(data, "%llu,%hu$GVSNSVSP,%llu,%f,%x", &timestamp, &countdown, &vehsp.timestamp, &vehsp.vehicleSpeed, &vehsp.validityBits);    
+    n = sscanf(data, "%llu,%hu,$GVSNSVSP,%llu,%f,%x", &timestamp, &countdown, &vehsp.timestamp, &vehsp.vehicleSpeed, &vehsp.validityBits);    
 
-    if (n <= 0)
+    if (n != 5) //5 fields to parse
     {
         LOG_ERROR_MSG(gContext,"replayer: processGVSNSVSP failed!");
         return false;
@@ -356,15 +371,14 @@ static bool processGVSNSVSP(char* data)
     return true;
 }
 
-void *listenForMessages( void *ptr )
+static void *listenForMessages( void *ptr )
 {  
     struct sockaddr_in si_me;
     struct sockaddr_in si_other;
-    int s;
     socklen_t slen = sizeof(si_other);
     ssize_t readBytes = 0;
-    char buf[BUFLEN];
-    char msgId[MSGIDLEN];
+    char buf[BUFLEN+1]; //add space fer terminating \0
+    char msgId[MSGIDLEN+1]; //add space fer terminating \0
     int port = PORT;
 
     DLT_REGISTER_APP("SNSS", "SENSOSRS-SERVICE");
@@ -422,11 +436,11 @@ void *listenForMessages( void *ptr )
             LOG_DEBUG(gContext,"Received Packet from %s:%d", 
                       inet_ntoa(si_other.sin_addr), ntohs(si_other.sin_port));
 
-            sscanf(buf, "%*[^'$']$%[^',']", msgId);
+            sscanf(buf, "%*[^'$']$%" STRINGIFY(MSGIDLEN) "[^',']", msgId);
     
-            LOG_DEBUG(gContext,"MsgID:%s",msgId);
-            LOG_DEBUG(gContext,"Len:%d",(int)strlen(buf));
-            LOG_INFO(gContext,"Data:%s",buf);
+            LOG_DEBUG(gContext,"MsgID:%s", msgId);
+            LOG_DEBUG(gContext,"Len:%u", (unsigned int)strlen(buf));
+            LOG_INFO(gContext,"Data:%s", buf);
 
             LOG_DEBUG_MSG(gContext,"------------------------------------------------");
 

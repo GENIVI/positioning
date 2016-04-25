@@ -315,69 +315,109 @@ def readGSV (fields):
 # Function definitions to write GENIVI Positioning Log - GNSS part
 ##################################################################
 
-#write GVGNSP - GNSS (simple) Position [take data from GGA sentence]
-def writeGVGNSP (file, gga, rmc, timestamp):
+#write GVGNSTIM - GNSS Date/Time [take data from GGA and RMC sentences]
+def writeGVGNSTIM (file, gga, rmc, timestamp):
+
+
+  GNSS_TIME_TIME_VALID    = 0x00000001   #Validity bit for field TGNSSTime fields hour, minute, second, ms.
+  GNSS_TIME_DATE_VALID    = 0x00000002   #Validity bit for field TGNSSTime fields year, month, day.
+  GNSS_TIME_SCALE_VALID   = 0x00000004   #Validity bit for field TGNSSTime field scale.
+  GNSS_TIME_LEAPSEC_VALID = 0x00000008   #Validity bit for field TGNSSTime field leapSeconds.
+
   valid = 0
-  file.write("{0:09d},0$GVGNSP,{0:09d},".format(timestamp))
-  if gga["lat"] is not None:
-    valid |= 0x01
-    file.write("{0:.5f},".format(gga["lat"]))
-  elif rmc["lat"] is not None:
-    valid |= 0x01
-    file.write("{0:.5f},".format(rmc["lat"]))
+  file.write("{0:09d},0,$GVGNSTIM,{0:09d},".format(timestamp))
+  if rmc["year"] is not None and rmc["month"] is not None and rmc["day"] is not None:
+    valid |= GNSS_TIME_DATE_VALID
+    file.write("{0:04d},{1:02d},{2:02d},".format(rmc["year"], rmc["month"]-1, rmc["day"] ))
   else:
-    file.write("0,")
-  if gga["lon"] is not None:
-    valid |= 0x02
-    file.write("{0:.5f},".format(gga["lon"]))
-  elif rmc["lon"] is not None:
-    valid |= 0x02
-    file.write("{0:.5f},".format(rmc["lon"]))
+    file.write("{0:04d},{1:02d},{2:02d},".format(0, 0, 0 ))
+  if rmc["hour"] is not None and rmc["minute"] is not None and rmc["second"] is not None:
+    valid |= GNSS_TIME_TIME_VALID
+    file.write("{0:02d},{1:02d},{2:02d},0,".format(rmc["hour"], rmc["minute"], rmc["second"] ))
   else:
-    file.write("0,")
-  if gga["alt_msl"] is not None:
-    valid |= 0x04
-    file.write("{0:.1f},".format(gga["alt_msl"]))
-  else:
-    file.write("0,")
-  file.write("0X{0:02X}".format(valid))
+    file.write("{0:02d},{1:02d},{2:02d},0,".format(0, 0, 0 ))    
+  #scale is not available
+  file.write("0,")
+  #leapSeconds is not available
+  file.write("0,")
+  file.write("0X{0:08X}".format(valid))
   file.write("\n")
   return
 
-#write GVGNSC - GNSS (simple) Course [take data from RMC sentence]
-def writeGVGNSC (file, gga, rmc, timestamp):
+#write GVGNSPOS - GNSS Position [take data from GGA and RMC sentences]
+def writeGVGNSPOS (file, gga, rmc, timestamp):
+
+  GNSS_POSITION_LATITUDE_VALID        = 0x00000001    # Validity bit for field TGNSSPosition::latitude. 
+  GNSS_POSITION_LONGITUDE_VALID       = 0x00000002    # Validity bit for field TGNSSPosition::longitude. 
+  GNSS_POSITION_ALTITUDEMSL_VALID     = 0x00000004    # Validity bit for field TGNSSPosition::altitudeMSL. 
+  GNSS_POSITION_ALTITUDEELL_VALID     = 0x00000008    # Validity bit for field TGNSSPosition::altitudeEll. 
+  GNSS_POSITION_HSPEED_VALID          = 0x00000010    # Validity bit for field TGNSSPosition::hSpeed. 
+  GNSS_POSITION_VSPEED_VALID          = 0x00000020    # Validity bit for field TGNSSPosition::vSpeed. 
+  GNSS_POSITION_HEADING_VALID         = 0x00000040    # Validity bit for field TGNSSPosition::heading. 
+  GNSS_POSITION_PDOP_VALID            = 0x00000080    # Validity bit for field TGNSSPosition::pdop. 
+  GNSS_POSITION_HDOP_VALID            = 0x00000100    # Validity bit for field TGNSSPosition::hdop. 
+  GNSS_POSITION_VDOP_VALID            = 0x00000200    # Validity bit for field TGNSSPosition::vdop. 
+  GNSS_POSITION_USAT_VALID            = 0x00000400    # Validity bit for field TGNSSPosition::usedSatellites. 
+  GNSS_POSITION_TSAT_VALID            = 0x00000800    # Validity bit for field TGNSSPosition::trackedSatellites. 
+  GNSS_POSITION_VSAT_VALID            = 0x00001000    # Validity bit for field TGNSSPosition::visibleSatellites. 
+  GNSS_POSITION_SHPOS_VALID           = 0x00002000    # Validity bit for field TGNSSPosition::sigmaHPosition. 
+  GNSS_POSITION_SALT_VALID            = 0x00004000    # Validity bit for field TGNSSPosition::sigmaAltitude. 
+  GNSS_POSITION_SHSPEED_VALID         = 0x00008000    # Validity bit for field TGNSSPosition::sigmaHSpeed. 
+  GNSS_POSITION_SVSPEED_VALID         = 0x00010000    # Validity bit for field TGNSSPosition::sigmaVSpeed. 
+  GNSS_POSITION_SHEADING_VALID        = 0x00020000    # Validity bit for field TGNSSPosition::sigmaHeading. 
+  GNSS_POSITION_STAT_VALID            = 0x00040000    # Validity bit for field TGNSSPosition::fixStatus. 
+  GNSS_POSITION_TYPE_VALID            = 0x00080000    # Validity bit for field TGNSSPosition::fixTypeBits.     
+  GNSS_POSITION_ASYS_VALID            = 0x00100000    # Validity bit for field TGNSSPosition::activated_systems. 
+  GNSS_POSITION_USYS_VALID            = 0x00200000    # Validity bit for field TGNSSPosition::used_systems. 
+
   valid = 0
-  file.write("{0:09d},0$GVGNSC,{0:09d},".format(timestamp))
+  file.write("{0:09d},0,$GVGNSPOS,{0:09d},".format(timestamp))
+  if gga["lat"] is not None:
+    valid |= GNSS_POSITION_LATITUDE_VALID
+    file.write("{0:.7f},".format(gga["lat"]))
+  elif rmc["lat"] is not None:
+    valid |= GNSS_POSITION_LATITUDE_VALID
+    file.write("{0:.7f},".format(rmc["lat"]))
+  else:
+    file.write("0,")
+  if gga["lon"] is not None:
+    valid |= GNSS_POSITION_LONGITUDE_VALID
+    file.write("{0:.7f},".format(gga["lon"]))
+  elif rmc["lon"] is not None:
+    valid |= GNSS_POSITION_LONGITUDE_VALID
+    file.write("{0:.7f},".format(rmc["lon"]))
+  else:
+    file.write("0,")
+  if gga["alt_msl"] is not None:
+    valid |= GNSS_POSITION_ALTITUDEMSL_VALID
+    file.write("{0:.1f},".format(gga["alt_msl"]))
+  else:
+    file.write("0,")
+  #altitudeEll not supported
+  file.write("0,")
   if rmc["speed"] is not None:
-    valid |= 0x01
+    valid |= GNSS_POSITION_HSPEED_VALID
     file.write("{0:.2f},".format(rmc["speed"]))
   else:
     file.write("0,")
-  #climb is not available
+  #vSpeed is not available
   file.write("0,")
   if rmc["course"] is not None:
-    valid |= 0x04
+    valid |= GNSS_POSITION_HEADING_VALID
     file.write("{0:.2f},".format(rmc["course"]))
   else:
     file.write("0,")
-  file.write("0X{0:02X}".format(valid))
-  file.write("\n")
-
-#write GVGNSAC - GNSS (extended) Accuracy [as first step take data from GGA sentence, later use GSA]
-def writeGVGNSAC (file, gga, rmc, timestamp):
-  valid = 0
-  file.write("{0:09d},0$GVGNSAC,{0:09d},".format(timestamp))
   #pdop is not available
   file.write("0,")
   if gga["hdop"] is not None:
-    valid |= 0x02
+    valid |= GNSS_POSITION_HDOP_VALID
     file.write("{0:.1f},".format(gga["hdop"]))
   else:
     file.write("0,")
   #vdop is not available
-  file.write("0,")
+  file.write("0,")    
   if gga["sat_used"] is not None:
-    valid |= 0x08
+    valid |= GNSS_POSITION_USAT_VALID
     file.write("{0:02d},".format(gga["sat_used"]))
   else:
     file.write("0,")
@@ -385,28 +425,37 @@ def writeGVGNSAC (file, gga, rmc, timestamp):
   file.write("0,")
   #visibleSatellites is not available
   file.write("0,")
-  #sigmaLatitude is not available
-  file.write("0,")
-  #sigmaLongitude is not available
+  #sigmaHPosition is not available
   file.write("0,")
   #sigmaAltitude is not available
   file.write("0,")
+  #sigmaHSpeed is not available
+  file.write("0,")   
+  #sigmaVSpeed is not available
+  file.write("0,")
+  #sigmaHeading is not available
+  file.write("0,")    
   #fix status
   #HACK: set 3D fix if there is a valid position
   if rmc["lat"] is not None:
-    valid |= 0x200
-    file.write("2,") #yes, the enum value 2 stands for a 3D fix
+    valid |= GNSS_POSITION_STAT_VALID
+    file.write("3,")
   else:
     file.write("0,")
   #fix type
   #HACK: set single frequency if there is a valid position
   if rmc["lat"] is not None:
-    valid |= 0x400
+    valid |= GNSS_POSITION_TYPE_VALID
     file.write("0X{0:08X},".format(0x00000001))#GNSS_FIX_TYPE_SINGLE_FREQUENCY      = 0x00000001
   else:
-    file.write("0,")
-  file.write("0X{0:03X}".format(valid))
+    file.write("0,")    
+  #activatedSystems is not available
+  file.write("0,")
+  #used_systems is not available
+  file.write("0,")    
+  file.write("0X{0:08X}".format(valid))
   file.write("\n")
+  return
 
 #GVGNSSAT - GNSS (extended) Satellite details [take data from GSV and GSA sentence]
 #  TODO: add support for status bits including extract list of used satellites from GSA
@@ -422,7 +471,7 @@ def writeGVGNSSAT (file, gsv_arr, timestamp):
     countdown = countdown-1
     if countdown >= 0:
       valid = 0x01
-      file.write("{0:09d},{1:02d}$GVGNSSAT,{0:09d},1,".format(timestamp,countdown))
+      file.write("{0:09d},{1:02d},$GVGNSSAT,{0:09d},1,".format(timestamp,countdown))
       if gsv_arr[0]["sat1_prn"] is not None:
         valid |= 0x02
         file.write("{0:02d},".format(gsv_arr[0]["sat1_prn"]))
@@ -443,14 +492,14 @@ def writeGVGNSSAT (file, gsv_arr, timestamp):
         file.write("{0:02d},".format(gsv_arr[0]["sat1_snr"]))
       else:
         file.write("0,")
-      #status bits not yet supported
-      file.write("0X00,0X{0:02X}".format(valid))
+      #status bits and posResidual not yet supported
+      file.write("0X00,0,0X{0:02X}".format(valid))
       file.write("\n")
     #gsv_arr[0], sat 2
     countdown = countdown-1
     if countdown >= 0:
       valid = 0x01
-      file.write("{0:09d},{1:02d}$GVGNSSAT,{0:09d},1,".format(timestamp,countdown))
+      file.write("{0:09d},{1:02d},$GVGNSSAT,{0:09d},1,".format(timestamp,countdown))
       if gsv_arr[0]["sat2_prn"] is not None:
         valid |= 0x02
         file.write("{0:02d},".format(gsv_arr[0]["sat2_prn"]))
@@ -471,14 +520,14 @@ def writeGVGNSSAT (file, gsv_arr, timestamp):
         file.write("{0:02d},".format(gsv_arr[0]["sat2_snr"]))
       else:
         file.write("0,")
-      #status bits not yet supported
-      file.write("0X00,0X{0:02X}".format(valid))
+      #status bits and posResidual not yet supported
+      file.write("0X00,0,0X{0:02X}".format(valid))
       file.write("\n")
     #gsv_arr[0], sat 3
     countdown = countdown-1
     if countdown >= 0:
       valid = 0x01
-      file.write("{0:09d},{1:02d}$GVGNSSAT,{0:09d},1,".format(timestamp,countdown))
+      file.write("{0:09d},{1:02d},$GVGNSSAT,{0:09d},1,".format(timestamp,countdown))
       if gsv_arr[0]["sat3_prn"] is not None:
         valid |= 0x02
         file.write("{0:02d},".format(gsv_arr[0]["sat3_prn"]))
@@ -499,14 +548,14 @@ def writeGVGNSSAT (file, gsv_arr, timestamp):
         file.write("{0:02d},".format(gsv_arr[0]["sat3_snr"]))
       else:
         file.write("0,")
-      #status bits not yet supported
-      file.write("0X00,0X{0:02X}".format(valid))
+      #status bits and posResidual not yet supported
+      file.write("0X00,0,0X{0:02X}".format(valid))
       file.write("\n")
     #gsv_arr[0], sat 4
     countdown = countdown-1
     if countdown >= 0:
       valid = 0x01
-      file.write("{0:09d},{1:02d}$GVGNSSAT,{0:09d},1,".format(timestamp,countdown))
+      file.write("{0:09d},{1:02d},$GVGNSSAT,{0:09d},1,".format(timestamp,countdown))
       if gsv_arr[0]["sat4_prn"] is not None:
         valid |= 0x02
         file.write("{0:02d},".format(gsv_arr[0]["sat4_prn"]))
@@ -527,14 +576,14 @@ def writeGVGNSSAT (file, gsv_arr, timestamp):
         file.write("{0:02d},".format(gsv_arr[0]["sat4_snr"]))
       else:
         file.write("0,")
-      #status bits not yet supported
-      file.write("0X00,0X{0:02X}".format(valid))
+      #status bits and posResidual not yet supported
+      file.write("0X00,0,0X{0:02X}".format(valid))
       file.write("\n")          
     #gsv_arr[1], sat 1
     countdown = countdown-1
     if countdown >= 0:
       valid = 0x01
-      file.write("{0:09d},{1:02d}$GVGNSSAT,{0:09d},1,".format(timestamp,countdown))
+      file.write("{0:09d},{1:02d},$GVGNSSAT,{0:09d},1,".format(timestamp,countdown))
       if gsv_arr[1]["sat1_prn"] is not None:
         valid |= 0x02
         file.write("{0:02d},".format(gsv_arr[1]["sat1_prn"]))
@@ -555,14 +604,14 @@ def writeGVGNSSAT (file, gsv_arr, timestamp):
         file.write("{0:02d},".format(gsv_arr[1]["sat1_snr"]))
       else:
         file.write("0,")
-      #status bits not yet supported
-      file.write("0X00,0X{0:02X}".format(valid))
+      #status bits and posResidual not yet supported
+      file.write("0X00,0,0X{0:02X}".format(valid))
       file.write("\n")
     #gsv_arr[1], sat 2
     countdown = countdown-1
     if countdown >= 0:
       valid = 0x01
-      file.write("{0:09d},{1:02d}$GVGNSSAT,{0:09d},1,".format(timestamp,countdown))
+      file.write("{0:09d},{1:02d},$GVGNSSAT,{0:09d},1,".format(timestamp,countdown))
       if gsv_arr[1]["sat2_prn"] is not None:
         valid |= 0x02
         file.write("{0:02d},".format(gsv_arr[1]["sat2_prn"]))
@@ -583,14 +632,14 @@ def writeGVGNSSAT (file, gsv_arr, timestamp):
         file.write("{0:02d},".format(gsv_arr[1]["sat2_snr"]))
       else:
         file.write("0,")
-      #status bits not yet supported
-      file.write("0X00,0X{0:02X}".format(valid))
+      #status bits and posResidual not yet supported
+      file.write("0X00,0,0X{0:02X}".format(valid))
       file.write("\n")
     #gsv_arr[1], sat 3
     countdown = countdown-1
     if countdown >= 0:
       valid = 0x01
-      file.write("{0:09d},{1:02d}$GVGNSSAT,{0:09d},1,".format(timestamp,countdown))
+      file.write("{0:09d},{1:02d},$GVGNSSAT,{0:09d},1,".format(timestamp,countdown))
       if gsv_arr[1]["sat3_prn"] is not None:
         valid |= 0x02
         file.write("{0:02d},".format(gsv_arr[1]["sat3_prn"]))
@@ -611,14 +660,14 @@ def writeGVGNSSAT (file, gsv_arr, timestamp):
         file.write("{0:02d},".format(gsv_arr[1]["sat3_snr"]))
       else:
         file.write("0,")
-      #status bits not yet supported
-      file.write("0X00,0X{0:02X}".format(valid))
+      #status bits and posResidual not yet supported
+      file.write("0X00,0,0X{0:02X}".format(valid))
       file.write("\n")
     #gsv_arr[1], sat 4
     countdown = countdown-1
     if countdown >= 0:
       valid = 0x01
-      file.write("{0:09d},{1:02d}$GVGNSSAT,{0:09d},1,".format(timestamp,countdown))
+      file.write("{0:09d},{1:02d},$GVGNSSAT,{0:09d},1,".format(timestamp,countdown))
       if gsv_arr[1]["sat4_prn"] is not None:
         valid |= 0x02
         file.write("{0:02d},".format(gsv_arr[1]["sat4_prn"]))
@@ -639,14 +688,14 @@ def writeGVGNSSAT (file, gsv_arr, timestamp):
         file.write("{0:02d},".format(gsv_arr[1]["sat4_snr"]))
       else:
         file.write("0,")
-      #status bits not yet supported
-      file.write("0X00,0X{0:02X}".format(valid))
+      #status bits and posResidual not yet supported
+      file.write("0X00,0,0X{0:02X}".format(valid))
       file.write("\n")   
     #gsv_arr[2], sat 1
     countdown = countdown-1
     if countdown >= 0:
       valid = 0x01
-      file.write("{0:09d},{1:02d}$GVGNSSAT,{0:09d},1,".format(timestamp,countdown))
+      file.write("{0:09d},{1:02d},$GVGNSSAT,{0:09d},1,".format(timestamp,countdown))
       if gsv_arr[2]["sat1_prn"] is not None:
         valid |= 0x02
         file.write("{0:02d},".format(gsv_arr[2]["sat1_prn"]))
@@ -667,14 +716,14 @@ def writeGVGNSSAT (file, gsv_arr, timestamp):
         file.write("{0:02d},".format(gsv_arr[2]["sat1_snr"]))
       else:
         file.write("0,")
-      #status bits not yet supported
-      file.write("0X00,0X{0:02X}".format(valid))
+      #status bits and posResidual not yet supported
+      file.write("0X00,0,0X{0:02X}".format(valid))
       file.write("\n")
     #gsv_arr[2], sat 2
     countdown = countdown-1
     if countdown >= 0:
       valid = 0x01
-      file.write("{0:09d},{1:02d}$GVGNSSAT,{0:09d},1,".format(timestamp,countdown))
+      file.write("{0:09d},{1:02d},$GVGNSSAT,{0:09d},1,".format(timestamp,countdown))
       if gsv_arr[2]["sat2_prn"] is not None:
         valid |= 0x02
         file.write("{0:02d},".format(gsv_arr[2]["sat2_prn"]))
@@ -695,14 +744,14 @@ def writeGVGNSSAT (file, gsv_arr, timestamp):
         file.write("{0:02d},".format(gsv_arr[2]["sat2_snr"]))
       else:
         file.write("0,")
-      #status bits not yet supported
-      file.write("0X00,0X{0:02X}".format(valid))
+      #status bits and posResidual not yet supported
+      file.write("0X00,0,0X{0:02X}".format(valid))
       file.write("\n")
     #gsv_arr[2], sat 3
     countdown = countdown-1
     if countdown >= 0:
       valid = 0x01
-      file.write("{0:09d},{1:02d}$GVGNSSAT,{0:09d},1,".format(timestamp,countdown))
+      file.write("{0:09d},{1:02d},$GVGNSSAT,{0:09d},1,".format(timestamp,countdown))
       if gsv_arr[2]["sat3_prn"] is not None:
         valid |= 0x02
         file.write("{0:02d},".format(gsv_arr[2]["sat3_prn"]))
@@ -723,14 +772,14 @@ def writeGVGNSSAT (file, gsv_arr, timestamp):
         file.write("{0:02d},".format(gsv_arr[2]["sat3_snr"]))
       else:
         file.write("0,")
-      #status bits not yet supported
-      file.write("0X00,0X{0:02X}".format(valid))
+      #status bits and posResidual not yet supported
+      file.write("0X00,0,0X{0:02X}".format(valid))
       file.write("\n")
     #gsv_arr[2], sat 4
     countdown = countdown-1
     if countdown >= 0:
       valid = 0x01
-      file.write("{0:09d},{1:02d}$GVGNSSAT,{0:09d},1,".format(timestamp,countdown))
+      file.write("{0:09d},{1:02d},$GVGNSSAT,{0:09d},1,".format(timestamp,countdown))
       if gsv_arr[2]["sat4_prn"] is not None:
         valid |= 0x02
         file.write("{0:02d},".format(gsv_arr[2]["sat4_prn"]))
@@ -751,8 +800,8 @@ def writeGVGNSSAT (file, gsv_arr, timestamp):
         file.write("{0:02d},".format(gsv_arr[2]["sat4_snr"]))
       else:
         file.write("0,")
-      #status bits not yet supported
-      file.write("0X00,0X{0:02X}".format(valid))
+      #status bits and posResidual not yet supported
+      file.write("0X00,0,0X{0:02X}".format(valid))
       file.write("\n")   
 
 ##################################################################
@@ -762,7 +811,7 @@ def writeGVGNSSAT (file, gsv_arr, timestamp):
 #write GVSNSVSP: Vehicle Speed
 def writeGVSNSVSP (file, rmc, timestamp):
   valid = 0
-  file.write("{0:09d},0$GVSNSVSP,{0:09d},".format(timestamp))
+  file.write("{0:09d},0,$GVSNSVSP,{0:09d},".format(timestamp))
   if rmc["speed"] is not None:
     valid |= 0x01
     file.write("{0:.2f},".format(rmc["speed"]))
@@ -774,7 +823,7 @@ def writeGVSNSVSP (file, rmc, timestamp):
 #write GVSNSGYR: Gyroscope Data
 def writeGVSNSGYR (file, rmc, prev_rmc, timestamp, prev_timestamp):
   valid = 0
-  file.write("{0:09d},0$GVSNSGYR,{0:09d},".format(timestamp))
+  file.write("{0:09d},0,$GVSNSGYR,{0:09d},".format(timestamp))
   #yaw rate is delta_heading / delta_time
   if (rmc["course"] is not None) and (prev_rmc["course"] is not None) and (timestamp > prev_timestamp):
     valid |= 0x01
@@ -799,7 +848,7 @@ def writeGVSNSGYR (file, rmc, prev_rmc, timestamp, prev_timestamp):
 #write GVSNSWHE: Wheel tick data Data (only rear right and left wheels)
 def writeGVSNSWHE (file, rmc, prev_rmc, timestamp, prev_timestamp):
   #this is the only sentence without valid bits
-  file.write("{0:09d},0$GVSNSWHE,{0:09d},".format(timestamp))
+  file.write("{0:09d},0,$GVSNSWHE,{0:09d},".format(timestamp))
   #yaw rate is delta_heading / delta_time
   if (rmc["speed"] is not None) and (rmc["course"] is not None) and (prev_rmc["course"] is not None) and (timestamp > prev_timestamp):
     delta_heading = - (rmc["course"] - prev_rmc["course"]) #course is clockwise, yaw rate is counter clock wise
@@ -915,8 +964,8 @@ if (c_SNS):
   fo.write("#Wheel rolling cirumference: {0:.3f}m\n".format(c_wheel_circ))
   fo.write("#Wheel ticks per revolution: {0:d}\n".format(c_wheel_tick_rev))
 fo.write("#By courtesy of Continental Automotive\n")
-fo.write("0,0$GVGNSVER,2,0,0\n")
-fo.write("0,0$GVSNSVER,2,0,0\n")
+fo.write("0,0$GVGNSVER,4,0,0\n")
+fo.write("0,0$GVSNSVER,4,0,0\n")
 
 
 #
@@ -967,9 +1016,8 @@ for line in fi:
 
     if g_write_genivi_log:
       g_write_genivi_log = False
-      writeGVGNSP  (fo, g_gga, g_rmc, g_timestamp)
-      writeGVGNSC  (fo, g_gga, g_rmc, g_timestamp)
-      writeGVGNSAC (fo, g_gga, g_rmc, g_timestamp)
+      writeGVGNSTIM(fo, g_gga, g_rmc, g_timestamp)
+      writeGVGNSPOS(fo, g_gga, g_rmc, g_timestamp)
       writeGVGNSSAT(fo, g_gsv_arr, g_timestamp)
       #write SNS data if requested
       if c_SNS:

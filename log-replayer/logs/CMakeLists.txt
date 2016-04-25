@@ -19,4 +19,6 @@
 #copy log files to facilitate testing
 configure_file(geneve-cologny.log geneve-cologny.log COPYONLY)
 configure_file(20100411_Geko_Regensburg_short.log 20100411_Geko_Regensburg_short.log COPYONLY)
+configure_file(20100403_Z205_Switzerland_short.log 20100403_Z205_Switzerland_short.log COPYONLY)
+configure_file(20160209_RPi_GENIVI_Regensburg.log 20160209_RPi_GENIVI_Regensburg.log COPYONLY)
 

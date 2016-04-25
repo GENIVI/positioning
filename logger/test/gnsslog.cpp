@@ -94,7 +94,7 @@ void gnssTimeToString(uint64_t timestamp, uint16_t countdown, const TGNSSTime* t
         snprintf(
         str,
         size-1, //ensure that there is space for null-terminator
-        "%"PRIu64",%"PRIu16",$GVGNSTIM,%"PRIu64",%04"PRIu16",%02"PRIu8",%02"PRIu8",%02"PRIu8",%02"PRIu8",%02"PRIu8",%03"PRIu16",%02"PRIi8",%u,0X%08X",
+        "%"PRIu64",%"PRIu16",$GVGNSTIM,%"PRIu64",%04"PRIu16",%02"PRIu8",%02"PRIu8",%02"PRIu8",%02"PRIu8",%02"PRIu8",%03"PRIu16",%u,%02"PRIi8",0X%08X",
         timestamp,
         countdown,
         time->timestamp,

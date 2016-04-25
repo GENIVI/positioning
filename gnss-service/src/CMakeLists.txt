@@ -31,7 +31,7 @@ include_directories("${PROJECT_SOURCE_DIR}/api")
 
 find_package(PkgConfig)
 
-set(LIBRARIES pthread)
+set(LIBRARIES pthread m)
 
 if(WITH_DLT)
     add_definitions("-DDLT_ENABLED=1")
