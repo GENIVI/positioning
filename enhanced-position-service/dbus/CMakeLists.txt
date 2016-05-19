@@ -74,8 +74,6 @@ message(STATUS "---------------------------------------------------------")
 if(WITH_TESTS)
     add_subdirectory(test)
     message(STATUS "---------------------------------------------------------")
-    add_subdirectory(test/compliance-test)
-    message(STATUS "---------------------------------------------------------")
 endif()
 
 

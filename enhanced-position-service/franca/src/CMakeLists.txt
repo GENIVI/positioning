@@ -18,7 +18,7 @@ set(CMAKE_VERBOSE_MAKEFILE on)
 set(CMAKE_CXX_FLAGS "-Wall -std=c++0x")
 set(CMAKE_BUILD_TYPE Debug)
 
-find_package(CommonAPI 3.1.3 REQUIRED)
+find_package(CommonAPI 3.1.5 REQUIRED)
 
 message(STATUS "WITH_DLT = ${WITH_DLT}")
 message(STATUS "WITH_GPSD = ${WITH_GPSD}")
@@ -37,7 +37,7 @@ if (WITH_FRANCA_DBUS_INTERFACE)
 
     message(STATUS "ENHANCED-POSITION-SERVICE-FRANCA-DBUS")
     
-    find_package(CommonAPI-DBus 3.1.3 REQUIRED)
+    find_package(CommonAPI-DBus 3.1.5 REQUIRED)
 
     # CommonAPI
     pkg_check_modules (DBUS "dbus-1 >= 1.4")
@@ -111,10 +111,10 @@ if (WITH_FRANCA_SOMEIP_INTERFACE)
     message(STATUS "ENHANCED-POSITION-SERVICE-FRANCA-SOMEIP")
 
     find_package( Boost 1.54 COMPONENTS system thread log REQUIRED )
-    find_package (CommonAPI-SomeIP 3.1.3 REQUIRED)
+    find_package (CommonAPI-SomeIP 3.1.5 REQUIRED)
 
     # CommonAPI
-    pkg_check_modules (COMMONAPI_SOMEIP "CommonAPI-Someip >= 3.1")
+    pkg_check_modules (COMMONAPI_SOMEIP "CommonAPI-SomeIP >= 3.1")
 
     FILE(GLOB PRJ_PROXY_GEN_SRCS ${PRJ_SRC_GEN_PATH}/*SomeIPProxy.cpp ${PRJ_SRC_GEN_PATH}/*Types.cpp ${PRJ_SRC_GEN_PATH}/*SomeIPDeployment.cpp)
     FILE(GLOB PRJ_STUB_GEN_SRCS ${PRJ_SRC_GEN_PATH}/*SomeIPStub*.cpp ${PRJ_SRC_GEN_PATH}/*Types.cpp  ${PRJ_SRC_GEN_PATH}/*SomeIPDeployment.cpp ${PRJ_SRC_GEN_PATH}/*StubDefault.cpp)

@@ -20,10 +20,10 @@
 #include "log.h"
 
 //EnhancedPosition-interface version
-#define VER_MAJOR 3
+#define VER_MAJOR 4
 #define VER_MINOR 0
 #define VER_MICRO 0
-#define VER_DATE "05-08-2014"
+#define VER_DATE "25-04-2016"
 
 DLT_IMPORT_CONTEXT(gCtx);
 
@@ -293,7 +293,7 @@ bool EnhancedPositionStubImpl::checkMajorVersion(int expectedMajor)
 
 void EnhancedPositionStubImpl::run()
 {
-    if(!checkMajorVersion(3))
+    if(!checkMajorVersion(4))
     {
         exit(EXIT_FAILURE);
     }

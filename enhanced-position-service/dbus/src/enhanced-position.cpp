@@ -81,10 +81,10 @@ EnhancedPosition::~EnhancedPosition()
 {
   ::DBus::Struct< uint16_t, uint16_t, uint16_t, std::string > Version;
 
-  Version._1 = 3;
+  Version._1 = 4;
   Version._2 = 0;
   Version._3 = 0;
-  Version._4 = std::string("05-08-2014");
+  Version._4 = std::string("25-04-2016");
 
   return Version;
 }

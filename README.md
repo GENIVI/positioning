@@ -10,6 +10,7 @@ The Positioning repository is a collection of APIs and corresponding proofs of c
 * LogReplayer
 * PositionWebService
 
+![architecture][architecture.png]
 
 ===============================
 Directory Structure
