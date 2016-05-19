@@ -10,8 +10,6 @@ The Positioning repository is a collection of APIs and corresponding proofs of c
 * LogReplayer
 * PositionWebService
 
-![architecture][architecture.png]
-
 ===============================
 Directory Structure
 ===============================
@@ -26,9 +24,13 @@ Directory Structure
 * sensors-service             //sensors-service API + PoC 
 * position-web-servce         //position-web-service PoC
 * architecture.png            //architecture overview
-* build-all.sh                //script to build the PoCs (usage: build-all.sh help) 
 * run-test.sh                 //script to run a quick test for each PoC (usage: run-test.sh help) 
 * positioning_x.y.bb          //version x.y of a Yocto recipe for the positioning PoCs
+
+===============================
+Architecture
+===============================
+![architecture](architecture.png)  
 
 ===============================
 How To Build
