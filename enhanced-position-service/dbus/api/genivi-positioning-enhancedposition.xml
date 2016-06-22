@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN" "http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
 <?xml-stylesheet type="text/xsl" href="introspect.xsl"?>
 
 <!-- SPDX-License-Identifier: MPL-2.0
@@ -67,7 +66,11 @@
           <line>dictionary = array of tuples (key,value)</line>
           <line>Invalid data is not be returned to the client application</line>
           <line>The vehicle axis system is defined by ISO 8855: In short, the X-axis pointing is forwards, the Y-axis is pointing left, the Z-axis is pointing upwards</line>
-          <line>key = enum(LATITUDE,LONGITUDE,ALTITUDE,HEADING,SPEED,CLIMB,ROLL_RATE,PITCH_RATE,YAW_RATE,PDOP,HDOP,VDOP,USED_SATELLITES,TRACKED_SATELLITES,VISIBLE_SATELLITES,SIGMA_HPOSITION,SIGMA_ALTITUDE,SIGMA_HEADING,SIGMA_SPEED,SIGMA_CLIMB,GNSS_FIX_STATUS,DR_STATUS,USED_SATELLITESYSTEMS)</line>
+          <line>key = enum(LATITUDE,LONGITUDE,ALTITUDE,HEADING,SPEED,CLIMB,</line>
+          <line>ROLL_RATE,PITCH_RATE,YAW_RATE,PDOP,HDOP,VDOP,</line>
+          <line>USED_SATELLITES,TRACKED_SATELLITES,VISIBLE_SATELLITES,</line>
+          <line>SIGMA_HPOSITION,SIGMA_ALTITUDE,SIGMA_HEADING,SIGMA_SPEED,SIGMA_CLIMB,</line>
+          <line>GNSS_FIX_STATUS,DR_STATUS,USED_SATELLITESYSTEMS)</line>
           <line>key = LATITUDE, value = value of type 'd', that expresses the WGS84 latitude of the current position in degrees. Range [-90:+90]. Example: 48.053250</line>
           <line>key = LONGITUDE, value = value of type 'd', that expresses the WGS84 longitude of the current position in degrees. Range [-180:+180]. Example: 8.324500</line>
           <line>key = ALTITUDE, value = value of type 'd', that expresses the altitude above the sea level of the current position in meters</line>

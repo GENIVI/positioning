@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN" "http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
 <?xml-stylesheet type="text/xsl" href="introspect.xsl"?>
 
 <!-- SPDX-License-Identifier: MPL-2.0
