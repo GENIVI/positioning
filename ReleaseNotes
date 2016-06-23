@@ -16,6 +16,7 @@ Prefixes have been used to distinguish tags referring to different components:
  ENPOS -> EnhancedPositionService
 
 The versions used in the tags must always match the versions of the GENIVI components specifications contained in the folder 'doc'.
+
 Example: 
 The tag ENPOS-4.0.0 identifies a stable version of the EnhancedPositionService that contains the document
 GENIVI_EnhancedPositionService_ComponentSpecification.pdf version 4.0.0.
@@ -32,16 +33,16 @@ GNSS-3.0.0   Stable release of GNSSService v3.0.0 rel
 
 Changes
 ------------
-|  Date   | Jira Ticket |   Description
-22-06-2016     GT-3345:   "improve layout of interface description generated from xml files"
-14-01-2016     GT-3039    "SNS API: In wheel.h, for wheel ticks: Provide wheel ticks since the
-                           last update are provided instead of the rolling counter"
-02-12-2015     GT-3219    "Extend GNSS API time structure to provide information about
-                           leap seconds and time scale"
-30-11-2015     GT-3206    "GNSS/SNS API: Extend API to provide sensor status information"
-28-10-1015     GT-3151    "Extend GNSS API to allow to set the satellite system"
-28-10-1015     GT-3152    "Extend EnhancedPositioning Configuration API to select a set of
-                           Satellite systems instead of only a single satellite system"
+|   Date    | Jira Ticket |      Description     |
+ 22-06-2016     GT-3345:   "improve layout of interface description generated from xml files"
+ 14-01-2016     GT-3039    "SNS API: In wheel.h, for wheel ticks: Provide wheel ticks since the
+                            last update are provided instead of the rolling counter"
+ 02-12-2015     GT-3219    "Extend GNSS API time structure to provide information about
+                            leap seconds and time scale"
+ 30-11-2015     GT-3206    "GNSS/SNS API: Extend API to provide sensor status information"
+ 28-10-1015     GT-3151    "Extend GNSS API to allow to set the satellite system"
+ 28-10-1015     GT-3152    "Extend EnhancedPositioning Configuration API to select a set of
+                            Satellite systems instead of only a single satellite system"
 
 Note: GT-<number> is the ID of a GENIVI Jira ticket that was created to implement
       a feature or fix a bug.Please see https://collab.genivi.org/issues/browse/

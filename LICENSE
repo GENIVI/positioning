@@ -2,8 +2,6 @@ The source code of the positioning proofs of concept is mainly licensed under th
  
 Some files contained in the current repositry are subject to the terms of other licenses:
 * The documentation is published under the terms of the Creative Commons Attribution Share-Alike 3.0 License 
-* The enhanced-position-service contains some files that were generated using the Nokia Qt tool 'qdbusxml2cpp'.
-  These files report the note 'Copyright (C) 2011 Nokia Corporation'
 
 Mozilla Public License Version 2.0
 ==================================
