@@ -23,11 +23,11 @@ GENIVI_EnhancedPositionService_ComponentSpecification.pdf version 4.0.0.
 
 Versions
 ------------
-ENPOS-4.0.0  Stableease of EnhancedPositionService v4.0.0
+ENPOS-4.0.0  Stable release of EnhancedPositionService v4.0.0
 SNS-4.0.0    Stable release of SensorsService v4.0.0
 GNSS-4.0.0   Stable release of GNSSService v4.0.0 rel
 
-ENPOS-3.0.0  Stableease of EnhancedPositionService v3.0.0
+ENPOS-3.0.0  Stable release of EnhancedPositionService v3.0.0
 SNS-3.0.1    Stable release of SensorsService v3.0.1
 GNSS-3.0.0   Stable release of GNSSService v3.0.0 rel
 
