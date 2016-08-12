@@ -356,7 +356,7 @@ void EnhancedPositionStubImpl::GetPositionInfo(const std::shared_ptr<CommonAPI::
 
             if (position.validityBits & GNSS_POSITION_ALTITUDEMSL_VALID)
             {
-                data[EnhancedPositionServiceTypes::PositionInfoKey::ALTITUDE] = position.altitudeMSL;
+                data[EnhancedPositionServiceTypes::PositionInfoKey::ALTITUDE] = (double) position.altitudeMSL;
             }
         }
 
@@ -364,17 +364,17 @@ void EnhancedPositionStubImpl::GetPositionInfo(const std::shared_ptr<CommonAPI::
         {
             if (position.validityBits & GNSS_POSITION_HEADING_VALID)
             {
-                data[EnhancedPositionServiceTypes::PositionInfoKey::HEADING] = position.heading;
+                data[EnhancedPositionServiceTypes::PositionInfoKey::HEADING] = (double) position.heading;
             }
 
             if (position.validityBits & GNSS_POSITION_HSPEED_VALID)
             {
-                data[EnhancedPositionServiceTypes::PositionInfoKey::SPEED] = position.hSpeed;
+                data[EnhancedPositionServiceTypes::PositionInfoKey::SPEED] = (double) position.hSpeed;
             }
 
             if (position.validityBits & GNSS_POSITION_VSPEED_VALID)
             {
-                data[EnhancedPositionServiceTypes::PositionInfoKey::CLIMB] = position.vSpeed;
+                data[EnhancedPositionServiceTypes::PositionInfoKey::CLIMB] = (double) position.vSpeed;
             }
         }
     }
