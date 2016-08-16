@@ -39,8 +39,20 @@ if (WITH_FRANCA_DBUS_INTERFACE)
     
     find_package(CommonAPI-DBus 3.1.5 REQUIRED)
 
+
     # CommonAPI
-    pkg_check_modules (DBUS "dbus-1 >= 1.4")
+
+    # DBus Path
+    if (DBUS_LIB_PATH)
+    # The patched DBus is located under a specific folder 
+      message(STATUS "DBUS_LIB_PATH = " ${DBUS_LIB_PATH})
+      set(DBUS_INCLUDE_DIRS ${DBUS_LIB_PATH}/include/dbus-1.0 ${DBUS_LIB_PATH}/lib/dbus-1.0/include)
+      set(DBUS_LIBDIR ${DBUS_LIB_PATH}/lib)
+      set(DBUS_LIBRARIES ${DBUS_LIB_PATH}/lib/libdbus-1.so)
+    else()
+      # There's a package config file in the PATH
+      pkg_check_modules (DBUS "dbus-1 >= 1.4")
+    endif()
     pkg_check_modules (COMMONAPI "CommonAPI >= 3.1")
     pkg_check_modules (COMMONAPI_DBUS "CommonAPI-DBus >= 3.1")
 
