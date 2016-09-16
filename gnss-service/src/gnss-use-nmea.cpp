@@ -124,32 +124,32 @@ void setGNSSStatus(EGNSSStatus newStatus)
 }   
 
 /**
- * Convert GPS data from NMEA parser to TGNSSPosition struct
- * @param gps_data [IN] GPS data decoded from NMEA parser
+ * Convert GNSS data from NMEA parser to TGNSSPosition struct
+ * @param gns_data [IN] GNSS data decoded from NMEA parser
  * @param timestamp [IN] timestamp in milliseconds
- * @param gnss_pos [OUT] TGNSSPosition struct which will be filled with gps_data and timestamp
+ * @param gnss_pos [OUT] TGNSSPosition struct which will be filled with gns_data and timestamp
  * @return conversion has been successful
  */
-bool extractPosition(const GPS_DATA& gps_data, uint64_t timestamp, TGNSSPosition& gnss_pos)
+bool extractPosition(const GNS_DATA& gns_data, uint64_t timestamp, TGNSSPosition& gnss_pos)
 {
     gnss_pos.validityBits = 0;    
     
     gnss_pos.timestamp = timestamp;
-    if (gps_data.valid & GPS_DATA_LAT) 
+    if (gns_data.valid & GNS_DATA_LAT)
     {
-        gnss_pos.latitude = gps_data.lat;
+        gnss_pos.latitude = gns_data.lat;
         gnss_pos.validityBits |= GNSS_POSITION_LATITUDE_VALID; 
     }
-    if (gps_data.valid & GPS_DATA_LON) 
+    if (gns_data.valid & GNS_DATA_LON)
     {
-        gnss_pos.longitude = gps_data.lon;    
+        gnss_pos.longitude = gns_data.lon;
         gnss_pos.validityBits |= GNSS_POSITION_LONGITUDE_VALID; 
     }
-    if (gps_data.valid & GPS_DATA_ALT) 
+    if (gns_data.valid & GNS_DATA_ALT)
     {
-        gnss_pos.altitudeMSL = gps_data.alt;
+        gnss_pos.altitudeMSL = gns_data.alt;
         gnss_pos.validityBits |= GNSS_POSITION_ALTITUDEMSL_VALID;
-        if (gps_data.valid & GPS_DATA_GEOID)
+        if (gns_data.valid & GNS_DATA_GEOID)
         {
             //Geoid separation terminology might be difficult to understand
             //You can cross check your NMEA output and calculation results
@@ -157,51 +157,51 @@ bool extractPosition(const GPS_DATA& gps_data, uint64_t timestamp, TGNSSPosition
             //  http://www.unavco.org/software/geodetic-utilities/geoid-height-calculator/geoid-height-calculator.html
             //  http://earth-info.nga.mil/GandG/wgs84/gravitymod/wgs84_180/intptWhel.html
             //  http://geographiclib.sourceforge.net/cgi-bin/GeoidEval
-            gnss_pos.altitudeEll = gps_data.alt+gps_data.geoid;
+            gnss_pos.altitudeEll = gns_data.alt+gns_data.geoid;
             gnss_pos.validityBits |= GNSS_POSITION_ALTITUDEELL_VALID;
         }
     }
-    if (gps_data.valid & GPS_DATA_SPEED) 
+    if (gns_data.valid & GNS_DATA_SPEED)
     {
-        gnss_pos.hSpeed = gps_data.speed;
+        gnss_pos.hSpeed = gns_data.speed;
         gnss_pos.validityBits |= GNSS_POSITION_HSPEED_VALID;
     }
     gnss_pos.vSpeed = 9999; //not available
-    if (gps_data.valid & GPS_DATA_SPEED) 
+    if (gns_data.valid & GNS_DATA_COURSE)
     {
-        gnss_pos.heading = gps_data.course;
-        gnss_pos.validityBits |= GPS_DATA_COURSE;
+        gnss_pos.heading = gns_data.course;
+        gnss_pos.validityBits |= GNSS_POSITION_HEADING_VALID;
     }
-    if (gps_data.valid & GPS_DATA_PDOP) 
+    if (gns_data.valid & GNS_DATA_PDOP)
     {
-        gnss_pos.pdop = gps_data.pdop;
+        gnss_pos.pdop = gns_data.pdop;
         gnss_pos.validityBits |= GNSS_POSITION_PDOP_VALID;
     }
-    if (gps_data.valid & GPS_DATA_HDOP) 
+    if (gns_data.valid & GNS_DATA_HDOP)
     {
-        gnss_pos.hdop = gps_data.hdop;
+        gnss_pos.hdop = gns_data.hdop;
         gnss_pos.validityBits |= GNSS_POSITION_HDOP_VALID;
     }
-    if (gps_data.valid & GPS_DATA_VDOP) 
+    if (gns_data.valid & GNS_DATA_VDOP)
     {
-        gnss_pos.vdop = gps_data.vdop;
+        gnss_pos.vdop = gns_data.vdop;
         gnss_pos.validityBits |= GNSS_POSITION_VDOP_VALID;
     }
-    if (gps_data.valid & GPS_DATA_USAT) 
+    if (gns_data.valid & GNS_DATA_USAT)
     {
-        gnss_pos.usedSatellites = gps_data.usat;
+        gnss_pos.usedSatellites = gns_data.usat;
         gnss_pos.validityBits |= GNSS_POSITION_USAT_VALID;
     }
     gnss_pos.trackedSatellites = 9999; //not available
     gnss_pos.visibleSatellites = 9999; //not available
-    if (gps_data.valid & GPS_DATA_HACC) 
+    if (gns_data.valid & GNS_DATA_HACC)
     {
-        gnss_pos.sigmaHPosition = gps_data.hacc;
+        gnss_pos.sigmaHPosition = gns_data.hacc;
         gnss_pos.validityBits |= GNSS_POSITION_SHPOS_VALID;
     }
-    if (gps_data.valid & GPS_DATA_HACC) 
+    if (gns_data.valid & GNS_DATA_VACC)
     {
-        gnss_pos.sigmaAltitude = gps_data.vacc;
+        gnss_pos.sigmaAltitude = gns_data.vacc;
         gnss_pos.validityBits |= GNSS_POSITION_SALT_VALID;
     }
 
@@ -211,14 +211,14 @@ bool extractPosition(const GPS_DATA& gps_data, uint64_t timestamp, TGNSSPosition
 
     gnss_pos.validityBits |= GNSS_POSITION_STAT_VALID; //always valid
     gnss_pos.fixStatus = GNSS_FIX_STATUS_NO;
-    if (gps_data.valid & GPS_DATA_FIX2D)
+    if (gns_data.valid & GNS_DATA_FIX2D)
     {
-        if (gps_data.fix2d)
+        if (gns_data.fix2d)
         {
             gnss_pos.fixStatus = GNSS_FIX_STATUS_2D;
         }
     }
-    if ( (gps_data.valid & GPS_DATA_FIX3D) && (gps_data.fix3d) )
+    if ( (gns_data.valid & GNS_DATA_FIX3D) && (gns_data.fix3d) )
     {
         gnss_pos.fixStatus = GNSS_FIX_STATUS_3D;
     }
@@ -230,36 +230,44 @@ bool extractPosition(const GPS_DATA& gps_data, uint64_t timestamp, TGNSSPosition
     gnss_pos.validityBits |= GNSS_POSITION_ASYS_VALID;
     gnss_pos.usedSystems = GNSS_SYSTEM_GPS;
     gnss_pos.validityBits |= GNSS_POSITION_USYS_VALID;
-
+    //check whether GLONASS is active in addition to GPS
+    //TODO check explicitly for GPS to cover GLONASS only
+    if ( (gns_data.valid_ext & GNS_DATA_USAT_GLO) && (gns_data.usat_glo > 0) )
+    {
+        gnss_pos.activatedSystems |= GNSS_SYSTEM_GLONASS;
+        gnss_pos.usedSystems |= GNSS_SYSTEM_GLONASS;
+        gnss_pos.fixTypeBits |= GNSS_FIX_TYPE_MULTI_CONSTELLATION;
+    }
+    
     return true;
 }
 
 /**
- * Convert GPS data from NMEA parser to TGNSSTime struct
- * @param gps_data [IN] GPS data decoded from NMEA parser
+ * Convert GNSS data from NMEA parser to TGNSSTime struct
+ * @param gns_data [IN] GNSS data decoded from NMEA parser
  * @param timestamp [IN] timestamp in milliseconds
- * @param gnss_time [OUT] TGNSSTime struct which will be filled with gps_data and timestamp
+ * @param gnss_time [OUT] TGNSSTime struct which will be filled with gns_data and timestamp
  * @return conversion has been successful
  */
-bool extractTime(const GPS_DATA& gps_data, uint64_t timestamp, TGNSSTime& gnss_time)
+bool extractTime(const GNS_DATA& gns_data, uint64_t timestamp, TGNSSTime& gnss_time)
 {
     gnss_time.validityBits = 0;    
     
     gnss_time.timestamp = timestamp;
     
-    if (gps_data.valid & GPS_DATA_TIME) 
+    if (gns_data.valid & GNS_DATA_TIME)
     {
-        gnss_time.hour = gps_data.time_hh;
-        gnss_time.minute = gps_data.time_mm;
-        gnss_time.second = gps_data.time_ss;
-        gnss_time.ms = gps_data.time_ms;
+        gnss_time.hour = gns_data.time_hh;
+        gnss_time.minute = gns_data.time_mm;
+        gnss_time.second = gns_data.time_ss;
+        gnss_time.ms = gns_data.time_ms;
         gnss_time.validityBits |= GNSS_TIME_TIME_VALID; 
     }
-    if (gps_data.valid & GPS_DATA_DATE) 
+    if (gns_data.valid & GNS_DATA_DATE)
     {
-        gnss_time.year = gps_data.date_yyyy;
-        gnss_time.month = gps_data.date_mm-1;
-        gnss_time.day = gps_data.date_dd;
+        gnss_time.year = gns_data.date_yyyy;
+        gnss_time.month = gns_data.date_mm-1;
+        gnss_time.day = gns_data.date_dd;
         gnss_time.validityBits |= GNSS_TIME_DATE_VALID; 
     }
 
@@ -353,6 +361,13 @@ int open_GNSS_NMEA_device(const char* gps_device, unsigned int baudrate)
 /* 
   Done
 */
+#ifdef NMEA_PRINT_RAW
+    //http://www.chemie.fu-berlin.de/chemnet/use/info/libc/libc_12.html#SEC237
+    //http://www.chemie.fu-berlin.de/chemnet/use/info/libc/libc_27.html#SEC465
+    //http://www.chemie.fu-berlin.de/chemnet/use/info/libc/libc_27.html#SEC468
+    //printf("MAX_CANON: %d\n", fpathconf(fd, _PC_MAX_CANON));
+    //printf("MAX_INPUT: %d\n", fpathconf(fd, _PC_MAX_INPUT));
+#endif
     //LOG_DEBUG(gContext, "OPEN successful %d\n", fd);
     return fd;
 }
@@ -372,10 +387,10 @@ void* loop_GNSS_NMEA_device(void* dev)
     //read failure - used to trigger restart
     bool read_failure = false;
     //trigger message
-    NMEA_RESULT trigger = NMEA_GPRMC;
-    //gps data as returned by NMEA parser
-    GPS_DATA gps_data;
-    HNMEA_Init_GPS_DATA(&gps_data);
+    NMEA_RESULT trigger = NMEA_RMC;
+    //gnss data as returned by NMEA parser
+    GNS_DATA gns_data;
+    HNMEA_Init_GNS_DATA(&gns_data);
 
     /* loop until we have a terminating condition */
     //LOG_DEBUG(gContext, "entering NMEA reading loop %d\n", fd);
@@ -413,18 +428,18 @@ void* loop_GNSS_NMEA_device(void* dev)
             printf("%"PRIu64",0,%s",gnss_get_timestamp(), buf);
             fflush(stdout);
             #endif
-            NMEA_RESULT nmea_res = HNMEA_Parse(buf, &gps_data);
+            NMEA_RESULT nmea_res = HNMEA_Parse(buf, &gns_data);
 
             //most receivers sent GPRMC as last, but u-blox send as first: use other trigger
             //determine most suitable trigger on actually received messages
             #ifdef GNSS_CHIPSET_UBLOX
-            if (nmea_res == NMEA_GPGST)  //highest precedence
+            if (nmea_res == NMEA_GST)  //highest precedence
             {
-                trigger = NMEA_GPGST;
+                trigger = NMEA_GST;
             }
-            if ((nmea_res == NMEA_GPGSA) && (trigger == NMEA_GPRMC)) //GSA better than RMC
+            if ((nmea_res == NMEA_GSA) && (trigger == NMEA_RMC)) //GSA better than RMC
             {
-                trigger = NMEA_GPGSA;
+                trigger = NMEA_GSA;
             }
             #endif
             if (nmea_res == trigger)
@@ -433,7 +448,7 @@ void* loop_GNSS_NMEA_device(void* dev)
                 uint64_t timestamp = gnss_get_timestamp() - GNSS_DELAY;
                 TGNSSTime gnss_time = { 0 };
                 TGNSSPosition gnss_pos = { 0 };
-                if (extractTime(gps_data, timestamp, gnss_time))
+                if (extractTime(gns_data, timestamp, gnss_time))
                 {
                     updateGNSSTime(&gnss_time, 1);
 
@@ -453,7 +468,7 @@ void* loop_GNSS_NMEA_device(void* dev)
                     fflush(stdout);
                     #endif
                 }
-                if (extractPosition(gps_data, timestamp, gnss_pos))
+                if (extractPosition(gns_data, timestamp, gnss_pos))
                 {
                     updateGNSSPosition(&gnss_pos,1 );
                 }

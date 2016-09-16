@@ -34,32 +34,35 @@ char test_gpgs3[] = "$GPGSV,3,3,12,09,08,259,29,26,65,304,45,24,02,263,,17,08,13
 
 
 
-void HNMEA_Init_GPS_DATA(GPS_DATA* gps_data)
+void HNMEA_Init_GNS_DATA(GNS_DATA* gns_data)
 {
-    gps_data->valid         = 0;
-    gps_data->valid_new     = 0;
-    gps_data->lat           = 999.99;
-    gps_data->lon           = 999.99;
-    gps_data->alt           = -1000.0;
-    gps_data->geoid         = -1000.0;
-    gps_data->date_yyyy     = -1;
-    gps_data->date_mm       = -1;
-    gps_data->date_dd       = -1;
-    gps_data->time_hh       = -1;
-    gps_data->time_mm       = -1;
-    gps_data->time_ss       = -1;
-    gps_data->time_ms       = -1;
-    gps_data->course        = -999.99;
-    gps_data->speed         = -999.99;
-    gps_data->hdop          = -999.99;
-    gps_data->vdop          = -999.99;
-    gps_data->pdop          = -999.99;
-    gps_data->usat          = -99;
-    gps_data->fix2d         = -1;
-    gps_data->fix3d         = -1;
-    gps_data->hacc          = 999.9;
-    gps_data->vacc          = 999.9;
-    
+    gns_data->valid         = 0;
+    gns_data->valid_new     = 0;
+    gns_data->valid_ext     = 0;
+    gns_data->valid_ext_new = 0;    
+    gns_data->lat           = 999.99;
+    gns_data->lon           = 999.99;
+    gns_data->alt           = -1000.0;
+    gns_data->geoid         = -1000.0;
+    gns_data->date_yyyy     = -1;
+    gns_data->date_mm       = -1;
+    gns_data->date_dd       = -1;
+    gns_data->time_hh       = -1;
+    gns_data->time_mm       = -1;
+    gns_data->time_ss       = -1;
+    gns_data->time_ms       = -1;
+    gns_data->course        = -999.99;
+    gns_data->speed         = -999.99;
+    gns_data->hdop          = -999.99;
+    gns_data->vdop          = -999.99;
+    gns_data->pdop          = -999.99;
+    gns_data->usat          = -99;
+    gns_data->fix2d         = -1;
+    gns_data->fix3d         = -1;
+    gns_data->hacc          = 999.9;
+    gns_data->vacc          = 999.9;
+    gns_data->usat_gps      = -99;
+    gns_data->usat_glo      = -99;    
 }
 
 
@@ -113,7 +116,7 @@ int HNMEA_Checksum_Valid(char* line)
     return ret;
 }
 
-void HNMEA_Parse_GPRMC(char* line, GPS_DATA* gps_data)
+void HNMEA_Parse_RMC(char* line, GNS_DATA* gns_data)
 {
     enum { MAX_FIELD_LEN = 128};
     char field[MAX_FIELD_LEN];
@@ -123,7 +126,8 @@ void HNMEA_Parse_GPRMC(char* line, GPS_DATA* gps_data)
     int stop = 0;   // stop flag
     int len = strlen(line);
 
-    gps_data->valid_new = 0;
+    gns_data->valid_new = 0;
+    gns_data->valid_ext_new = 0;
 
     //outer loop - stop at line end
     while ( (l < len ) && (stop == 0) )
@@ -139,10 +143,10 @@ void HNMEA_Parse_GPRMC(char* line, GPS_DATA* gps_data)
 
         switch (i)
         {
-            case 0: //$GPRMC
+            case 0: //$GPRMC or $GNRMC
             {
                 //cross-check for sentence name
-                if (strncmp (field, "$GPRMC", 6) != 0)
+                if ((strncmp (field, "$GPRMC", 6) != 0) && (strncmp (field, "$GNRMC", 6) != 0))
                 {
                     // force termination of loop
                     stop = 1;
@@ -154,13 +158,13 @@ void HNMEA_Parse_GPRMC(char* line, GPS_DATA* gps_data)
                 //length check
                 if (strlen (field) >=6)
                 {
-                    gps_data->time_ss = atoi(field+4);
-                    gps_data->time_ms = (atof(field+4)-gps_data->time_ss)*1000;
+                    gns_data->time_ss = atoi(field+4);
+                    gns_data->time_ms = (atof(field+4)-gns_data->time_ss)*1000;
                     field[4] = '\0';
-                    gps_data->time_mm = atoi(field+2);
+                    gns_data->time_mm = atoi(field+2);
                     field[2] = '\0';
-                    gps_data->time_hh = atoi(field);
-                    gps_data->valid_new |= GPS_DATA_TIME;
+                    gns_data->time_hh = atoi(field);
+                    gns_data->valid_new |= GNS_DATA_TIME;
                 }
                 break;
             }
@@ -171,20 +175,20 @@ void HNMEA_Parse_GPRMC(char* line, GPS_DATA* gps_data)
                 {
                     if (field[0] == 'A')
                     {
-                        gps_data->fix2d = 1;
+                        gns_data->fix2d = 1;
                     }
                     else
                     {
-                        gps_data->fix2d = 0;
+                        gns_data->fix2d = 0;
                     }
-                    gps_data->valid_new |= GPS_DATA_FIX2D;
+                    gns_data->valid_new |= GNS_DATA_FIX2D;
                 }
                 break;
             }
             case 3: //latitude - absolute value
             {
                 //check for minimum length + evaluate only if status ok
-                if ( ((gps_data->valid_new & GPS_DATA_FIX2D)!=0) && (gps_data->fix2d) && (strlen (field) >=2) )
+                if ( ((gns_data->valid_new & GNS_DATA_FIX2D)!=0) && (gns_data->fix2d) && (strlen (field) >=2) )
                 {
                     double fraction = 0.0;
                     if (strlen (field) >=3)
@@ -192,8 +196,8 @@ void HNMEA_Parse_GPRMC(char* line, GPS_DATA* gps_data)
                         fraction = atof(field+2)/60.0;
                     }
                     field[2]=0;
-                    gps_data->lat = atoi(field) + fraction;
-                    gps_data->valid_new |= GPS_DATA_LAT;
+                    gns_data->lat = atoi(field) + fraction;
+                    gns_data->valid_new |= GNS_DATA_LAT;
                 }
                 break;
             }
@@ -204,7 +208,7 @@ void HNMEA_Parse_GPRMC(char* line, GPS_DATA* gps_data)
                 {
                     if ((field[0] == 'S') || (field[0] == 's'))
                     {
-                        gps_data->lat = - gps_data->lat;
+                        gns_data->lat = - gns_data->lat;
                     }
                 }
                 break;
@@ -212,7 +216,7 @@ void HNMEA_Parse_GPRMC(char* line, GPS_DATA* gps_data)
             case 5: //longitude - absolute value
             {
                 //check for minimum length + evaluate only if status ok
-                if ( ((gps_data->valid_new & GPS_DATA_FIX2D)!=0) && (gps_data->fix2d) && (strlen (field) >=3) )
+                if ( ((gns_data->valid_new & GNS_DATA_FIX2D)!=0) && (gns_data->fix2d) && (strlen (field) >=3) )
                 {
                     double fraction = 0.0;
                     if (strlen (field) >=4)
@@ -220,8 +224,8 @@ void HNMEA_Parse_GPRMC(char* line, GPS_DATA* gps_data)
                         fraction = atof(field+3)/60.0;
                     }
                     field[3]=0;
-                    gps_data->lon = atoi(field) + fraction;
-                    gps_data->valid_new |= GPS_DATA_LON;
+                    gns_data->lon = atoi(field) + fraction;
+                    gns_data->valid_new |= GNS_DATA_LON;
                 }
                 break;
             }
@@ -232,7 +236,7 @@ void HNMEA_Parse_GPRMC(char* line, GPS_DATA* gps_data)
                 {
                     if ((field[0] == 'W') || (field[0] == 'w'))
                     {
-                        gps_data->lon = - gps_data->lon;
+                        gns_data->lon = - gns_data->lon;
                     }
                 }
                 break;
@@ -240,20 +244,20 @@ void HNMEA_Parse_GPRMC(char* line, GPS_DATA* gps_data)
             case 7: //speed - knots
             {
                 //length check + evaluate only if status ok
-                if (((gps_data->valid_new & GPS_DATA_FIX2D)!=0) && (gps_data->fix2d) && (strlen (field) >=1) )
+                if (((gns_data->valid_new & GNS_DATA_FIX2D)!=0) && (gns_data->fix2d) && (strlen (field) >=1) )
                 {
-                    gps_data->speed = atof(field)*1.852/3.6;
-                    gps_data->valid_new |= GPS_DATA_SPEED;
+                    gns_data->speed = atof(field)*1.852/3.6;
+                    gns_data->valid_new |= GNS_DATA_SPEED;
                 }
                 break;
             }
             case 8: //course - degrees
             {
                 //length check + evaluate only if status ok
-                if (((gps_data->valid_new & GPS_DATA_FIX2D)!=0) && (gps_data->fix2d) && (strlen (field) >=1) )
+                if (((gns_data->valid_new & GNS_DATA_FIX2D)!=0) && (gns_data->fix2d) && (strlen (field) >=1) )
                 {
-                    gps_data->course = atof(field);
-                    gps_data->valid_new |= GPS_DATA_COURSE;
+                    gns_data->course = atof(field);
+                    gns_data->valid_new |= GNS_DATA_COURSE;
                 }
                 break;
             }
@@ -262,12 +266,12 @@ void HNMEA_Parse_GPRMC(char* line, GPS_DATA* gps_data)
                 //length check
                 if (strlen (field) >=6)
                 {
-                    gps_data->date_yyyy = 2000 + atoi(field+4);
+                    gns_data->date_yyyy = 2000 + atoi(field+4);
                     field[4] = '\0';
-                    gps_data->date_mm = atoi(field+2);
+                    gns_data->date_mm = atoi(field+2);
                     field[2] = '\0';
-                    gps_data->date_dd = atoi(field);
-                    gps_data->valid_new |= GPS_DATA_DATE;
+                    gns_data->date_dd = atoi(field);
+                    gns_data->valid_new |= GNS_DATA_DATE;
                 }
                 stop = 1; //ignore all other fields
                 break;
@@ -297,10 +301,11 @@ void HNMEA_Parse_GPRMC(char* line, GPS_DATA* gps_data)
     }
 
     //update validity mask with new data
-    gps_data->valid |= gps_data->valid_new;
+    gns_data->valid |= gns_data->valid_new;
+    gns_data->valid_ext |= gns_data->valid_ext_new;
 }
 
-void HNMEA_Parse_GPGGA(char* line, GPS_DATA* gps_data)
+void HNMEA_Parse_GGA(char* line, GNS_DATA* gns_data)
 {
     enum { MAX_FIELD_LEN = 128};
     char field[MAX_FIELD_LEN];
@@ -317,7 +322,8 @@ void HNMEA_Parse_GPGGA(char* line, GPS_DATA* gps_data)
     double alt = 0.0;
     double geoid = 0.0;
 
-    gps_data->valid_new = 0;
+    gns_data->valid_new = 0;
+    gns_data->valid_ext_new = 0;
 
     //outer loop - stop at line end
     while ( (l < len ) && (stop == 0) )
@@ -333,10 +339,10 @@ void HNMEA_Parse_GPGGA(char* line, GPS_DATA* gps_data)
 
         switch (i)
         {
-            case 0: //$GPGGA
+            case 0: //$GPGGA or $GNGGA
             {
                 //cross-check for sentence name
-                if (strncmp (field, "$GPGGA", 6) != 0)
+                if ((strncmp (field, "$GPGGA", 6) != 0) && (strncmp (field, "$GNGGA", 6) != 0))
                 {
                     // force termination of loop
                     stop = 1;
@@ -348,13 +354,13 @@ void HNMEA_Parse_GPGGA(char* line, GPS_DATA* gps_data)
                 //length check
                 if (strlen (field) >=6)
                 {
-                    gps_data->time_ss = atoi(field+4);
-                    gps_data->time_ms = (atof(field+4)-gps_data->time_ss)*1000;
+                    gns_data->time_ss = atoi(field+4);
+                    gns_data->time_ms = (atof(field+4)-gns_data->time_ss)*1000;
                     field[4] = '\0';
-                    gps_data->time_mm = atoi(field+2);
+                    gns_data->time_mm = atoi(field+2);
                     field[2] = '\0';
-                    gps_data->time_hh = atoi(field);
-                    gps_data->valid_new |= GPS_DATA_TIME;
+                    gns_data->time_hh = atoi(field);
+                    gns_data->valid_new |= GNS_DATA_TIME;
                 }
                 break;
             }
@@ -370,7 +376,7 @@ void HNMEA_Parse_GPGGA(char* line, GPS_DATA* gps_data)
                     }
                     field[2]=0;
                     lat = atoi(field) + fraction;
-                    gps_data->valid_new |= GPS_DATA_LAT;
+                    gns_data->valid_new |= GNS_DATA_LAT;
                 }
                 break;
             }
@@ -398,7 +404,7 @@ void HNMEA_Parse_GPGGA(char* line, GPS_DATA* gps_data)
                     }
                     field[3]=0;
                     lon = atoi(field) + fraction;
-                    gps_data->valid_new |= GPS_DATA_LON;
+                    gns_data->valid_new |= GNS_DATA_LON;
                 }
                 break;
             }
@@ -421,16 +427,16 @@ void HNMEA_Parse_GPGGA(char* line, GPS_DATA* gps_data)
                 {
                     if ( (field[0] == '1') || (field[0] == '2') || (field[0] == '6') )
                     {
-                        gps_data->fix2d = 1;
-                        gps_data->lat = lat;
-                        gps_data->lon = lon;
+                        gns_data->fix2d = 1;
+                        gns_data->lat = lat;
+                        gns_data->lon = lon;
                     }
                     else
                     {
-                        gps_data->fix2d = 0;
-                        gps_data->valid_new &= ~(GPS_DATA_LAT | GPS_DATA_LON);
+                        gns_data->fix2d = 0;
+                        gns_data->valid_new &= ~(GNS_DATA_LAT | GNS_DATA_LON);
                     }
-                    gps_data->valid_new |= GPS_DATA_FIX2D;
+                    gns_data->valid_new |= GNS_DATA_FIX2D;
                 }
                 break;
             }
@@ -439,8 +445,8 @@ void HNMEA_Parse_GPGGA(char* line, GPS_DATA* gps_data)
                 //length check
                 if (strlen (field) >=1)
                 {
-                    gps_data->usat = atoi(field);
-                    gps_data->valid_new |= GPS_DATA_USAT;
+                    gns_data->usat = atoi(field);
+                    gns_data->valid_new |= GNS_DATA_USAT;
                 }
                 break;
             }
@@ -449,8 +455,8 @@ void HNMEA_Parse_GPGGA(char* line, GPS_DATA* gps_data)
                 //length check
                 if (strlen (field) >=1)
                 {
-                    gps_data->hdop = atof(field);
-                    gps_data->valid_new |= GPS_DATA_HDOP;
+                    gns_data->hdop = atof(field);
+                    gns_data->valid_new |= GNS_DATA_HDOP;
                 }
                 break;
             }
@@ -460,7 +466,7 @@ void HNMEA_Parse_GPGGA(char* line, GPS_DATA* gps_data)
                 if (strlen (field) >=1)
                 {
                     alt = atof(field);
-                    gps_data->valid_new |= GPS_DATA_ALT;
+                    gns_data->valid_new |= GNS_DATA_ALT;
                 }
                 break;
             }
@@ -469,13 +475,13 @@ void HNMEA_Parse_GPGGA(char* line, GPS_DATA* gps_data)
                 //length check
                 if (strlen (field) >=1)
                 {
-                    if ( (field[0] == 'M') && (gps_data->fix2d) )
+                    if ( (field[0] == 'M') && (gns_data->fix2d) )
                     {
-                        gps_data->alt = alt;
+                        gns_data->alt = alt;
                     }
                     else
                     {
-                        gps_data->valid_new &= ~(GPS_DATA_ALT);
+                        gns_data->valid_new &= ~(GNS_DATA_ALT);
                     }
                 }
                 break;
@@ -486,7 +492,7 @@ void HNMEA_Parse_GPGGA(char* line, GPS_DATA* gps_data)
                 if (strlen (field) >=1)
                 {
                     geoid = atof(field);
-                    gps_data->valid_new |= GPS_DATA_GEOID;
+                    gns_data->valid_new |= GNS_DATA_GEOID;
                 }
                 break;
             }
@@ -497,11 +503,11 @@ void HNMEA_Parse_GPGGA(char* line, GPS_DATA* gps_data)
                 {
                     if (field[0] == 'M') 
                     {
-                        gps_data->geoid = geoid;
+                        gns_data->geoid = geoid;
                     }
                     else
                     {
-                        gps_data->valid_new &= ~(GPS_DATA_GEOID);
+                        gns_data->valid_new &= ~(GNS_DATA_GEOID);
                     }
                 }
                 stop = 1; //ignore all other fields
@@ -532,11 +538,12 @@ void HNMEA_Parse_GPGGA(char* line, GPS_DATA* gps_data)
     }
 
     //update validity mask with valid_new data
-    gps_data->valid |= gps_data->valid_new;
+    gns_data->valid |= gns_data->valid_new;
+    gns_data->valid_ext |= gns_data->valid_ext_new;
 
 }
 
-void HNMEA_Parse_GPGSA(char* line, GPS_DATA* gps_data)
+void HNMEA_Parse_GSA(char* line, GNS_DATA* gns_data)
 {
     enum { MAX_FIELD_LEN = 128};
     char field[MAX_FIELD_LEN];
@@ -547,8 +554,12 @@ void HNMEA_Parse_GPGSA(char* line, GPS_DATA* gps_data)
     int len = strlen(line);
 
     int usat = 0; //counter for used satellites
+    //NMEA 4.1: GSA has additional field systemId after VDOP
+    //1=GPS 2=GLONASS 3=Galileo 4=BeiDou 
+    int systemId = 0;
 
-    gps_data->valid_new = 0;
+    gns_data->valid_new = 0;
+    gns_data->valid_ext_new = 0;
 
     //outer loop - stop at line end
     while ( (l < len ) && (stop == 0) )
@@ -564,10 +575,10 @@ void HNMEA_Parse_GPGSA(char* line, GPS_DATA* gps_data)
 
         switch (i)
         {
-            case 0: //$GPGSA
+            case 0: //$GPGSA or $GNGSA
             {
                 //cross-check for sentence name
-                if (strncmp (field, "$GPGSA", 6) != 0)
+                if ((strncmp (field, "$GPGSA", 6) != 0) && (strncmp (field, "$GNGSA", 6) != 0))
                 {
                     // force termination of loop
                     stop = 1;
@@ -585,21 +596,21 @@ void HNMEA_Parse_GPGSA(char* line, GPS_DATA* gps_data)
                 {
                     if (field[0] == '2')
                     {
-                        gps_data->fix2d = 1;
-                        gps_data->fix3d = 0;
+                        gns_data->fix2d = 1;
+                        gns_data->fix3d = 0;
                     }
                     else if (field[0] == '3')
                     {
-                        gps_data->fix2d = 1;
-                        gps_data->fix3d = 1;
+                        gns_data->fix2d = 1;
+                        gns_data->fix3d = 1;
                     }
                     else
                     {
-                        gps_data->fix2d = 0;
-                        gps_data->fix3d = 0;
+                        gns_data->fix2d = 0;
+                        gns_data->fix3d = 0;
                     }
-                    gps_data->valid_new |= GPS_DATA_FIX2D;
-                    gps_data->valid_new |= GPS_DATA_FIX3D;
+                    gns_data->valid_new |= GNS_DATA_FIX2D;
+                    gns_data->valid_new |= GNS_DATA_FIX3D;
                 }
                 break;
             }
@@ -627,8 +638,8 @@ void HNMEA_Parse_GPGSA(char* line, GPS_DATA* gps_data)
                 //length check
                 if (strlen (field) >=1)
                 {
-                    gps_data->pdop = atof(field);
-                    gps_data->valid_new |= GPS_DATA_PDOP;
+                    gns_data->pdop = atof(field);
+                    gns_data->valid_new |= GNS_DATA_PDOP;
                 }
                 break;
             }
@@ -637,8 +648,8 @@ void HNMEA_Parse_GPGSA(char* line, GPS_DATA* gps_data)
                 //length check
                 if (strlen (field) >=1)
                 {
-                    gps_data->hdop = atof(field);
-                    gps_data->valid_new |= GPS_DATA_HDOP;
+                    gns_data->hdop = atof(field);
+                    gns_data->valid_new |= GNS_DATA_HDOP;
                 }
                 break;
             }
@@ -647,12 +658,21 @@ void HNMEA_Parse_GPGSA(char* line, GPS_DATA* gps_data)
                 //length check
                 if (strlen (field) >=1)
                 {
-                    gps_data->vdop = atof(field);
-                    gps_data->valid_new |= GPS_DATA_VDOP;
+                    gns_data->vdop = atof(field);
+                    gns_data->valid_new |= GNS_DATA_VDOP;
+                }
+                break;
+            }
+            case 18: //NMEA 4.1 systemId
+            {
+                //length check
+                if (strlen (field) >=1)
+                {
+                    systemId = atoi(field);
                 }
                 stop = 1; //ignore all other fields
                 break;
-            }
+            }            
             default:
             {
                 stop = 1;
@@ -679,15 +699,29 @@ void HNMEA_Parse_GPGSA(char* line, GPS_DATA* gps_data)
 
     if (usat > 0)
     {
-        gps_data->usat = usat;
-        gps_data->valid_new |= GPS_DATA_USAT;
+        if (systemId == 0) //unspecified
+        {
+            gns_data->usat = usat;
+            gns_data->valid_new |= GNS_DATA_USAT;
+        }
+        else if (systemId == 1) //GPS
+        {
+            gns_data->usat_gps = usat;
+            gns_data->valid_ext_new |= GNS_DATA_USAT_GPS;
+        }
+        else if (systemId == 2) //GLONASS
+        {
+            gns_data->usat_glo = usat;
+            gns_data->valid_ext_new |= GNS_DATA_USAT_GLO;
+        }
     }
 
     //update validity mask with new data
-    gps_data->valid |= gps_data->valid_new;
+    gns_data->valid |= gns_data->valid_new;
+    gns_data->valid_ext |= gns_data->valid_ext_new;
 }
 
-void HNMEA_Parse_GPGST(char* line, GPS_DATA* gps_data)
+void HNMEA_Parse_GST(char* line, GNS_DATA* gns_data)
 {
     enum { MAX_FIELD_LEN = 128};
     char field[MAX_FIELD_LEN];
@@ -703,7 +737,8 @@ void HNMEA_Parse_GPGST(char* line, GPS_DATA* gps_data)
     float lon_std = 0.0;
     float alt_std = 0.0;
     
-    gps_data->valid_new = 0;
+    gns_data->valid_new = 0;
+    gns_data->valid_ext_new = 0;
 
     //outer loop - stop at line end
     while ( (l < len ) && (stop == 0) )
@@ -722,7 +757,7 @@ void HNMEA_Parse_GPGST(char* line, GPS_DATA* gps_data)
             case 0: //$GPGST
             {
                 //cross-check for sentence name
-                if (strncmp (field, "$GPGST", 6) != 0)
+                if ((strncmp (field, "$GPGST", 6) != 0) && (strncmp (field, "$GNGST", 6) != 0))
                 {
                     // force termination of loop
                     stop = 1;
@@ -734,13 +769,13 @@ void HNMEA_Parse_GPGST(char* line, GPS_DATA* gps_data)
                 //length check
                 if (strlen (field) >=6)
                 {
-                    gps_data->time_ss = atoi(field+4);
-                    gps_data->time_ms = (atof(field+4)-gps_data->time_ss)*1000;
+                    gns_data->time_ss = atoi(field+4);
+                    gns_data->time_ms = (atof(field+4)-gns_data->time_ss)*1000;
                     field[4] = '\0';
-                    gps_data->time_mm = atoi(field+2);
+                    gns_data->time_mm = atoi(field+2);
                     field[2] = '\0';
-                    gps_data->time_hh = atoi(field);
-                    gps_data->valid_new |= GPS_DATA_TIME;
+                    gns_data->time_hh = atoi(field);
+                    gns_data->valid_new |= GNS_DATA_TIME;
                 }
                 break;
             }
@@ -780,8 +815,8 @@ void HNMEA_Parse_GPGST(char* line, GPS_DATA* gps_data)
                 if ((strlen (field) >=1) && (lat_std_valid))
                 {
                     lon_std = atof(field);
-                    gps_data->hacc = sqrt(lat_std*lat_std + lon_std*lon_std);
-                    gps_data->valid_new |= GPS_DATA_HACC;
+                    gns_data->hacc = sqrt(lat_std*lat_std + lon_std*lon_std);
+                    gns_data->valid_new |= GNS_DATA_HACC;
                 }
                 break;
             }
@@ -791,8 +826,8 @@ void HNMEA_Parse_GPGST(char* line, GPS_DATA* gps_data)
                 if (strlen (field) >=1)
                 {
                     alt_std = atof(field);
-                    gps_data->vacc = alt_std;
-                    gps_data->valid_new |= GPS_DATA_VACC;
+                    gns_data->vacc = alt_std;
+                    gns_data->valid_new |= GNS_DATA_VACC;
                 }
                 break;
             }
@@ -821,56 +856,57 @@ void HNMEA_Parse_GPGST(char* line, GPS_DATA* gps_data)
     }
 
     //update validity mask with new data
-    gps_data->valid |= gps_data->valid_new;
+    gns_data->valid |= gns_data->valid_new;
+    gns_data->valid_ext |= gns_data->valid_ext_new;
 }
 
 
 
-NMEA_RESULT HNMEA_Parse(char* line, GPS_DATA* gps_data)
+NMEA_RESULT HNMEA_Parse(char* line, GNS_DATA* gns_data)
 {
     NMEA_RESULT ret = NMEA_UKNOWN;
-    if (strncmp (line, "$GPRMC", 6) == 0)
+    if ((strncmp (line, "$GPRMC", 6) == 0) || (strncmp (line, "$GNRMC", 6) == 0))
     {
         if (HNMEA_Checksum_Valid(line))
         {
-            HNMEA_Parse_GPRMC(line, gps_data);
-            ret = NMEA_GPRMC;
+            HNMEA_Parse_RMC(line, gns_data);
+            ret = NMEA_RMC;
         }
         else
         {
             ret = NMEA_BAD_CHKSUM;
         }
     }
-    if (strncmp (line, "$GPGGA", 6) == 0)
+    else if ((strncmp (line, "$GPGGA", 6) == 0) || (strncmp (line, "$GNGGA", 6) == 0))
     {
         if (HNMEA_Checksum_Valid(line))
         {
-            HNMEA_Parse_GPGGA(line, gps_data);
-            ret = NMEA_GPGGA;
+            HNMEA_Parse_GGA(line, gns_data);
+            ret = NMEA_GGA;
         }
         else
         {
             ret = NMEA_BAD_CHKSUM;
         }
     }
-    if (strncmp (line, "$GPGSA", 6) == 0)
+    else if ((strncmp (line, "$GPGSA", 6) == 0) || (strncmp (line, "$GNGSA", 6) == 0))
     {
         if (HNMEA_Checksum_Valid(line))
         {
-            HNMEA_Parse_GPGSA(line, gps_data);
-            ret = NMEA_GPGSA;
+            HNMEA_Parse_GSA(line, gns_data);
+            ret = NMEA_GSA;
         }
         else
         {
             ret = NMEA_BAD_CHKSUM;
         }
     }
-    if (strncmp (line, "$GPGST", 6) == 0)
+    else if ((strncmp (line, "$GPGST", 6) == 0) || (strncmp (line, "$GNGST", 6) == 0))
     {
         if (HNMEA_Checksum_Valid(line))
         {
-            HNMEA_Parse_GPGST(line, gps_data);
-            ret = NMEA_GPGST;
+            HNMEA_Parse_GST(line, gns_data);
+            ret = NMEA_GST;
         }
         else
         {
