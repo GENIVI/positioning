@@ -205,7 +205,7 @@ typedef enum {
     GNSS_SATELLITE_ID_VALID                     = 0x00000002,    /**< Validity bit for field TGNSSSatelliteDetail::satelliteId. */
     GNSS_SATELLITE_AZIMUTH_VALID                = 0x00000004,    /**< Validity bit for field TGNSSSatelliteDetail::azimuth. */
     GNSS_SATELLITE_ELEVATION_VALID              = 0x00000008,    /**< Validity bit for field TGNSSSatelliteDetail::elevation. */
-    GNSS_SATELLITE_SNR_VALID                    = 0x00000010,    /**< Validity bit for field TGNSSSatelliteDetail::SNR. */
+    GNSS_SATELLITE_CNO_VALID                    = 0x00000010,    /**< Validity bit for field TGNSSSatelliteDetail::CNo. */
     GNSS_SATELLITE_USED_VALID                   = 0x00000020,    /**< Validity bit for field TGNSSSatelliteDetail::statusBits::GNSS_SATELLITE_USED. */
     GNSS_SATELLITE_EPHEMERIS_AVAILABLE_VALID    = 0x00000040,    /**< Validity bit for field TGNSSSatelliteDetail::statusBits::GNSS_SATELLITE_EPHEMERIS_AVAILABLE. */
     GNSS_SATELLITE_RESIDUAL_VALID               = 0x00000080,    /**< Validity bit for field TGNSSSatelliteDetail::posResidual. */
@@ -229,7 +229,7 @@ typedef struct {
                                     */
     uint16_t azimuth;               /**< Satellite Azimuth in degrees. Value range 0..359 */
     uint16_t elevation;             /**< Satellite Elevation in degrees. Value range 0..90 */
-    uint16_t SNR;                   /**< SNR (C/No) in dBHz. Range 0 to 99, null when not tracking */
+    uint16_t CNo;                   /**< C/No (SNR) in dBHz. Range 0 to 99, 0 when not tracking */
     uint32_t statusBits;            /**< Bit mask of additional status flags.
                                         [bitwise or'ed @ref EGNSSSatelliteFlag values]. */
     int16_t posResidual;            /**< Residual in m of position calculation. Range -999 to +999, 0 if not tracking */                                        

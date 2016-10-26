@@ -588,13 +588,13 @@ static bool processGVGNSSAT(const char* data)
     n = sscanf(data, "%llu,%hu,$GVGNSSAT,%llu,%hu,%hu,%hu,%hu,%hu,%x,%hu,%x",
         &timestamp, &countdown,
         &sat.timestamp, &system, &sat.satelliteId,
-        &sat.azimuth, &sat.elevation, &sat.SNR,
+        &sat.azimuth, &sat.elevation, &sat.CNo,
         &sat.statusBits, &sat.posResidual, &sat.validityBits);
 
     if (n != 11) //11 fields to parse
     {
         //try old version without posResidual and without comma befroe $
-        n = sscanf(data, "%llu,%hu$GVGNSSAT,%llu,%hu,%hu,%hu,%hu,%hu,%x,%x", &timestamp, &countdown, &sat.timestamp,&system,&sat.satelliteId,&sat.azimuth,&sat.elevation,&sat.SNR,&sat.statusBits,&sat.validityBits);
+        n = sscanf(data, "%llu,%hu$GVGNSSAT,%llu,%hu,%hu,%hu,%hu,%hu,%x,%x", &timestamp, &countdown, &sat.timestamp,&system,&sat.satelliteId,&sat.azimuth,&sat.elevation,&sat.CNo,&sat.statusBits,&sat.validityBits);
         sat.validityBits &= ~GNSS_SATELLITE_RESIDUAL_VALID; //just to be safe
         
         if (n != 10) //10 fields to parse
@@ -606,7 +606,7 @@ static bool processGVGNSSAT(const char* data)
 
     //map integer to enum
     sat.system = system;
-    //LOG_DEBUG(gContext,"Decoded: %llu,%hu$GVGNSSAT,%llu,%d,%hu,%hu,%hu,%hu,0X%X,0X%X ", timestamp, countdown, sat.timestamp, sat.system, sat.satelliteId, sat.azimuth, sat.elevation, sat.SNR, sat.statusBits, sat.validityBits);
+    //LOG_DEBUG(gContext,"Decoded: %llu,%hu$GVGNSSAT,%llu,%d,%hu,%hu,%hu,%hu,0X%X,0X%X ", timestamp, countdown, sat.timestamp, sat.system, sat.satelliteId, sat.azimuth, sat.elevation, sat.CNo, sat.statusBits, sat.validityBits);
 
 
     //buffered data handling

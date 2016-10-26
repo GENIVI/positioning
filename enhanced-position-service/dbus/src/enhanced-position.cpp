@@ -389,13 +389,13 @@ void EnhancedPosition::cbSatelliteDetail(const TGNSSSatelliteDetail satelliteDet
 
   for (int i = 0; i<numElements; i++)
   {
-    LOG_INFO(gCtx,"SatelliteDetail Update[%d/%d]: satelliteId=%d azimuth=%d elevation=%d SNR=%d",
+    LOG_INFO(gCtx,"SatelliteDetail Update[%d/%d]: satelliteId=%d azimuth=%d elevation=%d CNo=%d",
              i+1,
              numElements,
              satelliteDetail[i].satelliteId, 
              satelliteDetail[i].azimuth,
              satelliteDetail[i].elevation,                                   
-             satelliteDetail[i].SNR);
+             satelliteDetail[i].CNo);
   }  
 
   if (!mpSelf)

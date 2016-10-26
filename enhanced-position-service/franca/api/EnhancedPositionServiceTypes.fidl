@@ -99,12 +99,12 @@ typeCollection EnhancedPositionServiceTypes {
         COMPASS = 4 
     }
     
-    <** @description : SatelliteInfo = array(struct(system,satelliteId,azimuth,elevation,snr,inUse))
+    <** @description : SatelliteInfo = array(struct(system,satelliteId,azimuth,elevation,cNo,inUse))
             system = enum(GPS, GLONASS, GALILEO, COMPASS, ... )
             satelliteId = satellite ID. This ID is unique within one satellite system
             azimuth = satellite azimuth in degrees. Value range 0..359
             elevation = satellite elevation in degrees. Value range 0..90
-            snr = SNR (C/No) in dBHz. Range 0 to 99, null when not tracking
+            cNo = C/No (SNR) in dBHz. Range 0 to 99, 0 when not tracking
             inUse = flag indicating if the satellite is used for the fix (inUse=true)
         **>
     struct SatelliteInfo {
@@ -112,7 +112,7 @@ typeCollection EnhancedPositionServiceTypes {
         UInt32 satellitId
         UInt32 azimuth
         UInt32 elevation
-        UInt32 snr
+        UInt32 cNo
         Boolean inUse
     }
     

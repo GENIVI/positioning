@@ -128,7 +128,7 @@ void gnssSatelliteDetailToString(uint64_t timestamp, uint16_t countdown, const T
         satelliteDetails->satelliteId,
         satelliteDetails->azimuth,
         satelliteDetails->elevation,
-        satelliteDetails->SNR,
+        satelliteDetails->CNo,
         satelliteDetails->statusBits,
         satelliteDetails->posResidual,
         satelliteDetails->validityBits

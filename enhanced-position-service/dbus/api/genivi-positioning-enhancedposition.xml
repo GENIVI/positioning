@@ -129,12 +129,12 @@
       </arg>        
       <arg name="satelliteInfo" type="a(qqqqqb)" direction="out">
         <doc>
-          <line>satelliteInfo = array(struct(system,satelliteId,azimuth,elevation,snr,inUse))</line> 
+          <line>satelliteInfo = array(struct(system,satelliteId,azimuth,elevation,cNo,inUse))</line> 
           <line> system = enum(GPS, GLONASS, GALILEO, BEIDOU, ... )</line> 
           <line> satelliteId = satellite ID. This ID is unique within one satellite system</line> 
           <line> azimuth = satellite azimuth in degrees. Value range 0..359</line> 
           <line> elevation = satellite elevation in degrees. Value range 0..90</line> 
-          <line> snr = SNR (C/No) in dBHz. Range 0 to 99, null when not tracking</line> 
+          <line> cNo = C/No (SNR) in dBHz. Range 0 to 99, 0 when not tracking</line> 
           <line> inUse = flag indicating if the satellite is used for the fix (inUse=true)</line> 
         </doc>
       </arg>
