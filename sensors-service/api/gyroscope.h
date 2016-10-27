@@ -27,29 +27,53 @@ extern "C" {
 #endif
 
 /**
- * TGyroscopeConfiguration::validityBits provides information about the currently valid signals of the gyroscope configuration data.
+ * TGyroscopeConfiguration::validityBits provides information about the 
+ * currently valid signals of the gyroscope configuration data.
  * It is a or'ed bitmask of the EGyroscopeConfigValidityBits values.
  */
 typedef enum {
-    GYROSCOPE_CONFIG_ANGLEYAW_VALID         = 0x00000001,    /**< Validity bit for field TGyroscopeConfiguration::angleYaw. */
-    GYROSCOPE_CONFIG_ANGLEPITCH_VALID       = 0x00000002,    /**< Validity bit for field TGyroscopeConfiguration::anglePitch. */
-    GYROSCOPE_CONFIG_ANGLEROLL_VALID        = 0x00000004,    /**< Validity bit for field TGyroscopeConfiguration::angleRoll. */
-    GYROSCOPE_CONFIG_MOMENTYAW_VALID        = 0x00000008,    /**< Validity bit for field TGyroscopeConfiguration::momentOfYawInertia. */
-    GYROSCOPE_CONFIG_SIGMAGYROSCOPE_VALID   = 0x00000010,    /**< Validity bit for field TGyroscopeConfiguration::sigmaGyroscope. */
-    GYROSCOPE_CONFIG_TYPE_VALID             = 0x00000020     /**< Validity bit for field TGyroscopeConfiguration::typeBits. */
+    /** Validity bit for field TGyroscopeConfiguration::angleYaw.
+    */
+    GYROSCOPE_CONFIG_ANGLEYAW_VALID         = 0x00000001,
+    /** Validity bit for field TGyroscopeConfiguration::anglePitch.
+    */
+    GYROSCOPE_CONFIG_ANGLEPITCH_VALID       = 0x00000002,
+    /** Validity bit for field TGyroscopeConfiguration::angleRoll.
+    */
+    GYROSCOPE_CONFIG_ANGLEROLL_VALID        = 0x00000004,
+    /** Validity bit for field TGyroscopeConfiguration::momentOfYawInertia.
+    */    
+    GYROSCOPE_CONFIG_MOMENTYAW_VALID        = 0x00000008,
+    /** Validity bit for field TGyroscopeConfiguration::sigmaGyroscope.
+    */
+    GYROSCOPE_CONFIG_SIGMAGYROSCOPE_VALID   = 0x00000010,
+    /** Validity bit for field TGyroscopeConfiguration::typeBits.
+    */
+    GYROSCOPE_CONFIG_TYPE_VALID             = 0x00000020
 } EGyroscopeConfigValidityBits;
 
 /**
  * Gyroscope type
- * TGyroscopeConfiguration::typeBits provides information about the type of the gyroscope and the interpretation of the signals.
+ * TGyroscopeConfiguration::typeBits provides information about the
+ * type of the gyroscope and the interpretation of the signals.
  * It is a or'ed bitmask of the EGyroscopeTypeBits values.
  */
 typedef enum {
-    GYROSCOPE_TEMPERATURE_COMPENSATED       = 0x00000001,   /**< Temperature bias compensation already applied to gyroscope signals. */
-    GYROSCOPE_YAWRATE_PROVIDED              = 0x00000002,   /**< A measurement for the z/yaw-axis is provided */
-    GYROSCOPE_PITCHRATE_PROVIDED            = 0x00000004,   /**< A measurement for the y/pitch-axis is provided */
-    GYROSCOPE_ROLLRATE_PROVIDED             = 0x00000008,   /**< A measurement for the x/roll-axis is provided */
-    GYROSCOPE_TEMPERATURE_PROVIDED          = 0x00000010    /**< A measurement for the temperature is provided */
+    /** Temperature bias compensation already applied to gyroscope signals.
+    */
+    GYROSCOPE_TEMPERATURE_COMPENSATED       = 0x00000001,
+    /** A measurement for the z/yaw-axis is provided.
+    */
+    GYROSCOPE_YAWRATE_PROVIDED              = 0x00000002,
+    /** A measurement for the y/pitch-axis is provided.
+    */
+    GYROSCOPE_PITCHRATE_PROVIDED            = 0x00000004,
+    /** A measurement for the x/roll-axis is provided.
+    */
+    GYROSCOPE_ROLLRATE_PROVIDED             = 0x00000008,
+    /** A measurement for the temperature is provided.
+    */
+    GYROSCOPE_TEMPERATURE_PROVIDED          = 0x00000010
 } EGyroscopeTypeBits;
 
 /**
@@ -92,30 +116,66 @@ typedef enum {
  *
  */
 typedef struct {
-    float angleYaw;             /**< Euler angle of first rotation, around yaw axis, to describe gyroscope orientation [degree]. For details, see above. */
-    float anglePitch;           /**< Euler angle of second rotation, around pitch axis, to describe gyroscope orientation [degree]. For details, see above. */
-    float angleRoll;            /**< Euler angle of third rotation, around roll axis, to describe gyroscope orientation [degree]. For details, see above. */
-    float momentOfYawInertia;   /**< Moment of yaw inertia. The pitch and roll inertia moments are not provided as they are not relevant for positioning. [kg*m^2] */
-    float sigmaGyroscope;       /**< Standard error estimate of the gyroscope for all directions. [degree/s] */
-    uint32_t typeBits;          /**< Bit mask indicating the type of the used gyroscope. 
-                                     [bitwise or'ed @ref EGyroscopeTypeBits values]. */
-    uint32_t validityBits;      /**< Bit mask indicating the validity of each corresponding value.
-                                     [bitwise or'ed @ref EGyroscopeConfigValidityBits values].
-                                     Must be checked before usage. */
+    /** Euler angle of first rotation, around yaw axis, 
+    * to describe gyroscope orientation [degree].
+    * For details, see above.
+    */
+    float angleYaw;
+    /** Euler angle of second rotation, around pitch axis,
+    * to describe gyroscope orientation [degree].
+    * For details, see above.
+    */
+    float anglePitch;
+    /** Euler angle of third rotation, around roll axis,
+    * to describe gyroscope orientation [degree].
+    * For details, see above.
+    */
+    float angleRoll;
+    /** Moment of yaw inertia [kg*m^2]. 
+    * The pitch and roll inertia moments are not provided
+    * as they are not relevant for positioning.
+    */
+    float momentOfYawInertia;
+    /** Standard error estimate of the gyroscope for all directions [degree/s].
+    */
+    float sigmaGyroscope;
+    /** Bit mask indicating the type of the used gyroscope.
+    * [bitwise or'ed @ref EGyroscopeTypeBits values].
+    */
+    uint32_t typeBits;
+    /** Bit mask indicating the validity of each corresponding value.
+    * [bitwise or'ed @ref EGyroscopeConfigValidityBits values].
+    * Must be checked before usage.
+    */
+    uint32_t validityBits;
 } TGyroscopeConfiguration;
 
 /**
- * TGyroscopeData::validityBits provides information which fields in TGyroscopeData contain valid measurement data. 
+ * TGyroscopeData::validityBits provides information which fields in
+ *  TGyroscopeData contain valid measurement data. 
  * It is a or'ed bitmask of the EGyroscopeValidityBits values.
  * Note: 
- * - The general availability of the signals is provided per TGyroscopeConfiguration::typeBits. 
- * - If a signal is generally provided but temporarily not available, then the corresponding typeBit will be set but not the validityBit
+ * - The general availability of the signals is provided per
+ *   TGyroscopeConfiguration::typeBits. 
+ * - If a signal is generally provided but temporarily not available,
+ *   then the corresponding typeBit will be set but not the validityBit
  */
 typedef enum {
-    GYROSCOPE_YAWRATE_VALID             = 0x00000001,    /**< Validity bit for field TGyroscopeData::yawRate. */
-    GYROSCOPE_PITCHRATE_VALID           = 0x00000002,    /**< Validity bit for field TGyroscopeData::pitchRate. */
-    GYROSCOPE_ROLLRATE_VALID            = 0x00000004,    /**< Validity bit for field TGyroscopeData::rollRate. */
-    GYROSCOPE_TEMPERATURE_VALID         = 0x00000008     /**< Validity bit for field TGyroscopeData::temperature. */
+    /** Validity bit for field TGyroscopeData::yawRate.
+    */
+    GYROSCOPE_YAWRATE_VALID             = 0x00000001,
+    /** Validity bit for field TGyroscopeData::pitchRate.
+    */
+    GYROSCOPE_PITCHRATE_VALID           = 0x00000002,
+    /** Validity bit for field TGyroscopeData::rollRate.
+    */
+    GYROSCOPE_ROLLRATE_VALID            = 0x00000004,
+    /** Validity bit for field TGyroscopeData::temperature.
+    */
+    GYROSCOPE_TEMPERATURE_VALID         = 0x00000008,
+    /** Validity bit for field TGyroscopeData::measurementInterval.
+    */
+    GYROSCOPE_MEASINT_VALID             = 0x00000010
 } EGyroscopeValidityBits;
 
 /**
@@ -131,24 +191,45 @@ typedef enum {
  * You must check the valid bits before usage.
  */
 typedef struct {
-    uint64_t timestamp;     /**< Timestamp of the acquisition of the gyroscope signal [ms].
-                                 All sensor/GNSS timestamps must be based on the same time source. */
-    float yawRate;          /**< Current angular rate measurement around the z/yaw-axis of the gyroscope sensor [degree/s].
-                                 Value range -100 / +100 degree/s. Frequency of at least 5Hz. Preferrably 50Hz. 
-                                 A rotation to the left is indicated by a positive sign. */
-    float pitchRate;        /**< Current angular rate measurement around the y/pitch-axis of the gyroscope sensor [degree/s].
-                                 Value range -100 / +100 degree/s. Frequency of at least 5Hz. Preferrably 50Hz. 
-                                 A rotation front down is indicated by a positive sign. */
-    float rollRate;         /**< Current angular rate measurement around the x/roll-axis of the gyroscope sensor [degree/s].
-                                 Value range -100 / +100 degree/s. Frequency of at least 5Hz. Preferrably 50Hz. 
-                                 A rotation right down is indicated by a positive sign. */
-    float temperature;      /**< Temperature reading of the gyroscope sensor.
-                                 If available it can be used for temperature compensation. 
-                                 The measurement unit is unspecified. 
-                                 Degrees celsius are preferred but any value linearly dependent on the temperature is fine.*/
-    uint32_t validityBits;  /**< Bit mask indicating the validity of each corresponding value.
-                                 [bitwise or'ed @ref EGyroscopeValidityBits values].
-                                  Must be checked before usage. */
+    /** Timestamp of the acquisition of the gyroscope signal [ms].
+    * All sensor/GNSS timestamps must be based on the same time source. 
+    */
+    uint64_t timestamp;
+    /** Current angular rate measurement around the z/yaw-axis of the gyroscope sensor [degree/s].
+    * Value range -100 / +100 degree/s. Frequency of at least 5Hz. Preferrably 50Hz.
+    * A rotation to the left is indicated by a positive sign.
+    */
+    float yawRate;
+    /** Current angular rate measurement around the y/pitch-axis of the gyroscope sensor [degree/s].
+    * Value range -100 / +100 degree/s. Frequency of at least 5Hz. Preferrably 50Hz.
+    * A rotation front down is indicated by a positive sign.
+    */
+    float pitchRate;
+    /** Current angular rate measurement around the x/roll-axis of the gyroscope sensor [degree/s].
+    * Value range -100 / +100 degree/s. Frequency of at least 5Hz. Preferrably 50Hz.
+    * A rotation right down is indicated by a positive sign.
+    */
+    float rollRate;
+    /** Temperature reading of the gyroscope sensor.
+    * If available it can be used for temperature compensation. 
+    * The measurement unit is unspecified. 
+    * Degrees celsius are preferred but any value linearly dependent on the temperature is fine.
+    */
+    float temperature;
+    /** Measurement interval over which the gyroscope signal has been acquired [ms].
+    * This may slightly differ from the timestamp difference, 
+    * e.g. in case of transmission jitter before timestamping.
+    * Providing the measurement interval allows thus 
+    * - a more accurate integration of gyroscope measurements.
+    * - correct usage of the first sample
+    * - adding consistency checks
+    */
+    uint16_t measurementInterval;
+    /** Bit mask indicating the validity of each corresponding value.
+    * [bitwise or'ed @ref EGyroscopeValidityBits values].
+    * Must be checked before usage.
+    */
+    uint32_t validityBits;
 } TGyroscopeData;
 
 /**

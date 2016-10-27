@@ -13,7 +13,7 @@
 
 // API Version
 #define GENIVI_SNS_API_MAJOR 4
-#define GENIVI_SNS_API_MINOR 0
+#define GENIVI_SNS_API_MINOR 1
 #define GENIVI_SNS_API_MICRO 0
 
 #include <stdint.h>
