@@ -31,16 +31,36 @@ extern "C" {
  * It is a or'ed bitmask of the EAccelerationConfigValidityBits values.
  */
 typedef enum {
-    ACCELERATION_CONFIG_DISTX_VALID     = 0x00000001,    /**< Validity bit for field TAccelerationConfiguration::dist2RefPointX. */
-    ACCELERATION_CONFIG_DISTY_VALID     = 0x00000002,    /**< Validity bit for field TAccelerationConfiguration::dist2RefPointY. */
-    ACCELERATION_CONFIG_DISTZ_VALID     = 0x00000004,    /**< Validity bit for field TAccelerationConfiguration::dist2RefPointZ. */
-    ACCELERATION_CONFIG_ANGLEYAW_VALID  = 0x00000008,    /**< Validity bit for field TAccelerationConfiguration::angleYaw. */
-    ACCELERATION_CONFIG_ANGLEPITCH_VALID= 0x00000010,    /**< Validity bit for field TAccelerationConfiguration::anglePitch. */
-    ACCELERATION_CONFIG_ANGLEROLL_VALID = 0x00000020,    /**< Validity bit for field TAccelerationConfiguration::angleRoll. */
-    ACCELERATION_CONFIG_SIGMAX_VALID    = 0x00000040,    /**< Validity bit for field TAccelerationConfiguration::sigmaX. */
-    ACCELERATION_CONFIG_SIGMAY_VALID    = 0x00000080,    /**< Validity bit for field TAccelerationConfiguration::sigmaX. */
-    ACCELERATION_CONFIG_SIGMAZ_VALID    = 0x00000100,    /**< Validity bit for field TAccelerationConfiguration::sigmaZ. */
-    ACCELERATION_CONFIG_TYPE_VALID      = 0x00000200     /**< Validity bit for field TAccelerationConfiguration::typeBits. */    
+    /** Validity bit for field TAccelerationConfiguration::dist2RefPointX.
+    */
+    ACCELERATION_CONFIG_DISTX_VALID     = 0x00000001,
+    /** Validity bit for field TAccelerationConfiguration::dist2RefPointY.
+    */
+    ACCELERATION_CONFIG_DISTY_VALID     = 0x00000002,
+    /** Validity bit for field TAccelerationConfiguration::dist2RefPointZ.
+    */
+    ACCELERATION_CONFIG_DISTZ_VALID     = 0x00000004,
+    /** Validity bit for field TAccelerationConfiguration::angleYaw.
+    */
+    ACCELERATION_CONFIG_ANGLEYAW_VALID  = 0x00000008,
+    /** Validity bit for field TAccelerationConfiguration::anglePitch.
+    */
+    ACCELERATION_CONFIG_ANGLEPITCH_VALID= 0x00000010,
+    /** Validity bit for field TAccelerationConfiguration::angleRoll.
+    */
+    ACCELERATION_CONFIG_ANGLEROLL_VALID = 0x00000020,
+    /**< Validity bit for field TAccelerationConfiguration::sigmaX.
+    */
+    ACCELERATION_CONFIG_SIGMAX_VALID    = 0x00000040,
+    /** Validity bit for field TAccelerationConfiguration::sigmaX. 
+    */
+    ACCELERATION_CONFIG_SIGMAY_VALID    = 0x00000080,
+    /** Validity bit for field TAccelerationConfiguration::sigmaZ.
+    */
+    ACCELERATION_CONFIG_SIGMAZ_VALID    = 0x00000100,
+    /**< Validity bit for field TAccelerationConfiguration::typeBits.
+    */
+    ACCELERATION_CONFIG_TYPE_VALID      = 0x00000200
 } EAccelerationConfigValidityBits;
 
 
@@ -50,10 +70,18 @@ typedef enum {
  * It is a or'ed bitmask of the EAccelerationTypeBits values.
  */
 typedef enum {
-    ACCELERATION_X_PROVIDED             = 0x00000001,   /**< An acceleration measurement for the x-axis is provided */
-    ACCELERATION_Y_PROVIDED             = 0x00000002,   /**< An acceleration measurement for the y-axis is provided */
-    ACCELERATION_Z_PROVIDED             = 0x00000004,   /**< An acceleration measurement for the z-axis is provided */
-    ACCELERATION_TEMPERATURE_PROVIDED   = 0x00000008    /**< A measurement for the temperature is provided */
+   /** An acceleration measurement for the x-axis is provided.
+   */
+    ACCELERATION_X_PROVIDED             = 0x00000001,
+   /**< An acceleration measurement for the y-axis is provided.
+   */    
+    ACCELERATION_Y_PROVIDED             = 0x00000002,
+   /**< An acceleration measurement for the z-axis is provided.
+   */    
+    ACCELERATION_Z_PROVIDED             = 0x00000004,
+   /**< A measurement for the temperature is provided.
+   */
+    ACCELERATION_TEMPERATURE_PROVIDED   = 0x00000008
 } EAccelerationTypeBits;
 
 
@@ -95,20 +123,45 @@ typedef enum {
  * E.g. "Strapdown Inertial Navigation Technology", 2nd Edition by David Titterton and John Weston, section 3.6
  * END Explanation of the angleYaw, anglePitch angleRoll parameters  */
 typedef struct {
-    float dist2RefPointX;   /**< Distance of acceleration sensor from vehicle reference point (x-coordinate) [m]. */
-    float dist2RefPointY;   /**< Distance of acceleration sensor from vehicle reference point (y-coordinate) [m]. */
-    float dist2RefPointZ;   /**< Distance of acceleration sensor from vehicle reference point (z-coordinate) [m]. */
-    float angleYaw;         /**< Euler angle of first rotation, around yaw axis, to describe acceleration sensor orientation [degree]. For details, see above. */
-    float anglePitch;       /**< Euler angle of second rotation, around pitch axis, to describe acceleration sensor orientation [degree]. For details, see above. */
-    float angleRoll;        /**< Euler angle of third rotation, around roll axis, to describe acceleration sensor orientation [degree]. For details, see above. */
-    float sigmaX;           /**< Standard error estimate of the x-acceleration [m/s^2]. */
-    float sigmaY;           /**< Standard error estimate of the y-acceleration [m/s^2]. */
-    float sigmaZ;           /**< Standard error estimate of the z-acceleration [m/s^2]. */
-    uint32_t typeBits;      /**< Bit mask indicating the type of the used accelerometer. 
-                                 [bitwise or'ed @ref EAccelerationTypeBits values]. */    
-    uint32_t validityBits;  /**< Bit mask indicating the validity of each corresponding value.
-                                 [bitwise or'ed @ref EAccelerationConfigValidityBits values].
-                                 Must be checked before usage. */
+    /** Distance of acceleration sensor from vehicle reference point (x-coordinate) [m].
+    */
+    float dist2RefPointX;
+    /** Distance of acceleration sensor from vehicle reference point (y-coordinate) [m].
+    */
+    float dist2RefPointY;
+    /** Distance of acceleration sensor from vehicle reference point (z-coordinate) [m].
+    */
+    float dist2RefPointZ;
+    /** Euler angle of first rotation, around yaw axis, to describe acceleration sensor orientation [degree].
+    * For details, see above.
+    */
+    float angleYaw;
+    /** Euler angle of second rotation, around pitch axis, to describe acceleration sensor orientation [degree].
+    * For details, see above.
+    */
+    float anglePitch;
+    /** Euler angle of third rotation, around roll axis, to describe acceleration sensor orientation [degree].
+    * For details, see above.
+    */
+    float angleRoll;
+    /** Standard error estimate of the x-acceleration [m/s^2].
+    */    
+    float sigmaX;
+    /** Standard error estimate of the y-acceleration [m/s^2].
+    */
+    float sigmaY;
+    /** Standard error estimate of the z-acceleration [m/s^2].
+    */
+    float sigmaZ;
+    /** Bit mask indicating the type of the used accelerometer. 
+    *  [bitwise or'ed @ref EAccelerationTypeBits values].
+    */
+    uint32_t typeBits;
+    /** Bit mask indicating the validity of each corresponding value.
+    * [bitwise or'ed @ref EAccelerationConfigValidityBits values].
+    * Must be checked before usage.
+    */
+    uint32_t validityBits;
 } TAccelerationConfiguration;
 
 /**
@@ -119,10 +172,21 @@ typedef struct {
  * - If a signal is generally provided but temporarily not available, then the corresponding typeBit will be set but not the validityBit 
  */
 typedef enum {
-    ACCELERATION_X_VALID                = 0x00000001,    /**< Validity bit for field TAccelerationData::x. */
-    ACCELERATION_Y_VALID                = 0x00000002,    /**< Validity bit for field TAccelerationData::y. */
-    ACCELERATION_Z_VALID                = 0x00000004,    /**< Validity bit for field TAccelerationData::z. */
-    ACCELERATION_TEMPERATURE_VALID      = 0x00000008     /**< Validity bit for field TAccelerationData::temperature. */
+    /** Validity bit for field TAccelerationData::x.
+    */    
+    ACCELERATION_X_VALID                = 0x00000001,
+    /** Validity bit for field TAccelerationData::y.
+    */
+    ACCELERATION_Y_VALID                = 0x00000002,
+    /** Validity bit for field TAccelerationData::z.
+    */
+    ACCELERATION_Z_VALID                = 0x00000004,
+    /** Validity bit for field TAccelerationData::temperature.
+    */
+    ACCELERATION_TEMPERATURE_VALID      = 0x00000008,
+    /** Validity bit for field TAccelerationData::measurementInterval.
+    */
+    ACCELERATION_MEASINT_VALID             = 0x00000010    
 } EAccelerationValidityBits;
 
 /**
@@ -138,18 +202,39 @@ typedef enum {
  * You must check the valid bits before usage.
  */
 typedef struct {
-    uint64_t timestamp;             /**< Timestamp of the acquisition of the accelerometer signal [ms].
-                                         All sensor/GNSS timestamps must be based on the same time source. */
-    float x;                        /**< The acceleration in direction of the X-axis of the accelerometer sensor [m/s^2].*/
-    float y;                        /**< The acceleration in direction of the Y-axis of the accelerometer sensor [m/s^2].*/
-    float z;                        /**< The acceleration in direction of the Z-axis of the accelerometer sensor [m/s^2]. */
-    float temperature;              /**< Temperature reading of the accelerometer sensor.
-                                         If available it can be used for temperature compensation. 
-                                         The measurement unit is unspecified. 
-                                         Degrees celsius are preferred but any value linearly dependent on the temperature is fine.*/
-    uint32_t validityBits;          /**< Bit mask indicating the validity of each corresponding value.
-                                         [bitwise or'ed @ref EAccelerationValidityBits values].
-                                         Must be checked before usage. */
+    /** Timestamp of the acquisition of the accelerometer signal [ms].
+    * All sensor/GNSS timestamps must be based on the same time source.
+    */
+    uint64_t timestamp;
+    /** The acceleration in direction of the X-axis of the accelerometer sensor [m/s^2].
+    */
+    float x;
+    /** The acceleration in direction of the Y-axis of the accelerometer sensor [m/s^2].
+    */
+    float y;
+    /** The acceleration in direction of the Z-axis of the accelerometer sensor [m/s^2].
+    */
+    float z;
+    /** Temperature reading of the accelerometer sensor.
+    * If available it can be used for temperature compensation. 
+    * The measurement unit is unspecified. 
+    * Degrees celsius are preferred but any value linearly dependent on the temperature is fine.
+    */
+    float temperature;
+    /** Measurement interval over which the accelerometer signal has been acquired [ms].
+    * This may slightly differ from the timestamp difference, 
+    * e.g. in case of transmission jitter before timestamping.
+    * Providing the measurement interval allows thus 
+    * - a more accurate integration of accelerometer measurements.
+    * - correct usage of the first sample
+    * - adding consistency checks
+    */
+    uint16_t measurementInterval;    
+    /** Bit mask indicating the validity of each corresponding value.
+    * [bitwise or'ed @ref EAccelerationValidityBits values].
+    * Must be checked before usage.
+    */
+    uint32_t validityBits;
 } TAccelerationData;
 
 /**
