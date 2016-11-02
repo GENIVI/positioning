@@ -197,17 +197,23 @@ typedef struct {
     uint64_t timestamp;
     /** Current angular rate measurement around the z/yaw-axis of the gyroscope sensor [degree/s].
     * Value range -100 / +100 degree/s. Frequency of at least 5Hz. Preferrably 50Hz.
-    * A rotation to the left is indicated by a positive sign.
+    * A rotation to the left is indicated by a positive sign,
+    * _if_ gyroscope axes are aligned with vehicle axes 
+    * i.e. if all euler angles are zero in TGyroscopeConfiguration.
     */
     float yawRate;
     /** Current angular rate measurement around the y/pitch-axis of the gyroscope sensor [degree/s].
     * Value range -100 / +100 degree/s. Frequency of at least 5Hz. Preferrably 50Hz.
-    * A rotation front down is indicated by a positive sign.
+    * A rotation front down is indicated by a positive sign,
+    * _if_ gyroscope axes are aligned with vehicle axes 
+    * i.e. if all euler angles are zero in TGyroscopeConfiguration.
     */
     float pitchRate;
     /** Current angular rate measurement around the x/roll-axis of the gyroscope sensor [degree/s].
     * Value range -100 / +100 degree/s. Frequency of at least 5Hz. Preferrably 50Hz.
-    * A rotation right down is indicated by a positive sign.
+    * A rotation right down is indicated by a positive sign,
+    * _if_ gyroscope axes are aligned with vehicle axes 
+    * i.e. if all euler angles are zero in TGyroscopeConfiguration.
     */
     float rollRate;
     /** Temperature reading of the gyroscope sensor.
