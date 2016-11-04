@@ -27,23 +27,45 @@ extern "C" {
 #endif
 
 /**
- * TVehicleSpeedData::validityBits provides information about the currently valid signals of the vehicle speed data.
+ * TVehicleSpeedData::validityBits provides information about the 
+ * currently valid signals of the vehicle speed data.
  * It is a or'ed bitmask of the EVehicleSpeedValidityBits values.
  */
 typedef enum {
-    VEHICLESPEED_VEHICLESPEED_VALID       = 0x00000001    /**< Validity bit for field TVehicleSpeedData::vehicleSpeed. */
+    /** Validity bit for field TVehicleSpeedData::vehicleSpeed.
+    */
+    VEHICLESPEED_VEHICLESPEED_VALID       = 0x00000001,
+    /** Validity bit for field TVehicleSpeedData::measurementInterval.
+    */
+    VEHICLESPEED__MEASINT_VALID           = 0x00000002        
 } EVehicleSpeedValidityBits;
 
 /**
  * Vehicle speed sensor service provides the current speed of the vehicle.
  */
 typedef struct {
-    uint64_t timestamp;         /**< Timestamp of the acquisition of the vehicle speed signal [ms].
-                                     All sensor/GNSS timestamps must be based on the same time source. */
-    float vehicleSpeed;         /**< Filtered vehicle speed in [m/s] with a frequency of at least 5Hz. Direction is given by the sign of this value.*/
-    uint32_t validityBits;      /**< Bit mask indicating the validity of each corresponding value.
-                                    [bitwise or'ed @ref EVehicleSpeedValidityBits values].
-                                    Must be checked before usage. */
+    /** Timestamp of the acquisition of the vehicle speed signal [ms].
+    * All sensor/GNSS timestamps must be based on the same time source.
+    */
+    uint64_t timestamp;
+    /** Filtered vehicle speed in [m/s] with a frequency of at least 5Hz.
+    * Direction is given by the sign of this value.
+    */
+    float vehicleSpeed;
+    /** Measurement interval over which the vehicle speed signal has been acquired [ms].
+    * This may slightly differ from the timestamp difference, 
+    * e.g. in case of transmission jitter before timestamping.
+    * Providing the measurement interval allows thus 
+    * - a more accurate integration of vehicle speed measurements.
+    * - correct usage of the first sample
+    * - adding consistency checks
+    */
+    uint16_t measurementInterval;     
+    /** Bit mask indicating the validity of each corresponding value.
+    * [bitwise or'ed @ref EVehicleSpeedValidityBits values].
+    * Must be checked before usage. 
+    */
+    uint32_t validityBits;
 } TVehicleSpeedData;
 
 /**
