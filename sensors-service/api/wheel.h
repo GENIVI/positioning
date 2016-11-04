@@ -101,14 +101,18 @@ extern "C" {
  * 
  */
 typedef enum {
-    WHEEL_STATUS_GAP             = 0x00000001,  /**< There has been a gap in data collection, 
-                                                      i.e. an unknown number of wheel revolutions has been lost. 
-                                                      The reason for such a gap can be for example
-                                                      - wheel tick data on the vehicle bus explicitly tagged as invalid 
-                                                      - interrupted reception of vehicle bus messages.
-                                                      This flag will only be set if the detected gap may affect the application. */
-    WHEEL_STATUS_INIT            = 0x00000002   /**< This is the first wheel data of a bus or ignition lifecycle, 
-                                                      i.e. the wheel tick difference calculation may be less reliable. */
+    /** There has been a gap in data collection, 
+    * i.e. an unknown number of wheel revolutions has been lost. 
+    * The reason for such a gap can be for example
+    * - wheel tick data on the vehicle bus explicitly tagged as invalid 
+    * - interrupted reception of vehicle bus messages.
+    * This flag will only be set if the detected gap may affect the application.
+    */
+    WHEEL_STATUS_GAP             = 0x00000001,
+   /** This is the first wheel data of a bus or ignition lifecycle,
+    * i.e. the wheel tick difference calculation may be less reliable.
+    */
+    WHEEL_STATUS_INIT            = 0x00000002
 } EWheelStatusBits;
 
 /**
@@ -117,14 +121,33 @@ typedef enum {
  * Note: The assignment of the fields to the wheels of the vehicle is provided by the function snsWheelGetConfiguration().
  */
 typedef enum {
-    WHEEL0_VALID                = 0x00000001,    /**< Validity bit for field TWheelData::data[0]. */
-    WHEEL1_VALID                = 0x00000002,    /**< Validity bit for field TWheelData::data[1]. */
-    WHEEL2_VALID                = 0x00000004,    /**< Validity bit for field TWheelData::data[2]. */
-    WHEEL3_VALID                = 0x00000008,    /**< Validity bit for field TWheelData::data[3]. */
-    WHEEL4_VALID                = 0x00000010,    /**< Validity bit for field TWheelData::data[4]. */
-    WHEEL5_VALID                = 0x00000020,    /**< Validity bit for field TWheelData::data[5]. */
-    WHEEL6_VALID                = 0x00000040,    /**< Validity bit for field TWheelData::data[6]. */
-    WHEEL7_VALID                = 0x00000080     /**< Validity bit for field TWheelData::data[7]. */
+    /** Validity bit for field TWheelData::data[0].
+    */
+    WHEEL0_VALID                = 0x00000001,
+    /** Validity bit for field TWheelData::data[1].
+    */
+    WHEEL1_VALID                = 0x00000002,
+    /** Validity bit for field TWheelData::data[2].
+    */
+    WHEEL2_VALID                = 0x00000004,
+    /** Validity bit for field TWheelData::data[3].
+    */
+    WHEEL3_VALID                = 0x00000008,
+    /** Validity bit for field TWheelData::data[4].
+    */
+    WHEEL4_VALID                = 0x00000010,
+    /** Validity bit for field TWheelData::data[5].
+    */
+    WHEEL5_VALID                = 0x00000020,
+    /** Validity bit for field TWheelData::data[6].
+    */
+    WHEEL6_VALID                = 0x00000040,
+    /** Validity bit for field TWheelData::data[7].
+    */
+    WHEEL7_VALID                = 0x00000080,
+    /** Validity bit for field TWheelData::measurementInterval.
+    */
+    WHEEL_MEASINT_VALID         = 0x00000100       
 } EWheelValidityBits;
 
 /**
@@ -136,43 +159,74 @@ typedef enum {
 
  */
 typedef enum {
-    WHEEL_UNIT_NONE             = 0,    /**< Wheel does not provide any data. */
-    WHEEL_UNIT_TICKS            = 1,    /**< Wheel rotation data is provided as number of wheel ticks accumulated within measurement interval. 
-                                             Note 1: Therefore, if the wheel ticks on the vehicle bus are represented as rolling counters, 
-                                             this is the difference between two subsequent rolling counter values 
-                                             taking the vehicle specific roll-over boundary into account. 
-                                             Note 2: It is safe to store integer values such as for wheel ticks 
-                                             without precision loss in float variables for values up to 2^23. */
-    WHEEL_UNIT_SPEED            = 2,    /**< Wheel rotation data is provided as speed in [m/s]. */
-    WHEEL_UNIT_ANGULAR_SPEED    = 3,    /**< Wheel rotation data is provided as angular speed in [1/s] rotation per seconds. */
+    /** Wheel does not provide any data.
+    */
+    WHEEL_UNIT_NONE             = 0,
+    /** Wheel rotation data is provided as number of wheel ticks accumulated within measurement interval. 
+    * Note 1: Therefore, if the wheel ticks on the vehicle bus are represented as rolling counters, 
+    * this is the difference between two subsequent rolling counter values 
+    * taking the vehicle specific roll-over boundary into account. 
+    * Note 2: It is safe to store integer values such as for wheel ticks 
+    * without precision loss in float variables for values up to 2^23.
+    */
+    WHEEL_UNIT_TICKS            = 1,
+    /** Wheel rotation data is provided as speed in [m/s].
+    */
+    WHEEL_UNIT_SPEED            = 2,
+    /** Wheel rotation data is provided as angular speed in [1/s] rotation per seconds.
+    */
+    WHEEL_UNIT_ANGULAR_SPEED    = 3,
 } EWheelUnit;
 
 /**
  * Wheel configuration status bits
  */
 typedef enum {
-    WHEEL_CONFIG_DRIVEN         = 0x00000001,  /**< The wheel is driven by the powertrain.
-                                                    It may thus be affected by additional wheel slip. */
-    WHEEL_CONFIG_STEERED        = 0x00000002,  /**< The wheel may be turned by the steering. 
-                                                    This is typically the case only for wheels on the front axle.
-                                                    But for some vehicles also wheels on other axles are permanently or temporarily steered. */
-    WHEEL_CONFIG_DIFF_LOCK      = 0x00000004   /**< The differential lock for this wheel is activated. */
+    /** The wheel is driven by the powertrain.
+    * It may thus be affected by additional wheel slip.
+    */
+    WHEEL_CONFIG_DRIVEN         = 0x00000001,
+    /** The wheel may be turned by the steering. 
+    * This is typically the case only for wheels on the front axle.
+    * But for some vehicles also wheels on other axles are permanently or temporarily steered.
+    */
+    WHEEL_CONFIG_STEERED        = 0x00000002,
+   /** The differential lock for this wheel is activated.
+   */
+    WHEEL_CONFIG_DIFF_LOCK      = 0x00000004
                                                     
 } EWheelConfigStatusBits;
 
 /**
- * TWheelConfiguration::validityBits provides information about the currently valid signals of the wheel configuration data.
+ * TWheelConfiguration::validityBits provides information about the currently
+ * valid signals of the wheel configuration data.
  * It is a or'ed bitmask of the EWheelConfigValidityBits values.
  */
 typedef enum {
-    WHEEL_CONFIG_TICKS_PER_REV_VALID    = 0x00000001,    /**< Validity bit for field TWheelConfiguration::wheelticksPerRevolution. */
-    WHEEL_CONFIG_TIRE_CIRC_VALID        = 0x00000002,    /**< Validity bit for field TWheelConfiguration::tireRollingCircumference. */
-    WHEEL_CONFIG_DISTX_VALID            = 0x00000004,    /**< Validity bit for field TWheelConfiguration::dist2RefPointX. */
-    WHEEL_CONFIG_DISTY_VALID            = 0x00000008,    /**< Validity bit for field TWheelConfiguration::dist2RefPointY. */
-    WHEEL_CONFIG_DISTZ_VALID            = 0x00000010,    /**< Validity bit for field TWheelConfiguration::dist2RefPointZ. */
-    WHEEL_CONFIG_DRIVEN_VALID           = 0x00000020,    /**< Validity bit for field TWheelConfiguration::EWheelConfigStatusBits::WHEEL_CONFIG_DRIVEN. */
-    WHEEL_CONFIG_STEERED_VALID          = 0x00000040,    /**< Validity bit for field TWheelConfiguration::EWheelConfigStatusBits::WHEEL_CONFIG_STEERED. */
-    WHEEL_CONFIG_DIFF_LOCK_VALID        = 0x00000080,    /**< Validity bit for field TWheelConfiguration::EWheelConfigStatusBits::WHEEL_CONFIG_DIFF_LOCK. */
+    /** Validity bit for field TWheelConfiguration::wheelticksPerRevolution.
+    */    
+    WHEEL_CONFIG_TICKS_PER_REV_VALID    = 0x00000001,
+    /** Validity bit for field TWheelConfiguration::tireRollingCircumference.
+    */
+    WHEEL_CONFIG_TIRE_CIRC_VALID        = 0x00000002,
+    /** Validity bit for field TWheelConfiguration::dist2RefPointX.
+    */
+    WHEEL_CONFIG_DISTX_VALID            = 0x00000004,
+    /** Validity bit for field TWheelConfiguration::dist2RefPointY.
+    */
+    WHEEL_CONFIG_DISTY_VALID            = 0x00000008,
+    /** Validity bit for field TWheelConfiguration::dist2RefPointZ.
+    */
+    WHEEL_CONFIG_DISTZ_VALID            = 0x00000010,
+    /** Validity bit for field TWheelConfiguration::EWheelConfigStatusBits::WHEEL_CONFIG_DRIVEN.
+    */
+    WHEEL_CONFIG_DRIVEN_VALID           = 0x00000020,
+    /** Validity bit for field TWheelConfiguration::EWheelConfigStatusBits::WHEEL_CONFIG_STEERED.
+    */
+    WHEEL_CONFIG_STEERED_VALID          = 0x00000040,
+    /** Validity bit for field TWheelConfiguration::EWheelConfigStatusBits::WHEEL_CONFIG_DIFF_LOCK.
+    */
+    WHEEL_CONFIG_DIFF_LOCK_VALID        = 0x00000080,
 
 } EWheelConfigValidityBits;
 
@@ -192,35 +246,59 @@ typedef enum {
  *
  */
 typedef struct {
-    EWheelUnit wheelUnit;               /**< [Static] Measurement unit in which the wheel rotation data is provided. 
-                                             WHEEL_UNIT_NONE, if no wheel rotation data is provided (and thus the rest of the structure can be ignored. */
-    uint8_t axleIndex;                  /**< [Static] Identification of the axle on which the wheel is mounted
-                                             Axles are numbered consecutively from front to rear.
-                                             0: unknown/unspecified
-                                             1: front axle
-                                             2: 2nd axle (rear axle on a typical 2-axle vehicle)
-                                             3: 3rd axle
-                                             ... */
-    uint8_t wheelIndex;                 /**< [Static] Identification of the location of the wheel on the axle
-                                             Wheels are numbered consecutively from left to right
-                                             0: unknown/unspecified
-                                             1: left-most wheel (also used when there is only one wheel per axle, e.g. for a trike)
-                                             2: right wheel #1 (right wheel on a typical passenger car with 2 wheels per axle)
-                                             3: right wheel #2
-                                             ... */
-    uint16_t wheelticksPerRevolution;   /**< [Static] Number of ticks for a single revolution of one wheel.
-                                             Typically only available when wheelUnit is WHEEL_UNIT_TICKS. */
-    float tireRollingCircumference;     /**< [Static] Distance travelled on the ground per a single revolution of the wheel. Unit: [m]. */
-    float dist2RefPointX;               /**< [Static] Distance of the wheel center from the vehicle reference point (x-coordinate) [m]. */
-    float dist2RefPointY;               /**< [Static] Distance of the wheel center from the vehicle reference point (y-coordinate) [m]. */
-    float dist2RefPointZ;               /**< [Static] Distance of the wheel center from the vehicle reference point (z-coordinate) [m]. */    
-    uint32_t statusBits;                /**< Bit mask providing additional status information.
-                                            [bitwise or'ed @ref EWheelConfigStatusBits values]. */
-
-    uint32_t validityBits;              /**< Bit mask indicating the validity of each corresponding value.
-                                            [bitwise or'ed @ref EWheelConfigValidityBits values].
-                                            Must be checked before usage. 
-                                            Note: wheelUnit, axleIndex and wheelIndex must always be valid. Therefore no dedicated validityBits are required.*/
+    /** [Static] Measurement unit in which the wheel rotation data is provided.
+    * WHEEL_UNIT_NONE, if no wheel rotation data is provided (and thus the rest of the structure can be ignored.
+    */
+    EWheelUnit wheelUnit;
+    /** [Static] Identification of the axle on which the wheel is mounted
+    * Axles are numbered consecutively from front to rear.
+    * 0: unknown/unspecified
+    * 1: front axle
+    * 2: 2nd axle (rear axle on a typical 2-axle vehicle)
+    * 3: 3rd axle
+    * ...
+    */    
+    uint8_t axleIndex;
+    /** [Static] Identification of the location of the wheel on the axle
+    * Wheels are numbered consecutively from left to right
+    * 0: unknown/unspecified
+    * 1: left-most wheel (also used when there is only one wheel per axle, e.g. for a trike)
+    * 2: right wheel #1 (right wheel on a typical passenger car with 2 wheels per axle)
+    * 3: right wheel #2
+    * ...
+    */
+    uint8_t wheelIndex;
+    /** [Static] Number of ticks for a single revolution of one wheel.
+    * Typically only available when wheelUnit is WHEEL_UNIT_TICKS.
+    */
+    uint16_t wheelticksPerRevolution;
+    /** [Static] Distance travelled on the ground
+    * per a single revolution of the wheel. Unit: [m].
+    */
+    float tireRollingCircumference;
+    /** [Static] Distance of the wheel center from
+    * the vehicle reference point (x-coordinate) [m].
+    */
+    float dist2RefPointX;
+    /** [Static] Distance of the wheel center from
+    * the vehicle reference point (y-coordinate) [m].
+    */
+    float dist2RefPointY;
+    /** [Static] Distance of the wheel center from
+    * the vehicle reference point (z-coordinate) [m].
+    */
+    float dist2RefPointZ;
+    /** Bit mask providing additional status information.
+    * [bitwise or'ed @ref EWheelConfigStatusBits values].
+    */
+    uint32_t statusBits;
+    /** Bit mask indicating the validity of each corresponding value.
+    * [bitwise or'ed @ref EWheelConfigValidityBits values].
+    * Must be checked before usage. 
+    * Note: wheelUnit, axleIndex and wheelIndex must always be valid.
+    * Therefore no dedicated validityBits are required.
+    */
+    uint32_t validityBits;
 } TWheelConfiguration;
 
 /**
@@ -241,17 +319,32 @@ typedef TWheelConfiguration TWheelConfigurationArray[WHEEL_MAX];
  * The index used for an individual wheel in the data[] array is the same as in the TWheelConfigurationArray.
  */
 typedef struct {
-    uint64_t timestamp;     /**< Timestamp of the acquisition of this wheel tick signal [ms].
-                                 All sensor/GNSS timestamps must be based on the same time source. */
-
-    float data[WHEEL_MAX];  /**< Wheel rotation data for the wheel identified by TWheelConfiguration::wheel1 in measurement unit identified by TWheelConfiguration::wheelUnit. */
-    
-    uint32_t statusBits;    /**< Bit mask providing additional status information.
-                                 [bitwise or'ed @ref EWheelStatusBits values]. */
-
-    uint32_t validityBits;  /**< Bit mask indicating the validity of each corresponding value.
-                                 [bitwise or'ed @ref EWheelValidityBits values].
-                                  Must be checked before usage. */                                                         
+    /** Timestamp of the acquisition of this wheel tick signal [ms].
+    * All sensor/GNSS timestamps must be based on the same time source.
+    */
+    uint64_t timestamp;
+    /** Wheel rotation data for the wheel identified by TWheelConfiguration::wheel[i]
+    *  in measurement unit identified by TWheelConfiguration::wheelUnit.
+    */
+    float data[WHEEL_MAX];
+    /** Bit mask providing additional status information.
+    * [bitwise or'ed @ref EWheelStatusBits values].
+    */
+    uint32_t statusBits;
+    /** Measurement interval over which the wheel data have been acquired [ms].
+    * This may slightly differ from the timestamp difference, 
+    * e.g. in case of transmission jitter before timestamping.
+    * Providing the measurement interval allows thus 
+    * - a more accurate integration of wheel data measurements.
+    * - correct usage of the first sample
+    * - adding consistency checks
+    */
+    uint16_t measurementInterval;        
+    /** Bit mask indicating the validity of each corresponding value.
+    * [bitwise or'ed @ref EWheelValidityBits values].
+    * Must be checked before usage.
+    */
+    uint32_t validityBits;
 } TWheelData;
 
 /**
