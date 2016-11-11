@@ -171,7 +171,7 @@ bool snsVehicleDataDestroy()
 
 bool processGVSNSWHE(const char* data)
 {
-    //parse data like: 061076000,0$GVSNSWHTK,061076000,7,266,8,185,0,0,0,0
+    //parse data like: 15259,0,$GVSNSWHE,15200,35,45,0,0,0,0,0,0,0X0001,100,0X03
     
     //storage for buffered data
     static TWheelData buf_whtk[MAX_BUF_MSG];
@@ -189,20 +189,36 @@ bool processGVSNSWHE(const char* data)
         return false;
     }
 
-    n = sscanf(data, "%llu,%hu,$GVSNSWHE,%llu,%f,%f,%f,%f,%f,%f,%f,%f,%x,%x", 
-      &timestamp, &countdown, &whtk.timestamp
-      ,&whtk.data[0], &whtk.data[1]
-      ,&whtk.data[2], &whtk.data[3]
-      ,&whtk.data[4], &whtk.data[5]
-      ,&whtk.data[6], &whtk.data[7]
-      ,&whtk.statusBits
-      ,&whtk.validityBits
-      );
+    //First try to read in new format with measurementInterval
+    n = sscanf(data, "%llu,%hu,$GVSNSWHE,%llu,%f,%f,%f,%f,%f,%f,%f,%f,%x,%hu,%x", 
+        &timestamp, &countdown, &whtk.timestamp
+        ,&whtk.data[0], &whtk.data[1]
+        ,&whtk.data[2], &whtk.data[3]
+        ,&whtk.data[4], &whtk.data[5]
+        ,&whtk.data[6], &whtk.data[7]
+        ,&whtk.statusBits
+        ,&whtk.measurementInterval
+        ,&whtk.validityBits
+        );
 
-    if (n != 13) //13 fields to parse
+    if (n != 14) //14 fields to parse
     {
-        LOG_ERROR_MSG(gContext,"replayer: processGVSNSWHE failed!");
-        return false;
+        //Else try to read in old format without measurementInterval
+        n = sscanf(data, "%llu,%hu,$GVSNSWHE,%llu,%f,%f,%f,%f,%f,%f,%f,%f,%x,%x", 
+            &timestamp, &countdown, &whtk.timestamp
+            ,&whtk.data[0], &whtk.data[1]
+            ,&whtk.data[2], &whtk.data[3]
+            ,&whtk.data[4], &whtk.data[5]
+            ,&whtk.data[6], &whtk.data[7]
+            ,&whtk.statusBits
+            ,&whtk.validityBits
+            );
+
+        if (n != 13) //13 fields to parse
+        {
+            LOG_ERROR_MSG(gContext,"replayer: processGVSNSWHE failed!");
+            return false;
+        }
     }
 
     //buffered data handling
@@ -261,12 +277,33 @@ static bool processGVSNSGYR(const char* data)
         return false;
     }
 
-    n = sscanf(data, "%llu,%hu,$GVSNSGYR,%llu,%f,%f,%f,%f,%x", &timestamp, &countdown, &gyro.timestamp, &gyro.yawRate, &gyro.pitchRate, &gyro.rollRate, &gyro.temperature, &gyro.validityBits);    
-
-    if (n != 8) //8 fields to parse
+    //First try to read in new format with measurementInterval
+    n = sscanf(data, "%llu,%hu,$GVSNSGYR,%llu,%f,%f,%f,%f,%hu,%x"
+        ,&timestamp, &countdown, &gyro.timestamp
+        ,&gyro.yawRate
+        ,&gyro.pitchRate
+        ,&gyro.rollRate
+        ,&gyro.temperature
+        ,&gyro.measurementInterval        
+        ,&gyro.validityBits
+        );
+    if (n != 9) //9 fields to parse
     {
-            LOG_ERROR_MSG(gContext,"replayer: processGVSNSGYR failed!");
-            return false;
+        //Else try to read in old format without measurementInterval
+        n = sscanf(data, "%llu,%hu,$GVSNSGYR,%llu,%f,%f,%f,%f,%x"
+            ,&timestamp, &countdown, &gyro.timestamp
+            ,&gyro.yawRate
+            ,&gyro.pitchRate
+            ,&gyro.rollRate
+            ,&gyro.temperature
+            ,&gyro.validityBits
+            );
+        
+        if (n != 8) //8 fields to parse
+        {
+                LOG_ERROR_MSG(gContext,"replayer: processGVSNSGYR failed!");
+                return false;
+        }
     }
 
     //buffered data handling
@@ -327,12 +364,32 @@ static bool processGVSNSVSP(const char* data)
         return false;
     }
 
-    n = sscanf(data, "%llu,%hu,$GVSNSVSP,%llu,%f,%x", &timestamp, &countdown, &vehsp.timestamp, &vehsp.vehicleSpeed, &vehsp.validityBits);    
+    //First try to read in new format with measurementInterval
+    n = sscanf(data, "%llu,%hu,$GVSNSVSP,%llu,%f,%hu,%x"
+        ,&timestamp
+        ,&countdown
+        ,&vehsp.timestamp
+        ,&vehsp.vehicleSpeed
+        ,&vehsp.measurementInterval
+        ,&vehsp.validityBits
+        );    
 
-    if (n != 5) //5 fields to parse
+    if (n != 6) //6 fields to parse
     {
-        LOG_ERROR_MSG(gContext,"replayer: processGVSNSVSP failed!");
-        return false;
+        //Else try to read in old format without measurementInterval
+    n = sscanf(data, "%llu,%hu,$GVSNSVSP,%llu,%f,%x"
+        ,&timestamp
+        ,&countdown
+        ,&vehsp.timestamp
+        ,&vehsp.vehicleSpeed
+        ,&vehsp.validityBits
+        );    
+
+        if (n != 5) //5 fields to parse
+        {
+            LOG_ERROR_MSG(gContext,"replayer: processGVSNSVSP failed!");
+            return false;
+        }
     }
 
     //buffered data handling
