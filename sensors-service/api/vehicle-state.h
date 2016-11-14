@@ -27,14 +27,23 @@ extern "C" {
 #endif
 
 /**
- * TVehicleStateData::validityBits provides information about the currently valid signals of the vehicle state data.
+ * TVehicleStateData::validityBits provides information about the
+ * currently valid signals of the vehicle state data.
  * It is a or'ed bitmask of the EVehicleStateValidityBits values.
  */
 typedef enum {
-    VEHICLESTATE_ANTILOCKBRAKESYSTEMACTIVE_VALID            = 0x00000001,   /**< Validity bit for field antiLockBrakeSystemActive::antiLockBrakeSystemActive. */
-    VEHICLESTATE_BRAKEACTIVE_VALID                          = 0x00000002,   /**< Validity bit for field antiLockBrakeSystemActive::brakeActive. */
-    VEHICLESTATE_ELECTRONICSTABILITYPROGRAMACTIVE_VALID     = 0x00000004,   /**< Validity bit for field antiLockBrakeSystemActive::electronicStabilityProgramActive. */
-    VEHICLESTATE_TRACTIONCONTROLACTIVE_VALID                = 0x00000008,   /**< Validity bit for field antiLockBrakeSystemActive::tractionControlActive. */
+    /** Validity bit for field TVehicleStateData::antiLockBrakeSystemActive.
+    */
+    VEHICLESTATE_ANTILOCKBRAKESYSTEMACTIVE_VALID            = 0x00000001,
+    /** Validity bit for field TVehicleStateData::brakeActive.
+    */
+    VEHICLESTATE_BRAKEACTIVE_VALID                          = 0x00000002,
+    /** Validity bit for field TVehicleStateData::electronicStabilityProgramActive.
+    */
+    VEHICLESTATE_ELECTRONICSTABILITYPROGRAMACTIVE_VALID     = 0x00000004,
+    /** Validity bit for field TVehicleStateData::tractionControlActive.
+    */
+    VEHICLESTATE_TRACTIONCONTROLACTIVE_VALID                = 0x00000008,
 } EVehicleStateValidityBits;
 
 /**
@@ -42,15 +51,27 @@ typedef enum {
  * You must check the valid bits before usage.
  */
 typedef struct {
-    uint64_t timestamp;                         /**< Timestamp of the acquisition of the accelerometer signal [ms].
-                                                     All sensor/GNSS timestamps must be based on the same time source. */
-    bool antiLockBrakeSystemActive;             /**< If true and signal is valid the ABS is currently engaged. */
-    bool brakeActive;                           /**< If true and signal is valid the brakes are currently engaged. */
-    bool electronicStabilityProgramActive;      /**< If true and signal is valid the electronic stability system (ESP or DSC) is currently engaged. */
-    bool tractionControlActive;                 /**< If true and signal is valid the traction control (ASR) is currently engaged. */
-    uint32_t validityBits;                      /**< Bit mask indicating the validity of each corresponding value.
-                                                    [bitwise or'ed @ref EVehicleStateValidityBits values].
-                                                    Must be checked before usage. */
+    /** Timestamp of the acquisition of the accelerometer signal [ms].
+    * All sensor/GNSS timestamps must be based on the same time source.
+    */
+    uint64_t timestamp;
+    /** If true and signal is valid the ABS is currently engaged.
+    */    
+    bool antiLockBrakeSystemActive;
+    /** If true and signal is valid the brakes are currently engaged.
+    */
+    bool brakeActive;
+    /** If true and signal is valid the electronic stability system (ESP or DSC) is currently engaged.
+    */
+    bool electronicStabilityProgramActive;
+    /** If true and signal is valid the traction control (ASR) is currently engaged.
+    */
+    bool tractionControlActive;
+    /** Bit mask indicating the validity of each corresponding value.
+    * [bitwise or'ed @ref EVehicleStateValidityBits values].
+    * Must be checked before usage.
+    */
+    uint32_t validityBits;
 } TVehicleStateData;
 
 /**
