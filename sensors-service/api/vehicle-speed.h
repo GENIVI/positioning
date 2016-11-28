@@ -52,15 +52,16 @@ typedef struct {
     * Direction is given by the sign of this value.
     */
     float vehicleSpeed;
-    /** Measurement interval over which the vehicle speed signal has been acquired [ms].
-    * This may slightly differ from the timestamp difference, 
+    /** Measurement interval over which the vehicle speed signal has been acquired.
+    * Unit: micro-seconds [us].
+    * This may slightly differ from the timestamp difference,
     * e.g. in case of transmission jitter before timestamping.
     * Providing the measurement interval allows thus 
     * - a more accurate integration of vehicle speed measurements.
     * - correct usage of the first sample
     * - adding consistency checks
     */
-    uint16_t measurementInterval;     
+    uint32_t measurementInterval;
     /** Bit mask indicating the validity of each corresponding value.
     * [bitwise or'ed @ref EVehicleSpeedValidityBits values].
     * Must be checked before usage. 

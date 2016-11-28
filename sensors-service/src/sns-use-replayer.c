@@ -190,7 +190,7 @@ bool processGVSNSWHE(const char* data)
     }
 
     //First try to read in new format with measurementInterval
-    n = sscanf(data, "%llu,%hu,$GVSNSWHE,%llu,%f,%f,%f,%f,%f,%f,%f,%f,%x,%hu,%x", 
+    n = sscanf(data, "%llu,%hu,$GVSNSWHE,%llu,%f,%f,%f,%f,%f,%f,%f,%f,%x,%u,%x", 
         &timestamp, &countdown, &whtk.timestamp
         ,&whtk.data[0], &whtk.data[1]
         ,&whtk.data[2], &whtk.data[3]
@@ -278,7 +278,7 @@ static bool processGVSNSGYR(const char* data)
     }
 
     //First try to read in new format with measurementInterval
-    n = sscanf(data, "%llu,%hu,$GVSNSGYR,%llu,%f,%f,%f,%f,%hu,%x"
+    n = sscanf(data, "%llu,%hu,$GVSNSGYR,%llu,%f,%f,%f,%f,%u,%x"
         ,&timestamp, &countdown, &gyro.timestamp
         ,&gyro.yawRate
         ,&gyro.pitchRate
@@ -365,7 +365,7 @@ static bool processGVSNSVSP(const char* data)
     }
 
     //First try to read in new format with measurementInterval
-    n = sscanf(data, "%llu,%hu,$GVSNSVSP,%llu,%f,%hu,%x"
+    n = sscanf(data, "%llu,%hu,$GVSNSVSP,%llu,%f,%u,%x"
         ,&timestamp
         ,&countdown
         ,&vehsp.timestamp

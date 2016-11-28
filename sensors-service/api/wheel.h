@@ -331,15 +331,16 @@ typedef struct {
     * [bitwise or'ed @ref EWheelStatusBits values].
     */
     uint32_t statusBits;
-    /** Measurement interval over which the wheel data have been acquired [ms].
-    * This may slightly differ from the timestamp difference, 
+    /** Measurement interval over which the wheel data have been acquired.
+    * Unit: micro-seconds [us].
+    * This may slightly differ from the timestamp difference,
     * e.g. in case of transmission jitter before timestamping.
     * Providing the measurement interval allows thus 
     * - a more accurate integration of wheel data measurements.
     * - correct usage of the first sample
     * - adding consistency checks
     */
-    uint16_t measurementInterval;        
+    uint32_t measurementInterval;
     /** Bit mask indicating the validity of each corresponding value.
     * [bitwise or'ed @ref EWheelValidityBits values].
     * Must be checked before usage.

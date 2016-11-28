@@ -221,15 +221,16 @@ typedef struct {
     * Degrees celsius are preferred but any value linearly dependent on the temperature is fine.
     */
     float temperature;
-    /** Measurement interval over which the accelerometer signal has been acquired [ms].
-    * This may slightly differ from the timestamp difference, 
+    /** Measurement interval over which the accelerometer signal has been acquired.
+    * Unit: micro-seconds [us].
+    * This may slightly differ from the timestamp difference,
     * e.g. in case of transmission jitter before timestamping.
     * Providing the measurement interval allows thus 
     * - a more accurate integration of accelerometer measurements.
     * - correct usage of the first sample
     * - adding consistency checks
     */
-    uint16_t measurementInterval;    
+    uint32_t measurementInterval;
     /** Bit mask indicating the validity of each corresponding value.
     * [bitwise or'ed @ref EAccelerationValidityBits values].
     * Must be checked before usage.
