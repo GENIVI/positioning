@@ -269,10 +269,12 @@ typedef enum {
     GNSS_POSITION_SHEADING_VALID        = 0x00020000,    /**< Validity bit for field TGNSSPosition::sigmaHeading. */
     //quality parameters: overall GNSS fix status
     GNSS_POSITION_STAT_VALID            = 0x00040000,    /**< Validity bit for field TGNSSPosition::fixStatus. */
-    GNSS_POSITION_TYPE_VALID            = 0x00080000,    /**< Validity bit for field TGNSSPosition::fixTypeBits. */    
+    GNSS_POSITION_TYPE_VALID            = 0x00080000,    /**< Validity bit for field TGNSSPosition::fixTypeBits. */
     //gnss system information
     GNSS_POSITION_ASYS_VALID            = 0x00100000,    /**< Validity bit for field TGNSSPosition::activatedSystems. */
     GNSS_POSITION_USYS_VALID            = 0x00200000,    /**< Validity bit for field TGNSSPosition::usedSystems. */
+    //correction data information
+    GNSS_POSITION_CORRAGE_VALID         = 0x00400000,    /**< Validity bit for field TGNSSPosition::correctionAge. */
 } EGNSSPositionValidityBits;
 
 /**
@@ -314,6 +316,9 @@ typedef struct {
                                          [bitwise or'ed @ref EGNSSSystem values].*/
     uint32_t usedSystems;           /**< Bit mask indicating the satellite systems that are actually used for the position fix
                                          [bitwise or'ed @ref EGNSSSystem values].*/
+    //correction data information
+    uint16_t correctionAge;         /**< Age of used correction data in [s]. 
+                                         Note: The kind of used correction data is identified by the corresponding bit in @ref fixTypeBits. */     
     //validity bits
     uint32_t validityBits;          /**< Bit mask indicating the validity of each corresponding value.
                                          [bitwise or'ed @ref EGNSSPositionValidityBits values].
