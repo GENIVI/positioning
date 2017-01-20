@@ -13,12 +13,12 @@ package org.genivi.EnhancedPositionService
 import org.genivi.EnhancedPositionService.EnhancedPositionServiceTypes.* from "EnhancedPositionServiceTypes.fidl"
 
 <**
-    @description : PositionFeedback = This interface allows the application implementing the map-matching algorithm to provide a position feedback to the EnahncedPositionService
+    @description : PositionFeedback = This interface allows the application implementing the map-matching algorithm to provide a position feedback to the EnhancedPositionService
 **>
 
 interface PositionFeedback {
     version {
-        major 0
+        major 5
         minor 0
     }
 

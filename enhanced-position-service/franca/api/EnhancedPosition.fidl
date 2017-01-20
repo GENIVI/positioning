@@ -15,7 +15,7 @@ import org.genivi.EnhancedPositionService.EnhancedPositionServiceTypes.* from "E
 <** @description : EnhancedPosition = This interface offers functionalities to retrieve the enhanced position of the vehicle **>
 interface EnhancedPosition {
     version {
-        major 0
+        major 5
         minor 0
     }
 

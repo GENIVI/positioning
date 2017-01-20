@@ -5,7 +5,7 @@
  *
  * \ingroup GNSSService
  * \brief Compliance Level: Abstract Component
- * \copyright Copyright (C) 2012, BMW Car IT GmbH, Continental Automotive GmbH, PCA Peugeot Citroën, XS Embedded GmbH
+ * \copyright Copyright (C) 2012, BMW Car IT GmbH, Continental Automotive GmbH, PCA Peugeot Citroën, XS Embedded GmbH, Garmin International
  * 
  * \license
  * This Source Code Form is subject to the terms of the

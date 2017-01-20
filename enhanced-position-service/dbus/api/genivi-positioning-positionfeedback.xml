@@ -14,9 +14,9 @@
 <node name="/org/genivi/positioning/PositionFeedback" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="introspect.xsd">
 
   <interface name="org.genivi.positioning.PositionFeedback">
-    <version>4.0.0 (11-Feb-2016)</version>
+    <version>5.0.0 (20-Jan-2017)</version>
     <doc>
-      <line>PositionFeedback = This interface allows the application implementing the map-matching algorithm to provide a position feedback to the EnahncedPositionService</line>
+      <line>PositionFeedback = This interface allows the application implementing the map-matching algorithm to provide a position feedback to the EnhancedPositionService</line>
     </doc>
     
     <method name="GetVersion">
