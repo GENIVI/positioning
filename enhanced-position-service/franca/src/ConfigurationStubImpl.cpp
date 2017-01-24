@@ -27,8 +27,6 @@
 
 DLT_IMPORT_CONTEXT(gCtx);
 
-using namespace org::genivi::EnhancedPositionService;
-
 ConfigurationStubImpl::ConfigurationStubImpl() {
 
    setUpdateIntervalAttribute(1000); //set default time interval

@@ -18,7 +18,7 @@ set(CMAKE_VERBOSE_MAKEFILE on)
 set(CMAKE_CXX_FLAGS "-Wall -std=c++0x")
 set(CMAKE_BUILD_TYPE Debug)
 
-find_package(CommonAPI 3.1.5 REQUIRED)
+find_package(CommonAPI 3.1.9 REQUIRED)
 
 message(STATUS "WITH_DLT = ${WITH_DLT}")
 message(STATUS "WITH_GPSD = ${WITH_GPSD}")
@@ -31,13 +31,13 @@ message(STATUS "WITH_FRANCA_SOMEIP_INTERFACE = ${WITH_FRANCA_SOMEIP_INTERFACE}")
 # Source Files
 set(PRJ_SRC_PATH ${CMAKE_CURRENT_SOURCE_DIR})
 set(PRJ_SRC_GEN_ROOT ${CMAKE_BINARY_DIR}/enhanced-position-service/franca/api)
-set(PRJ_SRC_GEN_PATH ${PRJ_SRC_GEN_ROOT}/org/genivi/EnhancedPositionService)
+set(PRJ_SRC_GEN_PATH ${PRJ_SRC_GEN_ROOT}/v5/org/genivi/EnhancedPositionService)
 
 if (WITH_FRANCA_DBUS_INTERFACE)
 
     message(STATUS "ENHANCED-POSITION-SERVICE-FRANCA-DBUS")
     
-    find_package(CommonAPI-DBus 3.1.5 REQUIRED)
+    find_package(CommonAPI-DBus 3.1.9 REQUIRED)
 
 
     # CommonAPI
@@ -53,8 +53,8 @@ if (WITH_FRANCA_DBUS_INTERFACE)
       # There's a package config file in the PATH
       pkg_check_modules (DBUS "dbus-1 >= 1.4")
     endif()
-    pkg_check_modules (COMMONAPI "CommonAPI >= 3.1")
-    pkg_check_modules (COMMONAPI_DBUS "CommonAPI-DBus >= 3.1")
+    pkg_check_modules (COMMONAPI "CommonAPI >= 3.1.9")
+    pkg_check_modules (COMMONAPI_DBUS "CommonAPI-DBus >= 3.1.9")
 
     FILE(GLOB PRJ_PROXY_GEN_SRCS ${PRJ_SRC_GEN_PATH}/*DBusProxy.cpp ${PRJ_SRC_GEN_PATH}/*Types.cpp ${PRJ_SRC_GEN_PATH}/*DBusDeployment.cpp)
     FILE(GLOB PRJ_STUB_GEN_SRCS ${PRJ_SRC_GEN_PATH}/*DBusStub*.cpp ${PRJ_SRC_GEN_PATH}/*Types.cpp ${PRJ_SRC_GEN_PATH}/*DBusDeployment.cpp ${PRJ_SRC_GEN_PATH}/*StubDefault.cpp)
@@ -77,6 +77,7 @@ if (WITH_FRANCA_DBUS_INTERFACE)
         ${COMMONAPI_INCLUDE_DIRS}
         ${COMMONAPI_DBUS_INCLUDE_DIRS}
         ${CMAKE_CURRENT_BINARY_DIR}
+        ${COMMONAPI_GEN_DIR}
         ${gnss-service_INCLUDE_DIRS}
         ${sensors-service_INCLUDE_DIRS}
     )

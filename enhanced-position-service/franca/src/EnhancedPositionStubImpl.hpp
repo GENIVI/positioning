@@ -20,11 +20,11 @@
 #define ENHANCEDPOSITIONSTUBIMPL_H_
 
 #include <CommonAPI/CommonAPI.hpp>
-#include <org/genivi/EnhancedPositionService/EnhancedPositionStubDefault.hpp>
+#include <v5/org/genivi/EnhancedPositionService/EnhancedPositionStubDefault.hpp>
 #include "gnss-init.h"
 #include "gnss.h"
 
-using namespace org::genivi::EnhancedPositionService;
+using namespace v5::org::genivi::EnhancedPositionService;
 
 class EnhancedPositionStubImpl: public EnhancedPositionStubDefault {
 

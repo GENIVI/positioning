@@ -5,12 +5,14 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 #include <CommonAPI/CommonAPI.hpp>
-#include <org/genivi/EnhancedPositionService/EnhancedPositionProxy.hpp>
+#include <v5/org/genivi/EnhancedPositionService/EnhancedPositionProxy.hpp>
+#include <org/genivi/EnhancedPositionService/EnhancedPositionServiceTypes.hpp>
 #include "log.h"
 #include <unistd.h>
 
 DLT_DECLARE_CONTEXT(gCtx);
 
+using namespace v5::org::genivi::EnhancedPositionService;
 using namespace org::genivi::EnhancedPositionService;
 
 void getPositionInfoAsyncCallback(const CommonAPI::CallStatus& callStatus, const EnhancedPositionServiceTypes::Timestamp& timestamp, const EnhancedPositionServiceTypes::PositionInfo& posInfo)

@@ -20,8 +20,10 @@
 #define CONFIGURATIONSTUBIMPL_H_
 
 #include <CommonAPI/CommonAPI.hpp>
-#include <org/genivi/EnhancedPositionService/ConfigurationStubDefault.hpp>
+#include <v5/org/genivi/EnhancedPositionService/ConfigurationStubDefault.hpp>
+#include <org/genivi/EnhancedPositionService/EnhancedPositionServiceTypes.hpp>
 
+using namespace v5::org::genivi::EnhancedPositionService;
 using namespace org::genivi::EnhancedPositionService;
 
 class ConfigurationStubImpl: public ConfigurationStubDefault {

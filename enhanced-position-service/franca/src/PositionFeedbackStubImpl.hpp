@@ -20,8 +20,10 @@
 #define POSITIONFEEDBACKSTUBIMPL_H_
 
 #include <CommonAPI/CommonAPI.hpp>
-#include <org/genivi/EnhancedPositionService/PositionFeedbackStubDefault.hpp>
+#include <v5/org/genivi/EnhancedPositionService/PositionFeedbackStubDefault.hpp>
+#include <org/genivi/EnhancedPositionService/EnhancedPositionServiceTypes.hpp>
 
+using namespace v5::org::genivi::EnhancedPositionService;
 using namespace org::genivi::EnhancedPositionService;
 
 class PositionFeedbackStubImpl: public PositionFeedbackStubDefault {
