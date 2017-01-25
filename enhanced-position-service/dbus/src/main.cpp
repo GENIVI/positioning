@@ -24,6 +24,7 @@
 #include "configuration.h"
 #include "log.h"
 #include "gnss.h"
+#include "gnss-init.h"
 
 const char* ENHANCED_POSITION_SERVICE_NAME = "org.genivi.positioning.EnhancedPosition";
 const char* ENHANCED_POSITION_OBJECT_PATH = "/org/genivi/positioning/EnhancedPosition";
@@ -79,7 +80,7 @@ int main()
     LOG_ERROR_MSG(gCtx,"Null pointer!");
   }
 
-  if(!checkGNSSMajorVersion(4))
+  if(!checkGNSSMajorVersion(GENIVI_GNSS_API_MAJOR))
   {
     LOG_ERROR_MSG(gCtx,"Wrong GNSS version - exiting!");
     exit(EXIT_FAILURE);
