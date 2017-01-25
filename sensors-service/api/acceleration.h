@@ -98,6 +98,7 @@ typedef enum {
  *  - first rotate by angleYaw about the Zv axis
  *  - second rotate by anglePitch about the new (intermediate) Y axis
  *  - third rotate by angleRoll about the new X axis
+ *
  * Notes 
  * - the angles are frequently called "Euler angles" and the rotations "Euler rotations"
  * - a different order of the rotations would lead to a different orientation
@@ -114,7 +115,7 @@ typedef enum {
  * if any of the angles (angleYaw, anglePitch, angleRoll) is not zero
  * then the raw measurement values of the accelerometer X, Y, Z axes may have to be be transformed
  * to the vehicle axis system by the client of this interface, depending on the type of application.
- * Raw measurements are provided in @TAccelerationData instead of already transformed values, because
+ * Raw measurements are provided in @ref TAccelerationData instead of already transformed values, because
  * - for accelerometers with less than 3 axes, the transformation is mathematically not well-defined
  * - some types of calibration operations are better performed on raw data
  *

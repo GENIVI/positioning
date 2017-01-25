@@ -46,11 +46,11 @@ typedef struct {
     uint64_t timestamp;             /**< Timestamp of the acquisition of the steering angle signal [ms].
                                          All sensor/GNSS timestamps must be based on the same time source. */
     float front;                    /**< Returns the mean steer angle of the front wheels [degree]. 
-                                         @ref ISO 8855:2011, section 7.1.3. */
+                                         See ISO 8855:2011, section 7.1.3. */
     float rear;                     /**< Returns the mean steer angle of the rear wheels [degree].
-                                         @ref ISO 8855:2011, section 7.1.3. */
+                                         See ISO 8855:2011, section 7.1.3. */
     float steeringWheel;            /**< Returns the angle of the steering wheel [degree].
-                                         @ref ISO 8855:2011, section 7.1.8.
+                                         See ISO 8855:2011, section 7.1.8.
                                          Must be used in combination with the steeringRatio @ref TSteeringAngleConfiguration. */
     uint32_t validityBits;          /**< Bit mask indicating the validity of each corresponding value.
                                         [bitwise or'ed @ref ESteeringAngleValidityBits values].
@@ -64,7 +64,7 @@ typedef struct {
     float sigmaSteeringAngle;       /**< Standard error estimate of the front steer angle in [degree]. -1 if invalid.*/
     float sigmaSteeringWheelAngle;  /**< Standard error estimate of the steering wheel angle in [degree]. -1 if invalid.*/
     float steeringRatio;            /**< Ratio between steering wheel angle change and front steer angle change.
-                                         @ref ISO 8855:2011, section 7.1.13.
+                                         See ISO 8855:2011, section 7.1.13.
                                          Only valid when static. 0 if invalid. Unit: [-] */
 } TSteeringAngleConfiguration;
 

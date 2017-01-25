@@ -36,7 +36,7 @@ typedef enum {
 
 /**
  * Slip angle sensor service provides the slip angle value. 
- * @ref ISO 8855:2011, section 5.2.9 "vehicle sideslip angle"
+ * See ISO 8855:2011, section 5.2.9 "vehicle sideslip angle"
  * The reference coordinate system for the slip angle is defined in ISO 8855:2011
  *
  * You must check the valid bit(s) before usage.

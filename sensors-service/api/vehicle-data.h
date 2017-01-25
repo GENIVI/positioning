@@ -124,7 +124,7 @@ bool snsVehicleDataDestroy();
 
 /**
  * Accessing static configuration information about the vehicle.
- * @param vehicleData After calling the method the available vehicle configuration data is written into vehicleData.
+ * @param vehicleDataConfiguration After calling the method the available vehicle configuration data is written into vehicleData.
  * @return Is true if data can be provided and false otherwise, e.g. missing initialization
  */
 bool snsVehicleDataGetConfiguration(TVehicleDataConfiguration* vehicleDataConfiguration);
