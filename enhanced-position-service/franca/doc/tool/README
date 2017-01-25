@@ -1,0 +1,10 @@
+--------------------------------------------
+How to generate the component specification
+--------------------------------------------
+
+Download Franca2IDL.jar and Franca2IDLFilter.sh from
+https://drive.google.com/open?id=0B7JseVbR6jvhfjNoSnMyc19HV2lGZW1Jay1lUVZ5YU9qN1NBZTZnRGg2emxZS2ZCQWU5VWM
+, copy them in the folder /usr/local/bin and allow executing these files as programs.
+
+Run the script generate_doc.sh
+

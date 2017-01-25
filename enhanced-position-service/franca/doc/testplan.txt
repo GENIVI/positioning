@@ -1,0 +1,27 @@
+/**************************************************************************
+ * Component Name: EnhancedPositionService
+ * Compliance Level: Abstract Component
+ * File: testplan.txt
+ * This document describes how to test the Abstract Component EnhancedPositionService.
+ * It is an artifact required by the GENIVI release process
+ * and is a prerequisite for the standardization of GENIVI interfaces
+ **************************************************************************/
+
+In order to test the EnhancedPositionService follow these steps:
+
+1) Install and compile the Positioning PoC (Proof of Concept) 
+   as described in the file: positioning/README.txt
+
+2) Navigate to the directory 'positioning'
+   Run the test script 'run-test.sh' with the parameter 'enhpos' 
+   Wait 10s until the test is completed
+
+The above mentioned script does the following:
+1) start an instance of the logreplayer
+2) start an instance of the enhanced-position-service
+3) start an instance of the enhanced-position-client
+
+
+
+
+
