@@ -220,12 +220,12 @@ typedef struct {
     EGNSSSystem system;             /**< Value representing the GNSS system. */
     uint16_t satelliteId;           /**< Satellite ID.
                                          Satellite IDs are only unique within one satellite system.
-                                         Satellites of different systems can be distinguished by @field TGNSSSatelliteDetail::system.
+                                         Satellites of different systems can be distinguished by @ref TGNSSSatelliteDetail::system.
                                          Ranges:
                                          1..32: GPS satellites (by PRN)
                                          33..64: SBAS/WAAS satellites
                                          65..96: GLONASS satellites
-                                         1..64: GALILEO satellites, @ref Galileo OS SIS ICD, http://www.gsc-europa.eu/gnss-markets/segments-applications/os-sis-icd.
+                                         1..64: GALILEO satellites, see Galileo OS SIS ICD, http://www.gsc-europa.eu/gnss-markets/segments-applications/os-sis-icd.
                                     */
     uint16_t azimuth;               /**< Satellite Azimuth in degrees. Value range 0..359 */
     uint16_t elevation;             /**< Satellite Elevation in degrees. Value range 0..90 */
@@ -371,9 +371,9 @@ typedef void (*GNSSPositionCallback)(const TGNSSPosition position[], uint16_t nu
 bool gnssGetConfiguration(TGNSSConfiguration* gnssConfig);
 
 /**
- * Method to get the UTC date / time data of the GNSS receiver at a specific point in time.
+ * Method to get the UTC date and time data of the GNSS receiver at a specific point in time.
  * The valid flags is updated. The data is only guaranteed to be updated when the valid flag is true.
- * @param time After calling the method the current GNSS UTC date / time is written into this parameter.
+ * @param utc After calling the method the current GNSS UTC date / time is written into this parameter.
  * @return Is true if data can be provided and false otherwise, e.g. missing initialization
  */
 bool gnssGetTime(TGNSSTime *utc);
@@ -469,7 +469,7 @@ bool gnssGetPrecisionTimingOffset(int32_t *delta);
  * No immediate confirmation is provided as the configuration request
  * is typically executed asynchronously by the GNSS receiver.
  * To verify when the configuration change has been executed,
- * the corresponding fields @ref activated_systems and @ref used_systems
+ * the corresponding fields @ref TGNSSPosition::activatedSystems and @ref TGNSSPosition::usedSystems
  * in @ref TGNSSPosition updates have to be monitored
  *
  * @param activateSystems   Bit mask indicating the satellite systems which shall be activated for use
