@@ -281,6 +281,13 @@ typedef enum {
  * GNSS position data including velocity, status and accuracy.
  * This data structure provides all GNSS information which is typically needed 
  * for positioning applications such as GNSS/Dead Reckoning sensor fusion.
+ *
+ * Note: For an optimum sensor fusion with vehicle and inertial sensors,
+ * the velocity vector (@ref hSpeed, @ref vSpeed, @ref heading)
+ * is preferred to be low latency or instantaneous velocity output 
+ * from the GNSS chipset.
+ * This may require a specific configuration of the GNSS chipset
+ * which is out of the scope of this API.
  */
 typedef struct {
     uint64_t timestamp;             /**< Timestamp of the acquisition of the GNSS data [ms].
@@ -291,8 +298,9 @@ typedef struct {
     float altitudeMSL;              /**< Altitude above mean sea level (geoid) in [m]. */ 
     float altitudeEll;              /**< Altitude above WGS84 ellipsoid in [m]. */ 
     //velocity
-    float hSpeed;                   /**< Horizontal speed [m/s]. */ 
-    float vSpeed;                   /**< Vertical speed [m/s]. */ 
+    float hSpeed;                   /**< Horizontal speed [m/s], in direction as given by @ref heading. */ 
+    float vSpeed;                   /**< Vertical speed [m/s].
+                                         A positive value indicates an upwards movement, i.e. an ascending altitude. */ 
     float heading;                  /**< GNSS course angle [degree] (0 => north, 90 => east, 180 => south, 270 => west, no negative values). */ 
     //quality parameters: satellite constellation
     float pdop;                     /**< The positional (3D) dilution of precision. [Note: pdop^2 = hdop^2+vdop^2] */ 
