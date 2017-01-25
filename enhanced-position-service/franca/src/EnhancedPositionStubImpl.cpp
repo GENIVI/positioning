@@ -293,7 +293,7 @@ bool EnhancedPositionStubImpl::checkMajorVersion(int expectedMajor)
 
 void EnhancedPositionStubImpl::run()
 {
-    if(!checkMajorVersion(4))
+    if(!checkMajorVersion(GENIVI_GNSS_API_MAJOR))
     {
         exit(EXIT_FAILURE);
     }
