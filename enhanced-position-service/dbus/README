@@ -1,0 +1,6 @@
+Starting with the version 5.0.0, the Franca fidl files in the folder franca/api define 
+the official GENIVI interface of the EnhancedPositionService component
+
+The interface defined in the XML files in the folder dbus/api may diverge 
+from the offical API defined in the fidl files.
+This is a well-known problem that will be solved in future releases.

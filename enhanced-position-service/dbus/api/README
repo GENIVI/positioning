@@ -1,0 +1,9 @@
+---------------------------------------------------------------------------------------------------------------------------------
+IMPORTANT NOTE
+---------------------------------------------------------------------------------------------------------------------------------
+
+Please note that the interfaces described in the current folder (*.xml) are obsolete
+and will be removed in futurre releases.
+
+The official GENIVI interfaces of the EnhancedPositionService are those defined in the fidl files 
+contained in the folder 'api' inside of 'franca'

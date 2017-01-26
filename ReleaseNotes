@@ -18,18 +18,22 @@ Prefixes have been used to distinguish tags referring to different components:
 The versions used in the tags must always match the versions of the GENIVI components specifications contained in the folder 'doc'.
 
 Example: 
-The tag ENPOS-4.0.0 identifies a stable version of the EnhancedPositionService that contains the document
-GENIVI_EnhancedPositionService_ComponentSpecification.pdf version 4.0.0.
+The tag ENPOS-5.0.0 identifies a stable version of the EnhancedPositionService that contains the document
+GENIVI_EnhancedPositionService_ComponentSpecification.pdf version 5.0.0.
 
 Versions
 ------------
+ENPOS-5.0.0  Stable release of EnhancedPositionService v5.0.0
+SNS-5.0.0    Stable release of SensorsService v5.0.0
+GNSS-5.0.0   Stable release of GNSSService v5.0.0
+
 ENPOS-4.0.0  Stable release of EnhancedPositionService v4.0.0
 SNS-4.0.0    Stable release of SensorsService v4.0.0
-GNSS-4.0.0   Stable release of GNSSService v4.0.0 rel
+GNSS-4.0.0   Stable release of GNSSService v4.0.0
 
 ENPOS-3.0.0  Stable release of EnhancedPositionService v3.0.0
 SNS-3.0.1    Stable release of SensorsService v3.0.1
-GNSS-3.0.0   Stable release of GNSSService v3.0.0 rel
+GNSS-3.0.0   Stable release of GNSSService v3.0.0
 
 Changes
 ------------
