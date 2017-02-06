@@ -212,6 +212,13 @@ bool gnssGetTime(TGNSSTime* time)
     return retval;
 }
 
+bool gnssGetPrecisionTimingOffset(int32_t *delta)
+{
+    //Dummy implementation
+    return false;
+}
+
+
 bool gnssRegisterStatusCallback(GNSSStatusCallback callback)
 {
     bool retval = false;
