@@ -2,7 +2,7 @@
 # @licence app begin@
 # SPDX-License-Identifier: MPL-2.0
 #
-# Component Name: GNSSService
+# Component Name: EnhancedPositionService
 #
 # Author: Marco Residori
 #
@@ -16,9 +16,9 @@
 # @licence end@
 ###########################################################################
 
-set(DLT_INCLUDE_DIRS /usr/local/include/dlt)
+set(DLT_INCLUDE_DIRS /usr/include/dlt)
 set(DLT_LIBRARIES dlt)
-set(DLT_LIBRARY_DIRS /usr/local/lib)
+set(DLT_LIBRARY_DIRS /usr/lib)
 
 find_package(PkgConfig)
 pkg_check_modules(DLT REQUIRED automotive-dlt)

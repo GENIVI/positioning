@@ -16,9 +16,9 @@
 # @licence end@
 ###########################################################################
 
-set(DLT_INCLUDE_DIRS /usr/include/dlt)
+set(DLT_INCLUDE_DIRS /usr/local/include/dlt)
 set(DLT_LIBRARIES dlt)
-set(DLT_LIBRARY_DIRS /usr/lib)
+set(DLT_LIBRARY_DIRS /usr/local/lib)
 
 find_package(PkgConfig)
 pkg_check_modules(DLT REQUIRED automotive-dlt)

@@ -2,7 +2,7 @@
 # @licence app begin@
 # SPDX-License-Identifier: MPL-2.0
 #
-# Component Name: GNSSService
+# Component Name: EnhancedPositionService
 #
 # Author: Marco Residori
 #
