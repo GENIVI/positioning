@@ -33,7 +33,7 @@ set(LIBRARIES pthread)
 
 if(WITH_DLT)
     set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}")
-    find_package(DLT REQUIRED)
+    pkg_check_modules(DLT REQUIRED automotive-dlt)
     add_definitions("-DDLT_ENABLED=1")
     include_directories( ${DLT_INCLUDE_DIRS} )
     set(LIBRARIES ${LIBRARIES} ${DLT_LIBRARIES})
