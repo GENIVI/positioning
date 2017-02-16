@@ -1,8 +1,7 @@
-============================
-Positioning Git Repository
-===========================
+# Positioning Git Repository
 
 The Positioning repository is a collection of APIs and corresponding proofs of concept:
+
 * GNSSService
 * SensorsService
 * EnhancedPositionService
@@ -10,9 +9,7 @@ The Positioning repository is a collection of APIs and corresponding proofs of c
 * LogReplayer
 * PositionWebService
 
-===============================
 Directory Structure
-===============================
 
 * enhanced-position-service   //three enhanced-position-service PoCs:  
                               1) with dbus interfaces, (official API)  
@@ -27,41 +24,43 @@ Directory Structure
 * run-test.sh                 //script to run a quick test for each PoC (usage: run-test.sh help) 
 * positioning_x.y.bb          //version x.y of a Yocto recipe for the positioning PoCs
 
-===============================
-Architecture
-===============================
+## Architecture
+
 ![architecture](architecture.png)  
 
-===============================
-How To Build
-===============================
+## How To Build
 
 To build the positioning proofs of concept please follow the following steps:
 First create and enter the build folder
+
 ```
 mkdir ./build
 cd build
 ```
 
 To build:
+
 ```
 cmake ../
 make
 ````
 
 To build with tests:
+
 ```
 cmake -DWITH_TESTS=ON -DWITH_DEBUG=ON ../
 make
 ```
 
 To build with dbus interfaces:
+
 ```
 cmake -DWITH_DBUS_INTERFACE=ON -DWITH_FRANCA_DBUS_INTERFACE=OFF -DWITH_FRANCA_SOMEIP_INTERFACE=OFF -DWITH_TESTS=ON -DWITH_DEBUG=ON -DWITH_DLT=OFF -DCMAKE_BUILD_TYPE=Debug ../
 make
 ```
 
 To build with interfaces based on Franca and CommonAPI (see below how to configure CommonAPI):
+
 ```
 cmake -DWITH_DBUS_INTERFACE=OFF -DWITH_FRANCA_DBUS_INTERFACE=ON -DWITH_FRANCA_SOMEIP_INTERFACE=ON 
 -DWITH_TESTS=ON -DWITH_DEBUG=ON -DWITH_DLT=OFF -DCMAKE_BUILD_TYPE=Debug 
@@ -73,20 +72,20 @@ make
 ```
 
 To build with tests and reading GPS NMEA data from a GPS receiver attached to /dev/ttyACM0 at 38400
+
 ```
 cmake -DWITH_NMEA=ON -DWITH_TESTS=ON -DWITH_DEBUG=ON -DGNSS_DEVICE=\"/dev/ttyACM0\" -DGNSS_BAUDRATE=B38400 ../
 make
 ```
 
 To build with tests, with the logger, without the EnhancedPositionService, using as GNSS source a GPS receiver with a u-blox chipset and 50ms transmission delay providing NMEA data to /dev/ttyACM0 at 38400 baud, using as source for gyro and accelerometer data a LSM9DS1 sensor attached via I2C (e.g. from a Sense Hat module)
+
 ```
 cmake -DWITH_ENHANCED_POSITION_SERVICE=OFF -DWITH_NMEA=ON -DWITH_SENSORS=ON -DIMU_TYPE=LSM9DS1 -DWITH_LOGGER=ON -DWITH_TESTS=ON -DWITH_DEBUG=ON -DGNSS_DEVICE=\"/dev/ttyACM0\" -DGNSS_BAUDRATE=B38400 -DGNSS_CHIPSET=UBLOX -DGNSS_DELAY=50 ../
 make
 ```
 
-===============================
-Compiler Options and Default Settings
-===============================
+## Compiler Options and Default Settings
 
 * option(WITH_ENHANCED_POSITION_SERVICE
        "Build the Enhanced Positioning Service" ON)
@@ -123,9 +122,7 @@ Compiler Options and Default Settings
 
 Just set the option to ON or OFF on the command line.
 
-===============================
-How To Test
-===============================
+## How To Test
 
 To test the positioning proofs of concept please use the following test application (under top folder):
 (please note that you need to build with -DWITH_TESTS=ON and -DWITH_DEBUG=ON to see something displayed)
@@ -142,9 +139,7 @@ service:
 * kill            Kill all test applications
 * help            Print Help
 
-===============================
-Dependencies
-===============================
+## Dependencies
 
 You might have to install additional packages to compile and run the Positioning PoC.
 This section tries to summarize those dependencies.
@@ -154,6 +149,7 @@ Other Linux distributions (e.g. openSuSE) may require some adaptation as
 the package names and even the package manager may be different.
 
 CMake is used to create the make files
+
 ```
 sudo apt-get install cmake
 ```
@@ -164,6 +160,7 @@ sudo apt-get install gpsd libgps-dev
 
 To test the enhanced-position-service (dbus-service) the packages 'libdbus-1-dev', libdbus-c++-dev' and 'xsltproc' must be installed.
 to install these packages, please execute the following command:
+
 ```
 sudo apt-get install libdbus-1-dev libdbus-c++-dev xsltproc
 sudo ldconfig 
@@ -171,30 +168,39 @@ sudo ldconfig
 
 To test the enhanced-position-service (commonapi-service) the package CommonAPI and CommonAPI code generators must be installed.
 Please see: 
-* http://git.projects.genivi.org/?p=ipc/common-api-runtime.git;a=blob;f=INSTALL
-* http://git.projects.genivi.org/?p=ipc/common-api-tools.git;a=blob;f=INSTALL
-* http://git.projects.genivi.org/?p=ipc/common-api-dbus-runtime.git;a=blob;f=INSTALL
-* http://git.projects.genivi.org/?p=ipc/common-api-dbus-tools.git;a=blob;f=INSTALL
-* http://git.projects.genivi.org/?p=common-api/cpp-someip-runtime.git;a=blob;f=INSTALL
-* http://git.projects.genivi.org/?p=common-api/cpp-someip-tools.git;a=blob;f=INSTALL
-* http://git.projects.genivi.org/?p=vSomeIP.git;a=blob;f=README
+
+* <https://github.com/GENIVI/capicxx-core-runtime>
+* <https://github.com/GENIVI/capicxx-core-tools>
+* <https://github.com/GENIVI/capicxx-dbus-runtime>
+* <https://github.com/GENIVI/capicxx-dbus-tools>
+* <https://github.com/GENIVI/capicxx-someip-runtime>
+* <https://github.com/GENIVI/capicxx-someip-tools>
+* <https://github.com/GENIVI/vsomeip>
 
 DWITH_TESTS=ON enables the compilation of the test application(s).
 
 DWITH_DLT=ON requires that the DLT-daemon is installed.
 To download the DLT-daemon, just execute the following command:
-git clone git://git.projects.genivi.org/dlt-daemon.git
+
+```
+git clone https://github.com/GENIVI/dlt-daemon
+```
+
 To install the DLT-daemon, etxract the tarball and follow the 
 instructions in the file install.txt.  
 
 Note: You may have to call 
+
   ```
   export PKG_CONFIG_PATH=/usr/lib/pkgconfig
   ```
+
 before 
+
   ```
   sudo ldconfig
   ```
+
 to add DLT to the pkgconfig search path before calling cmake
 
 DWITH_IPHONE=ON requires that the iPhone app 'SensorLogger' is
