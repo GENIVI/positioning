@@ -169,13 +169,13 @@ sudo ldconfig
 To test the enhanced-position-service (commonapi-service) the package CommonAPI and CommonAPI code generators must be installed.
 Please see: 
 
-* http://git.projects.genivi.org/?p=ipc/common-api-runtime.git;a=blob;f=INSTALL
-* http://git.projects.genivi.org/?p=ipc/common-api-tools.git;a=blob;f=INSTALL
-* http://git.projects.genivi.org/?p=ipc/common-api-dbus-runtime.git;a=blob;f=INSTALL
-* http://git.projects.genivi.org/?p=ipc/common-api-dbus-tools.git;a=blob;f=INSTALL
-* http://git.projects.genivi.org/?p=common-api/cpp-someip-runtime.git;a=blob;f=INSTALL
-* http://git.projects.genivi.org/?p=common-api/cpp-someip-tools.git;a=blob;f=INSTALL
-* http://git.projects.genivi.org/?p=vSomeIP.git;a=blob;f=README
+* <https://github.com/GENIVI/capicxx-core-runtime>
+* <https://github.com/GENIVI/capicxx-core-tools>
+* <https://github.com/GENIVI/capicxx-dbus-runtime>
+* <https://github.com/GENIVI/capicxx-dbus-tools>
+* <https://github.com/GENIVI/capicxx-someip-runtime>
+* <https://github.com/GENIVI/capicxx-someip-tools>
+* <https://github.com/GENIVI/vsomeip>
 
 DWITH_TESTS=ON enables the compilation of the test application(s).
 
