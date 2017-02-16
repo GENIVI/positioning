@@ -183,7 +183,7 @@ DWITH_DLT=ON requires that the DLT-daemon is installed.
 To download the DLT-daemon, just execute the following command:
 
 ```
-git clone git://git.projects.genivi.org/dlt-daemon.git
+git clone https://github.com/GENIVI/dlt-daemon
 ```
 
 To install the DLT-daemon, etxract the tarball and follow the 
