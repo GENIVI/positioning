@@ -1,8 +1,5 @@
 var searchData=
 [
-  ['satellitesystem',['SatelliteSystem',['../interfaceorg_1_1genivi_1_1EnhancedPositionService_1_1Configuration.html#a6766e14ccfab2f3e78d5741a461acacc',1,'org::genivi::EnhancedPositionService::Configuration']]],
-  ['satellitid',['satellitId',['../structorg_1_1genivi_1_1EnhancedPositionService_1_1EnhancedPositionServiceTypes_1_1SatelliteInfo.html#ae6b279a3f73e6470d2f60102f600fc68',1,'org::genivi::EnhancedPositionService::EnhancedPositionServiceTypes::SatelliteInfo']]],
-  ['snr',['snr',['../structorg_1_1genivi_1_1EnhancedPositionService_1_1EnhancedPositionServiceTypes_1_1SatelliteInfo.html#a7053afeaefe4259b19164a08e630a090',1,'org::genivi::EnhancedPositionService::EnhancedPositionServiceTypes::SatelliteInfo']]],
-  ['stringvalue',['stringValue',['../unionorg_1_1genivi_1_1EnhancedPositionService_1_1EnhancedPositionServiceTypes_1_1Value.html#a01b9d874e7ab192bec5b5d9a2e84e007',1,'org::genivi::EnhancedPositionService::EnhancedPositionServiceTypes::Value']]],
-  ['system',['system',['../structorg_1_1genivi_1_1EnhancedPositionService_1_1EnhancedPositionServiceTypes_1_1SatelliteInfo.html#a87d93c9add3271c132bac5ced32bd061',1,'org::genivi::EnhancedPositionService::EnhancedPositionServiceTypes::SatelliteInfo']]]
+  ['positionfeedbacktype',['PositionFeedbackType',['../interfaceorg_1_1genivi_1_1EnhancedPositionService_1_1EnhancedPositionServiceTypes.html#a94e23fed107ef6001b3030b26d4eaef8',1,'org::genivi::EnhancedPositionService::EnhancedPositionServiceTypes']]],
+  ['positioninfokey',['PositionInfoKey',['../interfaceorg_1_1genivi_1_1EnhancedPositionService_1_1EnhancedPositionServiceTypes.html#ac905d7c588aa2106f7d71c997f1eaf95',1,'org::genivi::EnhancedPositionService::EnhancedPositionServiceTypes']]]
 ];

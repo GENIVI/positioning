@@ -1,5 +1,6 @@
 var searchData=
 [
-  ['positionfeedbacktype',['PositionFeedbackType',['../interfaceorg_1_1genivi_1_1EnhancedPositionService_1_1EnhancedPositionServiceTypes.html#a94e23fed107ef6001b3030b26d4eaef8',1,'org::genivi::EnhancedPositionService::EnhancedPositionServiceTypes']]],
-  ['positioninfokey',['PositionInfoKey',['../interfaceorg_1_1genivi_1_1EnhancedPositionService_1_1EnhancedPositionServiceTypes.html#ac905d7c588aa2106f7d71c997f1eaf95',1,'org::genivi::EnhancedPositionService::EnhancedPositionServiceTypes']]]
+  ['maj',['maj',['../structorg_1_1genivi_1_1EnhancedPositionService_1_1EnhancedPositionServiceTypes_1_1Version.html#ae72c9f38218224a83ba3959f45035bda',1,'org::genivi::EnhancedPositionService::EnhancedPositionServiceTypes::Version']]],
+  ['mic',['mic',['../structorg_1_1genivi_1_1EnhancedPositionService_1_1EnhancedPositionServiceTypes_1_1Version.html#ab9380442a68a19ffc6e4182c866cfe3a',1,'org::genivi::EnhancedPositionService::EnhancedPositionServiceTypes::Version']]],
+  ['min',['min',['../structorg_1_1genivi_1_1EnhancedPositionService_1_1EnhancedPositionServiceTypes_1_1Version.html#a4f48dfd08cc04f848cb60d703b2f402f',1,'org::genivi::EnhancedPositionService::EnhancedPositionServiceTypes::Version']]]
 ];
