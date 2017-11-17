@@ -19,6 +19,9 @@
 #ifndef ___POSITION_FEEDBACK_H
 #define ___POSITION_FEEDBACK_H
 
+#ifndef DBUS_HAS_RECURSIVE_MUTEX
+#define DBUS_HAS_RECURSIVE_MUTEX
+#endif
 #include <dbus-c++/dbus.h>
 #include "position-feedback-adaptor.h"
 

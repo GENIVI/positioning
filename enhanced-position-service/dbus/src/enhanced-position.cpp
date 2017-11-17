@@ -408,13 +408,52 @@ void EnhancedPosition::cbSatelliteDetail(const TGNSSSatelliteDetail satelliteDet
   //mpSelf->SatelliteInfoUpdate(changedValues);
 }
 
+void EnhancedPosition::cbAcceleration(const TAccelerationData accelerationData[], uint16_t numElements)
+{
+    LOG_INFO_MSG(gCtx,"Acceleration...");
+    for (int i = 0; i<numElements; i++)
+    {
+      LOG_INFO(gCtx,"Acceleration Update[%d/%d]: x=%d y=%d z=%d temperature=%d measurementInterval=%d validityBits=%d",
+               i+1,
+               numElements,
+               accelerationData[i].x,
+               accelerationData[i].y,
+               accelerationData[i].z,
+               accelerationData[i].temperature,
+               accelerationData[i].measurementInterval,
+               accelerationData[i].validityBits);
+    }
+}
+
+void EnhancedPosition::cbGyroscope(const TGyroscopeData gyroData[], uint16_t numElements)
+{
+    LOG_INFO_MSG(gCtx,"Gyroscope...");
+    for (int i = 0; i<numElements; i++)
+    {
+      LOG_INFO(gCtx,"Gyroscope Update[%d/%d]: yawRate=%d pitchRate=%d rollRate=%d temperature=%d measurementInterval=%d validityBits=%d",
+               i+1,
+               numElements,
+               gyroData[i].yawRate,
+               gyroData[i].pitchRate,
+               gyroData[i].rollRate,
+               gyroData[i].temperature,
+               gyroData[i].measurementInterval,
+               gyroData[i].validityBits);
+    }
+}
 
 void EnhancedPosition::run()
 {
   LOG_INFO_MSG(gCtx,"Starting EnhancedPosition dispatcher...");
 
-  gnssRegisterPositionCallback(&cbPosition);
-  gnssRegisterSatelliteDetailCallback(&cbSatelliteDetail);
+  if (!gnssRegisterPositionCallback(&cbPosition))
+      LOG_ERROR_MSG(gCtx,"Position Callback not registered");
+  if (!gnssRegisterSatelliteDetailCallback(&cbSatelliteDetail))
+      LOG_ERROR_MSG(gCtx,"SatelliteDetail Callback not registered");
+  if (!snsGyroscopeRegisterCallback(&cbGyroscope))
+      LOG_ERROR_MSG(gCtx,"Gyroscope Callback not registered");
+  if (!snsAccelerationRegisterCallback(&cbAcceleration))
+      LOG_ERROR_MSG(gCtx,"Acceleration Callback not registered");
 }
 
 void EnhancedPosition::shutdown()
@@ -423,6 +462,8 @@ void EnhancedPosition::shutdown()
 
   gnssDeregisterPositionCallback(&cbPosition);
   gnssDeregisterSatelliteDetailCallback(&cbSatelliteDetail);
+  snsGyroscopeDeregisterCallback(&cbGyroscope);
+  snsAccelerationDeregisterCallback(&cbAcceleration);
 }
 
 

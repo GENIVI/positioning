@@ -18,11 +18,16 @@
 #ifndef ___ENHANCED_POSITION_H
 #define ___ENHANCED_POSITION_H
 
+#ifndef DBUS_HAS_RECURSIVE_MUTEX
+#define DBUS_HAS_RECURSIVE_MUTEX
+#endif
 #include <dbus-c++/dbus.h>
 
 #include "enhanced-position-adaptor.h"
 #include "gnss-init.h"
 #include "gnss.h"
+#include "acceleration.h"
+#include "gyroscope.h"
 
 class EnhancedPosition
   : public org::genivi::positioning::EnhancedPosition_adaptor
@@ -49,6 +54,8 @@ private:
 
   static void cbSatelliteDetail(const TGNSSSatelliteDetail satelliteDetail[], uint16_t numElements);
   static void cbPosition(const TGNSSPosition position[], uint16_t numElements);
+  static void cbAcceleration(const TAccelerationData accelerationData[], uint16_t numElements);
+  static void cbGyroscope(const TGyroscopeData gyroData[], uint16_t numElements);
 
   static void sigPositionUpdate(const TGNSSPosition position[], uint16_t numElements);
 

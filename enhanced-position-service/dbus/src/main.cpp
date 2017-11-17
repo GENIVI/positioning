@@ -17,6 +17,9 @@
 **************************************************************************/
 
 #include <signal.h>
+#ifndef DBUS_HAS_RECURSIVE_MUTEX
+#define DBUS_HAS_RECURSIVE_MUTEX
+#endif
 #include <dbus-c++/dbus.h>
 
 #include "enhanced-position.h"

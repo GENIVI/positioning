@@ -18,6 +18,9 @@
 #ifndef ___CONFIGURATION_H
 #define ___CONFIGURATION_H
 
+#ifndef DBUS_HAS_RECURSIVE_MUTEX
+#define DBUS_HAS_RECURSIVE_MUTEX
+#endif
 #include <dbus-c++/dbus.h>
 #include "configuration-adaptor.h"
 
