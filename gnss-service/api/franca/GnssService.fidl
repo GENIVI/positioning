@@ -1,0 +1,202 @@
+/*  SPDX-License-Identifier: MPL-2.0
+    Component Name: EnhancedPositionService
+    Compliance Level: Abstract Component
+    Copyright (C) 2012, BMW Car IT GmbH, Continental Automotive GmbH, PCA Peugeot Citroën, XS Embedded GmbH
+    License:
+    This Source Code Form is subject to the terms of the
+    Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed with
+    this file, You can obtain one at http://mozilla.org/MPL/2.0/.
+*/
+
+package org.genivi.GnssService
+
+import org.genivi.GnssService.GnssServiceTypes.* from "GnssServiceTypes.fidl"
+
+<** @description : Gnss = This interface offers functionalities to retrieve the GNSS position of the vehicle **>
+interface Gnss {
+	version {
+	    major 5
+	    minor 0
+	}
+
+	<** @description: getConfiguration = Accessing static configurationdata related to the GNSS service. **>
+	method getConfiguration {
+	    out {
+	        TGNSSConfiguration gnssConfig
+		<** @description: provided = Is true if data can be provided and false otherwise, e.g. missing initialization **>
+		Boolean provided
+		}
+	}
+
+	<** @description: getTime = get the UTC date and time data of the GNSS receiver at a specific point in time. **>
+	method getTime {
+	    out {
+	        TGNSSTime utc
+		<** @description: provided = Is true if data can be provided and false otherwise, e.g. missing initialization **>
+		Boolean provided
+		}
+	}
+
+	<** @description: notifyTimeChanged
+	The signal will be emitted when new time data is available from the GNSS receiver.
+	The valid flags is updated. The data is only guaranteed to be updated when the valid flag is true.
+	This signal may return buffered data (numElements >1) for different reasons
+	  for (large) portions of data buffered at startup
+	  for data buffered during regular operation e.g. for performance optimization (reduction of callback invocation frequency)
+	If the array contains (numElements >1), the elements will be ordered with rising timestamps 
+	**>
+    broadcast notifyTimeChanged selective {
+	    out {
+	    	<** @description: time = array of TGNSSTime with size numElements**>
+			TGNSSTime[] time
+			<** @description: numElements = allowed range: >=1. If numElements >1, buffered data are provided.**>
+			UInt16 numElements
+	   	}
+    }
+
+	<** @description: getSatelliteDetails = get the GNSS satellite details at a specific point in time. **>
+	method getSatelliteDetails {
+	    out {
+	        TGNSSSatelliteDetail satelliteDetails
+			<** @description: numSatelliteDetails = Number of elements written to the array satelliteDetails. **>
+			UInt16 numSatelliteDetails
+			<** @description: provided = Is true if data can be provided and false otherwise, e.g. missing initialization **>
+			Boolean provided
+		}
+	}
+
+	<** @description: notifySatelliteDetailChanged
+	The signal will be emitted when new date data is available from the GNSS receiver.
+	The valid flags is updated. The data is only guaranteed to be updated when the valid flag is true.
+	This signal may return buffered data (numElements >1) for different reasons
+	  for (large) portions of data buffered at startup
+	  for data buffered during regular operation e.g. for performance optimization (reduction of callback invocation frequency)
+	If the array contains (numElements >1), the elements will be ordered with rising timestamps 
+	**>
+    broadcast notifySatelliteDetailChanged selective {
+	    out {
+	    	<** @description: satelliteDetail = array of TGNSSSatelliteDetail with size numElements. **>
+			TGNSSSatelliteDetail[] satelliteDetail
+			<** @description: numElements = allowed range: >=1. If numElements >1, buffered data are provided. **>
+			UInt16 numElements
+	    }
+    }
+
+	<** @description: getPosition = get the GNSS position data at a specific point in time. **>
+	method getPosition {
+	    out {
+	        TGNSSPosition position
+			<** @description: provided = Is true if data can be provided and false otherwise, e.g. missing initialization **>
+			Boolean provided
+		}
+	}
+
+	<** @description: notifyPositionChanged
+	The signal will be emitted when new position data data is available from the GNSS receiver.
+	The valid flags is updated. The data is only guaranteed to be updated when the valid flag is true.
+	This signal may return buffered data (numElements >1) for different reasons
+	  for (large) portions of data buffered at startup
+	  for data buffered during regular operation e.g. for performance optimization (reduction of callback invocation frequency)
+	If the array contains (numElements >1), the elements will be ordered with rising timestamps 
+	**>
+    broadcast notifyPositionChanged selective {
+	    out {
+	    	<** @description: position = array of TGNSSPosition with size numElements. **>
+			TGNSSPosition[] position
+			<** @description: numElements = allowed range: >=1. If numElements >1, buffered data are provided. **>
+			UInt16 numElements
+	    }
+  	}
+
+	<** @description: getPrecisionTimingOffset = get the precision timing information as signaled by the GNSS PPS signal. 
+	For accurate timing the 1 PPS (pulse per second) signal from the GNSS receiver is used within the positioning framework.
+	The PPS is a hardware signal which is a UTC synchronized pulse.
+	The duration between the pulses is 1s +/- 40ns and the duration of the pulse is configurable (about 100-200ms).
+	The PPS signal can be provided in the positioning framework as an interrupt service routine and this method provides the access
+	to the delta from UTC to system time.
+	If you really need precision timing you have to have the system time set within a range of +/-2s of UTC.
+	**>
+	method getPrecisionTimingOffset {
+	    out {
+			<** @description: delta = The result is provided in this parameter in nanoseconds. It gives the deviation of the system time (+/-) in respect to the PPS pulse and UTC.
+			     If the deviation is is greater than a value that can be represented with 32 Bits (i.e. more or less than about 2s) the
+			     maximum values are written to this parameter and the return value will be false.
+			**>
+	        Int32 delta
+			<** @description: available = Is true if the precision timing is available and fits in the range which can be represented by the delta parameter. **>
+			Boolean available
+	    }
+	}
+
+	<** @description: setGNSSSystems = set a specific set of GNSS satellite systems. 
+	No immediate confirmation is provided as the configuration request
+	is typically executed asynchronously by the GNSS receiver.
+	To verify when the configuration change has been executed,
+	the corresponding fields TGNSSPosition::activatedSystems and TGNSSPosition::usedSystems
+	in TGNSSPosition updates have to be monitored
+	**>
+	method setGNSSSystems {
+        in {
+			<** @description: activateSystems = Bit mask indicating the satellite systems which shall be activated for use
+		                 [bitwise or'ed EGNSSSystem values]. **>
+	   		UInt32 activateSystems
+	    }
+        out {
+			<** @description: accepted = True if the configuration request has been accepted.
+			False if the configuration request has not been accepted or is not supported at all. **>
+			Boolean accepted
+	    }
+	}
+
+//Method and broadcast defined into 'gnss-status.h'
+
+	<** @description: getStatus = get the GNSS status at a specific point in time. **>
+	method getStatus {
+	    out {
+	        TGNSSStatus status
+			<** @description: provided = Is true if data can be provided and false otherwise, e.g. missing initialization **>
+			Boolean provided
+		}
+	}
+
+	<** @description: notifyStatusChanged
+	The signal will be emitted when when new GNSS status data is available.
+	**>
+    broadcast notifyStatusChanged selective {
+	    out {
+			TGNSSStatus status
+	   	}
+    }
+
+//Method defined into 'gnss-meta-data.h'
+
+	<** @description: getMetaData = get the meta information about GNSS service. **>
+	method getMetaData {
+	    out {
+	        TGnssMetaData data
+			<** @description: available = Is true if meta data is available **>
+			Boolean available
+		}
+	}
+
+//Methods defined into 'gnss-init.h'
+
+	<** @description: init = Initialization of the GNSS service.
+	  Must be called before using the GNSS service to set up the service. **>
+	method init {
+	    out {
+			<** @description: initialized = Is true if initialization has been successfull **>
+			Boolean initialized
+		}
+	}
+
+	<** @description: destroy = Destroy the GNSS service.
+	  Must be called after using the GNSS service to shut down the service. **>
+	method destroy {
+	    out {
+			<** @description: destroyed = Is true if shutdown has been successfull. **>
+			Boolean destroyed
+		}
+	}
+
+}
