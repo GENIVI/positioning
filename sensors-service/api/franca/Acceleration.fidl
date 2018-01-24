@@ -14,6 +14,10 @@ import org.genivi.SensorsService.SensorsServiceTypes.* from "SensorsServiceTypes
 
 <** @description : Acceleration = This interface offers functionalities to retrieve the Acceleration of the vehicle **>
 interface Acceleration {
+	version {
+	    major 5
+	    minor 0
+	}
 
 	<** @description: 
 	TAccelerationConfiguration::validityBits provides information about the currently valid signals of the acceleration configuration data.

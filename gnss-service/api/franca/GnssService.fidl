@@ -56,6 +56,11 @@ interface Gnss {
 
 	<** @description: getSatelliteDetails = get the GNSS satellite details at a specific point in time. **>
 	method getSatelliteDetails {
+		in {
+			<** @description: count = Number of elements of the array satelliteDetails. 
+			This should be at least TGnssMetaData::numChannels **>
+			UInt16 count
+		}
 	    out {
 	        TGNSSSatelliteDetail satelliteDetails
 			<** @description: numSatelliteDetails = Number of elements written to the array satelliteDetails. **>
