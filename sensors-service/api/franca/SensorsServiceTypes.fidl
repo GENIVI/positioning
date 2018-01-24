@@ -1,0 +1,94 @@
+/*  SPDX-License-Identifier: MPL-2.0
+    Component Name: EnhancedPositionService
+    Compliance Level: Abstract Component
+    Copyright (C) 2012, BMW Car IT GmbH, Continental Automotive GmbH, PCA Peugeot Citroën, XS Embedded GmbH
+    License:
+    This Source Code Form is subject to the terms of the
+    Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed with
+    this file, You can obtain one at http://mozilla.org/MPL/2.0/.
+*/
+
+package org.genivi.SensorsService
+
+typeCollection SensorsServiceTypes {
+
+//Data types and enums defined into 'sns-meta-data.h'
+	<** @description:
+	The sensor category introduces the concept that sensor information can also be derived information
+	computed by combining several signals.
+	**>
+	enumeration ESensorCategory {
+	    SENSOR_CATEGORY_UNKNOWN       // Unknown category. Should not be used.
+	    SENSOR_CATEGORY_LOGICAL       // A logical sensor can combine signals of several sensors.
+	    SENSOR_CATEGORY_PHYSICAL      // A physical sensor provides signals from physically available sensors.
+	}
+
+
+	<** @description:
+	The sensor type identifies which physical quantity is measured.
+	For each sensor type there is a corresponding API header with data structures callback notifications and getter functions defined
+	Note that for all 3 wheel sensor types there is a combined API header.
+	**>
+	enumeration ESensorType {
+	    SENSOR_TYPE_UNKNOWN             // Unknown sensor type. Should not be used. 
+	    SENSOR_TYPE_ACCELERATION        // Acceleration sensor. 
+	    SENSOR_TYPE_GYROSCOPE           // Gyroscope sensor. 
+	    SENSOR_TYPE_INCLINATION         // Inclination sensor. 
+	    SENSOR_TYPE_ODOMETER            // Odometer sensor. 
+	    SENSOR_TYPE_REVERSE_GEAR        // Reverse gear sensor. 
+	    SENSOR_TYPE_SLIP_ANGLE          // Slip angle sensor. 
+	    SENSOR_TYPE_STEERING_ANGLE      // Steering angle sensor. 
+	    SENSOR_TYPE_VEHICLE_SPEED       // Vehicle speed sensor. 
+	    SENSOR_TYPE_VEHICLE_STATE       // Vehicle state sensor. 
+	    SENSOR_TYPE_WHEELTICK           // Wheel tick sensor. 
+	    SENSOR_TYPE_WHEELSPEEDANGULAR   // Wheel speed angular sensor. 
+	    SENSOR_TYPE_WHEELSPEED          // Wheel speed sensor. 
+	}
+
+	<** @description:
+	The software platform provides the following information about the Sensor and the related output Signals.
+	Sensor clients need the meta data information in order to correctly handle data provided by sensor service and
+	to adapt to the variation in the signal data delivery.
+	 **>
+	struct TSensorMetaData {
+	    UInt32 ^version              // Version of the sensor service. 
+	    ESensorCategory category     // Sensor Category (Physical/Logical). 
+	    ESensorType type             // Sensor Type (Odometer Gyroscope etc.). 
+	    UInt32 cycleTime 			 // Sensor cycle time (update interval) in ms. 0 for irregular updates 
+	}
+
+	//Data types and enums defined into 'sns-status.h'
+	
+	<** @description:
+	Enumeration to describe the status of the sensor
+	 **>
+	enumeration ESensorStatus {
+	    SENSOR_STATUS_NOTAVAILABLE  = 0    	// Sensor is not available at all based on configuration data. 
+	    SENSOR_STATUS_INITIALIZING  = 1    	// Initial status when the connection to the Sensor is set up for the first time. 
+	    SENSOR_STATUS_AVAILABLE     = 2    	// Sensor is available and running as expected. 
+	    SENSOR_STATUS_RESTARTING    = 3    	// Sensor is restarted i.e. due to communication loss. 
+	    SENSOR_STATUS_FAILURE       = 4		// Sensor is not operating properly. Restarting did not help. 
+	    SENSOR_STATUS_OUTOFSERVICE  = 5		// Sensor is temporarily not available due to some known external condition vehicle bus or external ECU providing he signal being off. 
+	}
+
+	<** @description:
+	TSensorStatus::validityBits provides information about the currently valid signals of the TSensorStatus struct.
+	It is a or'ed bitmask of the ESensorStatusValidityBits values.
+	 **>
+	enumeration ESensorStatusValidityBits {
+	    SENSOR_STATUS_STATUS_VALID  = 0x00000001    // Validity bit for field TSensorStatus::status.
+	}
+
+	<** @description:
+	Container for sensor status information
+	 **>
+	struct TSensorStatus {
+	    UInt64 timestamp            // Timestamp of the sensor status transition [ms].
+	                                // All sensor/GNSS timestamps must be based on the same time source.
+	    ESensorStatus status		// Status of the sensor **>
+	    UInt32 validityBits         // Bit mask indicating the validity of each corresponding value.
+	                                // [bitwise or'ed ref ESensorStatusValidityBits values].
+	                                // Must be checked before usage. **>
+	}
+
+}

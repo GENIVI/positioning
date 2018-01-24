@@ -1,0 +1,28 @@
+/*  SPDX-License-Identifier: MPL-2.0
+    Component Name: EnhancedPositionService
+    Compliance Level: Abstract Component
+    Copyright (C) 2012, BMW Car IT GmbH, Continental Automotive GmbH, PCA Peugeot Citroën, XS Embedded GmbH
+    License:
+    This Source Code Form is subject to the terms of the
+    Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed with
+    this file, You can obtain one at http://mozilla.org/MPL/2.0/.
+*/
+
+package org.genivi.SensorsService
+
+import org.genivi.SensorsService.SensorsServiceTypes.* from "SensorsServiceTypes.fidl"
+
+<** @description : MetaData = This interface offers functionalities to retrieve the MetaData of SensorsService **>
+interface MetaData {
+
+	<** @description: getMetaDataList = get the metadata of all available sensors. **>
+	method getMetaDataList {
+	    out {
+	        TSensorMetaData[] metadata
+			<** @description: numElements = number of elements in the array **>
+			UInt16 numElements
+		}
+	}
+	
+}
+

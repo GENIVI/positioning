@@ -1,0 +1,319 @@
+/*  SPDX-License-Identifier: MPL-2.0
+    Component Name: EnhancedPositionService
+    Compliance Level: Abstract Component
+    Copyright (C) 2012, BMW Car IT GmbH, Continental Automotive GmbH, PCA Peugeot Citroën, XS Embedded GmbH
+    License:
+    This Source Code Form is subject to the terms of the
+    Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed with
+    this file, You can obtain one at http://mozilla.org/MPL/2.0/.
+*/
+
+package org.genivi.SensorsService
+
+import org.genivi.SensorsService.SensorsServiceTypes.* from "SensorsServiceTypes.fidl"
+
+<** @description : Acceleration = This interface offers functionalities to retrieve the Acceleration of the vehicle **>
+interface Acceleration {
+
+	<** @description: 
+	TAccelerationConfiguration::validityBits provides information about the currently valid signals of the acceleration configuration data.
+	It is a or'ed bitmask of the EAccelerationConfigValidityBits values.
+	**>
+	enumeration EAccelerationConfigValidityBits{
+	    <** @description:  Validity bit for field TAccelerationConfiguration::dist2RefPointX.
+	   	**>
+	    ACCELERATION_CONFIG_DISTX_VALID     = 0x00000001
+	    <** @description:  Validity bit for field TAccelerationConfiguration::dist2RefPointY.
+	   	**>
+	    ACCELERATION_CONFIG_DISTY_VALID     = 0x00000002
+	    <** @description:  Validity bit for field TAccelerationConfiguration::dist2RefPointZ.
+	   	**>
+	    ACCELERATION_CONFIG_DISTZ_VALID     = 0x00000004
+	    <** @description:  Validity bit for field TAccelerationConfiguration::angleYaw.
+	   	**>
+	    ACCELERATION_CONFIG_ANGLEYAW_VALID  = 0x00000008
+	    <** @description:  Validity bit for field TAccelerationConfiguration::anglePitch.
+	   	**>
+	    ACCELERATION_CONFIG_ANGLEPITCH_VALID= 0x00000010
+	    <** @description:  Validity bit for field TAccelerationConfiguration::angleRoll.
+	   	**>
+	    ACCELERATION_CONFIG_ANGLEROLL_VALID = 0x00000020
+	    <** @description:  Validity bit for field TAccelerationConfiguration::sigmaX.
+	   	**>
+	    ACCELERATION_CONFIG_SIGMAX_VALID    = 0x00000040
+	    <** @description:  Validity bit for field TAccelerationConfiguration::sigmaX. 
+	   	**>
+	    ACCELERATION_CONFIG_SIGMAY_VALID    = 0x00000080
+	    <** @description:  Validity bit for field TAccelerationConfiguration::sigmaZ.
+	   	**>
+	    ACCELERATION_CONFIG_SIGMAZ_VALID    = 0x00000100
+	    <** @description:  Validity bit for field TAccelerationConfiguration::typeBits.
+	   	**>
+	    ACCELERATION_CONFIG_TYPE_VALID      = 0x00000200
+	}
+
+	<** @description: 
+	Accelerometer type
+	TAccelerationConfiguration::typeBits provides information about the type of the accelerometer and the interpretation of the signals.
+	It is a or'ed bitmask of the EAccelerationTypeBits values.
+	**>
+	enumeration EAccelerationTypeBits{
+	   	<** @description:  An acceleration measurement for the x-axis is provided.
+	  	**>
+	    ACCELERATION_X_PROVIDED             = 0x00000001
+	   	<** @description:  An acceleration measurement for the y-axis is provided.
+	  	**>    
+	    ACCELERATION_Y_PROVIDED             = 0x00000002
+	   	<** @description:  An acceleration measurement for the z-axis is provided.
+	  	**>    
+	    ACCELERATION_Z_PROVIDED             = 0x00000004
+	   	<** @description:  A measurement for the temperature is provided.
+	  	**>
+	    ACCELERATION_TEMPERATURE_PROVIDED   = 0x00000008
+	}
+
+
+	<** @description: 
+	Static configuration data for the acceleration sensor service.
+	
+	BEGIN Explanation of the angleYaw, anglePitch angleRoll parameters
+	The orientation of the accelerometer hardware (Xa, Ya, Za)
+	with respect to the vehicle axis system (Xv, Yv, Zv)
+	can be described using the angles (angleYaw, anglePitch, angleRoll)
+	following the approach defined in ISO 8855:2011, section 5.2, table 1
+	Apply 3 rotations on the vehicle axis system until it matches the accelerometer axis system
+	The rotation sequence is as follows
+	 - first rotate by angleYaw about the Zv axis
+	 - second rotate by anglePitch about the new (intermediate) Y axis
+	 - third rotate by angleRoll about the new X axis
+	
+	Notes 
+	- the angles are frequently called "Euler angles" and the rotations "Euler rotations"
+	- a different order of the rotations would lead to a different orientation
+	- as the vehicle axis system is right-handed, also the accelerometer axis system must be right-handed
+	
+	The vehicle axis system as defined in ISO 8855:2011(E).
+	In this system, the axes (Xv, Yv, Zv) are oriented as follows
+	- Xv is in the horizontal plane, pointing forwards
+	- Yv is in the horizontal plane, pointing to the left
+	- Zv is perpendicular to the horizontal plane, pointing upwards
+	For an illustration, see https://collab.genivi.org/wiki/display/genivi/LBSSensorServiceRequirementsBorg#LBSSensorServiceRequirementsBorg-ReferenceSystem
+	
+	When the accelerometer axes are not aligned with the vehicle axes, i.e. 
+	if any of the angles (angleYaw, anglePitch, angleRoll) is not zero
+	then the raw measurement values of the accelerometer X, Y, Z axes may have to be be transformed
+	to the vehicle axis system by the client of this interface, depending on the type of application.
+	Raw measurements are provided in TAccelerationData instead of already transformed values, because
+	- for accelerometers with less than 3 axes, the transformation is mathematically not well-defined
+	- some types of calibration operations are better performed on raw data
+	
+	Implementors hint: The mathematics of this kind of transformation, 
+	like the derivation of the rotation matrixes is described in literature on strapdown navigation
+	E.g. "Strapdown Inertial Navigation Technology", 2nd Edition by David Titterton and John Weston, section 3.6
+	END Explanation of the angleYaw, anglePitch angleRoll parameters 	
+	**>
+	struct TAccelerationConfiguration{
+	    <** @description:  Distance of acceleration sensor from vehicle reference point (x-coordinate) [m].
+	   	**>
+	    Float dist2RefPointX
+	    <** @description:  Distance of acceleration sensor from vehicle reference point (y-coordinate) [m].
+	   	**>
+	    Float dist2RefPointY
+	    <** @description:  Distance of acceleration sensor from vehicle reference point (z-coordinate) [m].
+	   	**>
+	    Float dist2RefPointZ
+	    <** @description:  Euler angle of first rotation, around yaw axis, to describe acceleration sensor orientation [degree].
+	   	For details, see above.
+	   	**>
+	    Float angleYaw
+	    <** @description:  Euler angle of second rotation, around pitch axis, to describe acceleration sensor orientation [degree].
+	   	For details, see above.
+	   	**>
+	    Float anglePitch
+	    <** @description:  Euler angle of third rotation, around roll axis, to describe acceleration sensor orientation [degree].
+	   	For details, see above.
+	   	**>
+	    Float angleRoll
+	    <** @description:  Standard error estimate of the x-acceleration [m/s^2].
+	   	**>    
+	    Float sigmaX
+	    <** @description:  Standard error estimate of the y-acceleration [m/s^2].
+	   	**>
+	    Float sigmaY
+	    <** @description:  Standard error estimate of the z-acceleration [m/s^2].
+	   	**>
+	    Float sigmaZ
+	    <** @description:  Bit mask indicating the type of the used accelerometer. 
+	    [bitwise or'ed EAccelerationTypeBits values].
+	   	**>
+	    UInt32 typeBits
+	    <** @description:  Bit mask indicating the validity of each corresponding value.
+	   	[bitwise or'ed EAccelerationConfigValidityBits values].
+	   	Must be checked before usage.
+	   	**>
+	    UInt32 validityBits
+	}
+
+	<** @description: 
+	TAccelerationData::validityBits provides information about the currently valid signals of the acceleration data.
+	It is a or'ed bitmask of the EAccelerationValidityBits values.
+	Note: 
+	- The general availability of the signals is provided per TAccelerationConfiguration::typeBits. 
+	- If a signal is generally provided but temporarily not available, then the corresponding typeBit will be set but not the validityBit 
+	**>
+	enumeration EAccelerationValidityBits{
+	    <** @description:  Validity bit for field TAccelerationData::x.
+	   	**>    
+	    ACCELERATION_X_VALID                = 0x00000001
+	    <** @description:  Validity bit for field TAccelerationData::y.
+	   	**>
+	    ACCELERATION_Y_VALID                = 0x00000002
+	    <** @description:  Validity bit for field TAccelerationData::z.
+	   	**>
+	    ACCELERATION_Z_VALID                = 0x00000004
+	    <** @description:  Validity bit for field TAccelerationData::temperature.
+	   	**>
+	    ACCELERATION_TEMPERATURE_VALID      = 0x00000008
+	    <** @description:  Validity bit for field TAccelerationData::measurementInterval.
+	   	**>
+	    ACCELERATION_MEASINT_VALID          = 0x00000010    
+	} 
+
+	<** @description: 
+	The AccelerationData delivers the sensor values of the accelerometer.
+	The coordinate system is the axis system of the accelerometer sensor, 
+	i.e. the x, y, z values are raw measurements 
+	without any conversion except probably averaging of multiple 
+	sensor readings over the measurement interval.
+
+	see TAccelerationConfiguration for an explanation how to convert these values to the vehicle axis system
+
+	It is possible that not all values are populated, e.g. when only a 1-axis accelerometer is used.
+	You must check the valid bits before usage.
+	**>
+	struct TAccelerationData{
+	    <** @description:  Timestamp of the acquisition of the accelerometer signal [ms].
+	   	All sensor/GNSS timestamps must be based on the same time source.
+	   	**>
+	    UInt64 timestamp
+	    <** @description:  The acceleration in direction of the X-axis of the accelerometer sensor [m/s^2].
+	   	**>
+	    Float x
+	    <** @description:  The acceleration in direction of the Y-axis of the accelerometer sensor [m/s^2].
+	   	**>
+	    Float y
+	    <** @description:  The acceleration in direction of the Z-axis of the accelerometer sensor [m/s^2].
+	   	**>
+	    Float z
+	    <** @description:  Temperature reading of the accelerometer sensor.
+	   	If available it can be used for temperature compensation. 
+	   	The measurement unit is unspecified. 
+	   	Degrees celsius are preferred but any value linearly dependent on the temperature is fine.
+	   	**>
+	    Float temperature
+	    <** @description:  Measurement interval over which the accelerometer signal has been acquired.
+	   	Unit: micro-seconds [us].
+	   	This may slightly differ from the timestamp difference,
+	   	e.g. in case of transmission jitter before timestamping.
+	   	Providing the measurement interval allows thus 
+	   	- a more accurate integration of accelerometer measurements.
+	   	- correct usage of the first sample
+	   	- adding consistency checks
+	   	**>
+	    UInt32 measurementInterval
+	    <** @description:  Bit mask indicating the validity of each corresponding value.
+	   	[bitwise or'ed EAccelerationValidityBits values].
+	   	Must be checked before usage.
+	   	**>
+	    UInt32 validityBits
+	}
+
+	<** @description: 
+	Initialization of the acceleration sensor service.
+	Must be called before using the acceleration sensor service to set up the service.
+	**>
+	method init {
+	    out {
+			<** @description: initialized = Is true if initialization has been successfull **>
+			Boolean initialized
+		}
+	}
+
+	<** @description: 
+	Destroy the acceleration sensor service.
+	Must be called after using the acceleration sensor service to shut down the service.
+	**>
+	method destroy {
+	    out {
+			<** @description: destroyed = Is true if shutdown has been successfull. **>
+			Boolean destroyed
+		}
+	}
+
+	<** @description: getMetaData = get the meta information about sensor service.
+	The meta data of a sensor service provides information about it's name, version, type, subtype, sampling frequency etc.
+	**>
+	method getMetaData {
+	    out {
+	        TSensorMetaData data
+			<** @description: available = Is true if meta data is available **>
+			Boolean available
+		}
+	}
+
+	<** @description: getAccelerationConfiguration = get the static configuration information about the acceleration sensor. 
+	**>
+	method getAccelerationConfiguration {
+	    out {
+	        TAccelerationConfiguration config
+			<** @description: available = Is true if data can be provided and false otherwise, e.g. missing initialization **>
+			Boolean available
+		}
+	}
+
+	<** @description: getAccelerationData = get the acceleration data at a specific point in time. 
+	All valid flags are updated. The data is only guaranteed to be updated when the valid flags are true.
+	**>
+	method getAccelerationData {
+	    out {
+	        TAccelerationData accelerationData
+			<** @description: available = Is true if data can be provided and false otherwise, e.g. missing initialization **>
+			Boolean available
+		}
+	}
+	<** @description: getAccelerationDataList = get a list of acceleration data. 
+	may return buffered data (numElements >1) for different reasons
+	  for (large) portions of data buffered at startup
+	  for data buffered during regular operation e.g. for performance optimization (reduction of callback invocation frequency)
+	If the array contains (numElements >1), the elements will be ordered with rising timestamps
+	accelerationData pointer to an array of TAccelerationData with size numElements
+	**>
+	method getAccelerationDataList {
+	    out {
+	        TAccelerationData[] accelerationData
+			<** @description: numElements = allowed range: >=1. If numElements >1, buffered data are provided.**>
+			UInt16 numElements
+		}
+	}
+	<** @description: notifyAccelerationDataChanged
+	The signal will be emitted when new acceleration data is available.
+	All valid flags are updated. The data is only guaranteed to be updated when the valid flags are true.
+	**>
+	broadcast notifyAccelerationDataChanged selective {   	
+	}
+
+	<** @description: getStatus = get the acceleration sensor status at a specific point in time. **>
+	method getStatus {
+	    out {
+	        TSensorStatus status
+			<** @description: available = Is true if data can be provided and false otherwise, e.g. missing initialization **>
+			Boolean available
+		}
+	}
+	<** @description: notifyStatusChanged
+	The signal will be emitted when new acceleration sensor status data is available.
+	**>
+	broadcast notifyStatusChanged selective {   	
+	}
+		
+}
