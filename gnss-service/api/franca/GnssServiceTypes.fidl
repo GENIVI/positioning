@@ -1,7 +1,7 @@
 /*  SPDX-License-Identifier: MPL-2.0
     Component Name: EnhancedPositionService
     Compliance Level: Abstract Component
-    Copyright (C) 2012, BMW Car IT GmbH, Continental Automotive GmbH, PCA Peugeot Citroën, XS Embedded GmbH
+    Copyright (C) 2018, BMW Car IT GmbH, Continental Automotive GmbH, Groupe PSA, XS Embedded GmbH
     License:
     This Source Code Form is subject to the terms of the
     Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed with
@@ -11,22 +11,9 @@
 package org.genivi.GnssService
 
 typeCollection GnssServiceTypes {
-
-//Types and enums defined into 'gnss.h'
-	<** @description: 
-	3 dimensional distance used for description of geometric descriptions within the vehicle reference system.       
-	The vehicle axis system as defined in ISO 8855:2011(E).
-	In this system, the axes (Xv, Yv, Zv) are oriented as follows
-	- Xv is in the horizontal plane, pointing forwards
-	- Yv is in the horizontal plane, pointing to the left
-	- Zv is perpendicular to the horizontal plane, pointing upwards
-	For an illustration, see https://collab.genivi.org/wiki/display/genivi/LBSSensorServiceRequirementsBorg#LBSSensorServiceRequirementsBorg-ReferenceSystem
-	The reference point of the vehicle lies underneath the center of the rear axle on the surface of the road. 
-	**>
-	struct TGNSSDistance3D {		
-	    Float x	// Distance in x direction in [m] according to the reference coordinate system.
-	    Float y 	// Distance in y direction in [m] according to the reference coordinate system.	               
-	    Float z   	// Distance in z direction in [m] according to the reference coordinate system.         
+	version {
+	    major 5
+	    minor 0
 	}
 
 	<** @description: 
@@ -49,18 +36,6 @@ typeCollection GnssServiceTypes {
 	    GNSS_CONFIG_ANTPOS_VALID         = 0x00000001         // Validity bit for field TGNSSConfiguration::antennaPosition.
 	    GNSS_CONFIG_SATSYS_VALID         = 0x00000002         // Validity bit for field TGNSSConfiguration::supportedSystems.
 	}
-
-	<** @description: 
-	Static configuration data related to the GNSS service.
-	**>
-	struct TGNSSConfiguration {
-	    TGNSSDistance3D antennaPosition            // GNSS antenna position relative to the vehicle reference point.
-	    UInt32        supportedSystems           // Bit mask indicating the satellite systems which are supported by the GNSS hardware
-		                                     //    [bitwise or'ed see ref EGNSSSystem values].
-	    UInt32        validityBits               // Bit mask indicating the validity of each corresponding value.
-		                                     //    [bitwise or'ed see ref EGNSSConfigValidityBits values].
-		                                     //    Must be checked before usage.
-	} 
 
 	<** @description: 
 	TGNSSPosition::fixTypeBits provides GNSS Fix Type indication. 
@@ -186,41 +161,41 @@ typeCollection GnssServiceTypes {
 	It is a or'ed bitmask of the EGNSSSatelliteDetailValidityBits values.
 	**>
 	enumeration EGNSSSatelliteDetailValidityBits {
-	    GNSS_SATELLITE_SYSTEM_VALID                 = 0x00000001              // Validity bit for field TGNSSSatelliteDetail::system.
-	    GNSS_SATELLITE_ID_VALID                     = 0x00000002              // Validity bit for field TGNSSSatelliteDetail::satelliteId.
-	    GNSS_SATELLITE_AZIMUTH_VALID                = 0x00000004              // Validity bit for field TGNSSSatelliteDetail::azimuth.
-	    GNSS_SATELLITE_ELEVATION_VALID              = 0x00000008              // Validity bit for field TGNSSSatelliteDetail::elevation.
-	    GNSS_SATELLITE_CNO_VALID                    = 0x00000010              // Validity bit for field TGNSSSatelliteDetail::CNo.
-	    GNSS_SATELLITE_USED_VALID                   = 0x00000020              // Validity bit for field TGNSSSatelliteDetail::statusBits::GNSS_SATELLITE_USED.
-	    GNSS_SATELLITE_EPHEMERIS_AVAILABLE_VALID    = 0x00000040              // Validity bit for field TGNSSSatelliteDetail::statusBits::GNSS_SATELLITE_EPHEMERIS_AVAILABLE.
-	    GNSS_SATELLITE_RESIDUAL_VALID               = 0x00000080              // Validity bit for field TGNSSSatelliteDetail::posResidual.
+	    GNSS_SATELLITE_SYSTEM_VALID                 = 0x00000001      // Validity bit for field TGNSSSatelliteDetail::system.
+	    GNSS_SATELLITE_ID_VALID                     = 0x00000002      // Validity bit for field TGNSSSatelliteDetail::satelliteId.
+	    GNSS_SATELLITE_AZIMUTH_VALID                = 0x00000004      // Validity bit for field TGNSSSatelliteDetail::azimuth.
+	    GNSS_SATELLITE_ELEVATION_VALID              = 0x00000008      // Validity bit for field TGNSSSatelliteDetail::elevation.
+	    GNSS_SATELLITE_CNO_VALID                    = 0x00000010      // Validity bit for field TGNSSSatelliteDetail::CNo.
+	    GNSS_SATELLITE_USED_VALID                   = 0x00000020      // Validity bit for field TGNSSSatelliteDetail::statusBits::GNSS_SATELLITE_USED.
+	    GNSS_SATELLITE_EPHEMERIS_AVAILABLE_VALID    = 0x00000040      // Validity bit for field TGNSSSatelliteDetail::statusBits::GNSS_SATELLITE_EPHEMERIS_AVAILABLE.
+	    GNSS_SATELLITE_RESIDUAL_VALID               = 0x00000080      // Validity bit for field TGNSSSatelliteDetail::posResidual.
 	}
 
 	<** @description: 
 	Detailed data from one GNSS satellite.
 	**>
 	struct TGNSSSatelliteDetail {
-	    UInt64 timestamp                 // Timestamp of the acquisition of the satellite detail data [ms].
-		                             // All sensor/GNSS timestamps must be based on the same time source.
-	    EGNSSSystem system               // Value representing the GNSS system.
-	    UInt16 satelliteId               // Satellite ID.
-		                             // Satellite IDs are only unique within one satellite system.
-		                             // Satellites of different systems can be distinguished by see ref TGNSSSatelliteDetail::system.
-		                             // Ranges:
-		                             // 1..32: GPS satellites (by PRN)
-		                             // 33..64: SBAS/WAAS satellites
-		                             // 65..96: GLONASS satellites
-		                             // 1..64: GALILEO satellites, see Galileo OS SIS ICD, http://www.gsc-europa.eu/gnss-markets/segments-applications/os-sis-icd.
+	    UInt64 timestamp                 	// Timestamp of the acquisition of the satellite detail data [ms].
+		                             		// All sensor/GNSS timestamps must be based on the same time source.
+	    EGNSSSystem system               	// Value representing the GNSS system.
+	    UInt16 satelliteId               	// Satellite ID.
+		                             		// Satellite IDs are only unique within one satellite system.
+		                             		// Satellites of different systems can be distinguished by see ref TGNSSSatelliteDetail::system.
+		                             		// Ranges:
+		                             		// 1..32: GPS satellites (by PRN)
+		                             		// 33..64: SBAS/WAAS satellites
+		                             		// 65..96: GLONASS satellites
+		                             		// 1..64: GALILEO satellites, see Galileo OS SIS ICD, http://www.gsc-europa.eu/gnss-markets/segments-applications/os-sis-icd.
 		                           
-	    UInt16 azimuth                   // Satellite Azimuth in degrees. Value range 0..359
-	    UInt16 elevation                 // Satellite Elevation in degrees. Value range 0..90
-	    UInt16 CNo                       // C/No (SNR) in dBHz. Range 0 to 99, 0 when not tracking
-	    UInt32 statusBits                // Bit mask of additional status flags.
-		                             // [bitwise or'ed see ref EGNSSSatelliteFlag values].
-	    Int16 posResidual                // Residual in m of position calculation. Range -999 to +999, 0 if not tracking                                        
-	    UInt32 validityBits              // Bit mask indicating the validity of each corresponding value.
-		                             // [bitwise or'ed see ref EGNSSSatelliteDetailValidityBits values].
-		                             // Must be checked before usage.
+	    UInt16 azimuth                   	// Satellite Azimuth in degrees. Value range 0..359
+	    UInt16 elevation                 	// Satellite Elevation in degrees. Value range 0..90
+	    UInt16 CNo                       	// C/No (SNR) in dBHz. Range 0 to 99, 0 when not tracking
+	    UInt32 statusBits                	// Bit mask of additional status flags.
+		                             		// [bitwise or'ed see ref EGNSSSatelliteFlag values].
+	    Int16 posResidual                	// Residual in m of position calculation. Range -999 to +999, 0 if not tracking                                        
+	    UInt32 validityBits              	// Bit mask indicating the validity of each corresponding value.
+		                             		// [bitwise or'ed see ref EGNSSSatelliteDetailValidityBits values].
+		                             		// Must be checked before usage.
 	}
 
 	<** @description: 
@@ -274,69 +249,67 @@ typeCollection GnssServiceTypes {
 	which is out of the scope of this API.
 	**>
 	struct TGNSSPosition {
-	    UInt64 timestamp                 // Timestamp of the acquisition of the GNSS data [ms].
-		                             // All sensor/GNSS timestamps must be based on the same time source.
+	    UInt64 timestamp                 	// Timestamp of the acquisition of the GNSS data [ms].
+		                             		// All sensor/GNSS timestamps must be based on the same time source.
 	    //position
-	    Double latitude                    // Latitude in WGS84 in [degree]. 
-	    Double longitude                   // Longitude in WGS84 in [degree]. 
-	    Float altitudeMSL                  // Altitude above mean sea level (geoid) in [m]. 
-	    Float altitudeEll                  // Altitude above WGS84 ellipsoid in [m]. 
+	    Double latitude                    	// Latitude in WGS84 in [degree]. 
+	    Double longitude                   	// Longitude in WGS84 in [degree]. 
+	    Float altitudeMSL                  	// Altitude above mean sea level (geoid) in [m]. 
+	    Float altitudeEll                  	// Altitude above WGS84 ellipsoid in [m]. 
 	    //velocity
-	    Float hSpeed                       // Horizontal speed [m/s], in direction as given by see ref heading. 
-	    Float vSpeed                       // Vertical speed [m/s].
-		                               // A positive value indicates an upwards movement, i.e. an ascending altitude. 
-	    Float heading                      // GNSS course angle [degree] (0 => north, 90 => east, 180 => south, 270 => west, no negative values). 
+	    Float hSpeed                       	// Horizontal speed [m/s], in direction as given by see ref heading. 
+	    Float vSpeed                       	// Vertical speed [m/s].
+		                               		// A positive value indicates an upwards movement, i.e. an ascending altitude. 
+	    Float heading                      	// GNSS course angle [degree] (0 => north, 90 => east, 180 => south, 270 => west, no negative values). 
 	    //quality parameters: satellite constellation
-	    Float pdop                         // The positional (3D) dilution of precision. [Note: pdop^2 = hdop^2+vdop^2] 
-	    Float hdop                         // The horizontal (2D) dilution of precision. 
-	    Float vdop                         // The vertical (altitude) dilution of precision. 
-	    UInt16 usedSatellites            // Number of satellites used for the GNSS fix. 
-	    UInt16 trackedSatellites         // Number of satellites from which a signal is received. 
-	    UInt16 visibleSatellites         // Number of satellites expected to be receivable, i.e. above horizon or elevation mask. 
+	    Float pdop                         	// The positional (3D) dilution of precision. [Note: pdop^2 = hdop^2+vdop^2] 
+	    Float hdop                         	// The horizontal (2D) dilution of precision. 
+	    Float vdop                         	// The vertical (altitude) dilution of precision. 
+	    UInt16 usedSatellites            	// Number of satellites used for the GNSS fix. 
+	    UInt16 trackedSatellites         	// Number of satellites from which a signal is received. 
+	    UInt16 visibleSatellites         	// Number of satellites expected to be receivable, i.e. above horizon or elevation mask. 
 	    //quality parameters: error estimates
-	    Float sigmaHPosition               // Standard error estimate of the horizontal position in [m]. 
-	    Float sigmaAltitude                // Standard error estimate of altitude in [m]. 
-	    Float sigmaHSpeed                  // Standard error estimate of horizontal speed in [m/s]. 
-	    Float sigmaVSpeed                  // Standard error estimate of vertical speed in [m/s].     
-	    Float sigmaHeading                 // Standard error estimate of horizontal heading/course in [degree]. 
+	    Float sigmaHPosition               	// Standard error estimate of the horizontal position in [m]. 
+	    Float sigmaAltitude                	// Standard error estimate of altitude in [m]. 
+	    Float sigmaHSpeed                  	// Standard error estimate of horizontal speed in [m/s]. 
+	    Float sigmaVSpeed                  	// Standard error estimate of vertical speed in [m/s].     
+	    Float sigmaHeading                 	// Standard error estimate of horizontal heading/course in [degree]. 
 	    //quality parameters: overall GNSS fix status
-	    EGNSSFixStatus fixStatus           // Value representing the GNSS mode. 
-	    UInt32 fixTypeBits               // Bit mask indicating the sources actually used for the GNSS calculation. 
-		                             // [bitwise or'ed see ref EGNSSFixType values].
+	    EGNSSFixStatus fixStatus           	// Value representing the GNSS mode. 
+	    UInt32 fixTypeBits               	// Bit mask indicating the sources actually used for the GNSS calculation. 
+		                             		// [bitwise or'ed see ref EGNSSFixType values].
 	    //gnss system information
-	    UInt32 activatedSystems          // Bit mask indicating the satellite systems that are activated for use
-		                             // [bitwise or'ed see ref EGNSSSystem values].
-	    UInt32 usedSystems               // Bit mask indicating the satellite systems that are actually used for the position fix
-		                             // [bitwise or'ed see ref EGNSSSystem values].
+	    UInt32 activatedSystems          	// Bit mask indicating the satellite systems that are activated for use
+		                             		// [bitwise or'ed see ref EGNSSSystem values].
+	    UInt32 usedSystems               	// Bit mask indicating the satellite systems that are actually used for the position fix
+		                             		// [bitwise or'ed see ref EGNSSSystem values].
 	    //correction data information
-	    UInt16 correctionAge             // Age of used correction data in [s]. 
-		                             // Note: The kind of used correction data is identified by the corresponding bit in see ref fixTypeBits.     
+	    UInt16 correctionAge             	// Age of used correction data in [s]. 
+		                             		// Note: The kind of used correction data is identified by the corresponding bit in see ref fixTypeBits.     
 	    //validity bits
-	    UInt32 validityBits              // Bit mask indicating the validity of each corresponding value.
-		                             // [bitwise or'ed see ref EGNSSPositionValidityBits values].
-		                             // Must be checked before usage.                                         
+	    UInt32 validityBits              	// Bit mask indicating the validity of each corresponding value.
+		                             		// [bitwise or'ed see ref EGNSSPositionValidityBits values].
+		                             		// Must be checked before usage.                                         
 	}
-
-//Types and enums defined into 'gnss-status.h'
 
 	<** @description: Enumeration to describe the status of the GNSS receiver. **>
 	enumeration EGNSSStatus {
-	    GNSS_STATUS_NOTAVAILABLE  = 0           // GNSS is not available at all, based on configuration data.    
-	    GNSS_STATUS_INITIALIZING  = 1           // Initial status when the connection to the GNSS is set up for the first time.
-	    GNSS_STATUS_AVAILABLE     = 2           // GNSS is available and running as expected.
-	    GNSS_STATUS_RESTARTING    = 3           // GNSS is restarted, i.e. due to communication loss.
-	    GNSS_STATUS_FAILURE       = 4           // GNSS is not operating properly. Restarting did not help.
-	    GNSS_STATUS_OUTOFSERVICE  = 5          // GNSS is temporarily not available, due to some known external condition, e.g. firmware update or switch off for antenna supervision.
+	    GNSS_STATUS_NOTAVAILABLE  = 0		// GNSS is not available at all, based on configuration data.    
+	    GNSS_STATUS_INITIALIZING  = 1       // Initial status when the connection to the GNSS is set up for the first time.
+	    GNSS_STATUS_AVAILABLE     = 2       // GNSS is available and running as expected.
+	    GNSS_STATUS_RESTARTING    = 3       // GNSS is restarted, i.e. due to communication loss.
+	    GNSS_STATUS_FAILURE       = 4       // GNSS is not operating properly. Restarting did not help.
+	    GNSS_STATUS_OUTOFSERVICE  = 5       // GNSS is temporarily not available, due to some known external condition, e.g. firmware update or switch off for antenna supervision.
 	}
 
 	<** @description: Enumeration to describe the status of the GNSS antenna. **>
 	enumeration EGNSSAntennaStatus {
-	    GNSS_ANT_STATUS_NORMAL          = 0           // GNSS antenna is working in normal operation.
-	    GNSS_ANT_STATUS_OVERCURRENT     = 1           // GNSS antenna is working but the antenna current is higher than expected.
-	    GNSS_ANT_STATUS_OPEN            = 2           // GNSS antenna is not working because not connected (antenna current too low).
-	    GNSS_ANT_STATUS_SHORT_GND       = 3           // GNSS antenna is not working due to short-circuit to ground.
-	    GNSS_ANT_STATUS_SHORT_BATT      = 4           // GNSS antenna is not working due to short-circuit to battery.
-	    GNSS_ANT_STATUS_OUTOFSERVICE    = 5           // GNSS antenna is temporarily not available, due to some known external condition.
+	    GNSS_ANT_STATUS_NORMAL          = 0 // GNSS antenna is working in normal operation.
+	    GNSS_ANT_STATUS_OVERCURRENT     = 1 // GNSS antenna is working but the antenna current is higher than expected.
+	    GNSS_ANT_STATUS_OPEN            = 2 // GNSS antenna is not working because not connected (antenna current too low).
+	    GNSS_ANT_STATUS_SHORT_GND       = 3 // GNSS antenna is not working due to short-circuit to ground.
+	    GNSS_ANT_STATUS_SHORT_BATT      = 4 // GNSS antenna is not working due to short-circuit to battery.
+	    GNSS_ANT_STATUS_OUTOFSERVICE    = 5 // GNSS antenna is temporarily not available, due to some known external condition.
 	}
 
 	<** @description: TGNSSStatus::validityBits provides information about the currently valid signals of the TGNSSStatus struct.
@@ -348,16 +321,14 @@ typeCollection GnssServiceTypes {
 
 	<** @description: Container for GNSS status information **>
 	struct TGNSSStatus {
-	    UInt64 timestamp	// Timestamp of the GNSS status transition [ms].
-		                // All sensor/GNSS timestamps must be based on the same time source.
-	    EGNSSStatus status	//  Status of the GNSS receiver
-	    EGNSSAntennaStatus antStatus	//  Status of the GNSS antenna
-	    UInt32 validityBits	//  Bit mask indicating the validity of each corresponding value.
-		                //  [bitwise or'ed  EGNSSStatusValidityBits values].
-		                //  Must be checked before usage.
+	    UInt64 timestamp					// Timestamp of the GNSS status transition [ms].
+		                					// All sensor/GNSS timestamps must be based on the same time source.
+	    EGNSSStatus status					//  Status of the GNSS receiver
+	    EGNSSAntennaStatus antStatus		//  Status of the GNSS antenna
+	    UInt32 validityBits					//  Bit mask indicating the validity of each corresponding value.
+		                					//  [bitwise or'ed  EGNSSStatusValidityBits values].
+		                					//  Must be checked before usage.
 	}    
-
-//Types and enums defined into 'gnss-meta-data.h'
 
 	<** @description: The GNSS category introduces the concept that sensor information can also be derived information
 	 computed by combining several signals. **>
@@ -382,11 +353,11 @@ typeCollection GnssServiceTypes {
 	  GNSS clients need the meta data information in order to correctly handle data provided by GNSS service and
 	  to adapt to the variation in the signal data delivery. **>
 	struct TGnssMetaData {
-	    UInt32 versionGnss	// Version of the GNSS service. //NB: version is a reserved word in Franca, so wording is fixed to versionGnss
-	    EGnssCategory category	// GNSS Category (Physical/Logical).
-	    UInt32 typeBits	// GNSS Type: combination of bits defined in @ref EGnssTypeBits.
-	    UInt32 cycleTime	// GNSS cycle time (update interval) in ms. 0 for irregular updates
-	    UInt16 numChannels	// Number of GNSS receiver channels for satellite signal reception.
+	    UInt32 versionGnss					// Version of the GNSS service. //NB: version is a reserved word in Franca, so wording is fixed to versionGnss
+	    EGnssCategory category				// GNSS Category (Physical/Logical).
+	    UInt32 typeBits						// GNSS Type: combination of bits defined in EGnssTypeBits.
+	    UInt32 cycleTime					// GNSS cycle time (update interval) in ms. 0 for irregular updates
+	    UInt16 numChannels					// Number of GNSS receiver channels for satellite signal reception.
 	}
 
 }

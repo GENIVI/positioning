@@ -1,0 +1,59 @@
+/*  SPDX-License-Identifier: MPL-2.0
+    Component Name: GnssService
+    Compliance Level: Abstract Component
+    Copyright (C) 2018, BMW Car IT GmbH, Continental Automotive GmbH, Groupe PSA, XS Embedded GmbH
+    License:
+    This Source Code Form is subject to the terms of the
+    Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed with
+    this file, You can obtain one at http://mozilla.org/MPL/2.0/.
+*/
+
+package org.genivi.GnssService
+
+import org.genivi.GnssService.GnssServiceTypes.* from "GnssServiceTypes.fidl"
+
+<** @description : Gnss = This interface offers functionalities to retrieve the GNSS position of the vehicle **>
+interface Configuration {
+	version {
+	    major 5
+	    minor 0
+	}
+
+	<** @description: 
+	3 dimensional distance used for description of geometric descriptions within the vehicle reference system.       
+	The vehicle axis system as defined in ISO 8855:2011(E).
+	In this system, the axes (Xv, Yv, Zv) are oriented as follows
+	- Xv is in the horizontal plane, pointing forwards
+	- Yv is in the horizontal plane, pointing to the left
+	- Zv is perpendicular to the horizontal plane, pointing upwards
+	For an illustration, see https://collab.genivi.org/wiki/display/genivi/LBSSensorServiceRequirementsBorg#LBSSensorServiceRequirementsBorg-ReferenceSystem
+	The reference point of the vehicle lies underneath the center of the rear axle on the surface of the road. 
+	**>
+	struct TGNSSDistance3D {		
+	    Float x	// Distance in x direction in [m] according to the reference coordinate system.
+	    Float y // Distance in y direction in [m] according to the reference coordinate system.	               
+	    Float z // Distance in z direction in [m] according to the reference coordinate system.         
+	}
+
+	<** @description: 
+	Static configuration data related to the GNSS service.
+	**>
+	struct TGNSSConfiguration {
+	    TGNSSDistance3D antennaPosition	// GNSS antenna position relative to the vehicle reference point.
+	    UInt32        supportedSystems  // Bit mask indicating the satellite systems which are supported by the GNSS hardware
+		                                //    [bitwise or'ed see ref EGNSSSystem values].
+	    UInt32        validityBits      // Bit mask indicating the validity of each corresponding value.
+		                                //    [bitwise or'ed see ref EGNSSConfigValidityBits values].
+		                                //    Must be checked before usage.
+	} 
+
+	<** @description: getConfiguration = Accessing static configurationdata related to the GNSS service. **>
+	method getConfiguration {
+	    out {
+	        TGNSSConfiguration gnssConfig
+		<** @description: provided = Is true if data can be provided and false otherwise, e.g. missing initialization **>
+		Boolean provided
+		}
+	}
+
+}

@@ -1,7 +1,7 @@
 /*  SPDX-License-Identifier: MPL-2.0
-    Component Name: EnhancedPositionService
+    Component Name: SensorsService
     Compliance Level: Abstract Component
-    Copyright (C) 2012, BMW Car IT GmbH, Continental Automotive GmbH, PCA Peugeot Citroën, XS Embedded GmbH
+    Copyright (C) 2018, BMW Car IT GmbH, Continental Automotive GmbH, Groupe PSA, XS Embedded GmbH
     License:
     This Source Code Form is subject to the terms of the
     Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed with
@@ -11,8 +11,11 @@
 package org.genivi.SensorsService
 
 typeCollection SensorsServiceTypes {
+	version {
+	    major 5
+	    minor 0
+	}
 
-//Data types and enums defined into 'sns-meta-data.h'
 	<** @description:
 	The sensor category introduces the concept that sensor information can also be derived information
 	computed by combining several signals.
@@ -22,7 +25,6 @@ typeCollection SensorsServiceTypes {
 	    SENSOR_CATEGORY_LOGICAL       // A logical sensor can combine signals of several sensors.
 	    SENSOR_CATEGORY_PHYSICAL      // A physical sensor provides signals from physically available sensors.
 	}
-
 
 	<** @description:
 	The sensor type identifies which physical quantity is measured.
@@ -57,8 +59,6 @@ typeCollection SensorsServiceTypes {
 	    UInt32 cycleTime 			 // Sensor cycle time (update interval) in ms. 0 for irregular updates 
 	}
 
-	//Data types and enums defined into 'sns-status.h'
-	
 	<** @description:
 	Enumeration to describe the status of the sensor
 	 **>

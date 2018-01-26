@@ -1,0 +1,150 @@
+/*  SPDX-License-Identifier: MPL-2.0
+    Component Name: SensorsService
+    Compliance Level: Abstract Component
+    Copyright (C) 2018, BMW Car IT GmbH, Continental Automotive GmbH, Groupe PSA, XS Embedded GmbH
+    License:
+    This Source Code Form is subject to the terms of the
+    Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed with
+    this file, You can obtain one at http://mozilla.org/MPL/2.0/.
+*/
+
+package org.genivi.SensorsService
+
+import org.genivi.SensorsService.SensorsServiceTypes.* from "SensorsServiceTypes.fidl"
+
+<** @description : AccelerationConfiguration = This interface offers functionalities to retrieve the configuration of the Acceleration interface of the vehicle **>
+interface AccelerationConfiguration {
+	version {
+	    major 5
+	    minor 0
+	}
+
+	<** @description: 
+	TAccelerationConfiguration::validityBits provides information about the currently valid signals of the acceleration configuration data.
+	It is a or'ed bitmask of the EAccelerationConfigValidityBits values.
+	**>
+	enumeration EAccelerationConfigValidityBits{
+	    <** @description:  Validity bit for field TAccelerationConfiguration::dist2RefPointX.
+	   	**>
+	    ACCELERATION_CONFIG_DISTX_VALID     = 0x00000001
+	    <** @description:  Validity bit for field TAccelerationConfiguration::dist2RefPointY.
+	   	**>
+	    ACCELERATION_CONFIG_DISTY_VALID     = 0x00000002
+	    <** @description:  Validity bit for field TAccelerationConfiguration::dist2RefPointZ.
+	   	**>
+	    ACCELERATION_CONFIG_DISTZ_VALID     = 0x00000004
+	    <** @description:  Validity bit for field TAccelerationConfiguration::angleYaw.
+	   	**>
+	    ACCELERATION_CONFIG_ANGLEYAW_VALID  = 0x00000008
+	    <** @description:  Validity bit for field TAccelerationConfiguration::anglePitch.
+	   	**>
+	    ACCELERATION_CONFIG_ANGLEPITCH_VALID= 0x00000010
+	    <** @description:  Validity bit for field TAccelerationConfiguration::angleRoll.
+	   	**>
+	    ACCELERATION_CONFIG_ANGLEROLL_VALID = 0x00000020
+	    <** @description:  Validity bit for field TAccelerationConfiguration::sigmaX.
+	   	**>
+	    ACCELERATION_CONFIG_SIGMAX_VALID    = 0x00000040
+	    <** @description:  Validity bit for field TAccelerationConfiguration::sigmaX. 
+	   	**>
+	    ACCELERATION_CONFIG_SIGMAY_VALID    = 0x00000080
+	    <** @description:  Validity bit for field TAccelerationConfiguration::sigmaZ.
+	   	**>
+	    ACCELERATION_CONFIG_SIGMAZ_VALID    = 0x00000100
+	    <** @description:  Validity bit for field TAccelerationConfiguration::typeBits.
+	   	**>
+	    ACCELERATION_CONFIG_TYPE_VALID      = 0x00000200
+	}
+
+	<** @description: 
+	Static configuration data for the acceleration sensor service.
+	
+	BEGIN Explanation of the angleYaw, anglePitch angleRoll parameters
+	The orientation of the accelerometer hardware (Xa, Ya, Za)
+	with respect to the vehicle axis system (Xv, Yv, Zv)
+	can be described using the angles (angleYaw, anglePitch, angleRoll)
+	following the approach defined in ISO 8855:2011, section 5.2, table 1
+	Apply 3 rotations on the vehicle axis system until it matches the accelerometer axis system
+	The rotation sequence is as follows
+	 - first rotate by angleYaw about the Zv axis
+	 - second rotate by anglePitch about the new (intermediate) Y axis
+	 - third rotate by angleRoll about the new X axis
+	
+	Notes 
+	- the angles are frequently called "Euler angles" and the rotations "Euler rotations"
+	- a different order of the rotations would lead to a different orientation
+	- as the vehicle axis system is right-handed, also the accelerometer axis system must be right-handed
+	
+	The vehicle axis system as defined in ISO 8855:2011(E).
+	In this system, the axes (Xv, Yv, Zv) are oriented as follows
+	- Xv is in the horizontal plane, pointing forwards
+	- Yv is in the horizontal plane, pointing to the left
+	- Zv is perpendicular to the horizontal plane, pointing upwards
+	For an illustration, see https://collab.genivi.org/wiki/display/genivi/LBSSensorServiceRequirementsBorg#LBSSensorServiceRequirementsBorg-ReferenceSystem
+	
+	When the accelerometer axes are not aligned with the vehicle axes, i.e. 
+	if any of the angles (angleYaw, anglePitch, angleRoll) is not zero
+	then the raw measurement values of the accelerometer X, Y, Z axes may have to be be transformed
+	to the vehicle axis system by the client of this interface, depending on the type of application.
+	Raw measurements are provided in TAccelerationData instead of already transformed values, because
+	- for accelerometers with less than 3 axes, the transformation is mathematically not well-defined
+	- some types of calibration operations are better performed on raw data
+	
+	Implementors hint: The mathematics of this kind of transformation, 
+	like the derivation of the rotation matrixes is described in literature on strapdown navigation
+	E.g. "Strapdown Inertial Navigation Technology", 2nd Edition by David Titterton and John Weston, section 3.6
+	END Explanation of the angleYaw, anglePitch angleRoll parameters 	
+	**>
+	struct TAccelerationConfiguration{
+	    <** @description:  Distance of acceleration sensor from vehicle reference point (x-coordinate) [m].
+	   	**>
+	    Float dist2RefPointX
+	    <** @description:  Distance of acceleration sensor from vehicle reference point (y-coordinate) [m].
+	   	**>
+	    Float dist2RefPointY
+	    <** @description:  Distance of acceleration sensor from vehicle reference point (z-coordinate) [m].
+	   	**>
+	    Float dist2RefPointZ
+	    <** @description:  Euler angle of first rotation, around yaw axis, to describe acceleration sensor orientation [degree].
+	   	For details, see above.
+	   	**>
+	    Float angleYaw
+	    <** @description:  Euler angle of second rotation, around pitch axis, to describe acceleration sensor orientation [degree].
+	   	For details, see above.
+	   	**>
+	    Float anglePitch
+	    <** @description:  Euler angle of third rotation, around roll axis, to describe acceleration sensor orientation [degree].
+	   	For details, see above.
+	   	**>
+	    Float angleRoll
+	    <** @description:  Standard error estimate of the x-acceleration [m/s^2].
+	   	**>    
+	    Float sigmaX
+	    <** @description:  Standard error estimate of the y-acceleration [m/s^2].
+	   	**>
+	    Float sigmaY
+	    <** @description:  Standard error estimate of the z-acceleration [m/s^2].
+	   	**>
+	    Float sigmaZ
+	    <** @description:  Bit mask indicating the type of the used accelerometer. 
+	    [bitwise or'ed EAccelerationTypeBits values].
+	   	**>
+	    UInt32 typeBits
+	    <** @description:  Bit mask indicating the validity of each corresponding value.
+	   	[bitwise or'ed EAccelerationConfigValidityBits values].
+	   	Must be checked before usage.
+	   	**>
+	    UInt32 validityBits
+	}
+
+	<** @description: getAccelerationConfiguration = get the static configuration information about the acceleration sensor. 
+	**>
+	method getAccelerationConfiguration {
+	    out {
+	        TAccelerationConfiguration config
+			<** @description: available = Is true if data can be provided and false otherwise, e.g. missing initialization **>
+			Boolean available
+		}
+	}
+		
+}

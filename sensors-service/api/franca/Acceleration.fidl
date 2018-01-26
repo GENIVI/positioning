@@ -1,7 +1,7 @@
 /*  SPDX-License-Identifier: MPL-2.0
-    Component Name: EnhancedPositionService
+    Component Name: SensorsService
     Compliance Level: Abstract Component
-    Copyright (C) 2012, BMW Car IT GmbH, Continental Automotive GmbH, PCA Peugeot Citroën, XS Embedded GmbH
+    Copyright (C) 2018, BMW Car IT GmbH, Continental Automotive GmbH, Groupe PSA, XS Embedded GmbH
     License:
     This Source Code Form is subject to the terms of the
     Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed with
@@ -17,43 +17,6 @@ interface Acceleration {
 	version {
 	    major 5
 	    minor 0
-	}
-
-	<** @description: 
-	TAccelerationConfiguration::validityBits provides information about the currently valid signals of the acceleration configuration data.
-	It is a or'ed bitmask of the EAccelerationConfigValidityBits values.
-	**>
-	enumeration EAccelerationConfigValidityBits{
-	    <** @description:  Validity bit for field TAccelerationConfiguration::dist2RefPointX.
-	   	**>
-	    ACCELERATION_CONFIG_DISTX_VALID     = 0x00000001
-	    <** @description:  Validity bit for field TAccelerationConfiguration::dist2RefPointY.
-	   	**>
-	    ACCELERATION_CONFIG_DISTY_VALID     = 0x00000002
-	    <** @description:  Validity bit for field TAccelerationConfiguration::dist2RefPointZ.
-	   	**>
-	    ACCELERATION_CONFIG_DISTZ_VALID     = 0x00000004
-	    <** @description:  Validity bit for field TAccelerationConfiguration::angleYaw.
-	   	**>
-	    ACCELERATION_CONFIG_ANGLEYAW_VALID  = 0x00000008
-	    <** @description:  Validity bit for field TAccelerationConfiguration::anglePitch.
-	   	**>
-	    ACCELERATION_CONFIG_ANGLEPITCH_VALID= 0x00000010
-	    <** @description:  Validity bit for field TAccelerationConfiguration::angleRoll.
-	   	**>
-	    ACCELERATION_CONFIG_ANGLEROLL_VALID = 0x00000020
-	    <** @description:  Validity bit for field TAccelerationConfiguration::sigmaX.
-	   	**>
-	    ACCELERATION_CONFIG_SIGMAX_VALID    = 0x00000040
-	    <** @description:  Validity bit for field TAccelerationConfiguration::sigmaX. 
-	   	**>
-	    ACCELERATION_CONFIG_SIGMAY_VALID    = 0x00000080
-	    <** @description:  Validity bit for field TAccelerationConfiguration::sigmaZ.
-	   	**>
-	    ACCELERATION_CONFIG_SIGMAZ_VALID    = 0x00000100
-	    <** @description:  Validity bit for field TAccelerationConfiguration::typeBits.
-	   	**>
-	    ACCELERATION_CONFIG_TYPE_VALID      = 0x00000200
 	}
 
 	<** @description: 
@@ -75,7 +38,6 @@ interface Acceleration {
 	  	**>
 	    ACCELERATION_TEMPERATURE_PROVIDED   = 0x00000008
 	}
-
 
 	<** @description: 
 	Static configuration data for the acceleration sensor service.
@@ -254,7 +216,7 @@ interface Acceleration {
 		}
 	}
 
-	<** @description: getMetaData = get the meta information about sensor service.
+	<** @description: getMetaData = get the meta information about acceleration service.
 	The meta data of a sensor service provides information about it's name, version, type, subtype, sampling frequency etc.
 	**>
 	method getMetaData {

@@ -1,7 +1,7 @@
 /*  SPDX-License-Identifier: MPL-2.0
-    Component Name: EnhancedPositionService
+    Component Name: GnssService
     Compliance Level: Abstract Component
-    Copyright (C) 2012, BMW Car IT GmbH, Continental Automotive GmbH, PCA Peugeot Citroën, XS Embedded GmbH
+    Copyright (C) 2018, BMW Car IT GmbH, Continental Automotive GmbH, Groupe PSA, XS Embedded GmbH
     License:
     This Source Code Form is subject to the terms of the
     Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed with
@@ -17,15 +17,6 @@ interface Gnss {
 	version {
 	    major 5
 	    minor 0
-	}
-
-	<** @description: getConfiguration = Accessing static configurationdata related to the GNSS service. **>
-	method getConfiguration {
-	    out {
-	        TGNSSConfiguration gnssConfig
-		<** @description: provided = Is true if data can be provided and false otherwise, e.g. missing initialization **>
-		Boolean provided
-		}
 	}
 
 	<** @description: getTime = get the UTC date and time data of the GNSS receiver at a specific point in time. **>
@@ -153,8 +144,6 @@ interface Gnss {
 	    }
 	}
 
-//Method and broadcast defined into 'gnss-status.h'
-
 	<** @description: getStatus = get the GNSS status at a specific point in time. **>
 	method getStatus {
 	    out {
@@ -173,8 +162,6 @@ interface Gnss {
 	   	}
     }
 
-//Method defined into 'gnss-meta-data.h'
-
 	<** @description: getMetaData = get the meta information about GNSS service. **>
 	method getMetaData {
 	    out {
@@ -183,8 +170,6 @@ interface Gnss {
 			Boolean available
 		}
 	}
-
-//Methods defined into 'gnss-init.h'
 
 	<** @description: init = Initialization of the GNSS service.
 	  Must be called before using the GNSS service to set up the service. **>

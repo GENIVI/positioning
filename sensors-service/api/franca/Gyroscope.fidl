@@ -1,11 +1,11 @@
 /*  SPDX-License-Identifier: MPL-2.0
-    Component Name: EnhancedPositionService
+    Component Name: SensorsService
     Compliance Level: Abstract Component
-    Copyright (C) 2012 BMW Car IT GmbH Continental Automotive GmbH PCA Peugeot Citroën XS Embedded GmbH
+    Copyright (C) 2018, BMW Car IT GmbH, Continental Automotive GmbH, Groupe PSA, XS Embedded GmbH
     License:
     This Source Code Form is subject to the terms of the
-    Mozilla Public License v. 2.0. If a copy of the MPL was not distributed with
-    this file You can obtain one at http://mozilla.org/MPL/2.0/.
+    Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed with
+    this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 */
 
 package org.genivi.SensorsService
@@ -18,125 +18,6 @@ interface Gyroscope {
 	    major 5
 	    minor 0
 	}
-
-	<** @description: 
-	TGyroscopeConfiguration::validityBits provides information about the 
-	currently valid signals of the gyroscope configuration data.
-	It is a or'ed bitmask of the EGyroscopeConfigValidityBits values.
-	 **>
-	enumeration EGyroscopeConfigValidityBits{
-	    <** @description: Validity bit for field TGyroscopeConfiguration::angleYaw.
-	    **>
-	    GYROSCOPE_CONFIG_ANGLEYAW_VALID         = 0x00000001
-	    <** @description: Validity bit for field TGyroscopeConfiguration::anglePitch.
-	    **>
-	    GYROSCOPE_CONFIG_ANGLEPITCH_VALID       = 0x00000002
-	    <** @description: Validity bit for field TGyroscopeConfiguration::angleRoll.
-	    **>
-	    GYROSCOPE_CONFIG_ANGLEROLL_VALID        = 0x00000004
-	    <** @description: Validity bit for field TGyroscopeConfiguration::momentOfYawInertia.
-	    **>    
-	    GYROSCOPE_CONFIG_MOMENTYAW_VALID        = 0x00000008
-	    <** @description: Validity bit for field TGyroscopeConfiguration::sigmaGyroscope.
-	    **>
-	    GYROSCOPE_CONFIG_SIGMAGYROSCOPE_VALID   = 0x00000010
-	    <** @description: Validity bit for field TGyroscopeConfiguration::typeBits.
-	    **>
-	    GYROSCOPE_CONFIG_TYPE_VALID             = 0x00000020
-	} 
-
-	<** @description: 
-	Gyroscope type
-	TGyroscopeConfiguration::typeBits provides information about the
-	type of the gyroscope and the interpretation of the signals.
-	It is a or'ed bitmask of the EGyroscopeTypeBits values.
-	 **>
-	enumeration EGyroscopeTypeBits {
-	    <** @description: Temperature bias compensation already applied to gyroscope signals.
-	    **>
-	    GYROSCOPE_TEMPERATURE_COMPENSATED       = 0x00000001
-	    <** @description: A measurement for the z/yaw-axis is provided.
-	    **>
-	    GYROSCOPE_YAWRATE_PROVIDED              = 0x00000002
-	    <** @description: A measurement for the y/pitch-axis is provided.
-	    **>
-	    GYROSCOPE_PITCHRATE_PROVIDED            = 0x00000004
-	    <** @description: A measurement for the x/roll-axis is provided.
-	    **>
-	    GYROSCOPE_ROLLRATE_PROVIDED             = 0x00000008
-	    <** @description: A measurement for the temperature is provided.
-	    **>
-	    GYROSCOPE_TEMPERATURE_PROVIDED          = 0x00000010
-	} 
-
-	<** @description: 
-	Static configuration data for the gyroscope sensor service.
-	BEGIN Explanation of the angleYaw anglePitch angleRoll parameters
-	The orientation of the gyroscope hardware (Xg Yg Zg)
-	with respect to the vehicle axis system (Xv Yv Zv)
-	can be described using the angles (angleYaw anglePitch angleRoll)
-	following the approach defined in ISO 8855:2011 section 5.2 table 1
-	Apply 3 rotations on the vehicle axis system until it matches the gyroscope axis system
-	The rotation sequence is as follows
-	 - first rotate by angleYaw about the Zv axis
-	 - second rotate by anglePitch about the new (intermediate) Y axis
-	 - third rotate by angleRoll about the new X axis
-	Notes 
-	- the angles are frequently called "Euler angles" and the rotations "Euler rotations"
-	- a different order of the rotations would lead to a different orientation
-	- as the vehicle axis system is right-handed also the gyroscope axis system must be right-handed
-	The vehicle axis system as defined in ISO 8855:2011(E).
-	In this system the axes (Xv Yv Zv) are oriented as follows
-	- Xv is in the horizontal plane pointing forwards
-	- Yv is in the horizontal plane pointing to the left
-	- Zv is perpendicular to the horizontal plane pointing upwards
-	For an illustration see https://collab.genivi.org/wiki/display/genivi/LBSSensorServiceRequirementsBorg#LBSSensorServiceRequirementsBorg-ReferenceSystem
-	When the gyroscope axes are not aligned with the vehicle axes i.e. 
-	if any of the angles (angleYaw anglePitch angleRoll) is not zero
-	then the raw measurement values of the gyroscope Z Y X axes may have to be be transformed
-	to the vehicle axis system by the client of this interface depending on the type of application.
-	Raw measurements are provided in  TGyroscopeData instead of already transformed values because
-	- for gyroscopes with less than 3 axes the transformation is mathematically not well-defined
-	- some types of calibration operations are better performed on raw data
-	Implementors hint: The mathematics of this kind of transformation 
-	like the derivation of the rotation matrixes is described in literature on strapdown navigation
-	E.g. "Strapdown Inertial Navigation Technology" 2nd Edition by David Titterton and John Weston section 3.6
-	END Explanation of the angleYaw anglePitch angleRoll parameters 
-	 **>
-	struct TGyroscopeConfiguration {
-	    <** @description: Euler angle of first rotation around yaw axis 
-	   to describe gyroscope orientation [degree].
-	   For details see above.
-	    **>
-	    Float angleYaw
-	    <** @description: Euler angle of second rotation around pitch axis
-	   to describe gyroscope orientation [degree].
-	   For details see above.
-	    **>
-	    Float anglePitch
-	    <** @description: Euler angle of third rotation around roll axis
-	   to describe gyroscope orientation [degree].
-	   For details see above.
-	    **>
-	    Float angleRoll
-	    <** @description: Moment of yaw inertia [kg x m^2]. 
-	   The pitch and roll inertia moments are not provided
-	   as they are not relevant for positioning.
-	    **>
-	    Float momentOfYawInertia
-	    <** @description: Standard error estimate of the gyroscope for all directions [degree/s].
-	    **>
-	    Float sigmaGyroscope
-	    <** @description: Bit mask indicating the type of the used gyroscope.
-	   [bitwise or'ed  EGyroscopeTypeBits values].
-	    **>
-	    UInt32 typeBits
-	    <** @description: Bit mask indicating the validity of each corresponding value.
-	   [bitwise or'ed  EGyroscopeConfigValidityBits values].
-	   Must be checked before usage.
-	    **>
-	    UInt32 validityBits
-	} 
 
 	<** @description: 
 	TGyroscopeData::validityBits provides information which fields in
@@ -282,23 +163,13 @@ interface Gyroscope {
 		}
 	}
 
-	<** @description: getMetaData = get the meta information about sensor service.
+	<** @description: getMetaData = get the meta information about gyroscope service.
 	The meta data of a sensor service provides information about it's name, version, type, subtype, sampling frequency etc.
 	**>
 	method getMetaData {
 	    out {
 	        TSensorMetaData data
 			<** @description: available = Is true if meta data is available **>
-			Boolean available
-		}
-	}
-
-	<** @description: getGyroscopeConfiguration = get the static configuration information about the gyroscope sensor. 
-	**>
-	method getGyroscopeConfiguration {
-	    out {
-	        TGyroscopeConfiguration config
-			<** @description: available = Is true if data can be provided and false otherwise, e.g. missing initialization **>
 			Boolean available
 		}
 	}

@@ -1,7 +1,7 @@
 /*  SPDX-License-Identifier: MPL-2.0
-    Component Name: EnhancedPositionService
+    Component Name: SensorsService
     Compliance Level: Abstract Component
-    Copyright (C) 2012, BMW Car IT GmbH, Continental Automotive GmbH, PCA Peugeot Citroën, XS Embedded GmbH
+    Copyright (C) 2018, BMW Car IT GmbH, Continental Automotive GmbH, Groupe PSA, XS Embedded GmbH
     License:
     This Source Code Form is subject to the terms of the
     Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed with
