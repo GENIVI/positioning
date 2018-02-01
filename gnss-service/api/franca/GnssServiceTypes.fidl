@@ -29,15 +29,6 @@ typeCollection GnssServiceTypes {
 	}
 
 	<** @description: 
-	TGNSSConfiguration::validityBits provides information about the currently valid signals of the GNSS configuration data.
-	It is a or'ed bitmask of the EGNSSConfigValidityBits values.
-	**>
-	enumeration EGNSSConfigValidityBits {
-	    GNSS_CONFIG_ANTPOS_VALID         = 0x00000001         // Validity bit for field TGNSSConfiguration::antennaPosition.
-	    GNSS_CONFIG_SATSYS_VALID         = 0x00000002         // Validity bit for field TGNSSConfiguration::supportedSystems.
-	}
-
-	<** @description: 
 	TGNSSPosition::fixTypeBits provides GNSS Fix Type indication. 
 	I.e. it identifies the sources actually used for the GNSS calculation
 	It is a or'ed bitmask of the EGNSSFixType values. 
