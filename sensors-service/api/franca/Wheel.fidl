@@ -1,0 +1,264 @@
+/*  SPDX-License-Identifier: MPL-2.0
+    Component Name: SensorsService
+    Compliance Level: Abstract Component
+    Copyright (C) 2018, BMW Car IT GmbH, Continental Automotive GmbH, Groupe PSA, XS Embedded GmbH
+    License:
+    This Source Code Form is subject to the terms of the
+    Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed with
+    this file, You can obtain one at http://mozilla.org/MPL/2.0/.
+*/
+
+package org.genivi.SensorsService
+
+import org.genivi.SensorsService.SensorsServiceTypes.* from "SensorsServiceTypes.fidl"
+
+<** @description : Wheel = This interface offers functionalities to retrieve the wheel rotation data of the vehicle 
+Wheel rotation data may be provided as wheel ticks, as wheel speed 
+or as angular wheel speed.
+It is vehicle specific which kind of wheel rotation data is available
+and for which wheels the data is provided.
+The vehicle specific configuration can be queried using the 
+snsWheelGetConfiguration() function.
+Note: The driving direction (forward/backward) shall always be coded as
+sign of the wheel rotation data.
+This will reduce synchronization effort with separate reverse gear info 
+by the client application which is in particular useful with buffered data.
+How the driving direction can be derived is vehicle specific.
+**>
+interface Wheel {
+	version {
+	    major 5
+	    minor 0
+	}
+
+	<** @description: 
+	Maximum number of wheel elements per structure.
+	A fix value is used because a flat data structure has advantages like simple copying, indexed access.
+	**>
+	enumeration constants {
+		WHEEL_MAX = 8
+	} 
+
+	<** @description: 
+	Additional status information for wheel data, in particular when provided as wheel ticks.
+	This may help the client application to estimate the reliability of the wheel data.
+	TWheelData::statusBits is a or'ed bitmask of the EWheelStatusBits values.
+	Background information
+	----------------------
+	Wheel ticks are typically provided by the ABS/ESC ECU as rolling counters
+	on the vehicle bus.
+	To calculate the wheel ticks per time interval as provided by this API in the 
+	TWheelData structure, the difference between the two _valid_ rolling 
+	counter values at end and start of the time interval has to be calculated 
+	(taking into account potential rollover).
+	If any of the rolling counter values is invalid or if there has been a reset 
+	of the rolling counter in the time interval, then no valid difference can be 
+	calculated. Therefore an appropriate error/exception handling has to be 
+	implemented in the library translating the rolling counters from the vehicle bus
+	to the wheel ticks per time interval provided by this API.
+	Besides to the validity indication provided with each wheel rotation update,
+	the client (typically the EnhancedPositionService) using the wheel rotation API 
+	may be interested to know whether wheel rotation information may have been lost. 
+	In such a case it could adapt its error estimation related to 
+	wheel ticks or even make an internal reset of its corresponding states.
+	The status bits in enum EWheelStatusBits are defined to provide such information.
+	Further Background
+	------------------
+	This section gives an additional overview about the possible signal path 
+	of wheel tick data and the resulting possible exceptional situations:
+	There may be a gateway between the ABS/ESC ECU and the IVI system to separate
+	vehicle networks. This gateway may reduce the update rate of the CAN messages, 
+	e.g. from 20ms cycle time sent by the ABS ECU to 100ms provided for the IVI system.
+	When the update rate is reduced, the rolling counters may have to be resampled e.g.
+	from 8 bit to 13 bit to avoid rollover within the update period.
+	The rolling counters typically start from 0 when either the ABS ECU or the gateway is 
+	started/restarted, e.g. at an ignition cycle.
+	The rolling counters are often accompanied with additional status information to indicate 
+	validity, reset conditions or to allow to detect loss of wheel tick data during transmission
+	on vehicle bus (such as sequence numbers).
+	This status information has to be evaluated to determine whether the difference calculation 
+	between subsequent rolling counters yields a valid result or not.
+	The kind of status information provided alongside with the wheel ticks is very OEM specific 
+	- sometimes even additional context information such as ignition status has to considered.
+	Nearly all above mentioned parameters are OEM or vehicle specific: update rate, 
+	size of rolling counters, status indications, lifecycle of ECU, gateway, vehicle bus, ...
+	The status bits in enum EWheelStatusBits attempt to provide an appropriate abstraction for the
+	relevant vehicle specific status information.
+	**>
+	enumeration EWheelStatusBits{
+	    <** @description:  There has been a gap in data collection, 
+	   i.e. an unknown number of wheel revolutions has been lost. 
+	   The reason for such a gap can be for example
+	   - wheel tick data on the vehicle bus explicitly tagged as invalid 
+	   - interrupted reception of vehicle bus messages.
+	   This flag will only be set if the detected gap may affect the application.
+	   **>
+	    WHEEL_STATUS_GAP             = 0x00000001
+	   <** @description:  This is the first wheel data of a bus or ignition lifecycle,
+	   i.e. the wheel tick difference calculation may be less reliable.
+	   **>
+	    WHEEL_STATUS_INIT            = 0x00000002
+	} 
+
+	<** @description: 
+	TWheelData::validityBits provides information which fields in TWheelData contain valid measurement data. 
+	It is a or'ed bitmask of the EWheelValidityBits values.
+	Note: The assignment of the fields to the wheels of the vehicle is provided by the function snsWheelGetConfiguration().
+	**>
+	enumeration EWheelValidityBits{
+	    <** @description:  Validity bit for field TWheelData::data[0].
+	   **>
+	    WHEEL0_VALID                = 0x00000001
+	    <** @description:  Validity bit for field TWheelData::data[1].
+	   **>
+	    WHEEL1_VALID                = 0x00000002
+	    <** @description:  Validity bit for field TWheelData::data[2].
+	   **>
+	    WHEEL2_VALID                = 0x00000004
+	    <** @description:  Validity bit for field TWheelData::data[3].
+	   **>
+	    WHEEL3_VALID                = 0x00000008
+	    <** @description:  Validity bit for field TWheelData::data[4].
+	   **>
+	    WHEEL4_VALID                = 0x00000010
+	    <** @description:  Validity bit for field TWheelData::data[5].
+	   **>
+	    WHEEL5_VALID                = 0x00000020
+	    <** @description:  Validity bit for field TWheelData::data[6].
+	   **>
+	    WHEEL6_VALID                = 0x00000040
+	    <** @description:  Validity bit for field TWheelData::data[7].
+	   **>
+	    WHEEL7_VALID                = 0x00000080
+	    <** @description:  Validity bit for field TWheelData::measurementInterval.
+	   **>
+	    WHEEL_MEASINT_VALID         = 0x00000100       
+	} 
+
+	<** @description: 
+	Wheel rotation data information for multiple wheels.
+	Container with timestamp as used by callback and get function.
+	Wheel rotation data is provided for up to 8 wheels.
+	The assignment of the fields data[0] ... data[7]
+	to the wheels of the vehicle, the measurement unit and additional configuration parameters
+	is provided as static configuration by the function snsWheelGetConfiguration().
+	The index used for an individual wheel in the data[] array is the same as in the TWheelConfigurationArray.
+	**>
+	struct TWheelData{
+	    <** @description:  Timestamp of the acquisition of this wheel tick signal [ms].
+	   All sensor/GNSS timestamps must be based on the same time source.
+	   **>
+	    UInt64 timestamp
+	    <** @description:  Wheel rotation data for the wheel identified by TWheelConfiguration::wheel[i]
+	    in measurement unit identified by TWheelConfiguration::wheelUnit.
+	   **>
+	    Float[] data
+	    <** @description:  Bit mask providing additional status information.
+	   [bitwise or'ed ref EWheelStatusBits values].
+	   **>
+	    UInt32 statusBits
+	    <** @description:  Measurement interval over which the wheel data have been acquired.
+	   Unit: micro-seconds [us].
+	   This may slightly differ from the timestamp difference,
+	   e.g. in case of transmission jitter before timestamping.
+	   Providing the measurement interval allows thus 
+	   - a more accurate integration of wheel data measurements.
+	   - correct usage of the first sample
+	   - adding consistency checks
+	   **>
+	    UInt32 measurementInterval
+	    <** @description:  Bit mask indicating the validity of each corresponding value.
+	   [bitwise or'ed ref EWheelValidityBits values].
+	   Must be checked before usage.
+	   **>
+	    UInt32 validityBits
+	} 
+
+	<** @description: 
+	Initialization of the wheel sensor service.
+	Must be called before using the wheel sensor service to set up the service.
+	return: True if initialization has been successful.
+	Note: In case the initialization has not been successful during system startup, a later retry may be successful.
+	**>
+	method init {
+	    out {
+			<** @description: initialized = Is true if initialization has been successfull **>
+			Boolean initialized
+		}
+	}
+
+	<** @description: 
+	Destroy the wheel sensor service.
+	Must be called after using the wheel sensor service to shut down the service.
+	return: True if shutdown has been successful.
+	 Note: In case the shutdown has not been successful, a retry does not make sense. 
+	 The return value is intended primarily for diagnostics.
+	**>
+	method destroy {
+	    out {
+			<** @description: destroyed = Is true if shutdown has been successfull. **>
+			Boolean destroyed
+		}
+	}
+
+	<** @description: getMetaData = get the meta information about sensor service.
+	The meta data of a sensor service provides information about it's name, version, type, subtype, sampling frequency etc.
+	**>
+	method getMetaData {
+	    out {
+	        TSensorMetaData data
+			<** @description: available = Is true if meta data is available **>
+			Boolean available
+		}
+	}
+
+	<** @description: WheelData = get the wheel rotation data at a specific point in time. 
+	All valid flags are updated. The data is only guaranteed to be updated when the valid flags are true.
+	Note: Wheel rotation data typically changes while the vehicle is moving. 
+	Therefore for most applications it is better to register for wheel rotation data updates.
+	**>
+	method getWheelData {
+	    out {
+	        TWheelData wheelData
+			<** @description: available = Is true if data can be provided and false otherwise, e.g. missing initialization **>
+			Boolean available
+		}
+	}
+	<** @description: getWheelDataList = get a list of wheel rotation data. 
+	may return buffered data (numElements >1) for different reasons
+	  for (large) portions of data buffered at startup
+	  for data buffered during regular operation e.g. for performance optimization (reduction of callback invocation frequency)
+	If the array contains (numElements >1), the elements will be ordered with rising timestamps
+	All wheel data belonging to the same timestamp will be provided in the same structure,
+	wheelData pointer to an array of TWheelData with size numElements
+	**>
+	method getWheelDataList {
+	    out {
+	        TWheelData[] wheelData
+			<** @description: numElements = allowed range: >=1. If numElements >1, buffered data are provided.**>
+			UInt16 numElements
+		}
+	}
+	<** @description: notifyWheelDataChanged
+	The signal will be emitted when new wheel rotation data is available.
+	All valid flags are updated. The data is only guaranteed to be updated when the valid flags are true.
+	**>
+	broadcast notifyWheelDataChanged selective {   	
+	}
+
+	<** @description: getStatus = get the wheel sensor status at a specific point in time. **>
+	method getStatus {
+	    out {
+	        TSensorStatus status
+			<** @description: available = Is true if data can be provided and false otherwise, e.g. missing initialization **>
+			Boolean available
+		}
+	}
+	<** @description: notifyStatusChanged
+	The signal will be emitted when new wheel sensor status data is available.
+	**>
+	broadcast notifyStatusChanged selective {   	
+	}
+
+}
+

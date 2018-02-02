@@ -1,0 +1,191 @@
+/*  SPDX-License-Identifier: MPL-2.0
+    Component Name: SensorsService
+    Compliance Level: Abstract Component
+    Copyright (C) 2018, BMW Car IT GmbH, Continental Automotive GmbH, Groupe PSA, XS Embedded GmbH
+    License:
+    This Source Code Form is subject to the terms of the
+    Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed with
+    this file, You can obtain one at http://mozilla.org/MPL/2.0/.
+*/
+
+package org.genivi.SensorsService
+
+import org.genivi.SensorsService.SensorsServiceTypes.* from "SensorsServiceTypes.fidl"
+
+<** @description : WheelConfiguration = This interface offers functionalities to retrieve the configuration of the Wheel sensor interface of the vehicle **>
+interface WheelConfiguration {
+	version {
+	    major 5
+	    minor 0
+	}
+
+	<** @description: 
+	Defines the measurement unit in which the wheel rotation data is provided.
+	The wheel rotation direction is given by the sign of the wheel rotation value:
+	Positive values indicate forward driving.
+	Negative values indicate backward driving.
+	**>
+	enumeration EWheelUnit{
+	    <** @description:  Wheel does not provide any data.
+	   **>
+	    WHEEL_UNIT_NONE             = 0
+	    <** @description:  Wheel rotation data is provided as number of wheel ticks accumulated within measurement interval. 
+	   Note 1: Therefore, if the wheel ticks on the vehicle bus are represented as rolling counters, 
+	   this is the difference between two subsequent rolling counter values 
+	   taking the vehicle specific roll-over boundary into account. 
+	   Note 2: It is safe to store integer values such as for wheel ticks 
+	   without precision loss in Float variables for values up to 2^23.
+	   **>
+	    WHEEL_UNIT_TICKS            = 1
+	    <** @description:  Wheel rotation data is provided as speed in [m/s].
+	   **>
+	    WHEEL_UNIT_SPEED            = 2
+	    <** @description:  Wheel rotation data is provided as angular speed in [1/s] rotation per seconds.
+	   **>
+	    WHEEL_UNIT_ANGULAR_SPEED    = 3
+	} 
+
+	<** @description: 
+	Wheel configuration status bits
+	**>
+	enumeration EWheelConfigStatusBits{
+	    <** @description:  The wheel is driven by the powertrain.
+	   It may thus be affected by additional wheel slip.
+	   **>
+	    WHEEL_CONFIG_DRIVEN         = 0x00000001
+	    <** @description:  The wheel may be turned by the steering. 
+	   This is typically the case only for wheels on the front axle.
+	   But for some vehicles also wheels on other axles are permanently or temporarily steered.
+	   **>
+	    WHEEL_CONFIG_STEERED        = 0x00000002
+	   <** @description:  The differential lock for this wheel is activated.
+	  **>
+	    WHEEL_CONFIG_DIFF_LOCK      = 0x00000004                                                  
+	} 
+
+	<** @description: 
+	TWheelConfiguration::validityBits provides information about the currently
+	valid signals of the wheel configuration data.
+	It is a or'ed bitmask of the EWheelConfigValidityBits values.
+	**>
+	enumeration EWheelConfigValidityBits{
+	    <** @description:  Validity bit for field TWheelConfiguration::wheelticksPerRevolution.
+	   **>    
+	    WHEEL_CONFIG_TICKS_PER_REV_VALID    = 0x00000001
+	    <** @description:  Validity bit for field TWheelConfiguration::tireRollingCircumference.
+	   **>
+	    WHEEL_CONFIG_TIRE_CIRC_VALID        = 0x00000002
+	    <** @description:  Validity bit for field TWheelConfiguration::dist2RefPointX.
+	   **>
+	    WHEEL_CONFIG_DISTX_VALID            = 0x00000004
+	    <** @description:  Validity bit for field TWheelConfiguration::dist2RefPointY.
+	   **>
+	    WHEEL_CONFIG_DISTY_VALID            = 0x00000008
+	    <** @description:  Validity bit for field TWheelConfiguration::dist2RefPointZ.
+	   **>
+	    WHEEL_CONFIG_DISTZ_VALID            = 0x00000010
+	    <** @description:  Validity bit for field TWheelConfiguration::EWheelConfigStatusBits::WHEEL_CONFIG_DRIVEN.
+	   **>
+	    WHEEL_CONFIG_DRIVEN_VALID           = 0x00000020
+	    <** @description:  Validity bit for field TWheelConfiguration::EWheelConfigStatusBits::WHEEL_CONFIG_STEERED.
+	   **>
+	    WHEEL_CONFIG_STEERED_VALID          = 0x00000040
+	    <** @description:  Validity bit for field TWheelConfiguration::EWheelConfigStatusBits::WHEEL_CONFIG_DIFF_LOCK.
+	   **>
+	    WHEEL_CONFIG_DIFF_LOCK_VALID        = 0x00000080
+	} 
+
+	<** @description: 
+	Configuration data for an individual wheel.
+	Most configuration parameters are static for a given wheel.
+	The status bits WHEEL_CONFIG_DRIVEN, WHEEL_CONFIG_STEERED, WHEEL_CONFIG_DIFF_LOCK
+	are considered as dynamic configuration data.
+	I.e. those status bits may change dynamically during runtime.
+	The vehicle axis system as defined in ISO 8855:2011(E).
+	In this system, the axes (Xv, Yv, Zv) are oriented as follows
+	- Xv is in the horizontal plane, pointing forwards
+	- Yv is in the horizontal plane, pointing to the left
+	- Zv is perpendicular to the horizontal plane, pointing upwards
+	For an illustration, see https://collab.genivi.org/wiki/display/genivi/LBSSensorServiceRequirementsBorg#LBSSensorServiceRequirementsBorg-ReferenceSystem
+	**>
+	struct TWheelConfiguration{
+	    <** @description:  [Static] Measurement unit in which the wheel rotation data is provided.
+	   WHEEL_UNIT_NONE, if no wheel rotation data is provided (and thus the rest of the structure can be ignored.
+	   **>
+	    EWheelUnit wheelUnit
+	    <** @description:  [Static] Identification of the axle on which the wheel is mounted
+	   Axles are numbered consecutively from front to rear.
+	   0: unknown/unspecified
+	   1: front axle
+	   2: 2nd axle (rear axle on a typical 2-axle vehicle)
+	   3: 3rd axle
+	   ...
+	   **>    
+	    UInt8 axleIndex
+	    <** @description:  [Static] Identification of the location of the wheel on the axle
+	   Wheels are numbered consecutively from left to right
+	   0: unknown/unspecified
+	   1: left-most wheel (also used when there is only one wheel per axle, e.g. for a trike)
+	   2: right wheel #1 (right wheel on a typical passenger car with 2 wheels per axle)
+	   3: right wheel #2
+	   ...
+	   **>
+	    UInt8 wheelIndex
+	    <** @description:  [Static] Number of ticks for a single revolution of one wheel.
+	   Typically only available when wheelUnit is WHEEL_UNIT_TICKS.
+	   **>
+	    UInt16 wheelticksPerRevolution
+	    <** @description:  [Static] Distance travelled on the ground
+	   per a single revolution of the wheel. Unit: [m].
+	   **>
+	    Float tireRollingCircumference
+	    <** @description:  [Static] Distance of the wheel center from
+	   the vehicle reference point (x-coordinate) [m].
+	   **>
+	    Float dist2RefPointX
+	    <** @description:  [Static] Distance of the wheel center from
+	   the vehicle reference point (y-coordinate) [m].
+	   **>
+	    Float dist2RefPointY
+	    <** @description:  [Static] Distance of the wheel center from
+	   the vehicle reference point (z-coordinate) [m].
+	   **>
+	    Float dist2RefPointZ
+	    <** @description:  Bit mask providing additional status information.
+	   [bitwise or'ed ref EWheelConfigStatusBits values].
+	   **>
+	    UInt32 statusBits
+	    <** @description:  Bit mask indicating the validity of each corresponding value.
+	   [bitwise or'ed ref EWheelConfigValidityBits values].
+	   Must be checked before usage. 
+	   Note: wheelUnit, axleIndex and wheelIndex must always be valid.
+	   Therefore no dedicated validityBits are required.
+	   **>
+	    UInt32 validityBits
+	} 
+
+	<** @description: 
+	Set of configuration data for all wheels of the vehicle.
+	The index of configuration data for an individual wheel in the array is fixed during the runtime of the system.
+	Unused fields, i.e. those for which  wheelUnit is WHEEL_UNIT_NONE will be at the tail of the array.
+	**>
+	array TWheelConfigurationArray of TWheelConfiguration
+
+	<** @description: getWheelConfiguration = get the static configuration information about the wheel sensors. 
+	Note: as some parts of the wheel configuration may change during runtime it is recommended to register for configuration updates.
+	**>
+	method getWheelConfiguration {
+	    out {
+	        TWheelConfigurationArray config
+			<** @description: available = Is true if data can be provided and false otherwise, e.g. missing initialization **>
+			Boolean available
+		}
+	}
+	<** @description: notifyWheelConfigurationChanged
+	The signal will be emitted when an updated wheel configuration is available.
+	All valid flags are updated. The data is only guaranteed to be updated when the valid flags are true.
+	**>
+	broadcast notifyWheelConfigurationChanged selective {   	
+	}
+		
+}
