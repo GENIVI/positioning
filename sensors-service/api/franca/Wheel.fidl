@@ -93,11 +93,11 @@ interface Wheel {
 	   - interrupted reception of vehicle bus messages.
 	   This flag will only be set if the detected gap may affect the application.
 	   **>
-	    WHEEL_STATUS_GAP             = 0x00000001
+	    WHEEL_STATUS_GAP             = 1 //0x00000001
 	   <** @description:  This is the first wheel data of a bus or ignition lifecycle,
 	   i.e. the wheel tick difference calculation may be less reliable.
 	   **>
-	    WHEEL_STATUS_INIT            = 0x00000002
+	    WHEEL_STATUS_INIT            = 2 //0x00000002
 	} 
 
 	<** @description: 
@@ -108,31 +108,31 @@ interface Wheel {
 	enumeration EWheelValidityBits{
 	    <** @description:  Validity bit for field TWheelData::data[0].
 	   **>
-	    WHEEL0_VALID                = 0x00000001
+	    WHEEL0_VALID                = 1 //0x00000001
 	    <** @description:  Validity bit for field TWheelData::data[1].
 	   **>
-	    WHEEL1_VALID                = 0x00000002
+	    WHEEL1_VALID                = 2 //0x00000002
 	    <** @description:  Validity bit for field TWheelData::data[2].
 	   **>
-	    WHEEL2_VALID                = 0x00000004
+	    WHEEL2_VALID                = 4 //0x00000004
 	    <** @description:  Validity bit for field TWheelData::data[3].
 	   **>
-	    WHEEL3_VALID                = 0x00000008
+	    WHEEL3_VALID                = 8 //0x00000008
 	    <** @description:  Validity bit for field TWheelData::data[4].
 	   **>
-	    WHEEL4_VALID                = 0x00000010
+	    WHEEL4_VALID                = 16 //0x00000010
 	    <** @description:  Validity bit for field TWheelData::data[5].
 	   **>
-	    WHEEL5_VALID                = 0x00000020
+	    WHEEL5_VALID                = 32 //0x00000020
 	    <** @description:  Validity bit for field TWheelData::data[6].
 	   **>
-	    WHEEL6_VALID                = 0x00000040
+	    WHEEL6_VALID                = 64 //0x00000040
 	    <** @description:  Validity bit for field TWheelData::data[7].
 	   **>
-	    WHEEL7_VALID                = 0x00000080
+	    WHEEL7_VALID                = 128 //0x00000080
 	    <** @description:  Validity bit for field TWheelData::measurementInterval.
 	   **>
-	    WHEEL_MEASINT_VALID         = 0x00000100       
+	    WHEEL_MEASINT_VALID         = 256 //0x00000100       
 	} 
 
 	<** @description: 

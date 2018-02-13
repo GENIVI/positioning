@@ -76,7 +76,7 @@ typeCollection SensorsServiceTypes {
 	It is a or'ed bitmask of the ESensorStatusValidityBits values.
 	 **>
 	enumeration ESensorStatusValidityBits {
-	    SENSOR_STATUS_STATUS_VALID  = 0x00000001    // Validity bit for field TSensorStatus::status.
+	    SENSOR_STATUS_STATUS_VALID  = 1 //0x00000001    // Validity bit for field TSensorStatus::status.
 	}
 
 	<** @description:

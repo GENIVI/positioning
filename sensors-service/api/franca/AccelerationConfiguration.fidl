@@ -26,34 +26,34 @@ interface AccelerationConfiguration {
 	enumeration EAccelerationConfigValidityBits{
 	    <** @description:  Validity bit for field TAccelerationConfiguration::dist2RefPointX.
 	   	**>
-	    ACCELERATION_CONFIG_DISTX_VALID     = 0x00000001
+	    ACCELERATION_CONFIG_DISTX_VALID     = 1 //0x00000001
 	    <** @description:  Validity bit for field TAccelerationConfiguration::dist2RefPointY.
 	   	**>
-	    ACCELERATION_CONFIG_DISTY_VALID     = 0x00000002
+	    ACCELERATION_CONFIG_DISTY_VALID     = 2 //0x00000002
 	    <** @description:  Validity bit for field TAccelerationConfiguration::dist2RefPointZ.
 	   	**>
-	    ACCELERATION_CONFIG_DISTZ_VALID     = 0x00000004
+	    ACCELERATION_CONFIG_DISTZ_VALID     = 4 //0x00000004
 	    <** @description:  Validity bit for field TAccelerationConfiguration::angleYaw.
 	   	**>
-	    ACCELERATION_CONFIG_ANGLEYAW_VALID  = 0x00000008
+	    ACCELERATION_CONFIG_ANGLEYAW_VALID  = 8 //0x00000008
 	    <** @description:  Validity bit for field TAccelerationConfiguration::anglePitch.
 	   	**>
-	    ACCELERATION_CONFIG_ANGLEPITCH_VALID= 0x00000010
+	    ACCELERATION_CONFIG_ANGLEPITCH_VALID= 16 //0x00000010
 	    <** @description:  Validity bit for field TAccelerationConfiguration::angleRoll.
 	   	**>
-	    ACCELERATION_CONFIG_ANGLEROLL_VALID = 0x00000020
+	    ACCELERATION_CONFIG_ANGLEROLL_VALID = 32 //0x00000020
 	    <** @description:  Validity bit for field TAccelerationConfiguration::sigmaX.
 	   	**>
-	    ACCELERATION_CONFIG_SIGMAX_VALID    = 0x00000040
+	    ACCELERATION_CONFIG_SIGMAX_VALID    = 64 //0x00000040
 	    <** @description:  Validity bit for field TAccelerationConfiguration::sigmaX. 
 	   	**>
-	    ACCELERATION_CONFIG_SIGMAY_VALID    = 0x00000080
+	    ACCELERATION_CONFIG_SIGMAY_VALID    = 128 //0x00000080
 	    <** @description:  Validity bit for field TAccelerationConfiguration::sigmaZ.
 	   	**>
-	    ACCELERATION_CONFIG_SIGMAZ_VALID    = 0x00000100
+	    ACCELERATION_CONFIG_SIGMAZ_VALID    = 256 //0x00000100
 	    <** @description:  Validity bit for field TAccelerationConfiguration::typeBits.
 	   	**>
-	    ACCELERATION_CONFIG_TYPE_VALID      = 0x00000200
+	    ACCELERATION_CONFIG_TYPE_VALID      = 512 //0x00000200
 	}
 
 	<** @description: 

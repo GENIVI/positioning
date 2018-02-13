@@ -27,22 +27,22 @@ interface GyroscopeConfiguration {
 	enumeration EGyroscopeConfigValidityBits{
 	    <** @description: Validity bit for field TGyroscopeConfiguration::angleYaw.
 	    **>
-	    GYROSCOPE_CONFIG_ANGLEYAW_VALID         = 0x00000001
+	    GYROSCOPE_CONFIG_ANGLEYAW_VALID         = 1 //0x00000001
 	    <** @description: Validity bit for field TGyroscopeConfiguration::anglePitch.
 	    **>
-	    GYROSCOPE_CONFIG_ANGLEPITCH_VALID       = 0x00000002
+	    GYROSCOPE_CONFIG_ANGLEPITCH_VALID       = 2 //0x00000002
 	    <** @description: Validity bit for field TGyroscopeConfiguration::angleRoll.
 	    **>
-	    GYROSCOPE_CONFIG_ANGLEROLL_VALID        = 0x00000004
+	    GYROSCOPE_CONFIG_ANGLEROLL_VALID        = 4 //0x00000004
 	    <** @description: Validity bit for field TGyroscopeConfiguration::momentOfYawInertia.
 	    **>    
-	    GYROSCOPE_CONFIG_MOMENTYAW_VALID        = 0x00000008
+	    GYROSCOPE_CONFIG_MOMENTYAW_VALID        = 8 //0x00000008
 	    <** @description: Validity bit for field TGyroscopeConfiguration::sigmaGyroscope.
 	    **>
-	    GYROSCOPE_CONFIG_SIGMAGYROSCOPE_VALID   = 0x00000010
+	    GYROSCOPE_CONFIG_SIGMAGYROSCOPE_VALID   = 16 //0x00000010
 	    <** @description: Validity bit for field TGyroscopeConfiguration::typeBits.
 	    **>
-	    GYROSCOPE_CONFIG_TYPE_VALID             = 0x00000020
+	    GYROSCOPE_CONFIG_TYPE_VALID             = 32 //0x00000020
 	} 
 
 	<** @description: 
@@ -54,19 +54,19 @@ interface GyroscopeConfiguration {
 	enumeration EGyroscopeTypeBits {
 	    <** @description: Temperature bias compensation already applied to gyroscope signals.
 	    **>
-	    GYROSCOPE_TEMPERATURE_COMPENSATED       = 0x00000001
+	    GYROSCOPE_TEMPERATURE_COMPENSATED       = 1 //0x00000001
 	    <** @description: A measurement for the z/yaw-axis is provided.
 	    **>
-	    GYROSCOPE_YAWRATE_PROVIDED              = 0x00000002
+	    GYROSCOPE_YAWRATE_PROVIDED              = 2 //0x00000002
 	    <** @description: A measurement for the y/pitch-axis is provided.
 	    **>
-	    GYROSCOPE_PITCHRATE_PROVIDED            = 0x00000004
+	    GYROSCOPE_PITCHRATE_PROVIDED            = 4 //0x00000004
 	    <** @description: A measurement for the x/roll-axis is provided.
 	    **>
-	    GYROSCOPE_ROLLRATE_PROVIDED             = 0x00000008
+	    GYROSCOPE_ROLLRATE_PROVIDED             = 8 //0x00000008
 	    <** @description: A measurement for the temperature is provided.
 	    **>
-	    GYROSCOPE_TEMPERATURE_PROVIDED          = 0x00000010
+	    GYROSCOPE_TEMPERATURE_PROVIDED          = 16 //0x00000010
 	} 
 
 	<** @description: 

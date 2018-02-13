@@ -32,19 +32,19 @@ interface Gyroscope {
 	enumeration EGyroscopeValidityBits {
 	    <** @description: Validity bit for field TGyroscopeData::yawRate.
 	    **>
-	    GYROSCOPE_YAWRATE_VALID             = 0x00000001
+	    GYROSCOPE_YAWRATE_VALID             = 1 //0x00000001
 	    <** @description: Validity bit for field TGyroscopeData::pitchRate.
 	    **>
-	    GYROSCOPE_PITCHRATE_VALID           = 0x00000002
+	    GYROSCOPE_PITCHRATE_VALID           = 2 //0x00000002
 	    <** @description: Validity bit for field TGyroscopeData::rollRate.
 	    **>
-	    GYROSCOPE_ROLLRATE_VALID            = 0x00000004
+	    GYROSCOPE_ROLLRATE_VALID            = 4 //0x00000004
 	    <** @description: Validity bit for field TGyroscopeData::temperature.
 	    **>
-	    GYROSCOPE_TEMPERATURE_VALID         = 0x00000008
+	    GYROSCOPE_TEMPERATURE_VALID         = 8 //0x00000008
 	    <** @description: Validity bit for field TGyroscopeData::measurementInterval.
 	    **>
-	    GYROSCOPE_MEASINT_VALID             = 0x00000010
+	    GYROSCOPE_MEASINT_VALID             = 16 //0x00000010
 	} 
 
 	<** @description: 

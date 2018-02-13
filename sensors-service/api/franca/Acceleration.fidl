@@ -27,16 +27,16 @@ interface Acceleration {
 	enumeration EAccelerationTypeBits{
 	   	<** @description:  An acceleration measurement for the x-axis is provided.
 	  	**>
-	    ACCELERATION_X_PROVIDED             = 0x00000001
+	    ACCELERATION_X_PROVIDED             = 1 //0x00000001
 	   	<** @description:  An acceleration measurement for the y-axis is provided.
 	  	**>    
-	    ACCELERATION_Y_PROVIDED             = 0x00000002
+	    ACCELERATION_Y_PROVIDED             = 2 //0x00000002
 	   	<** @description:  An acceleration measurement for the z-axis is provided.
 	  	**>    
-	    ACCELERATION_Z_PROVIDED             = 0x00000004
+	    ACCELERATION_Z_PROVIDED             = 4 //0x00000004
 	   	<** @description:  A measurement for the temperature is provided.
 	  	**>
-	    ACCELERATION_TEMPERATURE_PROVIDED   = 0x00000008
+	    ACCELERATION_TEMPERATURE_PROVIDED   = 8 //0x00000008
 	}
 
 	<** @description: 
@@ -130,19 +130,19 @@ interface Acceleration {
 	enumeration EAccelerationValidityBits{
 	    <** @description:  Validity bit for field TAccelerationData::x.
 	   	**>    
-	    ACCELERATION_X_VALID                = 0x00000001
+	    ACCELERATION_X_VALID                = 1 //0x00000001
 	    <** @description:  Validity bit for field TAccelerationData::y.
 	   	**>
-	    ACCELERATION_Y_VALID                = 0x00000002
+	    ACCELERATION_Y_VALID                = 2 //0x00000002
 	    <** @description:  Validity bit for field TAccelerationData::z.
 	   	**>
-	    ACCELERATION_Z_VALID                = 0x00000004
+	    ACCELERATION_Z_VALID                = 4 //0x00000004
 	    <** @description:  Validity bit for field TAccelerationData::temperature.
 	   	**>
-	    ACCELERATION_TEMPERATURE_VALID      = 0x00000008
+	    ACCELERATION_TEMPERATURE_VALID      = 8 //0x00000008
 	    <** @description:  Validity bit for field TAccelerationData::measurementInterval.
 	   	**>
-	    ACCELERATION_MEASINT_VALID          = 0x00000010    
+	    ACCELERATION_MEASINT_VALID          = 16 //0x00000010    
 	} 
 
 	<** @description: 

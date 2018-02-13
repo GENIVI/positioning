@@ -52,15 +52,15 @@ interface WheelConfiguration {
 	    <** @description:  The wheel is driven by the powertrain.
 	   It may thus be affected by additional wheel slip.
 	   **>
-	    WHEEL_CONFIG_DRIVEN         = 0x00000001
+	    WHEEL_CONFIG_DRIVEN         = 1 //0x00000001
 	    <** @description:  The wheel may be turned by the steering. 
 	   This is typically the case only for wheels on the front axle.
 	   But for some vehicles also wheels on other axles are permanently or temporarily steered.
 	   **>
-	    WHEEL_CONFIG_STEERED        = 0x00000002
+	    WHEEL_CONFIG_STEERED        = 2 //0x00000002
 	   <** @description:  The differential lock for this wheel is activated.
 	  **>
-	    WHEEL_CONFIG_DIFF_LOCK      = 0x00000004                                                  
+	    WHEEL_CONFIG_DIFF_LOCK      = 4 //0x00000004                                                  
 	} 
 
 	<** @description: 
@@ -71,28 +71,28 @@ interface WheelConfiguration {
 	enumeration EWheelConfigValidityBits{
 	    <** @description:  Validity bit for field TWheelConfiguration::wheelticksPerRevolution.
 	   **>    
-	    WHEEL_CONFIG_TICKS_PER_REV_VALID    = 0x00000001
+	    WHEEL_CONFIG_TICKS_PER_REV_VALID    = 1 //0x00000001
 	    <** @description:  Validity bit for field TWheelConfiguration::tireRollingCircumference.
 	   **>
-	    WHEEL_CONFIG_TIRE_CIRC_VALID        = 0x00000002
+	    WHEEL_CONFIG_TIRE_CIRC_VALID        = 2 //0x00000002
 	    <** @description:  Validity bit for field TWheelConfiguration::dist2RefPointX.
 	   **>
-	    WHEEL_CONFIG_DISTX_VALID            = 0x00000004
+	    WHEEL_CONFIG_DISTX_VALID            = 4 //0x00000004
 	    <** @description:  Validity bit for field TWheelConfiguration::dist2RefPointY.
 	   **>
-	    WHEEL_CONFIG_DISTY_VALID            = 0x00000008
+	    WHEEL_CONFIG_DISTY_VALID            = 8 //0x00000008
 	    <** @description:  Validity bit for field TWheelConfiguration::dist2RefPointZ.
 	   **>
-	    WHEEL_CONFIG_DISTZ_VALID            = 0x00000010
+	    WHEEL_CONFIG_DISTZ_VALID            = 16 //0x00000010
 	    <** @description:  Validity bit for field TWheelConfiguration::EWheelConfigStatusBits::WHEEL_CONFIG_DRIVEN.
 	   **>
-	    WHEEL_CONFIG_DRIVEN_VALID           = 0x00000020
+	    WHEEL_CONFIG_DRIVEN_VALID           = 32 //0x00000020
 	    <** @description:  Validity bit for field TWheelConfiguration::EWheelConfigStatusBits::WHEEL_CONFIG_STEERED.
 	   **>
-	    WHEEL_CONFIG_STEERED_VALID          = 0x00000040
+	    WHEEL_CONFIG_STEERED_VALID          = 64 //0x00000040
 	    <** @description:  Validity bit for field TWheelConfiguration::EWheelConfigStatusBits::WHEEL_CONFIG_DIFF_LOCK.
 	   **>
-	    WHEEL_CONFIG_DIFF_LOCK_VALID        = 0x00000080
+	    WHEEL_CONFIG_DIFF_LOCK_VALID        = 128 //0x00000080
 	} 
 
 	<** @description: 
