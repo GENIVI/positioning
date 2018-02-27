@@ -1,11 +1,11 @@
 The folder 'franca' contains:
 - the interface description in Franca IDL
-- a version of the PoC that offers C++ interfaces generated using commonapi
-Starting with the version 5.0.0 the Franca fild files define the official 
-GENIVI interface of the EnhancedPositionService
+- a version of the PoC that offers C++ interfaces generated using CommonAPI-C++
+Starting with the version 5.0.0 the Franca .fidl files define the official 
+GENIVI interface of the EnhancedPositionService.
 
 The folder 'dbus' contains:
-- the interface description in DBU-XML 
+- the interface description in D-Bus XML Introspection file
 - a version of the PoC that offers D-Bus interfaces
 
  
