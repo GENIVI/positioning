@@ -1,0 +1,139 @@
+/*  SPDX-License-Identifier: MPL-2.0
+    Component Name: SensorsService
+    Compliance Level: Abstract Component
+    Copyright (C) 2018, BMW Car IT GmbH, Continental Automotive GmbH, Groupe PSA, XS Embedded GmbH
+    License:
+    This Source Code Form is subject to the terms of the
+    Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed with
+    this file, You can obtain one at http://mozilla.org/MPL/2.0/.
+*/
+
+package org.genivi.SensorsService
+
+import org.genivi.SensorsService.SensorsServiceTypes.* from "SensorsServiceTypes.fidl"
+
+<** @description : VehicleSpeed = This interface offers functionalities to retrieve current speed of the vehicle **>
+interface VehicleSpeed {
+	version {
+	    major 5
+	    minor 0
+	}
+
+	<** @description:
+	TVehicleSpeedData::validityBits provides information about the currently valid signals of the odometer data.
+	It is a or'ed bitmask of the EVehicleSpeedValidityBits values.
+	**>
+	enumeration EVehicleSpeedValidityBits {
+    	VEHICLESPEED_VEHICLESPEED_VALID       = 1 //0x00000001 Validity bit for field TVehicleSpeedData::vehicleSpeed.
+    	VEHICLESPEED__MEASINT_VALID           = 2 //0x00000002  Validity bit for field TVehicleSpeedData::measurementInterval.      
+	}
+
+	<** @description:
+	Vehicle speed sensor service provides the current speed of the vehicle.
+	**>
+	struct TVehicleSpeedData {
+	    <** @description: Timestamp of the acquisition of the vehicle speed signal [ms].
+	     All sensor/GNSS timestamps must be based on the same time source.
+	    **>
+	    UInt64 timestamp
+	    <** @description: Filtered vehicle speed in [m/s] with a frequency of at least 5Hz.
+	     Direction is given by the sign of this value.
+	    **>
+	    Float vehicleSpeed
+	    <** @description: Measurement interval over which the vehicle speed signal has been acquired.
+	     Unit: micro-seconds [us].
+	     This may slightly differ from the timestamp difference,
+	     e.g. in case of transmission jitter before timestamping.
+	     Providing the measurement interval allows thus 
+	     - a more accurate integration of vehicle speed measurements.
+	     - correct usage of the first sample
+	     - adding consistency checks
+	    **>
+	    UInt32 measurementInterval
+		<** @description: Bit mask indicating the validity of each corresponding value.
+	    bitwise or'ed ref EVehicleSpeedValidityBits values].
+	    Must be checked before usage. **>  
+	    UInt32 validityBits          
+	}
+
+	<** @description: 
+	Initialization of the vehicle speed sensor service.
+	Must be called before using the vehicle speed sensor service to set up the service.
+	**>
+	method init {
+	    out {
+			<** @description: initialized = Is true if initialization has been successfull **>
+			Boolean initialized
+		}
+	}
+
+	<** @description: 
+	Destroy the vehicle speed sensor service.
+	Must be called after using the vehicle speed sensor service to shut down the service.
+	**>
+	method destroy {
+	    out {
+			<** @description: destroyed = Is true if shutdown has been successfull. **>
+			Boolean destroyed
+		}
+	}
+
+	<** @description: getMetaData = get the meta information about vehicle speed sensor service.
+	The meta data of a sensor service provides information about it's name, version, type, subtype, sampling frequency etc.
+	**>
+	method getMetaData {
+	    out {
+	        TSensorMetaData data
+			<** @description: available = Is true if meta data is available **>
+			Boolean available
+		}
+	}
+
+	<** @description: getVehicleSpeedData = get the vehicle speed data at a specific point in time. 
+	**>
+	method getVehicleSpeedData {
+	    out {
+	        TVehicleSpeedData vehicleSpeedData
+			<** @description: available = Is true if data can be provided and false otherwise, e.g. missing initialization **>
+			Boolean available
+		}
+	}
+
+	<** @description: getVehicleSpeedDataList = get a list of vehicle speed sensor data. 
+	may return buffered data (numElements >1) for different reasons
+	  for (large) portions of data buffered at startup
+	  for data buffered during regular operation e.g. for performance optimization (reduction of callback invocation frequency)
+	If the array contains (numElements >1), the elements will be ordered with rising timestamps
+	vehicleSpeedData pointer to an array of TVehicleSpeedData with size numElements
+	**>
+	method getVehicleSpeedDataList {
+	    out {
+	        TVehicleSpeedData[] vehicleSpeedData
+			<** @description: numElements = allowed range: >=1. If numElements >1, buffered data are provided.**>
+			UInt16 numElements
+		}
+	}
+
+	<** @description: notifyVehicleSpeedDataChanged
+	The signal will be emitted when new vehicle speed sensor data is available.
+	All valid flags are updated. The data is only guaranteed to be updated when the valid flags are true.
+	**>
+	broadcast notifyVehicleSpeedDataChanged selective {   	
+	}
+
+	<** @description: getStatus = get the vehicle speed sensor status at a specific point in time. **>
+	method getStatus {
+	    out {
+	        TSensorStatus status
+			<** @description: available = Is true if data can be provided and false otherwise, e.g. missing initialization **>
+			Boolean available
+		}
+	}
+	<** @description: notifyStatusChanged
+	The signal will be emitted when new odometer sensor status data is available.
+	**>
+	broadcast notifyStatusChanged selective {   	
+	}
+		
+}
+

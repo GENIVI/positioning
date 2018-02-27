@@ -1,0 +1,133 @@
+/*  SPDX-License-Identifier: MPL-2.0
+    Component Name: SensorsService
+    Compliance Level: Abstract Component
+    Copyright (C) 2018, BMW Car IT GmbH, Continental Automotive GmbH, Groupe PSA, XS Embedded GmbH
+    License:
+    This Source Code Form is subject to the terms of the
+    Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed with
+    this file, You can obtain one at http://mozilla.org/MPL/2.0/.
+*/
+
+package org.genivi.SensorsService
+
+import org.genivi.SensorsService.SensorsServiceTypes.* from "SensorsServiceTypes.fidl"
+
+<** @description : Odometer = This interface offers functionalities to retrieve the travelled distance of the vehicle **>
+interface Odometer {
+	version {
+	    major 5
+	    minor 0
+	}
+
+	<** @description:
+	TOdometerData::validityBits provides information about the currently valid signals of the odometer data.
+	It is a or'ed bitmask of the EOdometerValidityBits values.
+	**>
+	enumeration EOdometerValidityBits {
+	    ODOMETER_TRAVELLEDDISTANCE_VALID    = 1 //0x00000001 Validity bit for field TOdometerData::travelledDistance. 
+	}
+
+	<** @description:
+	Odometer sensor service provides the travelled distance.
+	**>
+	struct TOdometerData {
+		<** @description:  Timestamp of the acquisition of the odometer signal [ms].
+	    All sensor/GNSS timestamps must be based on the same time source. **>
+		UInt64 timestamp        
+		<** @description: Distance in [cm] with at least 5Hz. Implemented as a running counter
+	    with overflow to support multiple clients and getter methods.
+	    As the representation of this value is done using 16 Bits the value can provide
+	    distances up 32767cm or 327.67m before overflowing. **>     
+	    UInt16 travelledDistance  
+		<** @description: Bit mask indicating the validity of each corresponding value.
+	    bitwise or'ed ref EOdometerValidityBits values].
+	    Must be checked before usage. **>  
+	    UInt32 validityBits          
+	}
+
+	<** @description: 
+	Initialization of the odometer sensor service.
+	Must be called before using the odometer sensor service to set up the service.
+	**>
+	method init {
+	    out {
+			<** @description: initialized = Is true if initialization has been successfull **>
+			Boolean initialized
+		}
+	}
+
+	<** @description: 
+	Destroy the odometer sensor service.
+	Must be called after using the odometer sensor service to shut down the service.
+	**>
+	method destroy {
+	    out {
+			<** @description: destroyed = Is true if shutdown has been successfull. **>
+			Boolean destroyed
+		}
+	}
+
+	<** @description: getMetaData = get the meta information about odometer service.
+	The meta data of a sensor service provides information about it's name, version, type, subtype, sampling frequency etc.
+	**>
+	method getMetaData {
+	    out {
+	        TSensorMetaData data
+			<** @description: available = Is true if meta data is available **>
+			Boolean available
+		}
+	}
+
+	<** @description: getOdometerData = get the odometer data at a specific point in time. 
+	Be careful when using this method to read data often enough to avoid missing an overflow.
+	With reasonable car speeds it should be enough to read the data every 3s.
+	The recommended usage for the odometer data is the callback interface.
+	The get method is provided for consistency reasons of the sensor service API and might be used
+	for determining the distance between a few points in time.
+	All valid flags are updated. The data is only guaranteed to be updated when the valid flags are true.
+	**>
+	method getOdometerData {
+	    out {
+	        TOdometerData odometerData
+			<** @description: available = Is true if data can be provided and false otherwise, e.g. missing initialization **>
+			Boolean available
+		}
+	}
+
+	<** @description: getOdometerDataList = get a list of odometer data. 
+	may return buffered data (numElements >1) for different reasons
+	  for (large) portions of data buffered at startup
+	  for data buffered during regular operation e.g. for performance optimization (reduction of callback invocation frequency)
+	If the array contains (numElements >1), the elements will be ordered with rising timestamps
+	odometerData pointer to an array of TOdometerData with size numElements
+	**>
+	method getOdometerDataList {
+	    out {
+	        TOdometerData[] odometerData
+			<** @description: numElements = allowed range: >=1. If numElements >1, buffered data are provided.**>
+			UInt16 numElements
+		}
+	}
+
+	<** @description: notifyOdometerDataChanged
+	The signal will be emitted when new odometer data is available.
+	All valid flags are updated. The data is only guaranteed to be updated when the valid flags are true.
+	**>
+	broadcast notifyOdometerDataChanged selective {   	
+	}
+
+	<** @description: getStatus = get the odometer sensor status at a specific point in time. **>
+	method getStatus {
+	    out {
+	        TSensorStatus status
+			<** @description: available = Is true if data can be provided and false otherwise, e.g. missing initialization **>
+			Boolean available
+		}
+	}
+	<** @description: notifyStatusChanged
+	The signal will be emitted when new odometer sensor status data is available.
+	**>
+	broadcast notifyStatusChanged selective {   	
+	}
+		
+}

@@ -1,0 +1,127 @@
+/*  SPDX-License-Identifier: MPL-2.0
+    Component Name: SensorsService
+    Compliance Level: Abstract Component
+    Copyright (C) 2018, BMW Car IT GmbH, Continental Automotive GmbH, Groupe PSA, XS Embedded GmbH
+    License:
+    This Source Code Form is subject to the terms of the
+    Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed with
+    this file, You can obtain one at http://mozilla.org/MPL/2.0/.
+*/
+
+package org.genivi.SensorsService
+
+import org.genivi.SensorsService.SensorsServiceTypes.* from "SensorsServiceTypes.fidl"
+
+<** @description : ReverseGear = This interface offers functionalities to retrieve the current status of the reverse gear of the vehicle. **>
+interface ReverseGear {
+	version {
+	    major 5
+	    minor 0
+	}
+
+	<** @description:
+	 TReverseGearData::validityBits provides information about the currently valid signals of the reverse gear data.
+	 It is a or'ed bitmask of the EReverseGearValidityBits values.
+	**>
+	enumeration EReverseGearValidityBits {
+	    REVERSEGEAR_REVERSEGEAR_VALID    = 1 //0x00000001 Validity bit for field TReverseGearData::isReverseGear. 
+	}
+
+	<** @description: 
+	Reverse gear sensor service provides the current status of the reverse gear of the vehicle.
+  	This information is explicitly restricted to provide only the information if the reverse gear is engaged.
+  	The direction of movement is provided by the direction of the vehicle speed.
+	**>
+	struct TReverseGearData{
+	    <** @description:  Timestamp of the acquisition of the reverse gear signal [ms].
+	   	All sensor/GNSS timestamps must be based on the same time source.
+	   	**>
+	    UInt64 timestamp
+		<** @description:True if the reverse gear is currently used. False otherwise. **>
+    	Boolean isReverseGear                 
+	    <** @description:  Bit mask indicating the validity of each corresponding value.
+	   	[bitwise or'ed EReverseGearValidityBits values].
+	   	Must be checked before usage.
+	   	**>
+	    UInt32 validityBits
+	}
+
+	<** @description: 
+	Initialization of the reverse gear sensor service.
+	Must be called before using the reverse gear sensor service to set up the service.
+	**>
+	method init {
+	    out {
+			<** @description: initialized = Is true if initialization has been successfull **>
+			Boolean initialized
+		}
+	}
+
+	<** @description: 
+	Destroy the reverse gear sensor service.
+	Must be called after using the reverse gear sensor service to shut down the service.
+	**>
+	method destroy {
+	    out {
+			<** @description: destroyed = Is true if shutdown has been successfull. **>
+			Boolean destroyed
+		}
+	}
+
+	<** @description: getMetaData = get the meta information about reverse gear service.
+	The meta data of a sensor service provides information about it's name, version, type, subtype, sampling frequency etc.
+	**>
+	method getMetaData {
+	    out {
+	        TSensorMetaData data
+			<** @description: available = Is true if meta data is available **>
+			Boolean available
+		}
+	}
+
+	<** @description: getReverseGearData = get the reverse gear data at a specific point in time. 
+	All valid flags are updated. The data is only guaranteed to be updated when the valid flags are true.
+	**>
+	method getReverseGearData {
+	    out {
+	        TReverseGearData reverseGearData
+			<** @description: available = Is true if data can be provided and false otherwise, e.g. missing initialization **>
+			Boolean available
+		}
+	}
+	<** @description: getReverseGearDataList = get a list of reverse gear data. 
+	may return buffered data (numElements >1) for different reasons
+	  for (large) portions of data buffered at startup
+	  for data buffered during regular operation e.g. for performance optimization (reduction of callback invocation frequency)
+	If the array contains (numElements >1), the elements will be ordered with rising timestamps
+	reverseGearData pointer to an array of TReverseGearData with size numElements
+	**>
+	method getReverseGearDataList {
+	    out {
+	        TReverseGearData[] reverseGearData
+			<** @description: numElements = allowed range: >=1. If numElements >1, buffered data are provided.**>
+			UInt16 numElements
+		}
+	}
+	<** @description: notifyReverseGearDataChanged
+	The signal will be emitted when new reverse gear data is available.
+	All valid flags are updated. The data is only guaranteed to be updated when the valid flags are true.
+	**>
+	broadcast notifyReverseGearDataChanged selective {   	
+	}
+
+	<** @description: getStatus = get the reverse gear sensor status at a specific point in time. **>
+	method getStatus {
+	    out {
+	        TSensorStatus status
+			<** @description: available = Is true if data can be provided and false otherwise, e.g. missing initialization **>
+			Boolean available
+		}
+	}
+	<** @description: notifyStatusChanged
+	The signal will be emitted when new reverse gear sensor status data is available.
+	**>
+	broadcast notifyStatusChanged selective {   	
+	}
+		
+}
