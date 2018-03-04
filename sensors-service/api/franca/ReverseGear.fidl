@@ -108,6 +108,11 @@ interface ReverseGear {
 	All valid flags are updated. The data is only guaranteed to be updated when the valid flags are true.
 	**>
 	broadcast notifyReverseGearDataChanged selective {   	
+	    out {
+	        TReverseGearData[] reverseGearData
+			<** @description: numElements = allowed range: >=1. If numElements >1, buffered data are provided.**>
+			UInt16 numElements
+		}
 	}
 
 	<** @description: getStatus = get the reverse gear sensor status at a specific point in time. **>
@@ -122,6 +127,9 @@ interface ReverseGear {
 	The signal will be emitted when new reverse gear sensor status data is available.
 	**>
 	broadcast notifyStatusChanged selective {   	
+	    out {
+			TSensorStatus status
+	   	}
 	}
 		
 }

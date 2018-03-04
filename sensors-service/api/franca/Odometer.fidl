@@ -114,6 +114,11 @@ interface Odometer {
 	All valid flags are updated. The data is only guaranteed to be updated when the valid flags are true.
 	**>
 	broadcast notifyOdometerDataChanged selective {   	
+	    out {
+	        TOdometerData[] odometerData
+			<** @description: numElements = allowed range: >=1. If numElements >1, buffered data are provided.**>
+			UInt16 numElements
+		}
 	}
 
 	<** @description: getStatus = get the odometer sensor status at a specific point in time. **>
@@ -128,6 +133,9 @@ interface Odometer {
 	The signal will be emitted when new odometer sensor status data is available.
 	**>
 	broadcast notifyStatusChanged selective {   	
+	    out {
+			TSensorStatus status
+	   	}
 	}
 		
 }

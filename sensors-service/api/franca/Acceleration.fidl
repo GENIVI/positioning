@@ -177,6 +177,10 @@ interface Acceleration {
 	All valid flags are updated. The data is only guaranteed to be updated when the valid flags are true.
 	**>
 	broadcast notifyAccelerationDataChanged selective {   	
+	    out {
+	        TAccelerationData[] accelerationData
+			UInt16              numElements
+		}
 	}
 
 	<** @description: getStatus = get the acceleration sensor status at a specific point in time. **>
@@ -192,6 +196,9 @@ interface Acceleration {
 	The signal will be emitted when new acceleration sensor status data is available.
 	**>
 	broadcast notifyStatusChanged selective {   	
+	    out {
+			TSensorStatus status
+	   	}
 	}
 		
 }

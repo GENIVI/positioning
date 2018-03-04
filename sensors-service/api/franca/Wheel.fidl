@@ -244,6 +244,11 @@ interface Wheel {
 	All valid flags are updated. The data is only guaranteed to be updated when the valid flags are true.
 	**>
 	broadcast notifyWheelDataChanged selective {   	
+	    out {
+	        TWheelData[] wheelData
+			<** @description: numElements = allowed range: >=1. If numElements >1, buffered data are provided.**>
+			UInt16 numElements
+		}
 	}
 
 	<** @description: getStatus = get the wheel sensor status at a specific point in time. **>
@@ -258,6 +263,9 @@ interface Wheel {
 	The signal will be emitted when new wheel sensor status data is available.
 	**>
 	broadcast notifyStatusChanged selective {   	
+	    out {
+			TSensorStatus status
+	   	}
 	}
 
 }

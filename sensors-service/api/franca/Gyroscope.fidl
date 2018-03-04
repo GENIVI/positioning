@@ -139,6 +139,11 @@ interface Gyroscope {
 	All valid flags are updated. The data is only guaranteed to be updated when the valid flags are true.
 	**>
 	broadcast notifyGyroscopeDataChanged selective {   	
+	    out {
+	        TGyroscopeData[] gyroData
+			<** @description: numElements = allowed range: >=1. If numElements >1, buffered data are provided.**>
+			UInt16 numElements
+		}
 	}
 
 	<** @description: 
@@ -186,6 +191,9 @@ interface Gyroscope {
 	The signal will be emitted when new gyroscope sensor status data is available.
 	**>
 	broadcast notifyStatusChanged selective {   	
+	    out {
+			TSensorStatus status
+	   	}
 	}
 	
 }
