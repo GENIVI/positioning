@@ -1,0 +1,183 @@
+/*  SPDX-License-Identifier: MPL-2.0
+    Component Name: EnhancedPositionService
+    Compliance Level: Abstract Component
+    Copyright (C) 2012, BMW Car IT GmbH, Continental Automotive GmbH, PCA Peugeot Citroën, XS Embedded GmbH
+    License:
+    This Source Code Form is subject to the terms of the
+    Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed with
+    this file, You can obtain one at http://mozilla.org/MPL/2.0/.
+*/
+
+package org.genivi.enhancedpositionservice
+
+typeCollection EnhancedPositionServiceTypes {
+
+    version {
+        major 5
+        minor 0
+    }
+
+    typedef Timestamp is UInt64
+    
+    <** @description: bitmask obtained as a result of an OR operation on enum values of type PositionInfoKey **>        
+    typedef Bitmask is UInt64 
+    
+    <** @description: version **>            
+    struct Version {
+        <** @description : when the major changes, then backward compatibility with previous releases is not granted **>
+        UInt16 maj
+        <** @description : when the minor changes, then backward compatibility with previous releases is granted, but something changed in the implementation of the API (e.g. new methods may have been added) **>
+        UInt16 min
+        <** @description : when the micro changes, then backward compatibility with previous releases is granted (bug fixes or documentation modifications) **>
+        UInt16 mic
+        <** @description : release date (e.g. 21-06-2011) **>
+        String date
+    }
+    
+    <** @description : Value = generic value (mapped to a dbus variant ('v') data type)**>
+    union Value {
+        UInt64 uInt64Value
+        Double doubleValue
+        Float  floatValue
+        String stringValue
+    }
+
+    enumeration PositionInfoKey {
+        LATITUDE           = 1
+        LONGITUDE          = 2
+        ALTITUDE           = 4
+        HEADING            = 8
+        SPEED              = 16
+        CLIMB              = 32
+        ROLL_RATE          = 64
+        PITCH_RATE         = 128
+        YAW_RATE           = 256
+        PDOP               = 512
+        HDOP               = 1024
+        VDOP               = 2048
+        USED_SATELLITES    = 4096
+        TRACKED_SATELLITES = 8192
+        VISIBLE_SATELLITES = 16384
+        SIGMA_HPOSITION    = 32768
+        SIGMA_ALTITUDE     = 65536
+        SIGMA_HEADING      = 131072
+        SIGMA_SPEED        = 262144
+        SIGMA_CLIMB        = 524288
+        GNSS_FIX_STATUS    = 1048576
+        DR_STATUS          = 2097152
+        RELIABILTY_INDEX   = 4194304
+    } 
+    
+    <** @description : PositionInfo = array of tuples (key,value)
+        key = enumeration PositionInfoKey
+        key = LATITUDE, value = value of type 'Double', that expresses the latitude of the current position. Range [-90:+90]. Example: 48.053250
+        key = LONGITUDE, value = value of type 'Double', that expresses the longitude of the current position. Range [-180:+180]. Example: 8.324500
+        key = ALTITUDE, value = value of type 'Double', that expresses the altitude above the sea level of the current position in meters
+        key = HEADING, value = value of type 'Double', that expresses the course angle in degree. Range [0:360]. 0 = north, 90 = east, 180 = south, 270 = west
+        key = SPEED, value = value of type 'Double', that expresses speed measured in m/s. A negative value indicates that the vehicle is moving backwards
+        key = CLIMB, value = value of type 'Double', that expresses the road gradient in degrees
+        key = ROLL_RATE, value = value of type 'Double', rotation rate around the X-axis in degrees/s. Range [-100:+100]
+        key = PITCH_RATE, value = value of type 'Double', rotation rate around the Y-axis in degrees/s. Range [-100:+100]
+        key = YAW_RATE, value = value of type 'Double', rotation rate around the Z-axis in degrees/s. Range [-100:+100]
+        key = PDOP, value = value of type 'Double', that represents the positional (3D) dilution of precision
+        key = HDOP, value = value of type 'Double', that represents the horizontal (2D) dilution of precision
+        key = VDOP, value = value of type 'Double', that represents vertical (altitude) dilution of precision
+        key = USED_SATELLITES, value = value of type 'UInt8', that represents the number of used satellites
+        key = TRACKED_SATELLITES, value = value of type 'UInt8', that represents the number of tracked satellites 
+        key = VISIBLE_SATELLITES, value = value of type 'UInt8', that represents the number of visible satellites
+        key = SIGMA_HPOSITION, value = value of type 'Double', that represents the standard deviation for the horizontal position in m
+        key = SIGMA_ALTITUDE, value = value of type 'Double', that represents the standard deviation for altitude in m
+        key = SIGMA_HEADING, value = value of type 'Double', that represents the standard deviation for altitude in degrees
+        key = SIGMA_SPEED, value = value of type 'Double', that represents the standard error estimate of the speed in m/s</line>
+        key = SIGMA_CLIMB, value = value of type 'Double', that represents the standard error estimate of the climb in degrees</line>
+        key = GNSS_FIX_STATUS, value = value of type 'UInt16', that represents an enum(NO_FIX(0x01),TIME_FIX(0x01),2D_FIX(0x02),3D_FIX(0x03), ... )
+        key = DR_STATUS, value = value of type 'Boolean', where TRUE means that a dead-reckoning algorithm has been used to calculate the current position
+    **>
+    map PositionInfo {
+        PositionInfoKey to Value
+    }
+
+    enumeration SatelliteSystem {
+        GPS     = 1
+        GLONASS = 2
+        GALILEO = 3
+        COMPASS = 4 
+    }
+    
+    <** @description : SatelliteInfo = array(struct(system,satelliteId,azimuth,elevation,cNo,inUse))
+            system = enum(GPS, GLONASS, GALILEO, COMPASS, ... )
+            satelliteId = satellite ID. This ID is unique within one satellite system
+            azimuth = satellite azimuth in degrees. Value range 0..359
+            elevation = satellite elevation in degrees. Value range 0..90
+            cNo = C/No (SNR) in dBHz. Range 0 to 99, 0 when not tracking
+            inUse = flag indicating if the satellite is used for the fix (inUse=true)
+        **>
+    struct SatelliteInfo {
+        SatelliteSystem system
+        UInt32 satellitId
+        UInt32 azimuth
+        UInt32 elevation
+        UInt32 cNo
+        Boolean inUse
+    }
+    
+    <** @description: since the hexadecimal format is not supported by Franca yet
+           the bitmask below is expressed using numbers in decimal format.
+           Example: 0x01000000 = 16777216 **> 
+    enumeration TimeInfoKey  {
+        YEAR   = 16777216   
+        MONTH  = 33554432  
+        DAY    = 67108864   
+        HOUR   = 134217728  
+        MINUTE = 268435456  
+        SECOND = 536870912  
+        MS     = 1073741824 
+    }
+
+    <** @description : TimeInfo = array of tuples (key,value)
+        key = enumeration TimeInfoKey
+        key = YEAR, value = value of type 'UInt16', 4 digits number that indicates the year. Example: 2012
+        key = MONTH, value = value of type 'UInt8', 2 digits number that indicates the month. Example: 03 means March
+        key = DAY, value = value of type 'UInt8', 2 digits number that indicates the day. Range [0:31]. Example: 07
+        key = HOUR, value = value of type 'UInt8', 2 digits number that indicates the hour. Range [0:23].  Example: 01
+        key = MINUTE, value = value of type 'UInt8', 2 digits number that represents the minutes. Range [0:59]. Example: 01
+        key = SECOND, value = value of type 'UInt8', 2 digits number that represents the seconds. Range [0:59]. Example: 01
+        key = MS, value = value of type 'UInt16', 3 digits number that represents the milliseconds. Range [0:999]. Example: 007
+    **>
+    map TimeInfo {
+        TimeInfoKey to Value
+    }
+    
+    enumeration PositionFeedbackKey {
+        LATITUDE         = 1
+        LONGITUDE        = 2
+        ALTITUDE         = 4
+        HEADING          = 8
+        SPEED            = 16
+        CLIMB            = 32
+        RELIABILTY_INDEX = 64
+    }
+    
+    enumeration PositionFeedbackType {
+        MAP_MATCHED_FEEDBACK = 1
+        TEST_FEEDBACK        = 2
+    }
+
+    <**
+        @description : PositionFeedback = array of tuples (key,value)</line>
+          key = enum(LATITUDE,LONGITUDE,ALTITUDE,HEADING,SPEED,CLIMB,RELIABILTY_INDEX, ... )</line>
+          key = LATITUDE, value = value of type Â´dÂ´, that expresses the latitude of the current position in format %3.6f. [-90,+90]. Example: 48.053250
+          key = LONGITUDE, value = value of type Â´dÂ´, that expresses the longitude of the current position in format %3.6f. [-180,+180]. Example: 8.324500 
+          key = ALTITUDE, value = value of type Â´iÂ´, that expresses the altitude above the sea level of the current position in meters
+          key = HEADING, value = value of type Â´iÂ´, that expresses the course angle in degree. [0,360]. Example: 0 => north, 90 => east, 180 => south, 270 => west
+          key = SPEED, value = value of type Â´dÂ´, that expresses speed measured in m/s
+          key = CLIMB, value = value of type Â´iÂ´, that expresses the inclination measured in degrees
+          key = RELIABILTY_INDEX, value = value of type Â´yÂ´, that indicates the position feedabck reliabilty. It can assume values from 0 to 100
+    **>
+    map PositionFeedbackInfo {
+        PositionFeedbackType to Value
+    }
+    
+}
+
+

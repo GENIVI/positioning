@@ -8,9 +8,9 @@
     this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 */
 
-package org.genivi.GnssService
+package org.genivi.gnssservice
 
-import org.genivi.GnssService.GnssServiceTypes.* from "GnssServiceTypes.fidl"
+import org.genivi.gnssservice.GnssServiceTypes.* from "GnssServiceTypes.fidl"
 
 <** @description : Gnss = This interface offers functionalities to retrieve the GNSS position of the vehicle **>
 interface Configuration {

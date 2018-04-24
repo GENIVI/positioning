@@ -1,0 +1,78 @@
+/*  SPDX-License-Identifier: MPL-2.0
+    Component Name: EnhancedPositionService
+    Compliance Level: Abstract Component
+    Copyright (C) 2012, BMW Car IT GmbH, Continental Automotive GmbH, PCA Peugeot Citroën, XS Embedded GmbH
+    License:
+    This Source Code Form is subject to the terms of the
+    Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed with
+    this file, You can obtain one at http://mozilla.org/MPL/2.0/.
+*/
+
+package org.genivi.enhancedpositionservice
+
+import org.genivi.enhancedpositionservice.EnhancedPositionServiceTypes.* from "EnhancedPositionServiceTypes.fidl"
+
+<** @description : EnhancedPosition = This interface offers functionalities to retrieve the enhanced position of the vehicle **>
+interface EnhancedPosition {
+    version {
+        major 5
+        minor 0
+    }
+
+    <** @description : GetVersion = This method returns the API version implemented by the server application **>
+    method GetVersion {
+        out {
+            Version ^version
+        }
+    }
+
+    <** @description : GetPositionInfo = This method returns a given set of positioning data (e.g. Position, Course, Accuracy, Status, ... )
+           Note: If a requested value is invalid, it's not returned to the client application
+    **>
+    method GetPositionInfo {
+        in {
+            <** @description : valuesToReturn = Bitmask obtained as result of a bitwise OR operation on the keys corresponding to the values to be returned **>
+            Bitmask valuesToReturn
+        }
+        out {
+            <** @description : timestamp = Timestamp of the acquisition of the position data [ms] **>
+            Timestamp timestamp 
+            <** @description : data = Position data **>
+            PositionInfo data
+        }
+    }
+    
+    <**
+        @description : GetSatelliteInfo = This method returns information about the current satellite constellation
+        Note: If a requested value is invalid, it's not returned to the client application
+    **>
+    method GetSatelliteInfo {
+        out {
+            <** @description : timestamp = Timestamp of the acquisition of the satellite detail data [ms] **>
+            Timestamp timestamp
+            <** @description : satelliteInfo = satellite information **>
+            SatelliteInfo satelliteInfo
+        }
+    }
+
+    <** @description : GetTime = This method returns UTC time and date.
+            Note: If a requested value is invalid, it's not returned to the client application
+    **>
+    method GetTime {
+        out {
+            <** @description : timestamp = Timestamp of the acquisition of the UTC date/time [ms] **>
+            Timestamp timestamp
+            <** @description : time = UTC date/time **>
+            TimeInfo time
+        }
+    }
+
+    <** @description : PositionUpdate = This signal is called to notify a client application of a position change. The update frequency is implementation specific. The maximal allowed frequency is 10Hz **>
+    broadcast PositionUpdate {
+        out {
+            <** @description : valuesToReturn = Bitmask obtained as result of a bitwise OR operation on the keys corresponding to the values that changed **>
+            Bitmask changedValues
+        }
+    }
+
+}

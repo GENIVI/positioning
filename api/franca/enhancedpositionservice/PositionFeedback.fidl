@@ -1,0 +1,54 @@
+/*  SPDX-License-Identifier: MPL-2.0
+    Component Name: EnhancedPositionService
+    Compliance Level: Abstract Component
+    Copyright (C) 2012, BMW Car IT GmbH, Continental Automotive GmbH, PCA Peugeot Citroën, XS Embedded GmbH
+    License:
+    This Source Code Form is subject to the terms of the
+    Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed with
+    this file, You can obtain one at http://mozilla.org/MPL/2.0/.
+*/
+
+package org.genivi.enhancedpositionservice
+
+import org.genivi.enhancedpositionservice.EnhancedPositionServiceTypes.* from "EnhancedPositionServiceTypes.fidl"
+
+<**
+    @description : PositionFeedback = This interface allows the application implementing the map-matching algorithm to provide a position feedback to the EnhancedPositionService
+**>
+
+interface PositionFeedback {
+    version {
+        major 5
+        minor 0
+    }
+
+    <**
+        @description : GetVersion = This method returns the API version implemented by the server application
+    **>
+    method GetVersion {
+        out {
+            Version ^version
+        }
+    }
+
+    <**
+        @description : SetPositionFeedback = This method allows a client application to provide the EnhancedPositionService with a position feedback
+    **>
+    method SetPositionFeedback {
+        in {
+            PositionFeedbackInfo feedback
+
+            <**
+                @description : timestamp = timestamp in ms
+            **>
+            UInt64 timestamp
+
+            <**
+                @description : feedbackType = enum(INVALID,MAP_MATCHED_FEEDBACK,TEST_FEEDBACK, ... )
+            **>
+            PositionFeedbackType feedbackType
+        }
+    }
+  
+
+}

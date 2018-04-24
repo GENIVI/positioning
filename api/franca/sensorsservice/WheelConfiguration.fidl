@@ -8,9 +8,9 @@
     this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 */
 
-package org.genivi.SensorsService
+package org.genivi.sensorsservice
 
-import org.genivi.SensorsService.SensorsServiceTypes.* from "SensorsServiceTypes.fidl"
+import org.genivi.sensorsservice.SensorsServiceTypes.* from "SensorsServiceTypes.fidl"
 
 <** @description : WheelConfiguration = This interface offers functionalities to retrieve the configuration of the Wheel sensor interface of the vehicle **>
 interface WheelConfiguration {
