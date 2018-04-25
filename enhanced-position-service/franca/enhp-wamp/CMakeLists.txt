@@ -23,7 +23,7 @@ set(PROJECT_NAME_LIBRARY ${PROJECT_NAME}-wamp)
 
 message(STATUS ${PROJECT_NAME})
 
-option(WAMP_GENERATION
+option(WITH_WAMP_GENERATION
        "Generate Wamp files" ON)
 
 set(CMAKE_VERBOSE_MAKEFILE on)

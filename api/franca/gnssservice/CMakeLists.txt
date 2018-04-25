@@ -38,8 +38,8 @@ option(COMMONAPI_DBUS_TOOL_GENERATOR
        "Absolute path to CommonAPI-DBus code generator" "")
 option(COMMONAPI_WAMP_TOOL_GENERATOR
        "Absolute path to CommonAPI-Wamp code generator" "")
-option(WAMP_GENERATION
-       "Generate Wamp files" OFF)
+option(WITH_WAMP_GENERATION
+      "Generate Wamp files" OFF)
 
 set(COMMONAPI_FIDL_DIR "${CMAKE_CURRENT_SOURCE_DIR}")
 
