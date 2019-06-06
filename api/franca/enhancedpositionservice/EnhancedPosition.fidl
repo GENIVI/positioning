@@ -51,7 +51,7 @@ interface EnhancedPosition {
             <** @description : timestamp = Timestamp of the acquisition of the satellite detail data [ms] **>
             Timestamp timestamp
             <** @description : satelliteInfo = satellite information **>
-            SatelliteInfo satelliteInfo
+            SatelliteInfo[] satelliteInfo
         }
     }
 
